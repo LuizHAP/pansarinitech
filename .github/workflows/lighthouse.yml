@@ -1,0 +1,41 @@
+name: Lighthouse
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  lighthouse:
+    name: Lighthouse Performance / A11y / SEO / BP (production)
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    # D-17: regressions open an issue but never block deploys.
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+
+      # Wait for Vercel production deploy to complete before measuring.
+      # Tune sleep based on observed deploy latency.
+      - name: Wait for Vercel production
+        run: sleep 60
+
+      - name: Run Lighthouse
+        id: lh
+        uses: treosh/lighthouse-ci-action@v12
+        with:
+          urls: |
+            https://pansarinitech.vercel.app/en
+            https://pansarinitech.vercel.app/pt
+            https://pansarinitech.vercel.app/en/non-existent-route
+            https://pansarinitech.vercel.app/pt/nao-existe
+          configPath: ./.lighthouserc.json
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+
+      - name: Open issue on regression
+        if: steps.lh.outcome == 'failure'
+        uses: peter-evans/create-issue-from-file@v5
+        with:
+          title: "Lighthouse regression on main"
+          content-filepath: .lighthouseci/manifest.json
+          labels: lighthouse, performance, regression

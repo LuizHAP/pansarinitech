@@ -1,0 +1,63 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  ci:
+    name: Lint + Typecheck + Build + Static-render + A11y matrix
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install (frozen lockfile)
+        run: pnpm install --frozen-lockfile
+
+      # D-16 (UPDATED): Biome replaces ESLint+Prettier (single binary,
+      # single config). The locked next/link rule is a Biome
+      # noRestrictedImports rule with overrides for src/lib/i18n/navigation.ts.
+      - name: Lint (Biome)
+        run: pnpm exec biome check .
+
+      - name: Typecheck
+        run: pnpm exec tsc --noEmit
+
+      # Single build per CI run; output captured for verify:static (D-19 budget < 3 min)
+      - name: Build
+        run: pnpm next build 2>&1 | tee /tmp/build.log
+
+      # D-15: parses /tmp/build.log; does NOT spawn another build
+      - name: Verify static rendering
+        run: pnpm verify:static /tmp/build.log
+
+      - name: Install Playwright browsers
+        run: pnpm exec playwright install --with-deps chromium
+
+      # D-14: full 4-combo × 2-page axe-core matrix; D-18: 0 violations required
+      - name: a11y matrix (en/pt × light/dark × home/404)
+        run: pnpm test:a11y
+
+      # Wave 2 regression spec — Sith-red contrast smoke (subset of the
+      # full matrix, kept as fast-feedback for THEME-06 specifically)
+      - name: a11y Sith regression
+        run: pnpm test:sith
+
+      - name: Upload Playwright report on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7
