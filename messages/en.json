@@ -1,0 +1,25 @@
+{
+  "home": {
+    "brand": "Luiz Pansarini",
+    "placeholder": "Coming soon — Phase 2.",
+    "shellNote": "Bilingual themed shell is in place. Content lands next."
+  },
+  "themeToggle": {
+    "label": "Toggle theme"
+  },
+  "localeToggle": {
+    "label": "Switch language"
+  },
+  "a11y": {
+    "skipToContent": "Skip to main content"
+  },
+  "header": {
+    "brandAriaLabel": "Luiz Pansarini — home"
+  },
+  "notFound": {
+    "title": "404",
+    "aurebeshFallback": "404 in Aurebesh",
+    "swReference": "These aren't the pages you're looking for.",
+    "cta": "Go back home"
+  }
+}

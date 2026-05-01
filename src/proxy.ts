@@ -1,6 +1,6 @@
-// proxy.ts (repo root) — D-09
+// src/proxy.ts — D-09 (Next 16 proxy file convention; lives in src/ when --src-dir is used)
 import createMiddleware from 'next-intl/middleware';
-import { routing } from './src/i18n/routing';
+import { routing } from './i18n/routing';
 
 export default createMiddleware(routing);
 

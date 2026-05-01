@@ -1,0 +1,25 @@
+{
+  "home": {
+    "brand": "Luiz Pansarini",
+    "placeholder": "Em breve — Fase 2.",
+    "shellNote": "Estrutura bilíngue e tematizada pronta. Conteúdo a seguir."
+  },
+  "themeToggle": {
+    "label": "Alternar tema"
+  },
+  "localeToggle": {
+    "label": "Trocar idioma"
+  },
+  "a11y": {
+    "skipToContent": "Pular para o conteúdo principal"
+  },
+  "header": {
+    "brandAriaLabel": "Luiz Pansarini — início"
+  },
+  "notFound": {
+    "title": "404",
+    "aurebeshFallback": "404 em Aurebesh",
+    "swReference": "Estas não são as páginas que você procura.",
+    "cta": "Voltar para o início"
+  }
+}

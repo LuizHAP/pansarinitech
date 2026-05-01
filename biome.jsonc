@@ -36,8 +36,7 @@
           "level": "error",
           "options": {
             "paths": {
-              "next/link": "Use the locale-aware Link from '@/lib/i18n/navigation' instead. Direct next/link strips the locale prefix and breaks bilingual routing. (D-16)",
-              "next/navigation": "Use the locale-aware redirect/usePathname/useRouter from '@/lib/i18n/navigation' instead. (D-16)"
+              "next/link": "Use the locale-aware Link from '@/lib/i18n/navigation' instead. Direct next/link strips the locale prefix and breaks bilingual routing. (D-16)"
             }
           }
         }
