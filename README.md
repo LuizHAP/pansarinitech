@@ -1,5 +1,7 @@
 # pansarinitech
 
+<!-- ci-validation -->
+
 Bilingual (PT/EN) personal portfolio for **Luiz Pansarini**, Principal Software Engineer.
 Subtle Star Wars aesthetic via a Jedi (light) / Sith (dark) theme toggle.
 
