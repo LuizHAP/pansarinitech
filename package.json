@@ -13,8 +13,9 @@
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
     "format": "biome format --write .",
+    "verify:static": "node scripts/check-static-rendering.mjs",
     "test:sith": "playwright test tests/sith-contrast.spec.ts",
-    "test:a11y:sith": "playwright test tests/sith-contrast.spec.ts"
+    "test:a11y": "playwright test tests/a11y-matrix.spec.ts"
   },
   "dependencies": {
     "@formatjs/intl-localematcher": "^0.8.5",

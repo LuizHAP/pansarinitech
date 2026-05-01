@@ -55,10 +55,15 @@
   --muted: oklch(18% 0.015 250);
   --muted-foreground: oklch(62% 0.015 250);
   --border: oklch(25% 0.02 250);
-  --primary: oklch(58% 0.21 28);
-  --primary-foreground: oklch(10% 0.01 250);
-  --accent: oklch(58% 0.21 28);
-  --accent-foreground: oklch(10% 0.01 250);
+  /* Sith primary: saber red, slightly DARKENED from oklch(58% 0.21 28) → 54% to
+     guarantee ≥4.5:1 contrast with white text on bg-primary. The original 58%
+     gave 4.33:1 with near-black text and 4.49:1 with off-white — both below
+     WCAG 1.4.3 AA. 54% gives ~5.0:1 with pure white. Visually still saber red.
+     Verified by axe in tests/a11y-matrix.spec.ts (404 page CTA button). [Rule 1] */
+  --primary: oklch(54% 0.21 28);
+  --primary-foreground: oklch(100% 0 0);
+  --accent: oklch(54% 0.21 28);
+  --accent-foreground: oklch(100% 0 0);
   --destructive: oklch(65% 0.22 28);
   --ring: oklch(58% 0.21 28);
   --input: oklch(18% 0.015 250);
