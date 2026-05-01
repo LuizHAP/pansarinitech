@@ -43,5 +43,9 @@ yarn-error.log*
 pnpm-debug.log*
 .npm
 
+# Playwright
+playwright-report/
+test-results/
+
 # GSD planning artifacts (kept local)
 .planning/
