@@ -1,3 +1,5 @@
+import { Header } from '@/components/shared/header';
+import { SkipToContent } from '@/components/shared/skip-to-content';
 import { routing } from '@/i18n/routing';
 // src/app/[locale]/layout.tsx — D-24 setRequestLocale in EVERY [locale] file
 import { MotionConfig } from 'motion/react';
@@ -25,8 +27,9 @@ export default async function LocaleLayout({
   return (
     <NextIntlClientProvider messages={messages} locale={locale}>
       <MotionConfig reducedMotion="user">
-        {/* Plan 02 will insert <SkipToContent /> and <Header /> here */}
-        <main id="main-content" tabIndex={-1} className="scroll-mt-14 min-h-screen">
+        <SkipToContent />
+        <Header />
+        <main id="main-content" tabIndex={-1} className="scroll-mt-14 min-h-[calc(100vh-56px)]">
           {children}
         </main>
       </MotionConfig>
