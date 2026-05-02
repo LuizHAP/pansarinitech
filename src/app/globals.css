@@ -181,8 +181,12 @@ html.dark pre[data-theme*=" "] span {
       animation-direction: reverse !important;
     }
     @keyframes vt-fade {
-      from { opacity: 1; }
-      to { opacity: 0; }
+      from {
+        opacity: 1;
+      }
+      to {
+        opacity: 0;
+      }
     }
   }
 }
