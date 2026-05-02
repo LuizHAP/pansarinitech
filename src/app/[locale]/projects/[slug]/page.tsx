@@ -1,6 +1,6 @@
 import { CaseStudyHero } from '@/components/sections/case-study-hero';
 import { type Locale, routing } from '@/i18n/routing';
-import { getAllSlugs, getProject } from '@/lib/mdx/loader';
+import { getAllSlugs, getProject } from '@/lib/mdx/projects';
 import { setRequestLocale } from 'next-intl/server';
 // src/app/[locale]/projects/[slug]/page.tsx — Phase 3 D-21, D-23
 // Case study page — async RSC. Stays ● SSG via setRequestLocale +

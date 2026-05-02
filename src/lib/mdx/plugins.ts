@@ -1,8 +1,10 @@
-// src/lib/mdx/plugins.ts — Phase 3 D-14
+// src/lib/mdx/plugins.ts — Phase 3 D-14 + Phase 4 D-07/D-08
 // Shared rehype/remark plugin config. ALL MDX renders (Phase 3 case studies +
 // Phase 4 blog posts) use this exact config. Do NOT override per-call —
 // single-theme override silently breaks the html.dark CSS flip (Pitfall 4).
+import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 import rehypePrettyCode, { type Options as RehypePrettyCodeOptions } from 'rehype-pretty-code';
+import rehypeSlug from 'rehype-slug';
 import remarkGfm from 'remark-gfm';
 
 export const rehypePrettyCodeOptions: RehypePrettyCodeOptions = {
@@ -20,5 +22,26 @@ export const rehypePrettyCodeOptions: RehypePrettyCodeOptions = {
 // shape: each entry is either a Plugin or a [Plugin, ...options] tuple.
 // biome-ignore lint/suspicious/noExplicitAny: matches PluggableList shape from unified
 export const remarkPlugins: any[] = [remarkGfm];
+
+// CRITICAL ORDER (DO NOT REORDER):
+//   1. rehype-slug FIRST — adds id="..." to headings; both autolink AND TOC extractor depend on these ids
+//   2. rehype-pretty-code MIDDLE — code-block transformation independent of headings
+//   3. rehype-autolink-headings LAST — wraps headings AFTER ids exist; behavior:'append' keeps
+//      heading text outside the <a> (screen-reader-friendly per rehype docs)
+// Reorder breaks: missing ids (anchors don't render) OR autolinked headings get pretty-code
+// figure wrapping (broken DOM). See RESEARCH §3 + Pitfall 5.
 // biome-ignore lint/suspicious/noExplicitAny: matches PluggableList shape from unified
-export const rehypePlugins: any[] = [[rehypePrettyCode, rehypePrettyCodeOptions]];
+export const rehypePlugins: any[] = [
+  rehypeSlug,
+  [rehypePrettyCode, rehypePrettyCodeOptions],
+  [
+    rehypeAutolinkHeadings,
+    {
+      behavior: 'append',
+      properties: {
+        className: ['heading-anchor'],
+        'aria-label': 'Permalink to this heading',
+      },
+    },
+  ],
+];

@@ -2,7 +2,7 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import type { Locale } from '@/i18n/routing';
 import { Link } from '@/lib/i18n/navigation';
-import { getProjects } from '@/lib/mdx/loader';
+import { getProjects } from '@/lib/mdx/projects';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 // src/app/[locale]/projects/page.tsx — Phase 3 D-21, D-22
 // Listing page — RSC. Stays ● SSG via setRequestLocale + frontmatter-only

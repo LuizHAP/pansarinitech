@@ -2,7 +2,7 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import type { Locale } from '@/i18n/routing';
 import { Link } from '@/lib/i18n/navigation';
-import { getProjects } from '@/lib/mdx/loader';
+import { getProjects } from '@/lib/mdx/projects';
 import { getTranslations } from 'next-intl/server';
 // src/components/sections/featured-projects-teaser.tsx — Phase 3 D-24
 // REWRITE of Phase 2 placeholder — async RSC consuming real getProjects(locale).
