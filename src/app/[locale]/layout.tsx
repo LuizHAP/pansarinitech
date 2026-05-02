@@ -13,8 +13,8 @@ import { ThemeProvider } from '@/components/shared/theme-provider';
 import { routing } from '@/i18n/routing';
 import { aurebesh } from '@/lib/fonts';
 // import { Toaster } from '@/components/ui/sonner'; // uncommented in Task 3 (sonner install)
-// import { Analytics } from '@vercel/analytics/next'; // uncommented in Task 2 (vercel analytics install)
-// import { SpeedInsights } from '@vercel/speed-insights/next'; // uncommented in Task 2 (speed insights install)
+import { Analytics } from '@vercel/analytics/next';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import { GeistMono } from 'geist/font/mono';
 import { GeistSans } from 'geist/font/sans';
 import { MotionConfig } from 'motion/react';
@@ -68,8 +68,8 @@ export default async function LocaleLayout({
             </NextIntlClientProvider>
           </MotionConfig>
         </ThemeProvider>
-        {/* <Analytics /> — uncommented in Task 2 (vercel analytics install) */}
-        {/* <SpeedInsights /> — uncommented in Task 2 (vercel speed insights install) */}
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
