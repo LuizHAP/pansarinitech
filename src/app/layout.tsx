@@ -1,9 +1,15 @@
-import { ThemeProvider } from '@/components/shared/theme-provider';
-import { aurebesh } from '@/lib/fonts';
 // src/app/layout.tsx — ROOT layout (NOT under [locale])
-// No setRequestLocale here — that's only for [locale] subtree (D-24).
-import { GeistMono } from 'geist/font/mono';
-import { GeistSans } from 'geist/font/sans';
+// Phase 2 Wave 1 (D-CONTEXT/D-13): passthrough so [locale]/layout.tsx can render the
+// per-locale lang attribute. metadata stays here for Next 16 to discover at build time.
+//
+// Returning `children` directly (cast to React.ReactElement) is the documented passthrough
+// pattern. Do NOT return `<>{children}</>` — Next has shown intermittent warnings around
+// fragment-only root layouts in some 16.x dot-releases. Plain `children` is the safest shape
+// across Next 16.0–16.2.
+//
+// Root `app/not-found.tsx` keeps its own document shell (Phase 1 commit f29b95a) — this
+// passthrough is compatible because root not-found bypasses this layout for proxy-excluded
+// paths.
 import type { Metadata } from 'next';
 import './globals.css';
 
@@ -12,22 +18,5 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <html
-      lang="en"
-      suppressHydrationWarning
-      className={`${GeistSans.variable} ${GeistMono.variable} ${aurebesh.variable}`}
-    >
-      <body>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          {children}
-        </ThemeProvider>
-      </body>
-    </html>
-  );
+  return children as React.ReactElement;
 }

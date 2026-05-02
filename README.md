@@ -31,7 +31,7 @@ pnpm test:a11y                                       # axe-core matrix: en/pt ×
 pnpm test:sith                                       # Sith-red contrast regression smoke (THEME-06)
 ```
 
-Every PR runs all gates via [`.github/workflows/ci.yml`](./.github/workflows/ci.yml). Lighthouse runs main-only via [`.github/workflows/lighthouse.yml`](./.github/workflows/lighthouse.yml) (failures open an issue; do not block deploys).
+Every PR runs all gates via [`.github/workflows/ci.yml`](./.github/workflows/ci.yml). Lighthouse runs main-only via [`.github/workflows/lighthouse.yml`](./.github/workflows/lighthouse.yml) (failures open an issue; do not block deploys). Phase 2 Wave 1 lifted Accessibility minScore 0.95 → 1.0 alongside the per-locale `<html lang>` migration.
 
 ## Planning
 
