@@ -1,5 +1,5 @@
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import type { Locale } from '@/i18n/routing';
 import { Link } from '@/lib/i18n/navigation';
 import { getProjects } from '@/lib/mdx/loader';
@@ -65,10 +65,10 @@ export default async function ProjectsListingPage({
                     ))}
                   </div>
                   <p className="mt-3 text-sm text-muted-foreground">{p.blurb}</p>
+                  <p className="mt-4 text-sm font-semibold text-foreground underline-offset-4 group-hover/card:underline">
+                    {t('cta.readMore')}
+                  </p>
                 </CardContent>
-                <CardFooter>
-                  <span className="text-sm font-medium text-primary">{t('cta.readMore')}</span>
-                </CardFooter>
               </Card>
             </Link>
           </li>

@@ -25,6 +25,12 @@ const PAGES = [
     path: (locale: 'en' | 'pt') => `/${locale}/non-existent-route-for-404`,
     desc: '404',
   },
+  // Phase 3 additions (PROJ-01..05):
+  { path: (locale: 'en' | 'pt') => `/${locale}/projects`, desc: 'projects-listing' },
+  {
+    path: (locale: 'en' | 'pt') => `/${locale}/projects/machinery-partner-ecommerce`,
+    desc: 'projects-case-study',
+  },
 ];
 
 test.describe('a11y matrix — WCAG 2.1 AA across en/pt × light/dark × home/404', () => {

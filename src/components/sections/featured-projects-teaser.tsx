@@ -34,7 +34,10 @@ export async function FeaturedProjectsTeaser({ locale }: { locale: Locale }) {
         <h2 id="featured-projects-heading" className="text-2xl font-semibold tracking-tight">
           {tSec('featuredProjects')}
         </h2>
-        <Link href="/projects" className="text-sm font-medium text-primary hover:underline">
+        <Link
+          href="/projects"
+          className="text-sm font-semibold text-foreground underline decoration-primary decoration-2 underline-offset-4 hover:decoration-foreground"
+        >
           {tProj('cta.viewAll')}
         </Link>
       </div>

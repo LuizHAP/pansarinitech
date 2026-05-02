@@ -33,6 +33,8 @@ jobs:
             https://pansarinitech.vercel.app/pt
             https://pansarinitech.vercel.app/en/now
             https://pansarinitech.vercel.app/pt/now
+            https://pansarinitech.vercel.app/en/projects
+            https://pansarinitech.vercel.app/pt/projects
           configPath: ./.lighthouserc.json
           uploadArtifacts: true
           temporaryPublicStorage: true

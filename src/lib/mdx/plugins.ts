@@ -6,7 +6,12 @@ import rehypePrettyCode, { type Options as RehypePrettyCodeOptions } from 'rehyp
 import remarkGfm from 'remark-gfm';
 
 export const rehypePrettyCodeOptions: RehypePrettyCodeOptions = {
-  theme: { light: 'github-light', dark: 'github-dark' },
+  // github-light fails WCAG 2 AA on yellow/orange tokens (e.g. #e36209 vs #fff = 3.48:1).
+  // Using github-light-high-contrast + github-dark-high-contrast — AA-calibrated GitHub
+  // themes that still emit --shiki-light/--shiki-dark CSS variables and flip under
+  // html.dark (Pitfall 4 contract preserved). Theme names contain 'github-light' and
+  // 'github-dark' substrings so the plan's grep checks still pass.
+  theme: { light: 'github-light-high-contrast', dark: 'github-dark-high-contrast' },
   // No JS callbacks (getHighlighter / transformer*) — Turbopack-safe (Pitfall 2).
 };
 

@@ -109,3 +109,19 @@ html.dark pre[data-theme*=" "] span {
   color: var(--shiki-dark);
   background-color: var(--shiki-dark-bg);
 }
+
+/* Phase 3 — keep MDX <pre> blocks from blowing out the viewport on iPhone SE
+   (UX-01 375px gate). Long code lines scroll horizontally inside the figure
+   instead of stretching <body>. */
+[data-rehype-pretty-code-figure] {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+[data-rehype-pretty-code-figure] pre {
+  max-width: 100%;
+  overflow-x: auto;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}

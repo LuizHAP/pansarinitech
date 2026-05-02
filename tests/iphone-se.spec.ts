@@ -21,6 +21,11 @@ const scenarios: Scenario[] = [
   { url: '/pt' },
   { url: '/en/now' },
   { url: '/pt/now' },
+  // Phase 3 additions (PROJ-01..05):
+  { url: '/en/projects' },
+  { url: '/pt/projects' },
+  { url: '/en/projects/machinery-partner-ecommerce' },
+  { url: '/pt/projects/machinery-partner-ecommerce' },
 ];
 
 for (const { url } of scenarios) {

@@ -40,6 +40,12 @@ jobs:
       - name: Verify data modules
         run: pnpm verify:data
 
+      # Phase 3 D-05 — bilingual parity + frontmatter shape for case studies.
+      # Pre-build fast-feedback gate: missing locale files or malformed frontmatter
+      # fail HERE, before next build burns CI minutes.
+      - name: Verify project content (Phase 3 PROJ-01..05 parity + Zod)
+        run: pnpm verify:projects
+
       # Single build per CI run; output captured for verify:static (D-19 budget < 3 min)
       - name: Build
         run: pnpm next build 2>&1 | tee /tmp/build.log
@@ -47,6 +53,12 @@ jobs:
       # D-15: parses /tmp/build.log; does NOT spawn another build
       - name: Verify static rendering
         run: pnpm verify:static /tmp/build.log
+
+      # Phase 3 D-18, D-19 — PERF-04 CI gate (fail-build on shiki/prism/monaco/highlight.js
+      # in any client chunk). Mirrors the verify:static parser pattern: read .next/static/chunks
+      # only, never spawn a second build.
+      - name: Verify no client-side highlighter (Phase 3 PERF-04)
+        run: pnpm verify:no-highlighter
 
       - name: Install Playwright browsers
         run: pnpm exec playwright install --with-deps chromium
