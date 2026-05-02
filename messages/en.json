@@ -21,5 +21,54 @@
     "aurebeshFallback": "404 in Aurebesh",
     "swReference": "These aren't the pages you're looking for.",
     "cta": "Go back home"
+  },
+  "hero": {
+    "contactCta": "Contact",
+    "resumeCta": "Resume"
+  },
+  "sections": {
+    "about": "About",
+    "featuredProjects": "Featured projects",
+    "featuredProjectsTeaserNote": "Case studies coming in Phase 3.",
+    "featuredProjectsCardYear": "Year",
+    "featuredProjectsCardRole": "Role"
+  },
+  "career": {
+    "title": "Career",
+    "sectionLabel": "Career timeline",
+    "pivotLabel": "IT-to-engineering pivot marker",
+    "pivotTooltip": "Pivot: IT → Engineering"
+  },
+  "skills": {
+    "title": "Skills",
+    "dailyUseLegend": "Bold + underline = daily use"
+  },
+  "now": {
+    "title": "What I'm doing now",
+    "lastUpdated": "Last updated",
+    "workingOn": "Working on",
+    "reading": "Reading / Learning",
+    "side": "Side / Personal",
+    "previewLink": "See more on the /now page"
+  },
+  "contact": {
+    "title": "Get in touch",
+    "lead": "Recruiters, hiring managers, and friends — pick the channel you prefer. I read everything.",
+    "emailButton": "Send email",
+    "copyButton": "Copy email",
+    "copied": "Email copied",
+    "copyFailed": "Couldn't copy — please use Cmd+C",
+    "linkedinLabel": "Open LinkedIn profile (opens in a new tab)",
+    "githubLabel": "Open GitHub profile (opens in a new tab)",
+    "linkedinText": "LinkedIn",
+    "githubText": "GitHub",
+    "resumeButton": "Resume (PDF)"
+  },
+  "footer": {
+    "copyright": "© 2026 Luiz Pansarini",
+    "builtWith": "Built with Next.js",
+    "source": "Source on GitHub",
+    "githubLabel": "Source code on GitHub (opens in a new tab)",
+    "linkedinLabel": "LinkedIn (opens in a new tab)"
   }
 }

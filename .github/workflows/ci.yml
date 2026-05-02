@@ -34,6 +34,12 @@ jobs:
       - name: Typecheck
         run: pnpm exec tsc --noEmit
 
+      # Phase 2 Wave 2 (D-03) — bilingual non-empty + Zod schema gate.
+      # Loads every src/data/*.ts module and asserts every {en, pt} field is
+      # populated. Fails CI on shape drift OR empty translations BEFORE build.
+      - name: Verify data modules
+        run: pnpm verify:data
+
       # Single build per CI run; output captured for verify:static (D-19 budget < 3 min)
       - name: Build
         run: pnpm next build 2>&1 | tee /tmp/build.log
