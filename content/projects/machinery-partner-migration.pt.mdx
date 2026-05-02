@@ -1,0 +1,128 @@
+---
+title: "Migração de no-code para Next.js"
+role: "Tech Lead, Principal Software Engineer"
+year: 2025
+stack:
+  - Next.js
+  - App Router
+  - React Server Components
+  - TypeScript
+  - Tailwind
+  - Vercel
+  - hreflang
+  - sitemap
+blurb: "Migração completa de uma plataforma no-code para Next.js App Router — preservando conteúdo, URLs e SEO enquanto destrava performance e ownership."
+heroImage: "./machinery-partner-migration/images/hero.jpg"
+tags:
+  - migration
+  - SEO
+  - performance
+  - App-Router
+featured: true
+order: 2
+---
+
+## Problema
+
+O site institucional vivia em uma plataforma no-code que tinha servido bem na
+fase zero-a-um. Em 2025 virou imposto. Toda passada do Lighthouse expunha JS de
+terceiros render-blocking que não dava para remover. Design pedia layouts que a
+plataforma não suportava; SEO pedia hreflang e structured data que a plataforma
+emitia incorretamente. O CMS rodava no mesmo render path que o site, então uma
+edição de conteúdo podia invalidar o cache inteiro e custar um cold-start de 4
+segundos para o primeiro visitante.
+
+O brief era inequívoco: ser dono do codebase. Manter toda URL estável. Não
+perder ranking de busca. Não quebrar o loop de autoria do time de marketing no
+dia um.
+
+## Solução
+
+Liderei a migração como Tech Lead, sendo dono da decisão App Router vs Pages
+Router, do caminho de adoção de RSC, da estratégia de hreflang e do contrato de
+preservação de URL. Três decisões importaram mais.
+
+Primeira: App Router, não Pages. Pages Router funcionava, mas o resto da empresa
+já estava no App Router e a stack diária do time puxava isso para frente. RSC
+nos deixou entregar páginas de marketing com quase zero JS no client —
+exatamente o que o orçamento do Lighthouse precisava.
+
+Segunda: preservação de URL como contrato hard, não best-effort. Toda URL antiga
+ganhou um mapeamento exaustivo para a nova rota. Onde a plataforma no-code
+usava rotas dinâmicas que não traduziam cleanly, usamos o catch-all do App
+Router + uma fronteira `notFound()` para manter o espaço de URLs legado
+renderizando até a tabela de redirects alcançar:
+
+```tsx
+// src/app/[locale]/[...rest]/page.tsx — catch-all locale-aware
+import { notFound } from 'next/navigation';
+import { setRequestLocale } from 'next-intl/server';
+import type { Locale } from '@/i18n/routing';
+
+export default async function CatchAll({
+  params,
+}: {
+  params: Promise<{ locale: Locale; rest: string[] }>;
+}) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+  // notFound() aqui renderiza [locale]/not-found.tsx — a fronteira de 404
+  // locale-aware. Tudo que cai aqui é ou uma URL stale (entregamos um redirect)
+  // ou um typo (o usuário recebe um 404 traduzido).
+  notFound();
+}
+```
+
+Terceira: hreflang e sitemap como código, não configuração. A emissão de
+hreflang da plataforma no-code tinha derivado; o Google silenciosamente
+de-duplicou alguns pares EN/PT. A correção foi um helper tipado que derivava
+alternates da mesma fonte que o router usava, então os dois não podiam derivar
+de novo:
+
+```ts
+// src/lib/seo/alternates.ts
+import { routing, type Locale } from '@/i18n/routing';
+
+export function buildAlternates(pathname: string): Record<Locale, string> {
+  return routing.locales.reduce(
+    (acc, locale) => ({ ...acc, [locale]: `/${locale}${pathname}` }),
+    {} as Record<Locale, string>,
+  );
+}
+```
+
+<Warning>
+Preservação de URL é inegociável em um site de conteúdo com ranking de busca
+estabelecido. Um único redirect quebrado em uma URL de alto tráfego custa meses
+de tráfego orgânico. Construa a tabela de redirects a partir dos logs do
+servidor, não dos sitemaps — sitemaps mentem.
+</Warning>
+
+## Impacto
+
+O site foi entregue com Lighthouse Performance ≥95 mobile, Accessibility 100,
+SEO 100. Passamos a ser donos do codebase fim-a-fim. Designers podiam entregar
+layouts sem abrir ticket na plataforma. O time de marketing manteve seu loop
+de autoria porque o CMS migrou para um modelo headless atrás de uma camada
+enxuta de API routes do Next.js — mesma UX, controle total do render path.
+
+<Stat number="≥95" label="Lighthouse Performance (mobile) — antes 71" />
+
+<Stat number="100" label="Lighthouse Accessibility + SEO" />
+
+A lição que eu tiraria: uma migração é dois projetos em um sobretudo — um
+projeto de construção e um projeto de descontinuação. A construção é a metade
+fácil. A descontinuação precisa de um contrato escrito para cada URL, cada
+campo de CMS, cada evento de analytics, e uma data.
+
+## Stack
+
+- **Framework:** Next.js 16 App Router, React Server Components, TypeScript
+  strict.
+- **Estilo:** Tailwind v4 (CSS-first), primitivos Shadcn.
+- **i18n:** next-intl com `localePrefix: 'always'` para reciprocidade limpa de
+  hreflang.
+- **CMS:** Headless (existente), bridged via uma camada enxuta de API routes do
+  Next.js.
+- **Hosting:** Vercel; ISR para páginas de conteúdo, SSG completo para rotas
+  estáticas.

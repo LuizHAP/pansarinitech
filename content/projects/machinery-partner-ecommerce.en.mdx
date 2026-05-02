@@ -1,0 +1,131 @@
+---
+title: "Heavy Machinery e-commerce"
+role: "Principal Software Engineer"
+year: 2024
+stack:
+  - Next.js
+  - React
+  - TypeScript
+  - Tailwind
+  - Shadcn
+  - React Native
+  - Expo
+  - Bun
+  - Fastify
+  - Odoo
+blurb: "First transactional storefront for US heavy machinery — Next.js + headless commerce + Odoo ERP + native mobile app."
+heroImage: "./machinery-partner-ecommerce/images/hero.jpg"
+tags:
+  - e-commerce
+  - BR-scale
+  - ERP-integration
+  - mobile
+featured: true
+order: 1
+---
+
+## Problem
+
+US heavy-machinery buyers had no online buying experience worth using. The dominant
+players were directory listings: a contact form, a phone number, and three weeks of
+back-and-forth before a quote landed. Specs lived in scanned PDFs; pricing lived
+exclusively in salespeople's heads; financing was a separate phone call to a broker.
+
+Two business-side constraints amplified the technical brief. First: every
+transaction had to round-trip through Odoo, the existing ERP — accounting, inventory,
+fulfillment, and partner payouts already lived there, and replacing it was not an
+option. Second: the buyers were on the road. Half the analytics traffic came from
+phones, often on patchy LTE in rural construction sites. A glossy desktop-first SPA
+would have shipped a 4-second LCP to the only audience that mattered.
+
+The brief looked like e-commerce, but the runtime characteristics looked like field
+software: low connectivity, durable carts, native-feeling app, no-PII hardening, and
+a checkout that survived a buyer accidentally hitting the back button on a
+$180,000 wheel loader.
+
+## Solution
+
+I led the architecture as Principal Engineer, then built the parts that needed the
+most technical-leadership investment myself — the ERP boundary, the cart-state
+contract, and the React Native module bridge — while pairing with the team on the
+storefront.
+
+The shape that landed: Next.js App Router for the storefront (RSC for product
+pages, client islands for cart + checkout), a thin Fastify gateway in front of Odoo
+that translated REST/JSON into Odoo's XML-RPC dialect, and a React Native + Expo
+app that reused the same gateway. Bun ran the gateway in Docker; deployment was
+Vercel for the web tier and EAS for the mobile build pipeline.
+
+The Fastify gateway was the most leverage-heavy piece. Odoo's RPC schema is
+generous and undertyped; one mistyped field lands in production as a $0 line item
+on a real invoice. The pattern that worked was a Zod-validated boundary at every
+gateway route:
+
+```ts
+// gateway/src/routes/quotes.ts (sanitized)
+import { Type } from '@sinclair/typebox';
+import type { FastifyPluginAsync } from 'fastify';
+import { odooClient } from '../lib/odoo';
+import { QuoteRequest, QuoteResponse } from '../schemas/quote';
+
+export const quoteRoutes: FastifyPluginAsync = async (app) => {
+  app.post('/quotes', {
+    schema: {
+      body: Type.Unsafe(QuoteRequest),
+      response: { 200: Type.Unsafe(QuoteResponse) },
+    },
+  }, async (req, reply) => {
+    const parsed = QuoteRequest.parse(req.body);
+    const odooResult = await odooClient.execute(
+      'sale.order',
+      'create',
+      [parsed.toOdooPayload()],
+    );
+    return QuoteResponse.parse({
+      id: odooResult.id,
+      total: odooResult.amount_total,
+      status: odooResult.state,
+    });
+  });
+};
+```
+
+The other technical-leadership moment was the cart-state contract between web and
+mobile. Both clients persisted the cart locally, both could initiate checkout, and
+both had to converge on the same gateway-side `quote_id` without a sync war. We
+shipped a single source-of-truth pattern: the gateway issued `quote_id`s with a
+short TTL, the client persisted the id (not the cart), and a stale id triggered a
+graceful "your cart was updated" prompt instead of silent merge.
+
+<Note>
+Building the boundary FIRST — Zod schemas, gateway, Odoo contract — before any UI
+work bought us months of velocity. Every UI bug was a UI bug. Every data bug was
+caught at the boundary in CI.
+</Note>
+
+## Impact
+
+The storefront launched as the first transactional buying experience in the US
+heavy-machinery segment. The mobile app shipped to App Store and Play Store under
+review processes I drove personally end-to-end (Apple's review queue is its own
+codebase). LCP on a real iPhone SE on LTE landed at ~1.7s on product pages,
+~2.1s on the cart, well under the 2.5s "good" threshold for Lighthouse.
+
+<Stat number="0 → 1" label="transactional storefronts in segment (web + native, simultaneous launch)" />
+
+<Stat number="~1.7s" label="real-world LCP on iPhone SE / LTE (product pages)" />
+
+The downstream win was operational, not just product. Sales now had a single live
+view of inventory, quotes, and order status — pulled from Odoo through the same
+gateway the storefront used. The ERP boundary doubled as an internal API.
+
+## Stack
+
+- **Frontend (web):** Next.js 15 App Router, React Server Components, Tailwind v4,
+  Shadcn primitives, TypeScript strict.
+- **Frontend (mobile):** React Native + Expo (managed workflow, EAS Build / EAS
+  Submit), shared TypeScript types via a workspace package.
+- **Gateway:** Bun + Fastify, Zod schemas at every boundary, OpenAPI auto-generated
+  from the same schemas for sales-team consumption.
+- **ERP:** Odoo (existing), bridged via XML-RPC behind the Fastify boundary.
+- **Hosting:** Vercel (storefront), EAS (mobile), self-hosted Odoo (existing).

@@ -25,7 +25,7 @@ export default async function HomePage({
     <>
       <Hero />
       <About />
-      <FeaturedProjectsTeaser />
+      <FeaturedProjectsTeaser locale={locale} />
       <CareerTimeline />
       <Skills />
       <NowPreview />

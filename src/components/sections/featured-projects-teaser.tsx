@@ -1,60 +1,28 @@
+import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import type { Locale } from '@/i18n/routing';
-// src/components/sections/featured-projects-teaser.tsx — RSC
-// Phase 2 placeholder: 3 cards (title + role + year only). Phase 3 fills with MDX
-// case studies. Section copy explains the deferral so visitors know why the cards are
-// thin. id="projects" for future header nav anchor.
-import { useLocale, useTranslations } from 'next-intl';
+import { Link } from '@/lib/i18n/navigation';
+import { getProjects } from '@/lib/mdx/loader';
+import { getTranslations } from 'next-intl/server';
+// src/components/sections/featured-projects-teaser.tsx — Phase 3 D-24
+// REWRITE of Phase 2 placeholder — async RSC consuming real getProjects(locale).
+// Critical: async RSC cannot read the locale via the client hook (Pitfall 8); locale is a prop.
+import Image from 'next/image';
+import machineryEcommerce from '../../../content/projects/machinery-partner-ecommerce/images/hero.jpg';
+import machineryMigration from '../../../content/projects/machinery-partner-migration/images/hero.jpg';
+import magaluSuperapp from '../../../content/projects/magazine-luiza-superapp/images/hero.jpg';
 
-type Teaser = {
-  id: string;
-  title: { en: string; pt: string };
-  role: { en: string; pt: string };
-  year: string;
-};
+const HERO_IMAGES = {
+  'machinery-partner-ecommerce': machineryEcommerce,
+  'machinery-partner-migration': machineryMigration,
+  'magazine-luiza-superapp': magaluSuperapp,
+} as const;
 
-const teasers: Teaser[] = [
-  {
-    id: 'machinery-partner-ecommerce',
-    title: {
-      en: 'Heavy machinery e-commerce',
-      pt: 'E-commerce de máquinas pesadas',
-    },
-    role: {
-      en: 'Machinery Partner · Principal Engineer',
-      pt: 'Machinery Partner · Principal Engineer',
-    },
-    year: '2024–present',
-  },
-  {
-    id: 'no-code-migration',
-    title: {
-      en: 'No-code → Next.js migration',
-      pt: 'Migração de no-code para Next.js',
-    },
-    role: {
-      en: 'Machinery Partner · Tech Lead',
-      pt: 'Machinery Partner · Tech Lead',
-    },
-    year: '2025',
-  },
-  {
-    id: 'magalu-superapp',
-    title: {
-      en: 'Magazine Luiza Superapp',
-      pt: 'Superapp Magazine Luiza',
-    },
-    role: {
-      en: 'Luizalabs · Senior Engineer',
-      pt: 'Luizalabs · Senior Engineer',
-    },
-    year: '2021–2023',
-  },
-];
-
-export function FeaturedProjectsTeaser() {
-  const locale = useLocale() as Locale;
-  const tSec = useTranslations('sections');
+export async function FeaturedProjectsTeaser({ locale }: { locale: Locale }) {
+  const tSec = await getTranslations({ locale, namespace: 'sections' });
+  const tProj = await getTranslations({ locale, namespace: 'projects' });
+  const all = await getProjects(locale);
+  const featured = all.filter((p) => p.featured).slice(0, 3);
 
   return (
     <section
@@ -62,23 +30,42 @@ export function FeaturedProjectsTeaser() {
       aria-labelledby="featured-projects-heading"
       className="mx-auto max-w-5xl px-4 py-12"
     >
-      <h2 id="featured-projects-heading" className="text-2xl font-semibold tracking-tight">
-        {tSec('featuredProjects')}
-      </h2>
-      <p className="mt-2 text-sm text-muted-foreground">{tSec('featuredProjectsTeaserNote')}</p>
+      <div className="flex items-baseline justify-between gap-4">
+        <h2 id="featured-projects-heading" className="text-2xl font-semibold tracking-tight">
+          {tSec('featuredProjects')}
+        </h2>
+        <Link href="/projects" className="text-sm font-medium text-primary hover:underline">
+          {tProj('cta.viewAll')}
+        </Link>
+      </div>
       <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {teasers.map((p) => (
-          <Card key={p.id}>
-            <CardHeader>
-              <CardTitle className="text-base">{p.title[locale]}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground">{p.role[locale]}</p>
-              <p className="mt-1 text-xs text-muted-foreground">
-                {tSec('featuredProjectsCardYear')}: {p.year}
-              </p>
-            </CardContent>
-          </Card>
+        {featured.map((p) => (
+          <Link
+            key={p.slug}
+            href={`/projects/${p.slug}`}
+            className="block transition hover:-translate-y-0.5 hover:shadow-md"
+          >
+            <Card className="h-full overflow-hidden">
+              <div className="aspect-[16/10] w-full bg-muted">
+                <Image
+                  src={HERO_IMAGES[p.slug as keyof typeof HERO_IMAGES]}
+                  alt={p.title}
+                  sizes="(max-width: 768px) 100vw, 33vw"
+                  placeholder="blur"
+                  className="h-full w-full object-cover"
+                />
+              </div>
+              <CardHeader>
+                <CardTitle className="text-base">{p.title}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground">
+                  {p.role} · {p.year}
+                </p>
+                <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">{p.blurb}</p>
+              </CardContent>
+            </Card>
+          </Link>
         ))}
       </div>
     </section>

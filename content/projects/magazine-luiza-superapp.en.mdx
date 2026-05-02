@@ -1,0 +1,127 @@
+---
+title: "Magazine Luiza Superapp"
+role: "Senior Software Engineer"
+year: 2022
+stack:
+  - React Native
+  - TypeScript
+  - Jest
+  - MSW
+  - Native Modules
+  - Multi-tenant
+blurb: "Shipping features inside a multi-tenant React Native app at Magalu scale — millions of MAU, 95%+ test coverage held cross-team."
+heroImage: "./magazine-luiza-superapp/images/hero.jpg"
+tags:
+  - react-native
+  - mobile
+  - testing
+  - multi-tenant
+featured: true
+order: 3
+---
+
+## Problem
+
+The Magalu Superapp shipped to millions of monthly active users. The codebase was
+multi-tenant: a dozen squads, each owning a feature surface — marketplace, finance,
+content, services — sharing the same React Native shell, the same release train,
+and the same build budget. Every PR landed in a repo where ten other teams had
+PRs in flight and a release manager who needed to ship on Tuesday.
+
+Two failure modes were structural. First: a regression introduced by team A could
+ship a broken screen for team B if the shared module surface drifted between PRs.
+Second: native bridging was the lingua franca for cross-team integrations
+(camera, biometrics, payments, deep links), and a malformed bridge call could
+crash the whole app, not just one screen.
+
+## Solution
+
+I shipped features inside this constraint as a Senior Engineer on the squad that
+owned cross-cutting native module work. Two technical-leadership patterns paid
+their keep cross-team.
+
+First: a written contract for every native module bridge — TypeScript on the JS
+side, the same shape mirrored on the iOS/Android side, validated at the boundary.
+The pattern looked like this in TypeScript (sanitized; the production version
+included observability hooks I won't share):
+
+```ts
+// modules/payments/bridge.ts (sanitized)
+import { NativeModules } from 'react-native';
+import { z } from 'zod';
+
+const PaymentRequest = z.object({
+  amount: z.number().int().positive(),
+  currency: z.literal('BRL'),
+  method: z.enum(['credit', 'debit', 'pix']),
+  idempotencyKey: z.string().uuid(),
+});
+const PaymentResult = z.object({
+  status: z.enum(['approved', 'declined', 'pending']),
+  authorizationCode: z.string().nullable(),
+});
+
+export async function requestPayment(input: z.input<typeof PaymentRequest>) {
+  const parsed = PaymentRequest.parse(input);
+  const raw = await NativeModules.PaymentsModule.request(parsed);
+  return PaymentResult.parse(raw);
+}
+```
+
+Second: 95%+ test coverage on every shared surface, held as a release gate, not a
+nice-to-have. The pattern that made it sustainable was MSW for the network layer
++ component-level tests for every UI state, leaving native modules behind a thin
+mock layer that mirrored the same Zod contracts:
+
+```ts
+// modules/payments/__tests__/bridge.test.ts
+import { rest, server } from '@/test/server';
+import { requestPayment } from '../bridge';
+
+it('approves a valid PIX payment', async () => {
+  server.use(
+    rest.post('/api/payments', (_, res, ctx) =>
+      res(ctx.json({ status: 'approved', authorizationCode: 'ABC123' })),
+    ),
+  );
+  const result = await requestPayment({
+    amount: 1000,
+    currency: 'BRL',
+    method: 'pix',
+    idempotencyKey: '00000000-0000-4000-8000-000000000001',
+  });
+  expect(result.status).toBe('approved');
+});
+```
+
+<Note>
+At Magalu scale, "I tested it on my phone" is not a strategy. The release train
+ships to millions of devices on dozens of OS / device combinations every week.
+The only way to stay sane is to make the test harness cheap to write and
+expensive to skip — branch protection on coverage threshold, MSW handlers
+shared across teams, and no `jest.mock('react-native')` exceptions without a
+recorded ADR.
+</Note>
+
+## Impact
+
+Features shipped without regressions on the squads I led. The 95%+ coverage
+threshold held across PR cycles, and the bridge contract pattern caught at least
+two production-bound bugs at PR review time during my tenure. The most durable
+output was a library of reusable native-module patterns the rest of the company
+adopted.
+
+<Stat number="95%+" label="test coverage held cross-team across release cycles" />
+
+<Stat number="millions" label="of monthly active users on the same release train" />
+
+## Stack
+
+- **App:** React Native (Magalu Superapp), TypeScript strict on every new
+  module.
+- **Testing:** Jest + Testing Library + MSW for network mocks; native modules
+  behind Zod-validated mocks.
+- **Native:** Custom modules in Swift/Kotlin where needed (payments, deep
+  links, biometrics).
+- **Process:** PR-level coverage threshold gates, ADRs for any
+  `jest.mock('react-native')` exceptions, shared MSW handler registry.

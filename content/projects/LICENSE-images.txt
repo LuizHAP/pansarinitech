@@ -1,0 +1,27 @@
+Hero Images — License & Attribution
+====================================
+
+All three case-study hero images are abstract, saber-tinted geometric
+illustrations originally drawn for pansarinitech (Phase 3, May 2026). They
+ship under the same MIT license as the rest of the repository and are
+freely swappable post-merge — Luiz can replace them with NDA-cleared
+photography or commission a designer at any time.
+
+Generated with handwritten SVG → JPEG conversion via sharp (devDep removed
+after generation; see git history for the one-off gen-heroes.mjs script).
+
+Files:
+- machinery-partner-ecommerce/images/hero.jpg — stylized heavy-machinery
+  silhouette + price-tag motif, saber-blue accents on a deep navy gradient.
+  Anonymized; no recognizable employer screenshots (T-03-03 mitigation).
+- machinery-partner-migration/images/hero.jpg — no-code grid morphing into
+  a Next.js App Router node graph, saber-blue arrow connector.
+- magazine-luiza-superapp/images/hero.jpg — phone outline with stacked
+  "lego" feature blocks + native-bridge module lines.
+
+Color palette intentionally Jedi-leaning (saber-blue) so the image looks
+right in light mode; on the dark theme the JPEG sits inside a Card with
+border + bg-muted, which keeps the contrast readable.
+
+Phase 4 may regenerate these if a real photo policy is established with
+Machinery Partner / Luizalabs (NDA review pending).
