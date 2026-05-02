@@ -102,6 +102,15 @@ jobs:
       - name: iPhone SE 375px overflow gate (UX-01)
         run: pnpm test:iphone-se
 
+      # Phase 5 D-06..D-11: end-to-end behavioral coverage of 6 critical flows.
+      # Runs ONCE on a single chromium project (playwright.config.ts: `e2e`)
+      # so it does NOT multiply across the 4-combo axe matrix. Reuses the same
+      # `next build` and Playwright browsers from the steps above. Fails build
+      # on first violation (Phase 1 D-18). Adds ~30-60s to the pipeline,
+      # comfortably under the < 3 min D-19 budget.
+      - name: Phase 5 e2e (locale, theme, navigation, downloads, 404, projects)
+        run: pnpm test:e2e
+
       - name: Upload Playwright report on failure
         if: failure()
         uses: actions/upload-artifact@v4
