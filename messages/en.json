@@ -45,6 +45,7 @@
   },
   "now": {
     "title": "What I'm doing now",
+    "pageDescription": "What I'm working on, reading, and learning right now.",
     "lastUpdated": "Last updated",
     "workingOn": "Working on",
     "reading": "Reading / Learning",
@@ -74,11 +75,13 @@
   "projects": {
     "title": "Projects",
     "listingIntro": "Selected technical case studies from 14 years building software — IT support to Principal Engineer, BR scale to US market.",
+    "listingDescription": "Three case studies in heavy machinery e-commerce, no-code → Next.js migration, and React Native at scale.",
     "viewProject": "Read more",
     "cta": {
       "readMore": "Read more →",
       "backToProjects": "← Back to projects",
-      "viewAll": "View all projects →"
+      "viewAll": "View all projects →",
+      "readBlog": "Read the blog →"
     },
     "error": {
       "failedToLoad": "This case study failed to load — please refresh."
@@ -89,11 +92,42 @@
       "stack": "Stack"
     }
   },
+  "blog": {
+    "pageTitle": "Blog",
+    "listingIntro": "Occasional engineering posts. Mostly about what I had to look up twice.",
+    "readingTime": "{minutes} min read",
+    "draftBadge": "Draft",
+    "published": "Published",
+    "tags": "Tags",
+    "noPosts": "No posts yet. The first one is on its way.",
+    "cta": {
+      "readMore": "Read more →",
+      "backToBlog": "← Back to blog"
+    }
+  },
   "mdx": {
     "callout": {
       "info": "Note:",
       "warn": "Warning:",
       "error": "Error:"
+    },
+    "copyCode": {
+      "button": "Copy code",
+      "success": "Code copied",
+      "error": "Couldn't copy — please use Cmd+C"
+    },
+    "toc": {
+      "label": "Contents"
+    }
+  },
+  "seo": {
+    "siteDescription": "Luiz Pansarini — Principal Software Engineer (Brazil/US). Bilingual portfolio: case studies, blog, and contact.",
+    "siteSuffix": "Luiz Pansarini",
+    "descriptions": {
+      "home": "Luiz Pansarini — Principal Software Engineer (Brazil/US). Bilingual portfolio: case studies, blog, and contact.",
+      "projects": "Three case studies in heavy machinery e-commerce, no-code → Next.js migration, and React Native at scale.",
+      "blog": "Occasional engineering posts. Mostly about what I had to look up twice.",
+      "now": "What I'm working on, reading, and learning right now."
     }
   }
 }

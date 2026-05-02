@@ -45,6 +45,7 @@
   },
   "now": {
     "title": "O que estou fazendo agora",
+    "pageDescription": "O que estou trabalhando, lendo e aprendendo no momento.",
     "lastUpdated": "Atualizado em",
     "workingOn": "Trabalhando em",
     "reading": "Lendo / Aprendendo",
@@ -74,11 +75,13 @@
   "projects": {
     "title": "Projetos",
     "listingIntro": "Estudos de caso técnicos selecionados de 14 anos construindo software — do suporte de TI a Engenheiro Principal, da escala BR ao mercado dos EUA.",
+    "listingDescription": "Três estudos de caso em e-commerce de máquinas pesadas, migração no-code → Next.js e React Native em escala.",
     "viewProject": "Ver mais",
     "cta": {
       "readMore": "Ver mais →",
       "backToProjects": "← Voltar aos projetos",
-      "viewAll": "Ver todos os projetos →"
+      "viewAll": "Ver todos os projetos →",
+      "readBlog": "Ler o blog →"
     },
     "error": {
       "failedToLoad": "Falha ao carregar este estudo de caso — atualize a página."
@@ -89,11 +92,42 @@
       "stack": "Stack"
     }
   },
+  "blog": {
+    "pageTitle": "Blog",
+    "listingIntro": "Posts ocasionais sobre engenharia. Quase sempre sobre coisas que precisei consultar duas vezes.",
+    "readingTime": "{minutes} min de leitura",
+    "draftBadge": "Rascunho",
+    "published": "Publicado em",
+    "tags": "Tags",
+    "noPosts": "Ainda sem posts. O primeiro está a caminho.",
+    "cta": {
+      "readMore": "Ler mais →",
+      "backToBlog": "← Voltar ao blog"
+    }
+  },
   "mdx": {
     "callout": {
       "info": "Nota:",
       "warn": "Aviso:",
       "error": "Erro:"
+    },
+    "copyCode": {
+      "button": "Copiar código",
+      "success": "Código copiado",
+      "error": "Não foi possível copiar — use Cmd+C"
+    },
+    "toc": {
+      "label": "Conteúdo"
+    }
+  },
+  "seo": {
+    "siteDescription": "Luiz Pansarini — Principal Software Engineer (Brasil/EUA). Portfólio bilíngue: estudos de caso, blog e contato.",
+    "siteSuffix": "Luiz Pansarini",
+    "descriptions": {
+      "home": "Luiz Pansarini — Principal Software Engineer (Brasil/EUA). Portfólio bilíngue: estudos de caso, blog e contato.",
+      "projects": "Três estudos de caso em e-commerce de máquinas pesadas, migração no-code → Next.js e React Native em escala.",
+      "blog": "Posts ocasionais sobre engenharia. Quase sempre sobre coisas que precisei consultar duas vezes.",
+      "now": "O que estou trabalhando, lendo e aprendendo no momento."
     }
   }
 }

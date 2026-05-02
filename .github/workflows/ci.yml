@@ -46,6 +46,11 @@ jobs:
       - name: Verify project content (Phase 3 PROJ-01..05 parity + Zod)
         run: pnpm verify:projects
 
+      # Phase 4 SEO best-practice gate — flags any seo.descriptions.* > 160 chars.
+      # Pre-build fast-feedback so a long meta-description fails CI before next build.
+      - name: Verify SEO description length (Phase 4)
+        run: pnpm verify:message-length
+
       # Single build per CI run; output captured for verify:static (D-19 budget < 3 min)
       - name: Build
         run: pnpm next build 2>&1 | tee /tmp/build.log
