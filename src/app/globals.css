@@ -125,3 +125,64 @@ html.dark pre[data-theme*=" "] span {
   font-size: 0.875rem;
   line-height: 1.5;
 }
+
+/* Phase 5 — View Transitions on theme toggle (CONTEXT D-01..D-05).
+   Same-document View Transition: radial-reveal clip-path mask from the
+   theme-toggle click coordinate. JS sets --vt-x / --vt-y on <html> before
+   calling document.startViewTransition(); CSS interpolates clip-path on
+   ::view-transition-new(root). No color flash — the new theme is unveiled,
+   not painted on. Falls back to instant swap on browsers without the API
+   (the @supports block silently no-ops).
+
+   Cascade gotcha (Pitfall 2 in 05-RESEARCH.md):
+   The existing globals.css reduced-motion block (line 74) uses `*` and does
+   NOT select ::view-transition-old/-new — those pseudo-elements live in the
+   UA shadow tree and ignore the universal selector. We MUST therefore add an
+   explicit reduced-motion override for the VT pseudo-elements below. */
+
+@media (prefers-reduced-motion: no-preference) {
+  @supports (view-transition-name: root) {
+    /* D-03: transparent reveal — OLD snapshot stays put; NEW wipes in on top. */
+    ::view-transition-old(root) {
+      animation: none;
+      mix-blend-mode: normal;
+    }
+    ::view-transition-new(root) {
+      animation: vt-reveal 420ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+      mix-blend-mode: normal;
+      z-index: 1;
+    }
+
+    @keyframes vt-reveal {
+      from {
+        clip-path: circle(0% at var(--vt-x, 50%) var(--vt-y, 50%));
+      }
+      to {
+        clip-path: circle(150% at var(--vt-x, 50%) var(--vt-y, 50%));
+      }
+    }
+  }
+}
+
+/* D-05: prefers-reduced-motion fallback — explicit 200ms opacity fade.
+   The Phase 1 reduced-motion block on line 74 does NOT cascade into VT
+   pseudo-elements; without this override the browser would play its default
+   ~250ms cross-fade, which a strict-RM user might still perceive as motion.
+   The explicit vt-fade keeps theme-change perception (a calm fade) while
+   honoring the user's "reduce, not eliminate" preference. */
+@media (prefers-reduced-motion: reduce) {
+  @supports (view-transition-name: root) {
+    ::view-transition-old(root),
+    ::view-transition-new(root) {
+      animation: vt-fade 200ms linear forwards !important;
+      mix-blend-mode: normal;
+    }
+    ::view-transition-old(root) {
+      animation-direction: reverse !important;
+    }
+    @keyframes vt-fade {
+      from { opacity: 1; }
+      to { opacity: 0; }
+    }
+  }
+}
