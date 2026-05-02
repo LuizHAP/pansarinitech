@@ -28,7 +28,7 @@ If everything else fails, the site must load fast on a recruiter's phone, commun
 ## Executive Recommendation
 - **i18n:** `next-intl@^4.9` (the only library with first-class App Router + RSC support)
 - **Theming:** `next-themes@^0.4` + Tailwind v4 `@custom-variant dark` (Shadcn's official approach)
-- **MDX:** `next-mdx-remote/rsc@^5` for RSC OR `@next/mdx` for route-based content — **avoid Velite if you keep Turbopack on** (webpack-plugin incompatibility)
+- **MDX:** `next-mdx-remote@^6` (use `/rsc` subpath) for RSC OR `@next/mdx` for route-based content — **avoid Velite if you keep Turbopack on** (webpack-plugin incompatibility)
 - **Animation:** `motion@^12` (formerly `framer-motion`, imported from `motion/react`) with `useReducedMotion`
 - **Forms:** `resend@^4` + React 19 `useActionState` + `zod@^4` (no react-hook-form needed for a single contact form)
 - **Analytics:** `@vercel/analytics@^1` + `@vercel/speed-insights@^1` (free on Hobby tier, zero-config, no consent banner)
@@ -54,9 +54,9 @@ If everything else fails, the site must load fast on a recruiter's phone, commun
 | `next-intl` | `^4.9.1` | i18n with App Router + RSC | **The** standard for App Router. Locale-segment routing, RSC-aware `useTranslations`/`getTranslations`, middleware for auto-detect, type-safe messages, hreflang helpers. Active maintenance for Next 16. |
 | `next-themes` | `^0.4.6` | Light/dark mode persistence | Two-line setup, no flash, `localStorage` + `prefers-color-scheme`. Official Shadcn recommendation. Pair with Tailwind v4 `@custom-variant dark (&:where(.dark, .dark *))`. |
 | `motion` | `^12.38` | Animation | Renamed from `framer-motion` mid-2025. Import from `motion/react`. **Built-in `useReducedMotion` and `<MotionConfig reducedMotion="user">`** — exactly what the project needs for the a11y constraint. v12 has no breaking changes vs v11. |
-| `next-mdx-remote` | `^5.x` (use `/rsc` import) | MDX in App Router | Despite repo being archived 2026-04-09, `next-mdx-remote/rsc` still works in Next 16 and is the path of least resistance for "MDX from `content/` folder" + RSC. Alternative: `next-mdx-remote-client` (active fork). |
+| `next-mdx-remote` | `^6` (use `/rsc` import) | MDX in App Router | Phase 3 ships next-mdx-remote@^6 (final stable 6.0.0 published 2026-02-12 before the GitHub repo was archived 2026-04-09). Breaking change in 6.0.0: `blockJS` AND `blockDangerousJS` default to `true` — Phase 3 keeps both defaults (MDX bodies are pure prose + JSX components from the typed `mdxComponents` map; static image imports stay in the page template, NOT inside MDX bodies). 12-month migration target unchanged: Fumadocs MDX. Alternative active fork: `next-mdx-remote-client`. |
 | `rehype-pretty-code` | `^0.14` | Syntax highlighting | Build-time (no runtime cost), powered by Shiki, supports dual light/dark themes — perfect for Jedi/Sith palette swap on code blocks. |
-| `shiki` | `^1.x` | Code tokenizer (peer of rehype-pretty-code) | VS Code accuracy. |
+| `shiki` | `^4` | Code tokenizer (peer of rehype-pretty-code) | VS Code accuracy. (Phase 3 pulled @^4; rehype-pretty-code 0.14 supports the v4 line.) |
 | `remark-gfm` | `^4` | GitHub-flavored Markdown | Tables, strikethrough, task lists. |
 | `zod` | `^4` | Frontmatter validation, form validation | Schema for blog post frontmatter, contact-form payload. Standard. |
 | `resend` | `^4.x` | Transactional email for contact form | 3,000 emails/month free, 100/day — orders of magnitude over portfolio needs. Server-Action friendly. **Only needed if you keep a form; project decision was direct email links.** Listed as on-deck if "Contact section" evolves. |
@@ -153,8 +153,8 @@ If everything else fails, the site must load fast on a recruiter's phone, commun
 | `next-intl@4.9` | `next@16` | GitHub issue #2064 reports edge cases on early 16.0; 4.9.x is the version with confirmed 16.x fixes. **Pin to `^4.9.1`, not `^4.0`.** |
 | `next-themes@0.4` | `next@16` + `tailwindcss@4` | Works fine with `attribute="class"`; ensure Tailwind v4 has `@custom-variant dark` defined. |
 | `motion@12` | `react@19` | No breaking changes from 11→12. Tested with Next 16 in March 2026. |
-| `next-mdx-remote@5` | `next@16` (RSC) | Repo archived 2026-04-09 — still works, but no future fixes. Plan migration to Fumadocs MDX or `next-mdx-remote-client` within 12 months. |
-| `rehype-pretty-code@0.14` | `shiki@^1` only | ESM-only; `next.config.mjs` (not `.js`) required. |
+| `next-mdx-remote@^6` | `next@16` (RSC) | Final stable 6.0.0 published 2026-02-12 (repo archived 2026-04-09 thereafter; package still works). Breaking from @5: `blockJS` and `blockDangerousJS` now default to `true` — strips `{expr}` JS expressions and `import`/`export` from MDX bodies. KEEP defaults (Phase 3 D-17). 12-month migration target: Fumadocs MDX or `next-mdx-remote-client` fork. |
+| `rehype-pretty-code@0.14` | `shiki@^1` or `shiki@^4` | ESM-only; `next.config.ts` works (Turbopack-native). Phase 3 pulls `shiki@^4`. |
 | `velite@*` | `next@16` Turbopack | **NOT directly compatible.** `VeliteWebpackPlugin` requires webpack. Use programmatic API via Next plugin OR run as separate `prebuild` script. |
 | `@vercel/og` (via `next/og`) | `next@16` Edge runtime | 500KB total bundle limit. Flexbox-only CSS. No `display: grid`. |
 | `geist@1` | `next@15+` | Already default in Next 15+; just import from `geist/font/sans` and `geist/font/mono`. |

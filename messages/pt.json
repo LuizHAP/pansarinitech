@@ -70,5 +70,30 @@
     "source": "Código fonte no GitHub",
     "githubLabel": "Código fonte no GitHub (abre em nova aba)",
     "linkedinLabel": "LinkedIn (abre em nova aba)"
+  },
+  "projects": {
+    "title": "Projetos",
+    "listingIntro": "Estudos de caso técnicos selecionados de 14 anos construindo software — do suporte de TI a Engenheiro Principal, da escala BR ao mercado dos EUA.",
+    "viewProject": "Ver mais",
+    "cta": {
+      "readMore": "Ver mais →",
+      "backToProjects": "← Voltar aos projetos",
+      "viewAll": "Ver todos os projetos →"
+    },
+    "error": {
+      "failedToLoad": "Falha ao carregar este estudo de caso — atualize a página."
+    },
+    "meta": {
+      "year": "Ano",
+      "role": "Função",
+      "stack": "Stack"
+    }
+  },
+  "mdx": {
+    "callout": {
+      "info": "Nota:",
+      "warn": "Aviso:",
+      "error": "Erro:"
+    }
   }
 }

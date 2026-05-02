@@ -94,3 +94,18 @@ body {
   background: var(--background);
   color: var(--foreground);
 }
+
+/* Phase 3 D-14 — rehype-pretty-code dual-theme. Spans carry inline
+   --shiki-light and --shiki-dark CSS variables; default reads light,
+   html.dark flips to dark. Single-theme blocks (no space in data-theme)
+   won't match these selectors — that's intentional (Pitfall 4). */
+code[data-theme*=" "] span,
+pre[data-theme*=" "] span {
+  color: var(--shiki-light);
+  background-color: var(--shiki-light-bg);
+}
+html.dark code[data-theme*=" "] span,
+html.dark pre[data-theme*=" "] span {
+  color: var(--shiki-dark);
+  background-color: var(--shiki-dark-bg);
+}
