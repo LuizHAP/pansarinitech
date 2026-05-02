@@ -24,7 +24,8 @@
     "analyze": "ANALYZE=true pnpm build",
     "test:sith": "playwright test tests/sith-contrast.spec.ts",
     "test:a11y": "playwright test tests/a11y-matrix.spec.ts",
-    "test:iphone-se": "playwright test tests/iphone-se.spec.ts"
+    "test:iphone-se": "playwright test tests/iphone-se.spec.ts",
+    "test:e2e": "playwright test tests/e2e.spec.ts --project=e2e"
   },
   "dependencies": {
     "@formatjs/intl-localematcher": "^0.8.5",
