@@ -31,6 +31,13 @@ jobs:
       - name: Lint (Biome)
         run: pnpm exec biome check .
 
+      # next-env.d.ts is gitignored and provides the *.jpg/*.png/*.svg module
+      # declarations via `next/image-types/global`. Without it, tsc fails with
+      # TS2307 on every static image import. `next typegen` regenerates it (and
+      # .next/types/routes.d.ts) without running a full build.
+      - name: Generate Next.js types (next-env.d.ts + route types)
+        run: pnpm exec next typegen
+
       - name: Typecheck
         run: pnpm exec tsc --noEmit
 
