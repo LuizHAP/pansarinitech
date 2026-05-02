@@ -10,9 +10,9 @@
 import { Header } from '@/components/shared/header';
 import { SkipToContent } from '@/components/shared/skip-to-content';
 import { ThemeProvider } from '@/components/shared/theme-provider';
+import { Toaster } from '@/components/ui/sonner';
 import { routing } from '@/i18n/routing';
 import { aurebesh } from '@/lib/fonts';
-// import { Toaster } from '@/components/ui/sonner'; // uncommented in Task 3 (sonner install)
 import { Analytics } from '@vercel/analytics/next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { GeistMono } from 'geist/font/mono';
@@ -64,7 +64,7 @@ export default async function LocaleLayout({
               >
                 {children}
               </main>
-              {/* <Toaster /> — uncommented in Task 3 (sonner install) */}
+              <Toaster />
             </NextIntlClientProvider>
           </MotionConfig>
         </ThemeProvider>

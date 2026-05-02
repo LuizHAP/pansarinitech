@@ -1,0 +1,53 @@
+Aurebesh font binary attribution + license
+============================================
+
+File: ft-aurebesh.woff2
+
+Source: Aurebesh_Rodian (beta) by AurekFonts
+Origin: https://github.com/AurekFonts/Aurebesh_Rodian (master branch)
+Original format: Aurebesh_Rodian_beta.otf
+Conversion: OpenType -> WOFF2 via fontTools (Python). No glyph
+  modifications; the binary is a re-encoded copy of the upstream OTF
+  preserving all glyphs, kerning, and metadata.
+
+License: MIT (per github.com/AurekFonts/Aurebesh_Rodian/blob/master/LICENSE)
+
+Used in this project:
+- Decorative-only Aurebesh accent on the 404 page
+  (src/app/[locale]/not-found.tsx + src/app/not-found.tsx).
+- aria-hidden="true" with sr-only English fallback (A11Y-07).
+- Loaded via next/font/local with preload: false (only fetched when the
+  404 page renders; not preloaded on home or other routes).
+
+Background:
+The original CONTEXT D-15 specified FT Aurebesh from fontesk.com (SIL OFL).
+Fontesk's distribution is gated behind an interactive form that fontesk's
+download buttons cannot be programmatically resolved without a browser
+session, so Plan 02-01 fell back to the Aurebesh_Rodian beta OTF released
+on GitHub by AurekFonts under MIT. Both licenses (OFL and MIT) permit
+unrestricted redistribution with attribution; this file documents both
+the source and the redistribution chain.
+
+------------------------------------------------------------------------
+
+MIT License (verbatim from upstream)
+
+Copyright (c) AurekFonts
+
+Permission is hereby granted, free of charge, to any person obtaining a
+copy of this software and associated documentation files (the "Software"),
+to deal in the Software without restriction, including without limitation
+the rights to use, copy, modify, merge, publish, distribute, sublicense,
+and/or sell copies of the Software, and to permit persons to whom the
+Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included
+in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+DEALINGS IN THE SOFTWARE.

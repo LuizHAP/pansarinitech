@@ -1,25 +1,25 @@
 // src/lib/fonts.ts
-// FT Aurebesh (OFL) — decorative numerals only (404 accent in Phase 2).
+// Aurebesh decorative font — used ONLY for the decorative accent on the 404 page
+// (src/app/[locale]/not-found.tsx + src/app/not-found.tsx). aria-hidden="true" with
+// sr-only English fallback for accessibility (A11Y-07).
 //
-// PLACEHOLDER FALLBACK: Phase 1 does NOT render any Aurebesh glyphs (no 404 page yet
-// — that ships in Plan 02). The real OFL FT Aurebesh binary is a manual download from
-// https://fontesk.com/ft-aurebesh-font/ (license: SIL OFL, freely redistributable).
+// Source: Aurebesh_Rodian (beta) by AurekFonts (MIT). The original CONTEXT D-15
+// pointed at FT Aurebesh from fontesk.com (SIL OFL); fontesk's distribution is
+// gated behind an interactive form, so Plan 02-01 fell back to the MIT-licensed
+// Aurebesh_Rodian. License attribution: public/fonts/LICENSE-aurebesh.txt.
 //
-// Until that binary lands at public/fonts/ft-aurebesh.woff2, we expose a CSS variable
-// `--font-aurebesh` that falls back to the system serif. This keeps the contract
-// (every page sets the CSS variable on <html className>) without breaking the build
-// on a zero-byte placeholder file.
+// preload: false is critical — the font is consumed by the 404 page only, so we
+// don't want Next.js injecting <link rel="preload"> on every page (would waste
+// ~7KB of bandwidth per pageview for a font 99% of users will never see).
 //
-// Plan 02 Task: replace this file with the proper next/font/local declaration once the
-// OFL binary is committed to public/fonts/. The export shape (`aurebesh.variable`,
-// `aurebesh.className`) must remain stable so src/app/layout.tsx does not need changes.
-//
-// TODO(plan-02): swap fallback for next/font/local when ft-aurebesh.woff2 is the real binary.
-// `variable` is empty so it interpolates to nothing in className lists.
-// Consumers that want Aurebesh (Phase 2 404 page) should use `aurebesh.style` inline OR
-// rely on `var(--font-aurebesh, ui-serif, Georgia, serif)` via Tailwind's font-aurebesh utility.
-export const aurebesh = {
-  variable: '',
-  className: '',
-  style: { fontFamily: 'var(--font-aurebesh, ui-serif, Georgia, serif)' },
-} as const;
+// display: 'swap' satisfies PERF-06 (no FOIT) — the 404 paints with a fallback
+// font first, then swaps to Aurebesh once the binary loads.
+import localFont from 'next/font/local';
+
+export const aurebesh = localFont({
+  src: '../../public/fonts/ft-aurebesh.woff2',
+  variable: '--font-aurebesh',
+  display: 'swap',
+  weight: '400',
+  preload: false,
+});

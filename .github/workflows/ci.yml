@@ -54,6 +54,12 @@ jobs:
       - name: a11y Sith regression
         run: pnpm test:sith
 
+      # Phase 2 Wave 1 (Plan 02-01 T3): UX-01 iPhone SE 375px overflow gate.
+      # Lighthouse mobile preset uses 412px (Moto G Power), so this is the
+      # additive viewport gate at the explicit ROADMAP success-criterion budget.
+      - name: iPhone SE 375px overflow gate (UX-01)
+        run: pnpm test:iphone-se
+
       - name: Upload Playwright report on failure
         if: failure()
         uses: actions/upload-artifact@v4
