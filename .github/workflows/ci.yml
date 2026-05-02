@@ -46,6 +46,12 @@ jobs:
       - name: Verify project content (Phase 3 PROJ-01..05 parity + Zod)
         run: pnpm verify:projects
 
+      # Phase 4 BLOG-01..04 — bilingual parity + frontmatter shape for blog posts.
+      # Same gate as verify:projects, runs immediately after. Negative-tested by
+      # removing one locale file → exit 1 (Plan 04-02 SUMMARY).
+      - name: Verify blog content (Phase 4 BLOG-01..04 parity + Zod)
+        run: pnpm verify:posts
+
       # Phase 4 SEO best-practice gate — flags any seo.descriptions.* > 160 chars.
       # Pre-build fast-feedback so a long meta-description fails CI before next build.
       - name: Verify SEO description length (Phase 4)

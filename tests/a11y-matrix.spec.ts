@@ -31,6 +31,12 @@ const PAGES = [
     path: (locale: 'en' | 'pt') => `/${locale}/projects/machinery-partner-ecommerce`,
     desc: 'projects-case-study',
   },
+  // Phase 4 additions (BLOG-01..04):
+  { path: (locale: 'en' | 'pt') => `/${locale}/blog`, desc: 'blog-listing' },
+  {
+    path: (locale: 'en' | 'pt') => `/${locale}/blog/building-this-portfolio`,
+    desc: 'blog-post',
+  },
 ];
 
 test.describe('a11y matrix — WCAG 2.1 AA across en/pt × light/dark × home/404', () => {
