@@ -133,9 +133,18 @@ test.describe('Project case study route renders in both locales (PROJ-04 + D-06 
     // static-import + next/image pipeline survives to runtime).
     const heroImg = page.locator('main img').first();
     await heroImg.scrollIntoViewIfNeeded();
-    expect(
-      await heroImg.evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth > 0),
-    ).toBe(true);
+    // WR-02: poll the load state — next/image is lazy, so the request fires
+    // on viewport intersection but the bytes arrive asynchronously. Playwright
+    // does not auto-wait for <img> load events, so a direct evaluate() races
+    // the network on slow CI workers. expect.poll re-runs the check until the
+    // image is fully decoded or the 10s timeout elapses.
+    await expect
+      .poll(
+        async () =>
+          heroImg.evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth > 0),
+        { timeout: 10_000 },
+      )
+      .toBe(true);
   });
 
   test('/en/projects/magazine-luiza-superapp renders MDX body in EN', async ({ page }) => {
