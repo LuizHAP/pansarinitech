@@ -14,6 +14,11 @@ const withBundleAnalyzer = bundleAnalyzer({
 // added later (e.g. staging.pansarini.tech) — T-04-24.
 const isProduction = process.env.VERCEL_ENV === 'production';
 
+// PHASE 5: do not enable experimental.viewTransition.
+// Manual document.startViewTransition() in src/components/shared/theme-toggle.tsx
+// (CONTEXT D-01..D-05) would be interrupted by React's <ViewTransition> component
+// if this flag were on. See .planning/phases/05-hardening-optional-post-launch/
+// 05-RESEARCH.md §Pitfall 1 (and react.dev/reference/react/ViewTransition).
 const nextConfig: NextConfig = {
   // Phase 1 baseline preserved — no images.remotePatterns needed (all images are
   // local static imports through next/image), no experimental flags.
