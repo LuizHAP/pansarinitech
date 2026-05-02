@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { now } from '@/data/now';
 import type { Locale } from '@/i18n/routing';
 import { formatLongDate, pickLocale } from '@/lib/i18n/helpers';
+import { buildMetadata } from '@/lib/seo';
 import type { Metadata } from 'next';
 // src/app/[locale]/now/page.tsx — NOW-01, NOW-02
 //
@@ -25,9 +26,12 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'now' });
-  return {
+  return buildMetadata({
+    locale,
+    path: '/now',
     title: t('title'),
-  };
+    description: t('pageDescription'),
+  });
 }
 
 export default async function NowPage({

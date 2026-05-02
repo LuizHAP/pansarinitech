@@ -7,6 +7,7 @@
 //
 // Toaster + Analytics + SpeedInsights wiring is staged across Tasks 2 and 3 of Plan 02-01.
 // They are imported and rendered here once the corresponding packages/components land.
+import { EasterEgg } from '@/components/shared/easter-egg';
 import { Footer } from '@/components/shared/footer';
 import { Header } from '@/components/shared/header';
 import { SkipToContent } from '@/components/shared/skip-to-content';
@@ -70,6 +71,7 @@ export default async function LocaleLayout({
             </NextIntlClientProvider>
           </MotionConfig>
         </ThemeProvider>
+        <EasterEgg />
         <Analytics />
         <SpeedInsights />
       </body>

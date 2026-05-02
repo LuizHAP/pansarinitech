@@ -76,6 +76,7 @@ export function buildMetadata(input: BuildMetadataInput): Metadata {
   }
 
   return {
+    metadataBase: new URL(SITE_URL),
     title: fullTitle,
     description,
     alternates: { canonical: canonicalUrl, languages },

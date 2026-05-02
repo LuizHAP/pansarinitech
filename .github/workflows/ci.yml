@@ -71,6 +71,12 @@ jobs:
       - name: Verify no client-side highlighter (Phase 3 PERF-04)
         run: pnpm verify:no-highlighter
 
+      # Phase 4 SEO-01..06 — boots `next start` against the existing build, curls every
+      # locale page, asserts <title>, <meta description>, og:locale, hreflang × 3 are present.
+      # MUST run AFTER `next build` (re-uses .next/) and before Playwright (port 3001).
+      - name: Verify SEO metadata shape (Phase 4 SEO-01..06)
+        run: pnpm verify:metadata
+
       - name: Install Playwright browsers
         run: pnpm exec playwright install --with-deps chromium
 

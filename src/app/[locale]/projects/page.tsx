@@ -3,7 +3,24 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import type { Locale } from '@/i18n/routing';
 import { Link } from '@/lib/i18n/navigation';
 import { getProjects } from '@/lib/mdx/projects';
+import { buildMetadata } from '@/lib/seo';
+import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: Locale }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'projects' });
+  return buildMetadata({
+    locale,
+    path: '/projects',
+    title: t('title'),
+    description: t('listingDescription'),
+  });
+}
 // src/app/[locale]/projects/page.tsx — Phase 3 D-21, D-22
 // Listing page — RSC. Stays ● SSG via setRequestLocale + frontmatter-only
 // loader.getProjects(locale). Cards link via @/lib/i18n/navigation Link to
