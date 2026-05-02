@@ -1,0 +1,211 @@
+---
+title: "Building this portfolio"
+date: "2026-05-02"
+excerpt: "Architectural diary of a bilingual, mobile-first, AA-accessible portfolio. Stack rationale, contrast fixes, MDX factory pattern, and what got cut."
+tags:
+  - nextjs
+  - tailwind
+  - i18n
+  - mdx
+  - biome
+  - accessibility
+draft: false
+---
+
+## Why I rebuilt it
+
+Every Principal-level engineer eventually rebuilds their portfolio. This is the
+architectural diary of mine.
+
+This is not a "look at my pretty hover effects" post. It is the technical
+decisions that mattered, the ones that did not, and the ones that did not
+survive a contrast audit. The portfolio targets two audiences in parallel:
+recruiters in Brazil and abroad who skim on a phone, and developers who scroll
+to the source. The constraints those audiences imply — mobile-first, WCAG 2.1
+AA, sub-three-second load on a slow connection — drove every stack choice.
+
+The angle is "build with what you show." Same engineer, same stack, same
+conventions I push at work. The rest of this post is about **what** and
+**why**, not **who**.
+
+## Stack rationale
+
+The locked stack is Next.js 16.2, Tailwind v4, and Shadcn/UI. Three concrete
+reasons, one per paragraph.
+
+**Next.js 16.2 with the App Router and React Server Components.** This is what
+I ship at Machinery Partner every week. Familiarity is a feature when the goal
+is building a portfolio in two evenings, not learning a stack. Turbopack as the
+default in 16 means dev cycles in the ~80ms range instead of ~800ms. React 19
+landed `useActionState` and `useFormStatus`, which removed the case for
+`react-hook-form`: the eventual contact-form layer collapses to a Server
+Action plus a Zod schema. No client form library required.
+
+**Tailwind v4 with OKLCH colors.** The v4 shift to CSS-first config — no
+`tailwind.config.js`, only a `@theme` block in `globals.css` — made the
+Jedi/Sith palette natural to express as semantic tokens. OKLCH gave
+perceptually uniform color: the Sith saber-red landing at
+`oklch(54% 0.21 28)` rather than an arbitrary HSL was a contrast story (next
+section). The build engine moved to Lightning CSS; the side effect is roughly
+ten-times faster builds, which compounds across four axe-core matrix runs in
+CI.
+
+**Shadcn over a component library.** Shadcn is not a library. It is a
+copy-paste catalog of unstyled primitives. That feels regressive until the
+third time a prebuilt library forces a workaround for a Sith-mode contrast
+bug — at which point owning the source is obvious. The downside is that there
+is no "Shadcn 1.0 → 2.0 upgrade." The upside is that there is no Shadcn 1.0 →
+2.0 upgrade.
+
+## Bilingual via next-intl
+
+The bilingual story has three layers: routing, request, and navigation.
+
+**Routing.** `localePrefix: 'always'` means every URL carries an `/en` or `/pt`
+prefix. This is the cleanest SEO story — canonical URLs are unambiguous — and
+the simplest mental model. The locale cookie is named `NEXT_LOCALE` with a
+one-year TTL, which survives a recruiter's "I will check back in six months."
+
+**Request.** A `proxy.ts` file at the repo root (renamed from `middleware.ts`
+in Next 16) intercepts `/` and 307-redirects to `/en` or `/pt` based on the
+`Accept-Language` header on first visit, the cookie on every visit after.
+Brazilian browsers reliably send `pt-BR`; English-speaking browsers send
+`en-*`; the fallback for ambiguity is `en`. Note 307 versus 308: next-intl
+emits 307 (temporary). The pedantic-correct choice is 308 (permanent), since
+the redirect rule never changes — but next-intl's 307 default is fine in
+practice.
+
+**Navigation.** Every internal link goes through `src/lib/i18n/navigation.ts`,
+which re-exports next-intl's locale-aware `<Link>`. That `<Link>` toggles
+locales while preserving the path. A Biome `noRestrictedImports` rule blocks
+`import 'next/link'` and `import 'next/navigation'` anywhere outside that
+single file, with one explicit override. The rule caught two regressions
+during the Phase 2 review.
+
+The catalog is two flat JSON files: `messages/en.json` and `messages/pt.json`.
+Until namespace count exceeds about 200 keys, splitting into per-namespace
+files is overhead. The build-time gate is full bilingual parity: every key in
+EN must exist in PT and vice versa, validated before `next build`.
+
+## Jedi/Sith theming
+
+`next-themes` does the persistence and the no-flash bootstrap. Tailwind v4
+does the variable resolution via `@custom-variant dark (&:where(.dark,
+.dark *))` in `globals.css`, replacing v3's `darkMode: 'class'` config that no
+longer exists.
+
+The interesting story is the contrast fix. The first Sith saber-red landed at
+`oklch(58% 0.21 28)` — visually iconic on a high-end display, but `text-primary`
+on the body background measured 3.67:1 against axe-core's contrast probe.
+WCAG 2.1 AA wants 4.5:1 for body text. The matrix run failed on the very first
+green build.
+
+Two paths forward. Shift the saber tone darker, or change the usage pattern.
+We did both. The Sith primary moved to `oklch(54% 0.21 28)` for the toggle and
+buttons, where the direction is `bg-primary text-primary-foreground` — that
+pair is AA-clean by construction. For inline accents like the
+`FeaturedProjectsTeaser` "View all" link, the pattern became
+`text-foreground decoration-primary decoration-2 underline-offset-4`. Same
+saber visual, AA-clean foreground.
+
+The dual-theme syntax-highlight in Phase 3 hit the same wall. Plain
+`github-light` failed AA on yellow-orange tokens — `#e36209` against `#ffffff`
+measures 3.48:1. Switched both themes to `github-light-high-contrast` and
+`github-dark-high-contrast`. Same dual-theme CSS-variable contract;
+AA-clean. The takeaway is to pick perceptually uniform color spaces, run the
+audit on every theme variant, and fix the surface, not the model.
+
+## MDX pipeline reuse
+
+The MDX pipeline shipped in Phase 3 for project case studies. By Phase 4 the
+blog needed it too. Two paths: copy-paste the loader, or extract a factory.
+Going factory was the obvious right answer — the loader's only parameterized
+inputs were the content directory, the Zod schema, and a `kind` string used
+in error messages.
+
+```ts
+// src/lib/mdx/factory.ts (excerpt)
+export function createMdxLoader<T>({
+  contentDir,
+  schema,
+  kind,
+}: {
+  contentDir: string;
+  schema: z.ZodType<T>;
+  kind: 'projects' | 'posts';
+}): MdxLoader<T> {
+  // parity check + Zod validation + compileMDX cross-check, same for both kinds
+}
+```
+
+The wrappers — `projects.ts` and `blog.ts` — became six-line modules. The
+parity check, the Zod validation, and the `cache()` wrapping carried over
+without modification.
+
+The renderer is `next-mdx-remote@6` with `blockJS: true` and
+`blockDangerousJS: true` defaults preserved. Block-JS means MDX cannot run
+arbitrary JavaScript: only the closed `mdxComponents` map (Callout, Note,
+Warning, Stat, plus a `pre` override for the copy-code button) is callable.
+Authors write Markdown plus those tags; nothing else executes. This is the
+security posture for content authored by a single trusted human, but the
+principle scales.
+
+Build-time syntax highlighting via `rehype-pretty-code` writes
+`data-theme="github-light-high-contrast github-dark-high-contrast"` into every
+fenced code block, plus dual-theme CSS variables. A single `html.dark` class
+flip swaps both at zero runtime cost. `@next/bundle-analyzer` confirms zero
+shiki and zero prism JavaScript in client chunks; a homemade
+`pnpm verify:no-highlighter` gate greps `.next/static/chunks` on every PR to
+keep that invariant from regressing.
+
+## The tooling
+
+Three smaller decisions worth narrating, because they each saved time later.
+
+**Biome over ESLint plus Prettier.** Single binary, single config, faster on
+every run, fewer configs to keep in sync. The `noRestrictedImports` rule
+replaced ESLint's; the semantic intent is identical. Removed the
+`eslint.config.mjs` from `create-next-app`'s output and never looked back.
+
+**Aurebesh as a decorative-only font with a fallback story.** The first
+attempt to download FT Aurebesh from a font distribution site hit a
+distribution gate — the URL returned 60KB of HTML form-page instead of a
+binary. The fallback, AurekFonts/Aurebesh_Rodian (MIT-licensed), works fine
+and ships at 6.8KB woff2. The license and provenance are committed to
+`public/fonts/LICENSE-aurebesh.txt`. The lesson: when ingesting OFL or MIT
+assets, verify the binary header (`file path/to/font.ttf`) before assuming
+the download succeeded. A `.html` masquerading as `.ttf` will silently
+corrupt your Satori OG image.
+
+**Vercel free-tier reality check.** Planning quoted "2,500 events per month"
+for Web Analytics from older training data. The actual 2026 Hobby tier is
+50,000 events per month for Web Analytics plus 10,000 data points per month
+for Speed Insights. Both are two-to-three orders of magnitude over realistic
+portfolio traffic. Lesson: re-verify pricing at planning time, not from
+training-cutoff memory.
+
+## What got cut
+
+Five things are deferred to v2, and each has a reason.
+
+A Cmd+K command palette. Nice for power users; recruiters do not use them.
+Phase 5 if the launch reveals a need.
+
+View Transitions on the theme toggle. Chromium and Safari 18+ ship the API,
+and reduced-motion users get the static fallback automatically. Phase 5
+polish — the toggle is already the most ornate UX moment on the site.
+
+The custom domain `pansarini.tech`. Bought, not yet pointed. The
+`*.vercel.app` URL is fine for v1 launch and gets Vercel's automatic
+preview-noindex headers for free. Phase 5 cutover is a one-line edit to
+`NEXT_PUBLIC_SITE_URL`.
+
+RSS. The blog is one post at launch. RSS makes sense at three. Defer.
+
+Behavioral end-to-end Playwright tests. The axe-core matrix already covers
+accessibility; the iPhone SE viewport spec already covers mobile overflow.
+Behavioral tests for locale toggle and theme toggle are lower ROI than
+shipping more posts. Phase 5 if launch reveals gaps.
+
+The portfolio shipped in four phases over a week — eighteen-plus commits to
+`main`, all green CI. Build with what you show.

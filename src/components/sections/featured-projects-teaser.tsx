@@ -30,16 +30,27 @@ export async function FeaturedProjectsTeaser({ locale }: { locale: Locale }) {
       aria-labelledby="featured-projects-heading"
       className="mx-auto max-w-5xl px-4 py-12"
     >
-      <div className="flex items-baseline justify-between gap-4">
+      <div className="flex flex-wrap items-baseline justify-between gap-4">
         <h2 id="featured-projects-heading" className="text-2xl font-semibold tracking-tight">
           {tSec('featuredProjects')}
         </h2>
-        <Link
-          href="/projects"
-          className="text-sm font-semibold text-foreground underline decoration-primary decoration-2 underline-offset-4 hover:decoration-foreground"
-        >
-          {tProj('cta.viewAll')}
-        </Link>
+        <div className="flex flex-wrap items-baseline gap-x-4 gap-y-2 text-sm">
+          <Link
+            href="/projects"
+            className="font-semibold text-foreground underline decoration-primary decoration-2 underline-offset-4 hover:decoration-foreground"
+          >
+            {tProj('cta.viewAll')}
+          </Link>
+          <span aria-hidden="true" className="text-muted-foreground">
+            ·
+          </span>
+          <Link
+            href="/blog"
+            className="font-semibold text-foreground underline decoration-primary decoration-2 underline-offset-4 hover:decoration-foreground"
+          >
+            {tProj('cta.readBlog')}
+          </Link>
+        </div>
       </div>
       <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {featured.map((p) => (

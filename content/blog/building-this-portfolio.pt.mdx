@@ -1,0 +1,216 @@
+---
+title: "Construindo este portfolio"
+date: "2026-05-02"
+excerpt: "Diário arquitetural de um portfolio bilíngue, mobile-first e acessível AA. Justificativa de stack, correções de contraste, padrão fábrica MDX e o que ficou de fora."
+tags:
+  - nextjs
+  - tailwind
+  - i18n
+  - mdx
+  - biome
+  - accessibility
+draft: false
+---
+
+## Por que reconstruí
+
+Todo engenheiro Principal acaba reconstruindo o próprio portfolio em algum
+momento. Este é o diário arquitetural do meu.
+
+Não é um post sobre "olha que efeitos de hover bonitos." É sobre as decisões
+técnicas que importaram, as que não importaram e as que não sobreviveram a uma
+auditoria de contraste. O portfolio mira em dois públicos em paralelo:
+recrutadores no Brasil e fora dele que dão uma olhada rápida pelo celular, e
+desenvolvedores que rolam até o código-fonte. As restrições que esses dois
+públicos impõem — mobile-first, WCAG 2.1 AA, carregamento abaixo de três
+segundos em conexão lenta — guiaram cada escolha de stack.
+
+O ângulo é "construa com o que você mostra." Mesmo engenheiro, mesma stack,
+mesmas convenções que defendo no trabalho. O resto do post é sobre **o quê**
+e **por quê**, não sobre **quem**.
+
+## Justificativa de stack
+
+A stack travada é Next.js 16.2, Tailwind v4 e Shadcn/UI. Três motivos
+concretos, um por parágrafo.
+
+**Next.js 16.2 com App Router e React Server Components.** É o que entrego na
+Machinery Partner toda semana. Familiaridade vira feature quando o objetivo é
+construir um portfolio em duas noites, não aprender uma stack. Turbopack como
+default no 16 deixa o ciclo de dev na casa dos ~80ms em vez de ~800ms. O React
+19 trouxe `useActionState` e `useFormStatus`, o que tirou o motivo para usar
+`react-hook-form`: a futura camada de formulário de contato cabe inteira em
+uma Server Action mais um schema Zod. Sem biblioteca de formulário no cliente.
+
+**Tailwind v4 com cores OKLCH.** A virada do v4 para configuração CSS-first
+— sem `tailwind.config.js`, só um bloco `@theme` no `globals.css` — tornou a
+paleta Jedi/Sith natural de expressar como tokens semânticos. OKLCH dá cor
+perceptualmente uniforme: o vermelho do sabre Sith parar em
+`oklch(54% 0.21 28)` em vez de um HSL arbitrário foi uma história de contraste
+(seção seguinte). O motor de build migrou para Lightning CSS; o efeito
+colateral é uma compilação cerca de dez vezes mais rápida, o que se acumula
+nas quatro rodadas da matriz axe-core no CI.
+
+**Shadcn em vez de uma biblioteca de componentes.** Shadcn não é uma
+biblioteca. É um catálogo de primitivos sem estilo, no esquema copia-e-cola.
+Soa retrógrado até a terceira vez que uma biblioteca pré-pronta força um
+workaround para um bug de contraste no modo Sith — aí ter o código-fonte fica
+óbvio. A desvantagem é que não existe "upgrade do Shadcn 1.0 para o 2.0." A
+vantagem é a mesma: não existe upgrade do Shadcn 1.0 para o 2.0.
+
+## Bilíngue via next-intl
+
+A história bilíngue tem três camadas: roteamento, requisição e navegação.
+
+**Roteamento.** `localePrefix: 'always'` significa que toda URL carrega o
+prefixo `/en` ou `/pt`. É a história de SEO mais limpa — URLs canônicas sem
+ambiguidade — e o modelo mental mais simples. O cookie de locale chama
+`NEXT_LOCALE`, com TTL de um ano, o que sobrevive ao "vou voltar daqui a seis
+meses" do recrutador.
+
+**Requisição.** Um arquivo `proxy.ts` na raiz do repo (renomeado de
+`middleware.ts` no Next 16) intercepta `/` e faz redirect 307 para `/en` ou
+`/pt` baseado no header `Accept-Language` na primeira visita, e no cookie em
+todas as visitas seguintes. Navegadores brasileiros mandam `pt-BR` de forma
+confiável; navegadores em inglês mandam `en-*`; o fallback para ambiguidade é
+`en`. Sobre 307 versus 308: o next-intl emite 307 (temporário). A escolha
+pedante-correta seria 308 (permanente), já que a regra de redirect nunca muda
+— mas o default 307 do next-intl funciona bem na prática.
+
+**Navegação.** Todo link interno passa por `src/lib/i18n/navigation.ts`, que
+re-exporta o `<Link>` consciente de locale do next-intl. Esse `<Link>` troca
+de locale preservando o caminho. Uma regra `noRestrictedImports` do Biome
+bloqueia `import 'next/link'` e `import 'next/navigation'` em qualquer outro
+lugar do código, com uma override explícita. A regra pegou duas regressões
+durante a revisão da Phase 2.
+
+O catálogo são dois JSONs flat: `messages/en.json` e `messages/pt.json`. Até
+o número de namespaces passar de uns 200, dividir por arquivo é overhead. O
+gate de build é paridade bilíngue total: toda chave em EN precisa existir em
+PT e vice-versa, validado antes do `next build`.
+
+## Tematização Jedi/Sith
+
+O `next-themes` cuida da persistência e do bootstrap sem flash. O Tailwind v4
+resolve as variáveis via `@custom-variant dark (&:where(.dark, .dark *))` no
+`globals.css`, substituindo o config `darkMode: 'class'` do v3 que não existe
+mais.
+
+A história interessante é a correção de contraste. O primeiro vermelho de
+sabre Sith parou em `oklch(58% 0.21 28)` — visualmente icônico em uma tela
+boa, mas `text-primary` sobre o fundo do body marcou 3.67:1 na sondagem de
+contraste do axe-core. WCAG 2.1 AA pede 4.5:1 para texto de corpo. A primeira
+rodada da matriz já falhou na primeira build verde.
+
+Dois caminhos. Escurecer o tom do sabre, ou mudar o padrão de uso. Fizemos
+os dois. O primário Sith foi para `oklch(54% 0.21 28)` no toggle e em botões,
+onde a direção é `bg-primary text-primary-foreground` — esse par é AA-clean
+por construção. Para acentos inline como o link "Ver todos" do
+`FeaturedProjectsTeaser`, o padrão virou
+`text-foreground decoration-primary decoration-2 underline-offset-4`. Mesmo
+visual de sabre, foreground AA-clean.
+
+O destaque de sintaxe dual-theme da Phase 3 bateu na mesma parede. O
+`github-light` puro falhava em AA nos tokens amarelo-laranja: `#e36209`
+contra `#ffffff` mede 3.48:1. Troquei os dois temas por
+`github-light-high-contrast` e `github-dark-high-contrast`. Mesmo contrato de
+variáveis CSS dual-theme; AA-clean. A lição é escolher espaços de cor
+perceptualmente uniformes, rodar a auditoria em cada variante de tema, e
+corrigir a superfície, não o modelo.
+
+## Reuso da pipeline MDX
+
+A pipeline MDX foi entregue na Phase 3 para os case studies de projetos. Na
+Phase 4 o blog também precisava dela. Dois caminhos: copiar e colar o loader,
+ou extrair uma fábrica. Ir de fábrica era o caminho óbvio — os únicos
+parâmetros do loader eram o diretório de conteúdo, o schema Zod e uma string
+`kind` usada em mensagens de erro.
+
+```ts
+// src/lib/mdx/factory.ts (trecho)
+export function createMdxLoader<T>({
+  contentDir,
+  schema,
+  kind,
+}: {
+  contentDir: string;
+  schema: z.ZodType<T>;
+  kind: 'projects' | 'posts';
+}): MdxLoader<T> {
+  // checagem de paridade + validação Zod + cross-check com compileMDX
+}
+```
+
+Os wrappers — `projects.ts` e `blog.ts` — viraram módulos de seis linhas. A
+checagem de paridade, a validação Zod e o `cache()` foram herdados sem
+modificação.
+
+O renderer é `next-mdx-remote@6` com os defaults `blockJS: true` e
+`blockDangerousJS: true` preservados. Block-JS significa que MDX não roda
+JavaScript arbitrário: só o mapa fechado de `mdxComponents` (Callout, Note,
+Warning, Stat, mais um override de `pre` para o botão de copy-code) é
+chamável. Autores escrevem Markdown mais essas tags; nada além disso executa.
+É a postura de segurança para conteúdo escrito por um único humano confiável,
+mas o princípio escala.
+
+O destaque de sintaxe em build-time via `rehype-pretty-code` escreve
+`data-theme="github-light-high-contrast github-dark-high-contrast"` em todo
+bloco de código fenced, mais variáveis CSS dual-theme. Um único toggle da
+classe `html.dark` troca os dois com custo zero em runtime. O
+`@next/bundle-analyzer` confirma zero shiki e zero prism nos chunks do
+cliente; um gate caseiro `pnpm verify:no-highlighter` faz grep em
+`.next/static/chunks` em todo PR para impedir essa invariante de regredir.
+
+## A ferramentaria
+
+Três decisões menores que valem o relato, porque cada uma poupou tempo
+depois.
+
+**Biome em vez de ESLint mais Prettier.** Um binário, uma config, mais rápido
+em toda execução, menos configs para manter sincronizadas. A regra
+`noRestrictedImports` substituiu a do ESLint; a intenção semântica é
+idêntica. Removi o `eslint.config.mjs` do output do `create-next-app` e nunca
+olhei para trás.
+
+**Aurebesh como fonte só decorativa, com plano de fallback.** A primeira
+tentativa de baixar FT Aurebesh de um site de distribuição de fontes bateu em
+um gate de distribuição — a URL devolveu 60KB de HTML de formulário em vez do
+binário. O fallback, AurekFonts/Aurebesh_Rodian (licença MIT), funcionou e
+pesa 6.8KB em woff2. Licença e procedência ficam em
+`public/fonts/LICENSE-aurebesh.txt`. A lição: ao consumir assets OFL ou MIT,
+verifique o cabeçalho do binário (`file caminho/da/fonte.ttf`) antes de
+assumir que o download deu certo. Um `.html` disfarçado de `.ttf` corrompe
+silenciosamente a OG image gerada via Satori.
+
+**Realidade do free tier do Vercel.** O planejamento citava "2.500 eventos
+por mês" para Web Analytics, vindo de dados de treinamento mais antigos. O
+plano Hobby de 2026 entrega 50.000 eventos por mês de Web Analytics, mais
+10.000 pontos de dados por mês de Speed Insights. Os dois são duas a três
+ordens de magnitude acima do tráfego realista de um portfolio. Lição:
+verifique preço no momento do planejamento, não da memória do training-cutoff.
+
+## O que ficou de fora
+
+Cinco coisas adiadas para a v2, cada uma com motivo.
+
+Um command palette Cmd+K. Bom para power users; recrutadores não usam. Phase
+5 se o launch indicar necessidade.
+
+View Transitions no toggle de tema. Chromium e Safari 18+ entregam a API, e
+usuários com `prefers-reduced-motion` recebem o fallback estático automático.
+Phase 5 polish — o toggle já é o momento mais ornado de UX no site.
+
+O domínio próprio `pansarini.tech`. Comprado, ainda não apontado. A URL
+`*.vercel.app` resolve bem para o launch v1 e ainda ganha de graça os headers
+de preview-noindex automáticos do Vercel. A virada na Phase 5 é uma edição de
+uma linha em `NEXT_PUBLIC_SITE_URL`.
+
+RSS. O blog tem um post no launch. RSS faz sentido a partir de três. Adia.
+
+Testes end-to-end comportamentais com Playwright. A matriz axe-core já cobre
+acessibilidade; o spec de viewport iPhone SE já cobre overflow mobile. Testes
+comportamentais para o toggle de locale e o toggle de tema têm ROI menor do
+que postar mais. Phase 5 se o launch revelar lacunas.
+
+O portfolio foi entregue em quatro phases ao longo de uma semana — dezoito ou
+mais commits no `main`, todos com CI verde. Construa com o que você mostra.

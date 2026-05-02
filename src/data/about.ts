@@ -21,8 +21,8 @@ export const about: About = {
     ],
   },
   cadence: {
-    en: 'I update /now every quarter.',
-    pt: 'Atualizo /now a cada trimestre.',
+    en: 'I update /now when something changes, and post on /blog when something is worth saying.',
+    pt: 'Atualizo /now quando algo muda e posto em /blog quando há algo que valha a pena dizer.',
   },
 };
 
