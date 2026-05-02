@@ -1,20 +1,35 @@
-// src/app/[locale]/page.tsx — D-24 setRequestLocale; placeholder home (Phase 2 replaces with Hero)
-import { getTranslations, setRequestLocale } from 'next-intl/server';
+import { About } from '@/components/sections/about';
+import { CareerTimeline } from '@/components/sections/career-timeline';
+import { Contact } from '@/components/sections/contact';
+import { FeaturedProjectsTeaser } from '@/components/sections/featured-projects-teaser';
+import { Hero } from '@/components/sections/hero';
+import { NowPreview } from '@/components/sections/now-preview';
+import { Skills } from '@/components/sections/skills';
+import type { Locale } from '@/i18n/routing';
+// src/app/[locale]/page.tsx — Phase 2 Wave 2 home composition.
+// D-24: setRequestLocale(locale) at the top so [locale] stays ● SSG.
+//
+// Anchor IDs across child sections (so a future Header nav can wire scroll links):
+//   #about, #projects, #skills, #now (the preview), #contact
+import { setRequestLocale } from 'next-intl/server';
 
 export default async function HomePage({
   params,
 }: {
-  params: Promise<{ locale: 'en' | 'pt' }>;
+  params: Promise<{ locale: Locale }>;
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const t = await getTranslations('home');
 
   return (
-    <section className="mx-auto max-w-2xl px-4 py-12 lg:py-24">
-      <h1 className="text-3xl font-bold">{t('brand')}</h1>
-      <p className="mt-4 text-muted-foreground">{t('placeholder')}</p>
-      <p className="mt-2 text-sm text-muted-foreground">{t('shellNote')}</p>
-    </section>
+    <>
+      <Hero />
+      <About />
+      <FeaturedProjectsTeaser />
+      <CareerTimeline />
+      <Skills />
+      <NowPreview />
+      <Contact />
+    </>
   );
 }
