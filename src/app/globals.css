@@ -177,7 +177,11 @@ html.dark pre[data-theme*=" "] span {
       animation: vt-fade 200ms linear forwards !important;
       mix-blend-mode: normal;
     }
-    ::view-transition-old(root) {
+    /* WR-01: OLD fades 1 → 0 (forwards direction, default); NEW fades 0 → 1
+       (reverse). Total perceived effect: calm cross-fade where the previous
+       theme dissolves while the new theme materializes in the same 200ms
+       window — preserves "reduce, not eliminate" intent. */
+    ::view-transition-new(root) {
       animation-direction: reverse !important;
     }
     @keyframes vt-fade {
