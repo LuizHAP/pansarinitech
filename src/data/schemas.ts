@@ -47,6 +47,9 @@ export const SkillCategorySchema = z.object({
       z.object({
         name: z.string().min(1), // proper noun (e.g., "Next.js"), not translated
         daily: z.boolean().optional(), // SKILLS-02 — daily-use highlight
+        icon: z.string().optional(), // Iconify slug e.g. "logos:nextjs-icon"
+        mono: z.string().optional(), // text fallback for badges without an icon
+        textBadge: z.boolean().optional(), // render mono text pill instead of icon
       }),
     )
     .min(1),

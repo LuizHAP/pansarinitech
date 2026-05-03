@@ -40,8 +40,8 @@
     "pivotTooltip": "Pivot: IT → Engineering"
   },
   "skills": {
-    "title": "Skills",
-    "dailyUseLegend": "Bold + underline = daily use"
+    "title": "Stack & Skills",
+    "dailyUseLegend": "Underlined = daily use"
   },
   "now": {
     "title": "What I'm doing now",

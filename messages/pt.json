@@ -41,7 +41,7 @@
   },
   "skills": {
     "title": "Skills",
-    "dailyUseLegend": "Negrito + sublinhado = uso diário"
+    "dailyUseLegend": "Sublinhado = uso diário"
   },
   "now": {
     "title": "O que estou fazendo agora",
