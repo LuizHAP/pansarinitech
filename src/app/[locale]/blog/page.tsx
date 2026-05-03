@@ -3,6 +3,7 @@
 // loader.getPosts(locale). Cards link via @/lib/i18n/navigation Link to preserve
 // the locale prefix on the slug route.
 import { PostCard } from '@/components/blog/post-card';
+import { RevealGroup, RevealItem } from '@/components/ui/reveal-group';
 import { type Locale, routing } from '@/i18n/routing';
 import { getPosts } from '@/lib/mdx/blog';
 import { buildMetadata } from '@/lib/seo';
@@ -44,17 +45,21 @@ export default async function BlogListingPage({
         {t('pageTitle')}
       </h1>
       <p className="mt-3 max-w-2xl text-base text-muted-foreground">{t('listingIntro')}</p>
-      <ul className="mt-8 space-y-6">
-        {posts.length === 0 ? (
-          <li className="text-muted-foreground">{t('noPosts')}</li>
-        ) : (
-          posts.map((p) => (
-            <li key={p.slug}>
-              <PostCard post={p} locale={locale} />
-            </li>
-          ))
-        )}
-      </ul>
+      <RevealGroup stagger={0.06}>
+        <ul className="mt-8 space-y-6">
+          {posts.length === 0 ? (
+            <li className="text-muted-foreground">{t('noPosts')}</li>
+          ) : (
+            posts.map((p) => (
+              <li key={p.slug}>
+                <RevealItem>
+                  <PostCard post={p} locale={locale} />
+                </RevealItem>
+              </li>
+            ))
+          )}
+        </ul>
+      </RevealGroup>
     </section>
   );
 }

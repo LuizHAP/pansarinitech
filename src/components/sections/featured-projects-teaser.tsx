@@ -1,5 +1,6 @@
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { RevealGroup, RevealItem } from '@/components/ui/reveal-group';
 import type { Locale } from '@/i18n/routing';
 import { Link } from '@/lib/i18n/navigation';
 import { getProjects } from '@/lib/mdx/projects';
@@ -52,36 +53,37 @@ export async function FeaturedProjectsTeaser({ locale }: { locale: Locale }) {
           </Link>
         </div>
       </div>
-      <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <RevealGroup className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3" stagger={0.08}>
         {featured.map((p) => (
-          <Link
-            key={p.slug}
-            href={`/projects/${p.slug}`}
-            className="block transition hover:-translate-y-0.5 hover:shadow-md"
-          >
-            <Card className="h-full overflow-hidden">
-              <div className="aspect-[16/10] w-full bg-muted">
-                <Image
-                  src={HERO_IMAGES[p.slug as keyof typeof HERO_IMAGES]}
-                  alt={p.title}
-                  sizes="(max-width: 768px) 100vw, 33vw"
-                  placeholder="blur"
-                  className="h-full w-full object-cover"
-                />
-              </div>
-              <CardHeader>
-                <CardTitle className="text-base">{p.title}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground">
-                  {p.role} · {p.year}
-                </p>
-                <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">{p.blurb}</p>
-              </CardContent>
-            </Card>
-          </Link>
+          <RevealItem key={p.slug}>
+            <Link
+              href={`/projects/${p.slug}`}
+              className="block transition hover:-translate-y-0.5 hover:shadow-md"
+            >
+              <Card className="h-full overflow-hidden">
+                <div className="aspect-[16/10] w-full bg-muted">
+                  <Image
+                    src={HERO_IMAGES[p.slug as keyof typeof HERO_IMAGES]}
+                    alt={p.title}
+                    sizes="(max-width: 768px) 100vw, 33vw"
+                    placeholder="blur"
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+                <CardHeader>
+                  <CardTitle className="text-base">{p.title}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground">
+                    {p.role} · {p.year}
+                  </p>
+                  <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">{p.blurb}</p>
+                </CardContent>
+              </Card>
+            </Link>
+          </RevealItem>
         ))}
-      </div>
+      </RevealGroup>
     </section>
   );
 }

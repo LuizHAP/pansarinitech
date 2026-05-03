@@ -14,6 +14,7 @@ import { pickLocale } from '@/lib/i18n/helpers';
 //
 // Brand icons (GitHub / LinkedIn) are inline SVG paths because lucide-react v1.14
 // does not ship brand marks. Inline SVG is tree-shake-free and zero-dependency.
+import { RevealGroup, RevealItem } from '@/components/ui/reveal-group';
 import { DownloadIcon, MailIcon } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 import { CopyEmailButton } from './copy-email-button';
@@ -65,48 +66,58 @@ export function Contact() {
       </h2>
       <p className="mt-2 text-base text-muted-foreground">{t('lead')}</p>
 
-      <div className="mt-6 flex flex-wrap items-center gap-3">
-        <a
-          href={mailtoHref}
-          className="inline-flex h-11 items-center justify-center gap-2 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
-        >
-          <MailIcon className="size-4" aria-hidden="true" />
-          <span className="font-mono">{contact.email}</span>
-        </a>
+      <RevealGroup className="mt-6 flex flex-wrap items-center gap-3" stagger={0.05}>
+        <RevealItem key="mail">
+          <a
+            href={mailtoHref}
+            className="inline-flex h-11 items-center justify-center gap-2 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+          >
+            <MailIcon className="size-4" aria-hidden="true" />
+            <span className="font-mono">{contact.email}</span>
+          </a>
+        </RevealItem>
 
-        <CopyEmailButton email={contact.email} />
+        <RevealItem key="copy">
+          <CopyEmailButton email={contact.email} />
+        </RevealItem>
 
-        <a
-          href={contact.linkedin}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label={t('linkedinLabel')}
-          className="inline-flex h-11 items-center justify-center gap-2 rounded-md border border-border px-4 text-sm font-medium transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
-        >
-          <LinkedinMark className="size-4" />
-          <span>{t('linkedinText')}</span>
-        </a>
+        <RevealItem key="linkedin">
+          <a
+            href={contact.linkedin}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={t('linkedinLabel')}
+            className="inline-flex h-11 items-center justify-center gap-2 rounded-md border border-border px-4 text-sm font-medium transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+          >
+            <LinkedinMark className="size-4" />
+            <span>{t('linkedinText')}</span>
+          </a>
+        </RevealItem>
 
-        <a
-          href={contact.github}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label={t('githubLabel')}
-          className="inline-flex h-11 items-center justify-center gap-2 rounded-md border border-border px-4 text-sm font-medium transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
-        >
-          <GithubMark className="size-4" />
-          <span>{t('githubText')}</span>
-        </a>
+        <RevealItem key="github">
+          <a
+            href={contact.github}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={t('githubLabel')}
+            className="inline-flex h-11 items-center justify-center gap-2 rounded-md border border-border px-4 text-sm font-medium transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+          >
+            <GithubMark className="size-4" />
+            <span>{t('githubText')}</span>
+          </a>
+        </RevealItem>
 
-        <a
-          href={resumeHref}
-          download={resumeFile}
-          className="inline-flex h-11 items-center justify-center gap-2 rounded-md border border-border px-4 text-sm font-medium transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
-        >
-          <DownloadIcon className="size-4" aria-hidden="true" />
-          <span>{t('resumeButton')}</span>
-        </a>
-      </div>
+        <RevealItem key="resume">
+          <a
+            href={resumeHref}
+            download={resumeFile}
+            className="inline-flex h-11 items-center justify-center gap-2 rounded-md border border-border px-4 text-sm font-medium transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+          >
+            <DownloadIcon className="size-4" aria-hidden="true" />
+            <span>{t('resumeButton')}</span>
+          </a>
+        </RevealItem>
+      </RevealGroup>
     </section>
   );
 }
