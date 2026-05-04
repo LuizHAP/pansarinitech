@@ -1,5 +1,5 @@
 'use client';
-import { RevealGroup, RevealItem } from '@/components/ui/reveal-group';
+import { RevealGroup, RevealItem } from '@/components/ui';
 import { about } from '@/data/about';
 // src/components/sections/about.tsx — v1.1 redesign (Client for motion)
 // Layout: stats row (4 cards) → hr → bullet highlights → hr → cadence line.

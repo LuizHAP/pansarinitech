@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui';
 import { now } from '@/data/now';
 import type { Locale } from '@/i18n/routing';
 import { formatLongDate, pickLocale } from '@/lib/i18n/helpers';

@@ -14,7 +14,7 @@ import { pickLocale } from '@/lib/i18n/helpers';
 //
 // Brand icons (GitHub / LinkedIn) are inline SVG paths because lucide-react v1.14
 // does not ship brand marks. Inline SVG is tree-shake-free and zero-dependency.
-import { RevealGroup, RevealItem } from '@/components/ui/reveal-group';
+import { RevealGroup, RevealItem } from '@/components/ui';
 import { DownloadIcon, MailIcon } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 import { CopyEmailButton } from './copy-email-button';

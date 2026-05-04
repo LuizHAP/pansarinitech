@@ -10,7 +10,7 @@
 // Sun/Moon CSS-only swap (Pitfall 2 Pattern A — no hydration risk).
 // Invariant aria-label, aria-pressed reflects dark state (THEME-05, Pitfall 9).
 'use client';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui';
 import { Moon, Sun } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useTheme } from 'next-themes';

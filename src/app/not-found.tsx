@@ -14,7 +14,7 @@
 //
 // Linking back to home: hardcoded `/en` (the defaultLocale, D-04). Users who land here
 // can use the standard navigation to switch locale once they hit a routed page.
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui';
 import { aurebesh } from '@/lib/fonts';
 
 export default function RootNotFound() {

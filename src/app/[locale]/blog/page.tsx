@@ -3,7 +3,7 @@
 // loader.getPosts(locale). Cards link via @/lib/i18n/navigation Link to preserve
 // the locale prefix on the slug route.
 import { PostCard } from '@/components/blog';
-import { RevealGroup, RevealItem } from '@/components/ui/reveal-group';
+import { RevealGroup, RevealItem } from '@/components/ui';
 import { type Locale, routing } from '@/i18n/routing';
 import { getPosts } from '@/lib/mdx/blog';
 import { buildMetadata } from '@/lib/seo';

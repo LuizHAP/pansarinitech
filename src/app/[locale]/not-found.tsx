@@ -1,4 +1,4 @@
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui';
 import { aurebesh } from '@/lib/fonts';
 import { Link } from '@/lib/i18n/navigation';
 // src/app/[locale]/not-found.tsx

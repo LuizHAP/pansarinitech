@@ -3,8 +3,7 @@
 // via Phase 2 formatDate) + reading time (via t('readingTime', { minutes })) +
 // excerpt + tag chips. Card uses theme tokens (bg-card / text-card-foreground)
 // so axe-matrix contrast holds across Jedi + Sith palettes.
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge, Card, CardContent, CardHeader, CardTitle } from '@/components/ui';
 import type { Locale } from '@/i18n/routing';
 import { formatDate } from '@/lib/i18n/helpers';
 import { Link } from '@/lib/i18n/navigation';

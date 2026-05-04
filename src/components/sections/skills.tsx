@@ -2,7 +2,7 @@
 // src/components/sections/skills.tsx — v1.1 redesign (Client for useState filter)
 // Filter chips + logo/icon badge grid. Uses @iconify/react for brand logos;
 // textBadge:true items get a mono-font pill fallback.
-import { RevealGroup, RevealItem } from '@/components/ui/reveal-group';
+import { RevealGroup, RevealItem } from '@/components/ui';
 import { skills } from '@/data/skills';
 import type { Locale } from '@/i18n/routing';
 import { Icon } from '@iconify/react';
