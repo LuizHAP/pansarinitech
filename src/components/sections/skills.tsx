@@ -95,7 +95,7 @@ export function Skills() {
                 className={[
                   'text-center text-[11px] font-medium leading-tight',
                   skill.daily
-                    ? 'text-primary underline decoration-primary decoration-1 underline-offset-4'
+                    ? 'text-foreground underline decoration-primary decoration-1 underline-offset-4'
                     : 'text-foreground',
                 ].join(' ')}
               >

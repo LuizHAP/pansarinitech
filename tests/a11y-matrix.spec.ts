@@ -56,8 +56,13 @@ test.describe('a11y matrix — WCAG 2.1 AA across en/pt × light/dark × home/40
         // against next-themes hydration timing — colorScheme:'dark' SHOULD
         // trigger enableSystem auto-flip, but we don't rely on it.)
         await page.evaluate(() => document.documentElement.classList.add('dark'));
-        await page.waitForTimeout(150);
       }
+
+      // Wait for RevealGroup/RevealItem stagger animations to complete before axe
+      // samples computed styles. The slowest chain: stagger 0.08 × 3 items (0.24s)
+      // + animation duration 0.4s = 0.64s total. 800ms gives a 160ms safety margin
+      // and covers dark-mode CSS-variable flip time too.
+      await page.waitForTimeout(800);
 
       // Theme-class assertion (defends against Method B drift — RESEARCH §A5).
       const htmlClass = (await page.locator('html').getAttribute('class')) ?? '';

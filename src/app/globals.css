@@ -33,7 +33,8 @@
   --card: oklch(94% 0.008 250);
   --card-foreground: oklch(12% 0.01 250);
   --muted: oklch(90% 0.012 250);
-  --muted-foreground: oklch(45% 0.01 250);
+  /* darkened from oklch(45%) → oklch(38%) to guarantee ≥4.5:1 against bg-card (oklch 94%) at small text sizes */
+  --muted-foreground: oklch(38% 0.01 250);
   --border: oklch(82% 0.018 250);
   --primary: oklch(55% 0.18 250);
   --primary-foreground: oklch(98% 0.005 250);
@@ -53,7 +54,8 @@
   --card: oklch(15% 0.012 250);
   --card-foreground: oklch(94% 0.008 250);
   --muted: oklch(18% 0.015 250);
-  --muted-foreground: oklch(62% 0.015 250);
+  /* lightened from oklch(62%) → oklch(70%) to guarantee ≥4.5:1 against bg-card (oklch 15%) at small text sizes */
+  --muted-foreground: oklch(70% 0.015 250);
   --border: oklch(25% 0.02 250);
   /* Sith primary: saber red, slightly DARKENED from oklch(58% 0.21 28) → 54% to
      guarantee ≥4.5:1 contrast with white text on bg-primary. The original 58%

@@ -32,7 +32,7 @@ export function About() {
                 className={[
                   'font-bold tracking-tight leading-none',
                   stat.small ? 'text-2xl' : 'text-3xl',
-                  stat.accent ? 'text-primary' : 'text-foreground',
+                  'text-foreground',
                 ].join(' ')}
               >
                 {stat.num}
