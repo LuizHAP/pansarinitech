@@ -9,7 +9,7 @@ vi.mock('sonner', () => ({
   Toaster: () => null,
 }));
 
-import { render, screen } from '@/test/render';
+import { act, render, screen } from '@/test/render';
 import { CopyEmailButton } from './copy-email-button';
 
 const TEST_EMAIL = 'test@example.com';
@@ -107,5 +107,37 @@ describe('<CopyEmailButton />', () => {
     await user.click(screen.getByRole('button'));
 
     expect(toast.success).toHaveBeenCalledWith('Email copied');
+  });
+
+  it('Test 6 (copied revert): button label reverts to "Copy email" after 2 seconds', async () => {
+    // Only fake setTimeout — leave Promise/microtask queue real so async handleCopy resolves normally.
+    vi.useFakeTimers({ toFake: ['setTimeout'] });
+
+    const writeTextSpy = vi.fn().mockResolvedValue(undefined);
+    Object.defineProperty(navigator, 'clipboard', {
+      configurable: true,
+      value: { writeText: writeTextSpy },
+    });
+
+    const { getByRole } = render(<CopyEmailButton email={TEST_EMAIL} />, { locale: 'en' });
+    const btn = getByRole('button');
+
+    // Use act to click and flush the async handleCopy state updates.
+    await act(async () => {
+      btn.click();
+    });
+
+    // After the click + async flush, button shows the copied confirmation.
+    expect(btn).toHaveTextContent('Email copied');
+
+    // Advance past the 2-second revert — runs the setTimeout(() => setCopied(false), 2000) callback.
+    await act(() => {
+      vi.advanceTimersByTime(2001);
+    });
+
+    // Label should revert back to the default copy prompt.
+    expect(btn).toHaveTextContent('Copy email');
+
+    vi.useRealTimers();
   });
 });

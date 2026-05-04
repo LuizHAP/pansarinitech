@@ -21,11 +21,15 @@ const COMPONENT_FILES = [
   'src/components/sections/career-timeline.tsx',
   'src/components/sections/featured-projects-teaser.tsx',
   'src/components/sections/now-preview.tsx',
+  'src/components/sections/case-study-hero.tsx',
+  'src/components/sections/copy-email-button.tsx',
   'src/components/shared/header.tsx',
   'src/components/shared/footer.tsx',
   'src/components/shared/theme-toggle.tsx',
   'src/components/shared/locale-toggle.tsx',
   'src/components/shared/skip-to-content.tsx',
+  'src/components/shared/easter-egg.tsx',
+  'src/components/shared/theme-provider.tsx',
 ];
 
 const PURE_100 = { statements: 100, branches: 100, functions: 100, lines: 100 };
