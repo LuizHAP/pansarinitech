@@ -1,5 +1,5 @@
-import { describe, expect, it, vi } from 'vitest';
 import { render, screen } from '@/test/render';
+import { describe, expect, it, vi } from 'vitest';
 
 // Mock static image imports BEFORE component import.
 // NOTE: vi.mock factories are hoisted — do NOT reference top-level variables inside them.

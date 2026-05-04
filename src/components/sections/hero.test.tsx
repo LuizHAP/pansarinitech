@@ -1,19 +1,17 @@
-import { describe, expect, it, vi } from 'vitest';
 import { render, screen } from '@/test/render';
-import { Hero } from './hero';
+import { describe, expect, it, vi } from 'vitest';
 
-// next/image in jsdom: Vitest transforms it fine; static imports return an object with `src`.
-// The luiz.jpg static import in hero.tsx resolves to the image file — mock it so jsdom doesn't
-// attempt to fetch it.
+// Static image mock — must be hoisted before component import.
 vi.mock('../../../public/luiz.jpg', () => ({
   default: { src: '/luiz.jpg', width: 768, height: 1024, blurDataURL: 'data:image/png;base64,xx' },
 }));
+
+import { Hero } from './hero';
 
 describe('<Hero />', () => {
   it('renders the H1 and both CTAs in en locale', () => {
     render(<Hero />, { locale: 'en' });
 
-    // H1 heading must be present
     expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument();
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Luiz Pansarini');
 
@@ -44,5 +42,11 @@ describe('<Hero />', () => {
     render(<Hero />, { locale: 'en' });
     const img = screen.getByRole('img');
     expect(img).toHaveAttribute('alt', expect.stringContaining('Luiz Pansarini'));
+  });
+
+  it('renders the role/value-prop text', () => {
+    render(<Hero />, { locale: 'en' });
+    // Value proposition paragraph from hero data
+    expect(screen.getByText(/Principal Software Engineer/i)).toBeInTheDocument();
   });
 });

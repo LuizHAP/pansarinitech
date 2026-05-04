@@ -1,6 +1,6 @@
-import { describe, expect, it } from 'vitest';
-import { render, screen } from '@/test/render';
 import { career } from '@/data/career';
+import { render, screen } from '@/test/render';
+import { describe, expect, it } from 'vitest';
 import { CareerTimeline } from './career-timeline';
 
 describe('<CareerTimeline />', () => {

@@ -1,10 +1,10 @@
-import { render as rtlRender, type RenderOptions } from '@testing-library/react';
+import type { Locale } from '@/i18n/routing';
+import { type RenderOptions, render as rtlRender } from '@testing-library/react';
 import { NextIntlClientProvider } from 'next-intl';
 import { ThemeProvider } from 'next-themes';
 import type { ReactElement, ReactNode } from 'react';
 import enMessages from '../../messages/en.json';
 import ptMessages from '../../messages/pt.json';
-import type { Locale } from '@/i18n/routing';
 
 const MESSAGES = { en: enMessages, pt: ptMessages } as const;
 

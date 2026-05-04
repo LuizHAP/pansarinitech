@@ -1,6 +1,6 @@
-import { describe, expect, it } from 'vitest';
-import { render, screen } from '@/test/render';
 import { now } from '@/data/now';
+import { render, screen } from '@/test/render';
+import { describe, expect, it } from 'vitest';
 import { NowPreview } from './now-preview';
 
 describe('<NowPreview />', () => {

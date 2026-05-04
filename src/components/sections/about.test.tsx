@@ -1,6 +1,6 @@
-import { describe, expect, it } from 'vitest';
-import { render, screen } from '@/test/render';
 import { aboutStats } from '@/data/about-stats';
+import { render, screen } from '@/test/render';
+import { describe, expect, it } from 'vitest';
 import { About } from './about';
 
 describe('<About />', () => {

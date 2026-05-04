@@ -1,5 +1,5 @@
-import { describe, expect, it, vi } from 'vitest';
 import { render, screen } from '@/test/render';
+import { describe, expect, it, vi } from 'vitest';
 import { Contact } from './contact';
 
 // CopyEmailButton uses navigator.clipboard and sonner toast — mock sonner to avoid toast portal errors

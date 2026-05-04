@@ -31,6 +31,13 @@ const COMPONENT_FILES = [
 const PURE_100 = { statements: 100, branches: 100, functions: 100, lines: 100 };
 const COMPONENT_TARGET = { statements: 70, branches: 60, functions: 70, lines: 70 };
 
+// hero.tsx and contact.tsx each have a single `pop() ?? 'resume.pdf'` null-coalescing
+// expression. The falsy branch is structurally unreachable: String.prototype.split() never
+// returns an empty array, so pop() never returns undefined. v8 counts this as 1/2 branches
+// covered (50%). We override just the branch threshold to 50% for these two files.
+// All other thresholds remain at COMPONENT_TARGET.
+const UNREACHABLE_NULL_COALESCE = { ...COMPONENT_TARGET, branches: 50 };
+
 export default defineConfig({
   plugins: [tsconfigPaths(), react()],
   test: {
@@ -45,6 +52,9 @@ export default defineConfig({
         ...Object.fromEntries(LIB_DATA_FILES.map((f) => [f, PURE_100])),
         // Pragmatic gate on components — render-coverage, not branch-perfection.
         ...Object.fromEntries(COMPONENT_FILES.map((f) => [f, COMPONENT_TARGET])),
+        // Per-file overrides for structurally unreachable branches (pop() ?? fallback).
+        'src/components/sections/hero.tsx': UNREACHABLE_NULL_COALESCE,
+        'src/components/sections/contact.tsx': UNREACHABLE_NULL_COALESCE,
       },
     },
     server: {
@@ -58,11 +68,7 @@ export default defineConfig({
         test: {
           name: 'node',
           environment: 'node',
-          include: [
-            'src/lib/**/*.test.ts',
-            'src/lib/**/*.test.tsx',
-            'src/data/**/*.test.ts',
-          ],
+          include: ['src/lib/**/*.test.ts', 'src/lib/**/*.test.tsx', 'src/data/**/*.test.ts'],
         },
       },
       {
@@ -70,10 +76,7 @@ export default defineConfig({
         test: {
           name: 'jsdom',
           environment: 'jsdom',
-          include: [
-            'src/components/**/*.test.ts',
-            'src/components/**/*.test.tsx',
-          ],
+          include: ['src/components/**/*.test.ts', 'src/components/**/*.test.tsx'],
           setupFiles: ['./vitest.setup.ts'],
         },
       },
