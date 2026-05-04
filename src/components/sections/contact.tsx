@@ -1,6 +1,3 @@
-import { contact } from '@/data/contact';
-import type { Locale } from '@/i18n/routing';
-import { pickLocale } from '@/lib/i18n/helpers';
 // src/components/sections/contact.tsx — RSC
 // CONTACT-01 (mailto with locale-aware subject), CONTACT-02 (LinkedIn + GitHub),
 // CONTACT-03 (click-to-copy via CopyEmailButton client island), CONTACT-04 (Resume PDF
@@ -15,6 +12,9 @@ import { pickLocale } from '@/lib/i18n/helpers';
 // Brand icons (GitHub / LinkedIn) are inline SVG paths because lucide-react v1.14
 // does not ship brand marks. Inline SVG is tree-shake-free and zero-dependency.
 import { RevealGroup, RevealItem } from '@/components/ui';
+import { contact } from '@/data/contact';
+import type { Locale } from '@/i18n/routing';
+import { pickLocale } from '@/lib/i18n/helpers';
 import { DownloadIcon, MailIcon } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 import { CopyEmailButton } from './copy-email-button';

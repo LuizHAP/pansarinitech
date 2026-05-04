@@ -1,4 +1,11 @@
-import { RevealGroup, RevealItem, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui';
+import {
+  RevealGroup,
+  RevealItem,
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui';
 import { career } from '@/data/career';
 import type { Locale } from '@/i18n/routing';
 import { formatPeriod, pickLocale } from '@/lib/i18n/helpers';

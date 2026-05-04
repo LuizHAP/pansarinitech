@@ -1,4 +1,12 @@
-import { Badge, Card, CardContent, CardHeader, CardTitle, RevealGroup, RevealItem } from '@/components/ui';
+import {
+  Badge,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  RevealGroup,
+  RevealItem,
+} from '@/components/ui';
 import type { Locale } from '@/i18n/routing';
 import { Link } from '@/lib/i18n/navigation';
 import { getProjects } from '@/lib/mdx/projects';
