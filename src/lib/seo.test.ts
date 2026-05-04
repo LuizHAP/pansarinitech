@@ -60,7 +60,7 @@ describe('buildMetadata() — type / openGraph article branches', () => {
   it("default type is 'website' and excludes article-only fields", () => {
     vi.stubEnv('VERCEL_ENV', 'production');
     const meta = buildMetadata({ locale: 'en', path: '', title: 'T', description: 'D' });
-    expect(meta.openGraph?.type).toBe('website');
+    expect((meta.openGraph as Record<string, unknown>).type).toBe('website');
     expect((meta.openGraph as Record<string, unknown>).publishedTime).toBeUndefined();
     expect((meta.openGraph as Record<string, unknown>).modifiedTime).toBeUndefined();
     expect((meta.openGraph as Record<string, unknown>).tags).toBeUndefined();

@@ -36,15 +36,14 @@ export function Skills() {
       <p className="mt-1 text-sm text-muted-foreground">{t('dailyUseLegend')}</p>
 
       {/* Filter chips — horizontal scroll on mobile */}
-      <div
-        className="mt-4 flex gap-2 overflow-x-auto pb-2 sm:flex-wrap sm:overflow-visible sm:pb-0"
-        role="group"
-        aria-label="Filter skills by category"
+      <fieldset
+        className="m-0 mt-4 flex min-w-0 gap-2 overflow-x-auto border-0 p-0 pb-2 sm:flex-wrap sm:overflow-visible sm:pb-0"
         style={{
           WebkitMaskImage: 'linear-gradient(90deg,#000 92%,transparent 100%)',
           maskImage: 'linear-gradient(90deg,#000 92%,transparent 100%)',
         }}
       >
+        <legend className="sr-only">Filter skills by category</legend>
         {FILTERS.map((f) => {
           const isActive = active === f.id;
           return (
@@ -64,7 +63,7 @@ export function Skills() {
             </button>
           );
         })}
-      </div>
+      </fieldset>
 
       {/* Badge grid */}
       <RevealGroup
