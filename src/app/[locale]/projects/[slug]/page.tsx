@@ -1,4 +1,4 @@
-import { CaseStudyHero } from '@/components/sections/case-study-hero';
+import { CaseStudyHero } from '@/components/sections';
 import { type Locale, routing } from '@/i18n/routing';
 import { getAllSlugs, getProject } from '@/lib/mdx/projects';
 import { buildMetadata } from '@/lib/seo';

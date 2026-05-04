@@ -1,10 +1,12 @@
-import { About } from '@/components/sections/about';
-import { CareerTimeline } from '@/components/sections/career-timeline';
-import { Contact } from '@/components/sections/contact';
-import { FeaturedProjectsTeaser } from '@/components/sections/featured-projects-teaser';
-import { Hero } from '@/components/sections/hero';
-import { NowPreview } from '@/components/sections/now-preview';
-import { Skills } from '@/components/sections/skills';
+import {
+  About,
+  CareerTimeline,
+  Contact,
+  FeaturedProjectsTeaser,
+  Hero,
+  NowPreview,
+  Skills,
+} from '@/components/sections';
 import type { Locale } from '@/i18n/routing';
 import { buildHomeMetadata } from '@/lib/seo';
 // src/app/[locale]/page.tsx — Phase 2 Wave 2 home composition.
