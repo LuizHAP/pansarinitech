@@ -84,6 +84,14 @@ jobs:
       - name: Verify SEO metadata shape (Phase 4 SEO-01..06)
         run: pnpm verify:metadata
 
+      # Phase 1 (v1.1) — Vitest unit test + 100% coverage gate on the 7 pure-logic files
+      # (utils, seo, i18n/helpers, mdx/{reading-time,schema,toc}, data/schemas). Runs in
+      # Node environment, no browser deps. Fails build if any target file drops below
+      # 100% statements/branches/functions/lines. Placed BEFORE Playwright browser install
+      # for fast feedback on a coverage regression (~5s vs ~30s for browser install).
+      - name: Unit tests + coverage gate (Phase 1)
+        run: pnpm test:unit:coverage
+
       - name: Install Playwright browsers
         run: pnpm exec playwright install --with-deps chromium
 
