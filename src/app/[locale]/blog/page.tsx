@@ -2,7 +2,7 @@
 // Listing page — async RSC. Stays ● SSG via setRequestLocale + frontmatter-only
 // loader.getPosts(locale). Cards link via @/lib/i18n/navigation Link to preserve
 // the locale prefix on the slug route.
-import { PostCard } from '@/components/blog/post-card';
+import { PostCard } from '@/components/blog';
 import { RevealGroup, RevealItem } from '@/components/ui/reveal-group';
 import { type Locale, routing } from '@/i18n/routing';
 import { getPosts } from '@/lib/mdx/blog';

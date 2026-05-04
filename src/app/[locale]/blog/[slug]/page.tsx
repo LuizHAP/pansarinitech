@@ -9,8 +9,7 @@
 //
 // TOC components render only when extractToc returns ≥1 entry (default
 // threshold 1000 words; CONTEXT D-07).
-import { TocMobile } from '@/components/blog/toc-mobile';
-import { TocSidebar } from '@/components/blog/toc-sidebar';
+import { TocMobile, TocSidebar } from '@/components/blog';
 import { type Locale, routing } from '@/i18n/routing';
 import { formatDate } from '@/lib/i18n/helpers';
 import { Link } from '@/lib/i18n/navigation';
