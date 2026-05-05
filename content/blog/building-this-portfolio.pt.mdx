@@ -126,21 +126,6 @@ ou extrair uma fábrica. Ir de fábrica era o caminho óbvio — os únicos
 parâmetros do loader eram o diretório de conteúdo, o schema Zod e uma string
 `kind` usada em mensagens de erro.
 
-```ts
-// src/lib/mdx/factory.ts (trecho)
-export function createMdxLoader<T>({
-  contentDir,
-  schema,
-  kind,
-}: {
-  contentDir: string;
-  schema: z.ZodType<T>;
-  kind: 'projects' | 'posts';
-}): MdxLoader<T> {
-  // checagem de paridade + validação Zod + cross-check com compileMDX
-}
-```
-
 Os wrappers — `projects.ts` e `blog.ts` — viraram módulos de seis linhas. A
 checagem de paridade, a validação Zod e o `cache()` foram herdados sem
 modificação.

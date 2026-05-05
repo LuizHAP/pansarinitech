@@ -123,21 +123,6 @@ Going factory was the obvious right answer — the loader's only parameterized
 inputs were the content directory, the Zod schema, and a `kind` string used
 in error messages.
 
-```ts
-// src/lib/mdx/factory.ts (excerpt)
-export function createMdxLoader<T>({
-  contentDir,
-  schema,
-  kind,
-}: {
-  contentDir: string;
-  schema: z.ZodType<T>;
-  kind: 'projects' | 'posts';
-}): MdxLoader<T> {
-  // parity check + Zod validation + compileMDX cross-check, same for both kinds
-}
-```
-
 The wrappers — `projects.ts` and `blog.ts` — became six-line modules. The
 parity check, the Zod validation, and the `cache()` wrapping carried over
 without modification.
