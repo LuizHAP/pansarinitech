@@ -144,7 +144,7 @@ describe('buildHomeMetadata()', () => {
     vi.stubEnv('VERCEL_ENV', 'production');
     const t = (k: string) => `X:${k}`;
     const meta = buildHomeMetadata('en', t);
-    expect(meta.title).toContain('X:home.brand');
+    expect(meta.title).toContain('X:seo.homeTitle');
     expect(meta.description).toBe('X:seo.siteDescription');
   });
 });

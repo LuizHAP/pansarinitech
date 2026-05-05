@@ -104,7 +104,7 @@ export function buildHomeMetadata(locale: Locale, t: (k: string) => string): Met
   return buildMetadata({
     locale,
     path: '',
-    title: t('home.brand'),
+    title: t('seo.homeTitle'),
     description: t('seo.siteDescription'),
     type: 'website',
   });
