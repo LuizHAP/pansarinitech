@@ -1,7 +1,7 @@
 // Tests for CaseStudyHero async RSC component.
 // Mocks: next/image, @/lib/i18n/navigation (Link), the 3 static hero images,
 // and getTranslations from next-intl/server.
-import React from 'react';
+import type React from 'react';
 import { describe, expect, it, vi } from 'vitest';
 
 vi.mock('next/image', () => ({
@@ -11,10 +11,7 @@ vi.mock('next/image', () => ({
       alt: string;
     } & Record<string, unknown>,
   ) => {
-    const src =
-      typeof props.src === 'string' ? props.src : (props.src?.src ?? '');
-    // biome-ignore lint/performance/noImgElement: test-only stub
-    // biome-ignore lint/a11y/useAltText: alt is destructured from props
+    const src = typeof props.src === 'string' ? props.src : (props.src?.src ?? '');
     return <img src={src} alt={props.alt} />;
   },
 }));
@@ -34,41 +31,32 @@ vi.mock('@/lib/i18n/navigation', () => ({
   ),
 }));
 
-vi.mock(
-  '../../../content/projects/machinery-partner-ecommerce/images/hero.jpg',
-  () => ({
-    default: {
-      src: '/hero-ecom.jpg',
-      width: 1200,
-      height: 630,
-      blurDataURL: 'data:image/png;base64,xx',
-    },
-  }),
-);
+vi.mock('../../../content/projects/machinery-partner-ecommerce/images/hero.jpg', () => ({
+  default: {
+    src: '/hero-ecom.jpg',
+    width: 1200,
+    height: 630,
+    blurDataURL: 'data:image/png;base64,xx',
+  },
+}));
 
-vi.mock(
-  '../../../content/projects/machinery-partner-migration/images/hero.jpg',
-  () => ({
-    default: {
-      src: '/hero-mig.jpg',
-      width: 1200,
-      height: 630,
-      blurDataURL: 'data:image/png;base64,xx',
-    },
-  }),
-);
+vi.mock('../../../content/projects/machinery-partner-migration/images/hero.jpg', () => ({
+  default: {
+    src: '/hero-mig.jpg',
+    width: 1200,
+    height: 630,
+    blurDataURL: 'data:image/png;base64,xx',
+  },
+}));
 
-vi.mock(
-  '../../../content/projects/magazine-luiza-superapp/images/hero.jpg',
-  () => ({
-    default: {
-      src: '/hero-magalu.jpg',
-      width: 1200,
-      height: 630,
-      blurDataURL: 'data:image/png;base64,xx',
-    },
-  }),
-);
+vi.mock('../../../content/projects/magazine-luiza-superapp/images/hero.jpg', () => ({
+  default: {
+    src: '/hero-magalu.jpg',
+    width: 1200,
+    height: 630,
+    blurDataURL: 'data:image/png;base64,xx',
+  },
+}));
 
 import enMessages from '../../../messages/en.json';
 import ptMessages from '../../../messages/pt.json';
@@ -81,24 +69,19 @@ vi.mock('next-intl/server', () => ({
     locale: 'en' | 'pt';
     namespace: string;
   }) => {
-    const msgs = (
-      locale === 'pt' ? ptMessages : enMessages
-    ) as Record<string, unknown>;
+    const msgs = (locale === 'pt' ? ptMessages : enMessages) as Record<string, unknown>;
     const ns = msgs[namespace] as Record<string, unknown>;
     return (key: string) => {
       // dotted key lookup, e.g. 'cta.backToProjects'
       return key
         .split('.')
-        .reduce<unknown>(
-          (acc, k) => (acc as Record<string, unknown>)?.[k],
-          ns,
-        ) as string;
+        .reduce<unknown>((acc, k) => (acc as Record<string, unknown>)?.[k], ns) as string;
     };
   },
 }));
 
-import { render, screen } from '@/test/render';
 import type { Project } from '@/lib/mdx/schema';
+import { render, screen } from '@/test/render';
 
 const baseProject: Project = {
   title: 'Machinery Partner E-commerce',
@@ -121,16 +104,10 @@ describe('<CaseStudyHero />', () => {
     render(jsx, { locale: 'en' });
 
     // h1 title
-    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(
-      baseProject.title,
-    );
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(baseProject.title);
 
     // role · year line
-    expect(
-      screen.getByText(
-        `${baseProject.role} · ${baseProject.year}`,
-      ),
-    ).toBeInTheDocument();
+    expect(screen.getByText(`${baseProject.role} · ${baseProject.year}`)).toBeInTheDocument();
 
     // stack badges (all 5 in this fixture — fewer than the 8-badge cap)
     for (const tech of baseProject.stack) {
@@ -152,9 +129,7 @@ describe('<CaseStudyHero />', () => {
     render(jsx, { locale: 'pt' });
 
     // PT translation for cta.backToProjects is "← Voltar aos projetos"
-    expect(
-      screen.getByRole('link', { name: /Voltar aos projetos/i }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /Voltar aos projetos/i })).toBeInTheDocument();
   });
 
   it('Test 3 (unknown slug): throws with a descriptive error', async () => {

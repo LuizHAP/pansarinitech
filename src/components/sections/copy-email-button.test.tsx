@@ -84,9 +84,7 @@ describe('<CopyEmailButton />', () => {
 
     await user.click(screen.getByRole('button'));
 
-    expect(toast.error).toHaveBeenCalledWith(
-      "Couldn't copy — please use Cmd+C",
-    );
+    expect(toast.error).toHaveBeenCalledWith("Couldn't copy — please use Cmd+C");
   });
 
   it('Test 5 (execCommand fallback success): uses execCommand when clipboard unavailable', async () => {

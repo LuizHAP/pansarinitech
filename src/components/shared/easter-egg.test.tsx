@@ -4,18 +4,10 @@ import React from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('next/script', () => ({
-  default: ({
-    children,
-    ...rest
-  }: { children?: string; [k: string]: unknown }) => (
-    // biome-ignore lint/security/noDangerouslySetInnerHtml: test-only stub
-    <script
-      {...rest}
-      dangerouslySetInnerHTML={{
-        __html: typeof children === 'string' ? children : '',
-      }}
-    />
-  ),
+  default: ({ children, ...rest }: { children?: string; [k: string]: unknown }) => {
+    const html = typeof children === 'string' ? children : '';
+    return React.createElement('script', { ...rest, dangerouslySetInnerHTML: { __html: html } });
+  },
 }));
 
 import { render } from '@testing-library/react';
