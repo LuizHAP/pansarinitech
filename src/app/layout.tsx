@@ -15,6 +15,9 @@ import './globals.css';
 
 export const metadata: Metadata = {
   title: 'Luiz Pansarini',
+  verification: {
+    google: 'GZNxF2q4D9DHuIF5_7pksepwESxAyKggi0bRYQ-uqfs',
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
