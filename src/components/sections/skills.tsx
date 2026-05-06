@@ -2,10 +2,11 @@
 // src/components/sections/skills.tsx — v1.1 redesign (Client for useState filter)
 // Filter chips + logo/icon badge grid. Uses @iconify/react for brand logos;
 // textBadge:true items get a mono-font pill fallback.
-import { RevealGroup, RevealItem } from '@/components/ui';
+import { childVariant, RevealGroup } from '@/components/ui';
 import { skills } from '@/data/skills';
 import type { Locale } from '@/i18n/routing';
 import { Icon } from '@iconify/react';
+import { motion } from 'motion/react';
 import { useLocale, useTranslations } from 'next-intl';
 import { useState } from 'react';
 
@@ -72,37 +73,40 @@ export function Skills() {
         stagger={0.04}
       >
         {filtered.map((skill) => (
-          <RevealItem key={`${skill.catId}:${skill.name}`}>
-            <div className="group flex flex-col items-center gap-2 rounded-lg border border-border bg-card px-2 py-4 transition-all hover:border-primary/50 hover:shadow-sm">
-              {/* Logo or text badge */}
-              <div
-                className={[
-                  'flex size-8 items-center justify-center rounded',
-                  skill.textBadge || !skill.icon
-                    ? 'bg-muted font-mono text-[10px] text-muted-foreground'
-                    : 'bg-white',
-                ].join(' ')}
+          <motion.div
+            key={`${skill.catId}:${skill.name}`}
+            variants={childVariant}
+            className="group flex flex-col items-center gap-2 rounded-lg border border-border bg-card px-2 py-4 transition-all hover:border-primary/50 hover:shadow-sm"
+          >
+            {/* Logo or text badge — wrapper div removed; centering moved onto the icon/span itself */}
+            {skill.icon && !skill.textBadge ? (
+              <Icon
+                icon={skill.icon}
+                width={24}
+                height={24}
                 aria-hidden="true"
-              >
-                {skill.icon && !skill.textBadge ? (
-                  <Icon icon={skill.icon} width={24} height={24} />
-                ) : (
-                  <span>{skill.mono ?? skill.name.slice(0, 3)}</span>
-                )}
-              </div>
-              {/* Name */}
+                className="flex size-8 items-center justify-center rounded bg-white p-1"
+              />
+            ) : (
               <span
-                className={[
-                  'text-center text-[11px] font-medium leading-tight',
-                  skill.daily
-                    ? 'text-foreground underline decoration-primary decoration-1 underline-offset-4'
-                    : 'text-foreground',
-                ].join(' ')}
+                aria-hidden="true"
+                className="flex size-8 items-center justify-center rounded bg-muted font-mono text-[10px] text-muted-foreground"
               >
-                {skill.name}
+                {skill.mono ?? skill.name.slice(0, 3)}
               </span>
-            </div>
-          </RevealItem>
+            )}
+            {/* Name */}
+            <span
+              className={[
+                'text-center text-[11px] font-medium leading-tight',
+                skill.daily
+                  ? 'text-foreground underline decoration-primary decoration-1 underline-offset-4'
+                  : 'text-foreground',
+              ].join(' ')}
+            >
+              {skill.name}
+            </span>
+          </motion.div>
         ))}
       </RevealGroup>
     </section>
