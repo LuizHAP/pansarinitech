@@ -73,6 +73,7 @@ export async function FeaturedProjectsTeaser({ locale }: { locale: Locale }) {
                     alt={p.title}
                     sizes="(max-width: 768px) 100vw, 33vw"
                     priority={index === 0}
+                    fetchPriority={index === 0 ? 'high' : 'auto'}
                     placeholder="blur"
                     className="h-full w-full object-cover"
                   />
