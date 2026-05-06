@@ -39,7 +39,7 @@ describe('<Contact />', () => {
     const resumeLinks = screen.getAllByRole('link');
     const resumeLink = resumeLinks.find((el) => el.getAttribute('download') !== null);
     expect(resumeLink).toBeDefined();
-    expect(resumeLink?.getAttribute('href')).toMatch(/Luiz-Pansarini-Resume\.pdf$/);
+    expect(resumeLink?.getAttribute('href')).toMatch(/Luiz-Pansarini_Resume\.pdf$/);
   });
 
   it('renders PT locale contact title and resume link', () => {
@@ -49,6 +49,6 @@ describe('<Contact />', () => {
 
     const resumeLinks = screen.getAllByRole('link');
     const resumeLink = resumeLinks.find((el) => el.getAttribute('download') !== null);
-    expect(resumeLink?.getAttribute('href')).toMatch(/Luiz-Pansarini-Curriculo\.pdf$/);
+    expect(resumeLink?.getAttribute('href')).toMatch(/Luiz-Pansarini_Curriculo\.pdf$/);
   });
 });

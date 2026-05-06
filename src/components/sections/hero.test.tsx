@@ -22,7 +22,7 @@ describe('<Hero />', () => {
     // Resume CTA has download attribute pointing to the EN PDF
     const resumeCta = screen.getByRole('link', { name: /Resume/i });
     expect(resumeCta).toHaveAttribute('download');
-    expect(resumeCta.getAttribute('href')).toMatch(/Luiz-Pansarini-Resume\.pdf$/);
+    expect(resumeCta.getAttribute('href')).toMatch(/Luiz-Pansarini_Resume\.pdf$/);
   });
 
   it('renders the pt locale resume label and href', () => {
@@ -31,7 +31,7 @@ describe('<Hero />', () => {
     // PT label for resume is "Currículo"
     const resumeCta = screen.getByRole('link', { name: /Currículo/i });
     expect(resumeCta).toHaveAttribute('download');
-    expect(resumeCta.getAttribute('href')).toMatch(/Luiz-Pansarini-Curriculo\.pdf$/);
+    expect(resumeCta.getAttribute('href')).toMatch(/Luiz-Pansarini_Curriculo\.pdf$/);
 
     // Contact CTA in pt locale is "Contato"
     const contactCta = screen.getByRole('link', { name: /Contato/i });

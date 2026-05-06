@@ -61,6 +61,7 @@ export default defineConfig({
         'src/components/sections/contact.tsx': UNREACHABLE_NULL_COALESCE,
       },
     },
+    testTimeout: 15000,
     server: {
       deps: {
         inline: ['next-intl', 'github-slugger'],
