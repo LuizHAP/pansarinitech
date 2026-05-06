@@ -7,11 +7,11 @@
 // dot on the rail; pivot:true gets a primary-colored (saber blue/red) dot wrapped in
 // a Tooltip with "Pivot: IT → Engineering".
 import {
-  childVariant,
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
+  childVariant,
 } from '@/components/ui';
 import { career } from '@/data/career';
 import type { Locale } from '@/i18n/routing';
