@@ -7,7 +7,7 @@ import type { ReactNode } from 'react';
 
 import type { Variants } from 'motion/react';
 
-const childVariant: Variants = {
+export const childVariant: Variants = {
   hidden: { opacity: 0, y: 16 },
   show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: 'easeOut' } },
 };

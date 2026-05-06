@@ -27,7 +27,7 @@ export {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from './dropdown-menu';
-export { RevealGroup, RevealItem, RevealSection } from './reveal-group';
+export { childVariant, RevealGroup, RevealItem, RevealSection } from './reveal-group';
 export { Separator } from './separator';
 export {
   Sheet,
