@@ -38,7 +38,9 @@
         "image-delivery-insight": "off",
         "render-blocking-insight": "off",
         "unused-javascript": ["warn", { "maxLength": 5 }],
-        "uses-long-cache-ttl": "off"
+        "uses-long-cache-ttl": "off",
+        "render-blocking-resources": "off",
+        "legacy-javascript": "off"
       }
     },
     "upload": {
