@@ -60,7 +60,7 @@ export async function FeaturedProjectsTeaser({ locale }: { locale: Locale }) {
         </div>
       </div>
       <RevealGroup className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3" stagger={0.08}>
-        {featured.map((p) => (
+        {featured.map((p, index) => (
           <RevealItem key={p.slug}>
             <Link
               href={`/projects/${p.slug}`}
@@ -72,6 +72,7 @@ export async function FeaturedProjectsTeaser({ locale }: { locale: Locale }) {
                     src={HERO_IMAGES[p.slug as keyof typeof HERO_IMAGES]}
                     alt={p.title}
                     sizes="(max-width: 768px) 100vw, 33vw"
+                    priority={index === 0}
                     placeholder="blur"
                     className="h-full w-full object-cover"
                   />

@@ -50,7 +50,7 @@ export default async function ProjectsListingPage({
       <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">{t('title')}</h1>
       <p className="mt-3 max-w-2xl text-base text-muted-foreground">{t('listingIntro')}</p>
       <ul className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {projects.map((p) => (
+        {projects.map((p, index) => (
           <li key={p.slug}>
             <Link
               href={`/projects/${p.slug}`}
@@ -62,6 +62,7 @@ export default async function ProjectsListingPage({
                     src={HERO_IMAGES[p.slug as keyof typeof HERO_IMAGES]}
                     alt={p.title}
                     sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    priority={index === 0}
                     placeholder="blur"
                     className="h-full w-full object-cover"
                   />

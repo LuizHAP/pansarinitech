@@ -9,8 +9,7 @@ jobs:
     name: Lighthouse Performance / A11y / SEO / BP (production)
     runs-on: ubuntu-latest
     timeout-minutes: 12
-    # D-17: regressions open an issue but never block deploys.
-    continue-on-error: true
+    # Lighthouse failures block the deploy so regressions are caught early.
     steps:
       - uses: actions/checkout@v4
 

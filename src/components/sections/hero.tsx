@@ -35,8 +35,7 @@ export function Hero() {
         width={256}
         height={256}
         sizes="(max-width: 768px) 160px, 256px"
-        // Next 16 LCP boost — static import gives auto blurDataURL.
-        preload
+        priority
         placeholder="blur"
         className="size-40 rounded-full object-cover sm:size-64"
       />
