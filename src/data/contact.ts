@@ -9,8 +9,8 @@ export const contact: Contact = {
   linkedin: 'https://linkedin.com/in/luizpansarini',
   github: 'https://github.com/LuizHAP',
   resumePdf: {
-    en: '/Luiz-Pansarini-Resume.pdf',
-    pt: '/Luiz-Pansarini-Curriculo.pdf',
+    en: '/Luiz-Pansarini_Resume.pdf',
+    pt: '/Luiz-Pansarini_Curriculo.pdf',
   },
   mailtoSubject: {
     en: 'Portfolio inquiry — [your name]',
