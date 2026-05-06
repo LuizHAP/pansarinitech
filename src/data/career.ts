@@ -14,7 +14,7 @@ export const career: Role[] = [
       en: 'Principal Software Engineer',
       pt: 'Principal Software Engineer',
     },
-    period: { start: '2023-01', end: 'present' },
+    period: { start: '2023-01', end: '2026-04' },
     bullets: {
       en: [
         'Leading the no-code → Next.js + headless CMS migration powering the first US heavy-machinery e-commerce.',

@@ -46,8 +46,8 @@ export const aboutBullets: Bullet[] = [
   {
     icon: 'Globe',
     text: {
-      en: 'Leading the first US heavy-machinery e-commerce',
-      pt: 'Liderando o 1° e-commerce US de máquinas pesadas',
+      en: 'Built the first US heavy-machinery e-commerce',
+      pt: 'Construí o 1° e-commerce US de máquinas pesadas',
     },
   },
 ];

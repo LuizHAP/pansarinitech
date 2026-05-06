@@ -9,8 +9,8 @@ export const hero: Hero = {
     pt: 'Principal Software Engineer · Brasil',
   },
   valueProp: {
-    en: "From IT helpdesk at Klabin to Principal Engineer at Machinery Partner in 14 years. I build the products I'd want to use — Next.js, React Native, and the messy backend that ties them together.",
-    pt: 'Do helpdesk de TI na Klabin a Principal Engineer na Machinery Partner em 14 anos. Construo os produtos que eu mesmo gostaria de usar — Next.js, React Native, e o backend bagunçado que conecta tudo.',
+    en: "From IT helpdesk at Klabin to Principal Engineer in 14 years. I build the products I'd want to use — Next.js, React Native, and the messy backend that ties them together. Open to new opportunities.",
+    pt: 'Do helpdesk de TI na Klabin a Principal Engineer em 14 anos. Construo os produtos que eu mesmo gostaria de usar — Next.js, React Native, e o backend bagunçado que conecta tudo. Aberto a novas oportunidades.',
   },
   photoAlt: {
     en: 'Luiz Pansarini, Principal Software Engineer',

@@ -4,10 +4,10 @@
 import { type NowContent, NowSchema } from './schemas';
 
 export const now: NowContent = {
-  lastUpdated: '2026-05-02',
+  lastUpdated: '2026-05-06',
   workingOn: {
-    en: 'Leading the no-code → Next.js + headless CMS migration at Machinery Partner. Day-to-day means React Server Components, app-router edges, payment integrations, and a lot of phone calls about heavy machinery I never knew had model numbers. On the side: writing the occasional engineering post on /blog.',
-    pt: 'Liderando a migração de no-code para Next.js + headless CMS na Machinery Partner. No dia a dia: React Server Components, bordas do app router, integrações de pagamento, e muitas ligações sobre máquinas pesadas que eu nunca soube que tinham número de modelo. No tempo livre: escrevendo posts ocasionais sobre engenharia em /blog.',
+    en: 'Wrapped up my time at Machinery Partner in April 2026 after leading the no-code → Next.js migration that became the first US heavy-machinery e-commerce. Currently open to work — looking for principal or senior full-stack roles in web, mobile, or product-focused teams. Writing the occasional engineering post on /blog in the meantime.',
+    pt: 'Encerrei minha jornada na Machinery Partner em abril de 2026 após liderar a migração de no-code para Next.js que se tornou o primeiro e-commerce de máquinas pesadas dos EUA. Atualmente open to work — procurando oportunidades de nível principal ou sênior em times focados em web, mobile ou produto. Escrevendo posts ocasionais sobre engenharia em /blog no intervalo.',
   },
   reading: {
     en: 'Re-reading Designing Data-Intensive Applications between sprints. Catching up on the React 19 + Next 16 changelog (especially the React Compiler GA notes and Turbopack default). Threading through the new Tailwind v4 OKLCH model in real projects.',
