@@ -120,6 +120,15 @@
       "label": "Conteúdo"
     }
   },
+  "personalProjects": {
+    "title": "Projetos pessoais",
+    "subtitle": "Projetos paralelos feitos por diversão, prática e usuários reais.",
+    "statusLive": "No ar",
+    "statusInDev": "Em desenvolvimento",
+    "visitSite": "Visitar site",
+    "viewCode": "Ver código",
+    "newTab": "abre em nova aba"
+  },
   "seo": {
     "homeTitle": "Principal Software Engineer",
     "siteDescription": "Luiz Pansarini — Principal Software Engineer (Brasil/EUA). Portfólio bilíngue: estudos de caso, blog e contato.",

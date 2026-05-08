@@ -120,6 +120,15 @@
       "label": "Contents"
     }
   },
+  "personalProjects": {
+    "title": "Personal projects",
+    "subtitle": "Side projects built for fun, practice, and real users.",
+    "statusLive": "Live",
+    "statusInDev": "In development",
+    "visitSite": "Visit site",
+    "viewCode": "View code",
+    "newTab": "opens in a new tab"
+  },
   "seo": {
     "homeTitle": "Principal Software Engineer",
     "siteDescription": "Luiz Pansarini — Principal Software Engineer (Brazil/US). Bilingual portfolio: case studies, blog, and contact.",

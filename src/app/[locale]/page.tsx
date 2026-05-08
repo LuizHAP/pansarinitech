@@ -5,6 +5,7 @@ import {
   FeaturedProjectsTeaser,
   Hero,
   NowPreview,
+  PersonalProjects,
   Skills,
 } from '@/components/sections';
 import type { Locale } from '@/i18n/routing';
@@ -42,6 +43,7 @@ export default async function HomePage({
       <Hero />
       <About />
       <FeaturedProjectsTeaser locale={locale} />
+      <PersonalProjects />
       <CareerTimeline />
       <Skills />
       <NowPreview />

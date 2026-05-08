@@ -5,5 +5,6 @@ export { Contact } from './contact';
 export { CopyEmailButton } from './copy-email-button';
 export { FeaturedProjectsTeaser } from './featured-projects-teaser';
 export { Hero } from './hero';
+export { PersonalProjects } from './personal-projects';
 export { NowPreview } from './now-preview';
 export { Skills } from './skills';
