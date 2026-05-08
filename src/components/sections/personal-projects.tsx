@@ -43,6 +43,7 @@ function ProjectScreenshot({ project }: { project: PersonalProject }) {
           alt={project.name}
           width={640}
           height={400}
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 400px"
           className="h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
         />
       </div>
