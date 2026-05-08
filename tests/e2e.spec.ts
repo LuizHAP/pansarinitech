@@ -79,7 +79,7 @@ test.describe('Navigation preserves locale (lib/i18n/navigation Link wrapper)', 
 });
 
 test.describe('Resume PDF download per locale (CONTACT-04 + D-06 #4)', () => {
-  test('EN /en hero "Resume" CTA downloads Luiz-Pansarini-Resume.pdf', async ({ page }) => {
+  test('EN /en hero "Resume" CTA downloads Luiz-Pansarini_Resume.pdf', async ({ page }) => {
     await page.goto('/en');
     const downloadPromise = page.waitForEvent('download');
     // Hero CTA is the FIRST resume link; Contact section adds another with
@@ -89,10 +89,10 @@ test.describe('Resume PDF download per locale (CONTACT-04 + D-06 #4)', () => {
       .first()
       .click();
     const download = await downloadPromise;
-    expect(download.suggestedFilename()).toBe('Luiz-Pansarini-Resume.pdf');
+    expect(download.suggestedFilename()).toBe('Luiz-Pansarini_Resume.pdf');
   });
 
-  test('PT /pt hero "Currículo" CTA downloads Luiz-Pansarini-Curriculo.pdf', async ({ page }) => {
+  test('PT /pt hero "Currículo" CTA downloads Luiz-Pansarini_Curriculo.pdf', async ({ page }) => {
     await page.goto('/pt');
     const downloadPromise = page.waitForEvent('download');
     await page
@@ -100,7 +100,7 @@ test.describe('Resume PDF download per locale (CONTACT-04 + D-06 #4)', () => {
       .first()
       .click();
     const download = await downloadPromise;
-    expect(download.suggestedFilename()).toBe('Luiz-Pansarini-Curriculo.pdf');
+    expect(download.suggestedFilename()).toBe('Luiz-Pansarini_Curriculo.pdf');
   });
 });
 
