@@ -50,7 +50,7 @@
   3. Personal Projects cards animate in with a scroll-reveal stagger pattern consistent with the v1.1 animation system
   4. Hover states, focus rings, and scroll-reveal entry timings are consistent across all homepage sections — no section feels out of sync with the others
 **Plans**: 3 plans
-  - [ ] 02-01-PLAN.md — CopyEmailButton icon swap (AnimatePresence + Check icon) + Test 7 icon-swap assertion
+  - [x] 02-01-PLAN.md — CopyEmailButton icon swap (AnimatePresence + Check icon) + Test 7 icon-swap assertion
   - [ ] 02-02-PLAN.md — Micro-interaction fixes: Skills focus ring DEV-1 + NowPreview link DEV-2
   - [ ] 02-03-PLAN.md — Personal Projects screenshot wiring (human hand-off) + UX-11 stagger visual verify
 **UI hint**: yes
@@ -83,7 +83,7 @@
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Cmd+K Command Palette | 2/2 | Complete   | 2026-05-13 |
-| 2. UX Polish — Testing, Interactions & Animations | 0/3 | Not started | - |
+| 2. UX Polish — Testing, Interactions & Animations | 1/3 | In progress | - |
 | 3. Automated Content Pipeline | 0/2 | Not started | - |
 | 4. SEO Enrichment | 0/TBD | Not started | - |
 
