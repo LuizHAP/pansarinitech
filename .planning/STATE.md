@@ -3,19 +3,19 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: UX Polish + Automated Content Pipeline
 status: executing
-last_updated: "2026-05-13T15:32:15.503Z"
+last_updated: "2026-05-13T15:45:00.000Z"
 last_activity: 2026-05-13
 progress:
   total_phases: 4
   completed_phases: 3
   total_plans: 11
-  completed_plans: 9
-  percent: 82
+  completed_plans: 10
+  percent: 91
 ---
 
 # Project State — pansarinitech
 
-**Last updated:** 2026-05-13 after 02-01 executed (AnimatePresence icon swap + Test 7; 200 tests pass)
+**Last updated:** 2026-05-13 after 02-02 executed (UX-12 micro-interaction deviations fixed; 200 tests pass)
 
 ---
 
@@ -34,7 +34,7 @@ progress:
 ## Current Position
 
 Phase: 02
-Plan: 02 (02-01 complete; 02-02, 02-03 remaining)
+Plan: 03 (02-01, 02-02 complete; 02-03 remaining)
 Status: Executing
 Last activity: 2026-05-13
 
@@ -86,6 +86,7 @@ Last activity: 2026-05-13
 | No contact form in v1 | mailto + LinkedIn covers ~95% of recruiter intent; forms = anti-spam complexity | PROJECT.md |
 | Phase 2 = explicit deployable milestone | Static sections via typed TS data ship a real bilingual portfolio without MDX | research/SUMMARY.md |
 | Mock `motion/react` in jsdom tests with synchronous AnimatePresence stub | AnimatePresence mode="wait" holds exiting elements in DOM until exit animation completes; jsdom has no animation frames — stub makes AnimatePresence a React.Fragment for instant swap | 02-01-SUMMARY.md |
+| Inline prose links: decoration-2/underline-offset-4/hover:decoration-foreground (not font-semibold/text-foreground) | Preserves paragraph flow; font-weight and color changes disrupt inline prose readability | 02-02-SUMMARY.md |
 
 ### Open TODOs
 
@@ -128,13 +129,13 @@ Last activity: 2026-05-13
 
 ### Last Session
 
-- Executed 02-01: AnimatePresence icon swap in CopyEmailButton (Check/CopyIcon animated swap)
-- Added Test 7 to copy-email-button.test.tsx; 200 total tests pass
-- Commits: `953e6b2` (feat task 1), `bb8ccc4` (test task 2)
+- Executed 02-02: Fixed UX-12 micro-interaction deviations (DEV-1 focus ring, DEV-2 link hover)
+- Commits: `dc05532` (fix DEV-1 skills.tsx), `7803e58` (fix DEV-2 now-preview.tsx)
+- 200 tests pass, 0 regressions
 
 ### Next Session
 
-Continue Phase 2 — execute 02-02 (Personal Projects polish) and 02-03 (micro-interactions). Run `/gsd-execute-phase 02`.
+Continue Phase 2 — execute 02-03 (micro-interactions). Run `/gsd-execute-phase 02`.
 
 ---
 

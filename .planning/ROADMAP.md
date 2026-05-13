@@ -51,8 +51,8 @@
   4. Hover states, focus rings, and scroll-reveal entry timings are consistent across all homepage sections — no section feels out of sync with the others
 **Plans**: 3 plans
   - [x] 02-01-PLAN.md — CopyEmailButton icon swap (AnimatePresence + Check icon) + Test 7 icon-swap assertion
-  - [ ] 02-02-PLAN.md — Micro-interaction fixes: Skills focus ring DEV-1 + NowPreview link DEV-2
-  - [ ] 02-03-PLAN.md — Personal Projects screenshot wiring (human hand-off) + UX-11 stagger visual verify
+  - [x] 02-02-PLAN.md — Micro-interaction fixes: Skills focus ring DEV-1 + NowPreview link DEV-2
+  - [x] 02-03-PLAN.md — Personal Projects screenshot wiring (human hand-off) + UX-11 stagger visual verify
 **UI hint**: yes
 
 ### Phase 3: Automated Content Pipeline

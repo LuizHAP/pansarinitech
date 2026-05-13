@@ -30,7 +30,7 @@
 
 ### Micro-Interactions
 
-- [ ] **UX-12**: Hover states, focus rings, and scroll-reveal timings are polished across all homepage sections
+- [x] **UX-12**: Hover states, focus rings, and scroll-reveal timings are polished across all homepage sections
 
 ---
 
