@@ -1,6 +1,7 @@
 // Tests for CopyEmailButton client component.
 // Covers EN/PT labels, clipboard success, execCommand fallback, and total failure paths.
 import userEvent from '@testing-library/user-event';
+import React from 'react';
 import { toast } from 'sonner';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -8,6 +9,41 @@ vi.mock('sonner', () => ({
   toast: { success: vi.fn(), error: vi.fn() },
   Toaster: () => null,
 }));
+
+vi.mock('lucide-react', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('lucide-react')>();
+  return {
+    ...actual,
+    Check: () => React.createElement('span', { 'data-testid': 'check-icon' }),
+    CopyIcon: () => React.createElement('span', { 'data-testid': 'copy-icon' }),
+  };
+});
+
+// Mock motion/react so AnimatePresence renders children without animation delays.
+// This prevents jsdom from holding exiting elements in the DOM during fake exit transitions.
+vi.mock('motion/react', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('motion/react')>();
+  return {
+    ...actual,
+    AnimatePresence: ({ children }: { children: React.ReactNode }) =>
+      React.createElement(React.Fragment, null, children),
+    motion: new Proxy(actual.motion, {
+      get(_target, prop) {
+        const tag = String(prop);
+        return ({ children, ...props }: Record<string, unknown> & { children?: React.ReactNode }) =>
+          React.createElement(
+            tag,
+            Object.fromEntries(
+              Object.entries(props).filter(
+                ([k]) => !['initial', 'animate', 'exit', 'transition', 'variants'].includes(k),
+              ),
+            ),
+            children,
+          );
+      },
+    }),
+  };
+});
 
 import { act, render, screen } from '@/test/render';
 import { CopyEmailButton } from './copy-email-button';
@@ -137,5 +173,26 @@ describe('<CopyEmailButton />', () => {
     expect(btn).toHaveTextContent('Copy email');
 
     vi.useRealTimers();
+  });
+
+  it('Test 7 (icon swap): shows check-icon after clipboard success and hides copy-icon', async () => {
+    const user = userEvent.setup();
+    const writeTextSpy = vi.fn().mockResolvedValue(undefined);
+    Object.defineProperty(navigator, 'clipboard', {
+      configurable: true,
+      value: { writeText: writeTextSpy },
+    });
+
+    render(<CopyEmailButton email={TEST_EMAIL} />, { locale: 'en' });
+
+    // Before click: copy-icon present, check-icon absent
+    expect(screen.getByTestId('copy-icon')).toBeInTheDocument();
+    expect(screen.queryByTestId('check-icon')).toBeNull();
+
+    await user.click(screen.getByRole('button'));
+
+    // After click: check-icon present, copy-icon absent
+    expect(screen.getByTestId('check-icon')).toBeInTheDocument();
+    expect(screen.queryByTestId('copy-icon')).toBeNull();
   });
 });
