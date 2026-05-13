@@ -1,3 +1,4 @@
+export { CommandPalette, CommandPaletteRoot, CommandPaletteTrigger } from './command-palette';
 export { EasterEgg } from './easter-egg';
 export { Footer } from './footer';
 export { Header } from './header';

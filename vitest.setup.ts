@@ -38,6 +38,24 @@ Object.defineProperty(global, 'IntersectionObserver', {
   value: IntersectionObserverMock,
 });
 
+// jsdom does not implement ResizeObserver — cmdk's Command primitive uses it
+// internally. Provide a no-op stub.
+const ResizeObserverMock = class {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+};
+Object.defineProperty(window, 'ResizeObserver', {
+  writable: true,
+  configurable: true,
+  value: ResizeObserverMock,
+});
+Object.defineProperty(global, 'ResizeObserver', {
+  writable: true,
+  configurable: true,
+  value: ResizeObserverMock,
+});
+
 afterEach(() => {
   cleanup();
 });
