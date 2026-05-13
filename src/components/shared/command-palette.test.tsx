@@ -283,7 +283,9 @@ describe('<CommandPaletteRoot />', () => {
     await user.click(screen.getByText('About'));
 
     await vi.waitFor(() => {
-      expect(Element.prototype.scrollIntoView).toHaveBeenCalledWith({ behavior: 'smooth' });
+      expect(Element.prototype.scrollIntoView).toHaveBeenCalledWith(
+        expect.objectContaining({ behavior: expect.stringMatching(/smooth|auto/) }),
+      );
     });
 
     document.body.removeChild(aboutEl);
@@ -301,7 +303,9 @@ describe('<CommandPaletteRoot />', () => {
     await user.click(screen.getByText('Home'));
 
     await vi.waitFor(() => {
-      expect(Element.prototype.scrollIntoView).toHaveBeenCalledWith({ behavior: 'smooth' });
+      expect(Element.prototype.scrollIntoView).toHaveBeenCalledWith(
+        expect.objectContaining({ behavior: expect.stringMatching(/smooth|auto/) }),
+      );
     });
 
     document.body.removeChild(heroEl);
@@ -322,7 +326,7 @@ describe('<CommandPaletteRoot />', () => {
       expect(window.open).toHaveBeenCalledWith(
         '/Luiz-Pansarini_Curriculo.pdf',
         '_blank',
-        'noopener',
+        'noopener,noreferrer',
       );
     });
   });
@@ -335,7 +339,11 @@ describe('<CommandPaletteRoot />', () => {
     await user.click(screen.getByText('Resume — EN (PDF)'));
 
     await vi.waitFor(() => {
-      expect(window.open).toHaveBeenCalledWith('/Luiz-Pansarini_Resume.pdf', '_blank', 'noopener');
+      expect(window.open).toHaveBeenCalledWith(
+        '/Luiz-Pansarini_Resume.pdf',
+        '_blank',
+        'noopener,noreferrer',
+      );
     });
   });
 
@@ -350,7 +358,7 @@ describe('<CommandPaletteRoot />', () => {
       expect(window.open).toHaveBeenCalledWith(
         'https://linkedin.com/in/luizpansarini',
         '_blank',
-        'noopener',
+        'noopener,noreferrer',
       );
     });
   });
@@ -363,7 +371,11 @@ describe('<CommandPaletteRoot />', () => {
     await user.click(screen.getByText('GitHub profile'));
 
     await vi.waitFor(() => {
-      expect(window.open).toHaveBeenCalledWith('https://github.com/LuizHAP', '_blank', 'noopener');
+      expect(window.open).toHaveBeenCalledWith(
+        'https://github.com/LuizHAP',
+        '_blank',
+        'noopener,noreferrer',
+      );
     });
   });
 });

@@ -70,10 +70,23 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
     return () => document.removeEventListener('keydown', onKeydown);
   }, [open, onOpenChange]);
 
+  const prefersReducedMotion =
+    typeof window !== 'undefined'
+      ? window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      : false;
+
   // Close-then-act: ensures dialog overlay is gone before action executes (D-05).
   function runCommand(action: () => void) {
     onOpenChange(false);
     requestAnimationFrame(action);
+  }
+
+  function scrollTo(id: string) {
+    runCommand(() =>
+      document.getElementById(id)?.scrollIntoView({
+        behavior: prefersReducedMotion ? 'auto' : 'smooth',
+      }),
+    );
   }
 
   return (
@@ -90,53 +103,23 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
 
         {/* Navigate group */}
         <CommandGroup heading={t('groupNavigate')}>
-          <CommandItem
-            onSelect={() =>
-              runCommand(() =>
-                document.getElementById('hero')?.scrollIntoView({ behavior: 'smooth' }),
-              )
-            }
-          >
+          <CommandItem onSelect={() => scrollTo('hero')}>
             <Home className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
             {t('navHero')}
           </CommandItem>
-          <CommandItem
-            onSelect={() =>
-              runCommand(() =>
-                document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' }),
-              )
-            }
-          >
+          <CommandItem onSelect={() => scrollTo('about')}>
             <User className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
             {t('navAbout')}
           </CommandItem>
-          <CommandItem
-            onSelect={() =>
-              runCommand(() =>
-                document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' }),
-              )
-            }
-          >
+          <CommandItem onSelect={() => scrollTo('projects')}>
             <Code2 className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
             {t('navProjects')}
           </CommandItem>
-          <CommandItem
-            onSelect={() =>
-              runCommand(() =>
-                document.getElementById('skills')?.scrollIntoView({ behavior: 'smooth' }),
-              )
-            }
-          >
+          <CommandItem onSelect={() => scrollTo('skills')}>
             <Layers className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
             {t('navSkills')}
           </CommandItem>
-          <CommandItem
-            onSelect={() =>
-              runCommand(() =>
-                document.getElementById('career')?.scrollIntoView({ behavior: 'smooth' }),
-              )
-            }
-          >
+          <CommandItem onSelect={() => scrollTo('career')}>
             <Briefcase className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
             {t('navCareer')}
           </CommandItem>
@@ -144,13 +127,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
             <BookOpen className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
             {t('navBlog')}
           </CommandItem>
-          <CommandItem
-            onSelect={() =>
-              runCommand(() =>
-                document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' }),
-              )
-            }
-          >
+          <CommandItem onSelect={() => scrollTo('contact')}>
             <Mail className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
             {t('navContact')}
           </CommandItem>
@@ -203,7 +180,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
         <CommandGroup heading={t('groupLinks')}>
           <CommandItem
             onSelect={() =>
-              runCommand(() => window.open(contact.resumePdf.pt, '_blank', 'noopener'))
+              runCommand(() => window.open(contact.resumePdf.pt, '_blank', 'noopener,noreferrer'))
             }
           >
             <FileText className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
@@ -211,20 +188,24 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
           </CommandItem>
           <CommandItem
             onSelect={() =>
-              runCommand(() => window.open(contact.resumePdf.en, '_blank', 'noopener'))
+              runCommand(() => window.open(contact.resumePdf.en, '_blank', 'noopener,noreferrer'))
             }
           >
             <FileText className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
             {t('linkResumeEn')}
           </CommandItem>
           <CommandItem
-            onSelect={() => runCommand(() => window.open(contact.linkedin, '_blank', 'noopener'))}
+            onSelect={() =>
+              runCommand(() => window.open(contact.linkedin, '_blank', 'noopener,noreferrer'))
+            }
           >
             <ExternalLink className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
             {t('linkLinkedin')}
           </CommandItem>
           <CommandItem
-            onSelect={() => runCommand(() => window.open(contact.github, '_blank', 'noopener'))}
+            onSelect={() =>
+              runCommand(() => window.open(contact.github, '_blank', 'noopener,noreferrer'))
+            }
           >
             <ExternalLink className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
             {t('linkGithub')}
