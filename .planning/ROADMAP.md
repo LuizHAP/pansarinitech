@@ -17,7 +17,7 @@
 ## Phases
 
 - [x] **Phase 1: Cmd+K Command Palette** — Full-featured keyboard command palette accessible from anywhere on the site (completed 2026-05-13)
-- [ ] **Phase 2: UX Polish — Testing, Interactions & Animations** — Copy-email tests, Personal Projects polish, and micro-interaction refinements across all sections
+- [x] **Phase 2: UX Polish — Testing, Interactions & Animations** — Copy-email tests, Personal Projects polish, and micro-interaction refinements across all sections (completed 2026-05-13)
 - [ ] **Phase 3: Automated Content Pipeline** — Scheduled Claude Code agent that generates bilingual MDX posts and opens GitHub PRs for human review
 - [ ] **Phase 4: SEO Enrichment** — MDX heading typography fix + JSON-LD structured data for blog and project posts
 
@@ -83,7 +83,7 @@
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Cmd+K Command Palette | 2/2 | Complete   | 2026-05-13 |
-| 2. UX Polish — Testing, Interactions & Animations | 1/3 | In progress | - |
+| 2. UX Polish — Testing, Interactions & Animations | 3/3 | Complete   | 2026-05-13 |
 | 3. Automated Content Pipeline | 0/2 | Not started | - |
 | 4. SEO Enrichment | 0/TBD | Not started | - |
 

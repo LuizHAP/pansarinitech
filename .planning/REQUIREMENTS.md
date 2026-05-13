@@ -25,8 +25,8 @@
 
 ### Personal Projects Section
 
-- [ ] **UX-10**: Personal Projects section layout is refined to match the quality standard of other homepage sections
-- [ ] **UX-11**: Personal Projects section has scroll-reveal stagger animations consistent with the v1.1 animation system
+- [x] **UX-10**: Personal Projects section layout is refined to match the quality standard of other homepage sections
+- [x] **UX-11**: Personal Projects section has scroll-reveal stagger animations consistent with the v1.1 animation system
 
 ### Micro-Interactions
 
