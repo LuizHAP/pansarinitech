@@ -105,6 +105,30 @@
       "backToBlog": "← Back to blog"
     }
   },
+  "commandPalette": {
+    "title": "Command Palette",
+    "description": "Search for a command or action",
+    "placeholder": "Type a command or search...",
+    "empty": "No results found.",
+    "triggerLabel": "Open command palette",
+    "groupNavigate": "Navigate to",
+    "groupActions": "Actions",
+    "groupLinks": "Links",
+    "navHero": "Home",
+    "navAbout": "About",
+    "navProjects": "Projects",
+    "navSkills": "Skills",
+    "navCareer": "Career",
+    "navContact": "Contact",
+    "navBlog": "Blog",
+    "actionToggleTheme": "Toggle theme (Jedi / Sith)",
+    "actionSwitchPt": "Switch to Portuguese",
+    "actionSwitchEn": "Switch to English",
+    "linkResumePt": "Resume — PT (PDF)",
+    "linkResumeEn": "Resume — EN (PDF)",
+    "linkLinkedin": "LinkedIn profile",
+    "linkGithub": "GitHub profile"
+  },
   "mdx": {
     "callout": {
       "info": "Note:",

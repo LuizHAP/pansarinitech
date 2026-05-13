@@ -105,6 +105,30 @@
       "backToBlog": "← Voltar ao blog"
     }
   },
+  "commandPalette": {
+    "title": "Painel de Comandos",
+    "description": "Pesquise por um comando ou ação",
+    "placeholder": "Digite um comando ou pesquise...",
+    "empty": "Nenhum resultado encontrado.",
+    "triggerLabel": "Abrir painel de comandos",
+    "groupNavigate": "Navegar para",
+    "groupActions": "Ações",
+    "groupLinks": "Links",
+    "navHero": "Início",
+    "navAbout": "Sobre",
+    "navProjects": "Projetos",
+    "navSkills": "Habilidades",
+    "navCareer": "Carreira",
+    "navContact": "Contato",
+    "navBlog": "Blog",
+    "actionToggleTheme": "Alternar tema (Jedi / Sith)",
+    "actionSwitchPt": "Trocar para Português",
+    "actionSwitchEn": "Trocar para Inglês",
+    "linkResumePt": "Currículo — PT (PDF)",
+    "linkResumeEn": "Resume — EN (PDF)",
+    "linkLinkedin": "Perfil no LinkedIn",
+    "linkGithub": "Perfil no GitHub"
+  },
   "mdx": {
     "callout": {
       "info": "Nota:",

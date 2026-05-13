@@ -30,6 +30,7 @@ const COMPONENT_FILES = [
   'src/components/shared/skip-to-content.tsx',
   'src/components/shared/easter-egg.tsx',
   'src/components/shared/theme-provider.tsx',
+  'src/components/shared/command-palette.tsx',
 ];
 
 const PURE_100 = { statements: 100, branches: 100, functions: 100, lines: 100 };
@@ -64,7 +65,7 @@ export default defineConfig({
     testTimeout: 15000,
     server: {
       deps: {
-        inline: ['next-intl', 'github-slugger'],
+        inline: ['next-intl', 'github-slugger', 'cmdk'],
       },
     },
     projects: [

@@ -26,6 +26,7 @@ export function Hero() {
 
   return (
     <section
+      id="hero"
       aria-labelledby="hero-heading"
       className="mx-auto flex max-w-5xl flex-col items-center gap-6 px-4 py-12 sm:flex-row-reverse sm:items-center sm:justify-between sm:py-20"
     >
