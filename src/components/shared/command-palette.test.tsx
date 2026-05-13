@@ -34,10 +34,8 @@ import { CommandPaletteRoot } from './command-palette';
 // Must import after mocks are declared
 import { switchLocale } from './locale-toggle-action';
 
-// jsdom does not define scrollIntoView on Element.prototype — define it once
-// at module scope so vi.spyOn can wrap it. This mirrors the pattern used for
-// window.matchMedia in vitest.setup.ts.
-Element.prototype.scrollIntoView = () => {};
+// Note: Element.prototype.scrollIntoView stub is defined in vitest.setup.ts
+// (cmdk calls scrollIntoView internally — jsdom doesn't implement it).
 
 describe('<CommandPaletteRoot />', () => {
   beforeEach(() => {

@@ -1,10 +1,28 @@
 import { render, screen } from '@/test/render';
+import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
 // locale-toggle-action is a Server Action ('use server') — mock it for jsdom
 vi.mock('./locale-toggle-action', () => ({
   switchLocale: vi.fn(async () => {}),
 }));
+
+// @/lib/i18n/navigation is needed by CommandPaletteRoot (useRouter for Blog command)
+vi.mock('@/lib/i18n/navigation', async () => {
+  const actual =
+    await vi.importActual<typeof import('@/lib/i18n/navigation')>('@/lib/i18n/navigation');
+  return {
+    ...actual,
+    useRouter: () => ({
+      push: vi.fn(),
+      replace: vi.fn(),
+      back: vi.fn(),
+      forward: vi.fn(),
+      refresh: vi.fn(),
+      prefetch: vi.fn(),
+    }),
+  };
+});
 
 import { Header } from './header';
 
@@ -33,5 +51,45 @@ describe('<Header />', () => {
     const themeBtn = screen.getByRole('button', { name: /toggle theme/i });
     expect(themeBtn).toBeInTheDocument();
     expect(themeBtn).toHaveAttribute('aria-pressed');
+  });
+
+  it('renders the command palette trigger button between locale and theme toggles', () => {
+    render(<Header />, { locale: 'en' });
+
+    const trigger = screen.getByRole('button', { name: /open command palette/i });
+    expect(trigger).toBeInTheDocument();
+  });
+
+  it('clicking the palette trigger opens the command palette dialog', async () => {
+    render(<Header />, { locale: 'en' });
+    const user = userEvent.setup();
+
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+
+    const trigger = screen.getByRole('button', { name: /open command palette/i });
+    await user.click(trigger);
+
+    expect(screen.getByRole('dialog')).toBeInTheDocument();
+  });
+
+  it('trigger appears after locale toggle and before theme toggle in DOM order', () => {
+    render(<Header />, { locale: 'en' });
+
+    const allButtons = screen.getAllByRole('button');
+    const localeEnIdx = allButtons.findIndex((b) => b.textContent?.trim() === 'EN');
+    const localeCtrlIdx = allButtons.findIndex((b) =>
+      /switch language/i.test(b.getAttribute('aria-label') ?? ''),
+    );
+    const triggerIdx = allButtons.findIndex((b) =>
+      /open command palette/i.test(b.getAttribute('aria-label') ?? ''),
+    );
+    const themeIdx = allButtons.findIndex((b) =>
+      /toggle theme/i.test(b.getAttribute('aria-label') ?? ''),
+    );
+
+    // LocaleToggle buttons appear before the palette trigger
+    expect(Math.max(localeEnIdx, localeCtrlIdx)).toBeLessThan(triggerIdx);
+    // Palette trigger appears before the theme toggle
+    expect(triggerIdx).toBeLessThan(themeIdx);
   });
 });

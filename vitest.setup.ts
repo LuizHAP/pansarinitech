@@ -38,6 +38,10 @@ Object.defineProperty(global, 'IntersectionObserver', {
   value: IntersectionObserverMock,
 });
 
+// jsdom does not implement scrollIntoView — cmdk calls it when scrolling the
+// selected item into view. Provide a no-op stub so cmdk doesn't throw.
+Element.prototype.scrollIntoView = () => {};
+
 // jsdom does not implement ResizeObserver — cmdk's Command primitive uses it
 // internally. Provide a no-op stub.
 const ResizeObserverMock = class {

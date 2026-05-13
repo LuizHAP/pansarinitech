@@ -1,8 +1,11 @@
 import { Link } from '@/lib/i18n/navigation';
 // src/components/shared/header.tsx
-// 56px sticky header — D-20: brand + locale toggle + theme toggle ONLY in Phase 1.
-// No nav links, no mobile hamburger (added Phase 2+).
+// 56px sticky header — D-20: brand + locale toggle + command palette trigger + theme toggle.
+// CommandPaletteRoot is a 'use client' component; RSC parents can render client children.
+// Option B chosen (P2 Task 2): CommandPaletteRoot owns the open state; trigger and palette
+// are co-located in one client tree. No module-scoped singleton pattern needed.
 import { useTranslations } from 'next-intl';
+import { CommandPaletteRoot } from './command-palette';
 import { LocaleToggle } from './locale-toggle';
 import { ThemeToggle } from './theme-toggle';
 
@@ -21,6 +24,7 @@ export function Header() {
         </Link>
         <div className="flex-1" />
         <LocaleToggle />
+        <CommandPaletteRoot />
         <ThemeToggle />
       </div>
     </header>
