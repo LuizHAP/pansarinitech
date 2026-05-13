@@ -1,0 +1,135 @@
+name: Generate Blog Post
+
+on:
+  schedule:
+    - cron: "0 9 */5 * *"    # ~every 5 days at 09:00 UTC (days 1, 6, 11, 16, 21, 26, 31)
+  workflow_dispatch:           # manual on-demand trigger from GitHub Actions UI
+
+jobs:
+  generate-post:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15        # content generation needs more runway than ci.yml's 8 min
+    permissions:
+      contents: write          # required for git push (branch creation)
+      pull-requests: write     # required for gh pr create
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install (frozen lockfile)
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Claude CLI
+        run: npm install -g @anthropic-ai/claude-code
+
+      - name: Configure git identity
+        run: |
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+
+      - name: Resolve topic and slug
+        id: topic
+        run: |
+          TODAY=$(date -u +%Y-%m-%d)
+          LAST=$(node -e "
+            const fs = require('fs');
+            const state = fs.existsSync('content/blog/.pipeline-state.json')
+              ? JSON.parse(fs.readFileSync('content/blog/.pipeline-state.json', 'utf8'))
+              : { last_topic: null };
+            console.log(state.last_topic || 'null');
+          ")
+          NEXT=$(node -e "
+            const seq = ['nextjs-react-frontend','software-engineering-career','ai-in-development','personal-projects-open-source'];
+            const last = process.argv[1] === 'null' ? null : process.argv[1];
+            const idx = last === null ? 0 : (seq.indexOf(last) + 1) % seq.length;
+            console.log(seq[idx]);
+          " "$LAST")
+          SLUG=$(echo "${NEXT}-$(date -u +%Y%m%d)" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9-]/-/g')
+          echo "today=$TODAY" >> $GITHUB_OUTPUT
+          echo "topic=$NEXT" >> $GITHUB_OUTPUT
+          echo "slug=$SLUG" >> $GITHUB_OUTPUT
+
+      - name: Generate bilingual MDX post
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          TOPIC: ${{ steps.topic.outputs.topic }}
+          SLUG: ${{ steps.topic.outputs.slug }}
+          TODAY: ${{ steps.topic.outputs.today }}
+        run: |
+          STYLE_REF=$(cat content/blog/building-this-portfolio.en.mdx)
+          PROJECTS_CONTEXT=$(cat content/projects-context/*.md 2>/dev/null || echo "")
+          PROMPT_TEMPLATE=$(cat scripts/generate-post-prompt.md)
+          PROMPT=$(echo "$PROMPT_TEMPLATE" | sed "s|\${SLUG}|${SLUG}|g; s|\${TOPIC}|${TOPIC}|g; s|\${TODAY}|${TODAY}|g")
+          FULL_PROMPT="${PROMPT}
+
+          ## Project context (learnings from my projects — use as raw material when relevant):
+          ${PROJECTS_CONTEXT}
+
+          ## Style reference (match this voice and structure):
+          ${STYLE_REF}"
+          claude --print -p "$FULL_PROMPT" \
+            --permission-mode acceptEdits \
+            --allowedTools "Read,Write,Edit,Bash(git status)" \
+            --no-session-persistence \
+            --model claude-sonnet-4-6
+
+      - name: Assert generated files exist
+        env:
+          SLUG: ${{ steps.topic.outputs.slug }}
+        run: |
+          test -f "content/blog/${SLUG}.en.mdx" || { echo "ERROR: EN file not generated"; exit 1; }
+          test -f "content/blog/${SLUG}.pt.mdx" || { echo "ERROR: PT file not generated"; exit 1; }
+          echo "Both locale files present."
+
+      - name: Verify blog content (parity + Zod)
+        run: pnpm verify:posts
+
+      - name: Create branch and commit
+        env:
+          SLUG: ${{ steps.topic.outputs.slug }}
+          TODAY: ${{ steps.topic.outputs.today }}
+          TOPIC: ${{ steps.topic.outputs.topic }}
+        run: |
+          BRANCH="content/auto-post-$(date -u +%Y-%m-%d-%H%M)"
+          git checkout -b "$BRANCH"
+          git add "content/blog/${SLUG}.en.mdx" "content/blog/${SLUG}.pt.mdx" "content/blog/.pipeline-state.json"
+          git commit -m "content(auto): ${TOPIC} post ${TODAY}"
+          git push origin "$BRANCH"
+
+      - name: Open PR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TOPIC: ${{ steps.topic.outputs.topic }}
+          TODAY: ${{ steps.topic.outputs.today }}
+        run: |
+          gh pr create \
+            --title "[auto] Blog post: ${TOPIC} (${TODAY})" \
+            --body "$(cat <<'BODY'
+          ## Automated blog post — review checklist
+
+          - [ ] Frontmatter valid: date (YYYY-MM-DD), excerpt (40–280 chars), tags present
+          - [ ] PT version reads naturally — not a literal translation
+          - [ ] No inline JS or dynamic imports in MDX body
+          - [ ] Flip \`draft: false\` to publish (or leave \`true\` to merge without publishing)
+
+          > Generated by the automated content pipeline. Merge to add to repo; flip draft to publish.
+          BODY
+          )" \
+            --base main
+
+      - name: Upload generated files on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: generated-post-debug
+          path: content/blog/
+          retention-days: 7
