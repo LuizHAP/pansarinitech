@@ -14,11 +14,15 @@ import { Button } from '@/components/ui';
 import { Moon, Sun } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useTheme } from 'next-themes';
-import type { MouseEvent } from 'react';
+import { type MouseEvent, useEffect, useState } from 'react';
 
 export function ThemeToggle() {
   const { resolvedTheme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
   const t = useTranslations('themeToggle');
+
+  useEffect(() => setMounted(true), []);
+
   const isDark = resolvedTheme === 'dark';
 
   const onClick = (event: MouseEvent<HTMLButtonElement>) => {
@@ -62,7 +66,7 @@ export function ThemeToggle() {
       variant="ghost"
       size="icon"
       aria-label={t('label')}
-      aria-pressed={isDark}
+      aria-pressed={mounted ? isDark : false}
       onClick={onClick}
       className="h-11 w-11"
     >
