@@ -2,20 +2,20 @@
 gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: UX Polish + Automated Content Pipeline
-status: planning
-last_updated: "2026-05-13T22:17:06.565Z"
+status: executing
+last_updated: "2026-05-13T23:05:00.000Z"
 last_activity: 2026-05-13
 progress:
   total_phases: 5
   completed_phases: 4
   total_plans: 14
-  completed_plans: 12
-  percent: 86
+  completed_plans: 14
+  percent: 100
 ---
 
 # Project State — pansarinitech
 
-**Last updated:** 2026-05-13 after 03-01 executed — pipeline static artifacts: .pipeline-state.json, generate-post-prompt.md, 5 project context stubs
+**Last updated:** 2026-05-13 after 03-02 executed — GitHub Actions workflow generate-post.yml created with cron+dispatch triggers, claude CLI invocation, assert-files step, verify:posts gate, HHMM branch, D-10 PR checklist
 
 ---
 
@@ -34,7 +34,7 @@ progress:
 ## Current Position
 
 Phase: 3
-Plan: 1 complete, 2 remaining (03-02, 03-03)
+Plan: 2 complete, 1 remaining (03-03)
 Status: In Progress
 Last activity: 2026-05-13
 
@@ -90,6 +90,8 @@ Last activity: 2026-05-13
 | Partial screenshot delivery: wire only available screenshots; leave pending-redesign entries as gradient placeholders | Avoids double-update churn; gradient fallback in ProjectScreenshot keeps cards visually valid | 02-03-SUMMARY.md |
 | topic_sequence canonical order: nextjs-react-frontend → software-engineering-career → ai-in-development → personal-projects-open-source | Round-robin rotation starting with most relevant frontend topic; null initial state ensures first run picks index 0 | 03-01-SUMMARY.md |
 | External prompt file (scripts/generate-post-prompt.md) over heredoc in YAML | YAML-escape-free editing; independently reviewable in PRs; injects via $(cat scripts/generate-post-prompt.md) | 03-01-SUMMARY.md |
+| HHMM suffix in branch name (content/auto-post-YYYY-MM-DD-HHMM) | Prevents same-day collision when workflow_dispatch is used multiple times on the same day (RESEARCH.md Pitfall 5 + D-11 extended) | 03-02-SUMMARY.md |
+| Assert-files-exist step before pnpm verify:posts | Catches silent zero-file writes (Pitfall 6: claude exits 0 but files not written without --permission-mode acceptEdits) with clear error message before the verify script is invoked | 03-02-SUMMARY.md |
 
 ### Open TODOs
 
@@ -132,13 +134,13 @@ Last activity: 2026-05-13
 
 ### Last Session
 
-- Executed 03-01: Created pipeline static artifacts — .pipeline-state.json (committed), generate-post-prompt.md (committed), 5 project context stubs (uncommitted, pending Luiz enrichment)
-- Commits: `63d6d98` (pipeline state), `55493ef` (generation prompt)
+- Executed 03-02: Created .github/workflows/generate-post.yml — cron + dispatch triggers, claude CLI invocation via --print -p, external prompt template ($(cat scripts/generate-post-prompt.md)), assert-files step, pnpm verify:posts gate, HHMM branch naming, D-10 PR checklist, upload-artifact on failure
+- Commits: `b2f2c53` (generate-post.yml workflow)
 - 200 tests pass, 0 regressions; pnpm verify:posts passes
 
 ### Next Session
 
-Phase 3 Plan 02 — GitHub Actions workflow (`generate-post.yml`). Run `/gsd-execute-phase 03`.
+Phase 3 Plan 03 — Human action setup (ANTHROPIC_API_KEY secret + repo setting). Run `/gsd-execute-phase 03`.
 
 ---
 

@@ -38,14 +38,14 @@
 
 ### Generation
 
-- [ ] **PIPE-01**: A Claude Code scheduled agent runs every 5 days and generates a bilingual (PT + EN) MDX blog post draft
+- [x] **PIPE-01**: A Claude Code scheduled agent runs every 5 days and generates a bilingual (PT + EN) MDX blog post draft
 - [x] **PIPE-02**: Topics rotate in round-robin across 4 areas: Next.js/React/frontend, Software Engineering/career, AI applied to development, Personal projects/open source
-- [ ] **PIPE-03**: Generated MDX files include all required frontmatter (title, description, publishedAt, tags, slug) valid against the existing `PostFrontmatter` Zod schema, for both locales
+- [x] **PIPE-03**: Generated MDX files include all required frontmatter (title, description, publishedAt, tags, slug) valid against the existing `PostFrontmatter` Zod schema, for both locales
 
 ### Publishing Flow
 
-- [ ] **PIPE-04**: The scheduled agent creates a git branch and opens a GitHub PR with the generated MDX files for human review and approval
-- [ ] **PIPE-05**: Merging the approved PR triggers Vercel auto-deploy via the existing CI pipeline (no new Vercel config required)
+- [x] **PIPE-04**: The scheduled agent creates a git branch and opens a GitHub PR with the generated MDX files for human review and approval
+- [x] **PIPE-05**: Merging the approved PR triggers Vercel auto-deploy via the existing CI pipeline (no new Vercel config required)
 
 ### Quality
 
