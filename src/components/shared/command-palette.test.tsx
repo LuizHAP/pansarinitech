@@ -156,7 +156,7 @@ describe('<CommandPaletteRoot />', () => {
     expect(screen.getByText('Blog')).toBeInTheDocument();
     expect(screen.getByText('Contact')).toBeInTheDocument();
     // 3 action items
-    expect(screen.getByText('Toggle theme (Jedi / Sith)')).toBeInTheDocument();
+    expect(screen.getByText('Toggle theme — Jedi (light) / Sith (dark)')).toBeInTheDocument();
     expect(screen.getByText('Switch to Portuguese')).toBeInTheDocument();
     expect(screen.getByText('Switch to English')).toBeInTheDocument();
     // 4 link items
@@ -180,7 +180,7 @@ describe('<CommandPaletteRoot />', () => {
     await user.keyboard('{Meta>}k{/Meta}');
     expect(screen.getByRole('dialog')).toBeInTheDocument();
 
-    const themeItem = screen.getByText('Toggle theme (Jedi / Sith)');
+    const themeItem = screen.getByText('Toggle theme — Jedi (light) / Sith (dark)');
     await user.click(themeItem);
 
     // Dialog should be closed immediately
@@ -199,7 +199,7 @@ describe('<CommandPaletteRoot />', () => {
     expect(document.documentElement.classList.contains('dark')).toBe(true);
 
     await user.keyboard('{Meta>}k{/Meta}');
-    const themeItem = screen.getByText('Toggle theme (Jedi / Sith)');
+    const themeItem = screen.getByText('Toggle theme — Jedi (light) / Sith (dark)');
     await user.click(themeItem);
 
     await vi.waitFor(() => {
