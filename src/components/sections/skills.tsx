@@ -54,7 +54,7 @@ export function Skills() {
               onClick={() => setActive(f.id)}
               aria-pressed={isActive}
               className={[
-                'flex-none rounded-full border px-3 py-1 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+                'flex-none rounded-full border px-3 py-1 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50',
                 isActive
                   ? 'border-primary bg-primary text-primary-foreground'
                   : 'border-border bg-background text-muted-foreground hover:border-primary hover:text-primary',
