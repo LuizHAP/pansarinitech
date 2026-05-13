@@ -2,20 +2,20 @@
 gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: UX Polish + Automated Content Pipeline
-status: ready_to_plan
-last_updated: "2026-05-13T15:45:02.163Z"
+status: planning
+last_updated: "2026-05-13T22:17:06.565Z"
 last_activity: 2026-05-13
 progress:
-  total_phases: 4
-  completed_phases: 2
-  total_plans: 7
-  completed_plans: 5
-  percent: 50
+  total_phases: 5
+  completed_phases: 4
+  total_plans: 14
+  completed_plans: 12
+  percent: 86
 ---
 
 # Project State — pansarinitech
 
-**Last updated:** 2026-05-13 after 02-03 executed (partial: doacao+redzone-boss screenshots wired; notificame+mtgprice deferred pending redesign; Phase 2 complete)
+**Last updated:** 2026-05-13 after 03-01 executed — pipeline static artifacts: .pipeline-state.json, generate-post-prompt.md, 5 project context stubs
 
 ---
 
@@ -34,8 +34,8 @@ progress:
 ## Current Position
 
 Phase: 3
-Plan: Not started
-Status: Ready to plan
+Plan: 1 complete, 2 remaining (03-02, 03-03)
+Status: In Progress
 Last activity: 2026-05-13
 
 ---
@@ -88,6 +88,8 @@ Last activity: 2026-05-13
 | Mock `motion/react` in jsdom tests with synchronous AnimatePresence stub | AnimatePresence mode="wait" holds exiting elements in DOM until exit animation completes; jsdom has no animation frames — stub makes AnimatePresence a React.Fragment for instant swap | 02-01-SUMMARY.md |
 | Inline prose links: decoration-2/underline-offset-4/hover:decoration-foreground (not font-semibold/text-foreground) | Preserves paragraph flow; font-weight and color changes disrupt inline prose readability | 02-02-SUMMARY.md |
 | Partial screenshot delivery: wire only available screenshots; leave pending-redesign entries as gradient placeholders | Avoids double-update churn; gradient fallback in ProjectScreenshot keeps cards visually valid | 02-03-SUMMARY.md |
+| topic_sequence canonical order: nextjs-react-frontend → software-engineering-career → ai-in-development → personal-projects-open-source | Round-robin rotation starting with most relevant frontend topic; null initial state ensures first run picks index 0 | 03-01-SUMMARY.md |
+| External prompt file (scripts/generate-post-prompt.md) over heredoc in YAML | YAML-escape-free editing; independently reviewable in PRs; injects via $(cat scripts/generate-post-prompt.md) | 03-01-SUMMARY.md |
 
 ### Open TODOs
 
@@ -130,13 +132,13 @@ Last activity: 2026-05-13
 
 ### Last Session
 
-- Executed 02-03 (partial): Wired doacao + redzone-boss screenshots; notificame + mtgprice deferred pending redesign
-- Commits: `7968811` (create screenshots dir), `7c73713` (wire doacao+redzone-boss)
-- 200 tests pass, 0 regressions; Phase 2 complete
+- Executed 03-01: Created pipeline static artifacts — .pipeline-state.json (committed), generate-post-prompt.md (committed), 5 project context stubs (uncommitted, pending Luiz enrichment)
+- Commits: `63d6d98` (pipeline state), `55493ef` (generation prompt)
+- 200 tests pass, 0 regressions; pnpm verify:posts passes
 
 ### Next Session
 
-Phase 3 — Automated Content Pipeline. Run `/gsd-execute-phase 03`.
+Phase 3 Plan 02 — GitHub Actions workflow (`generate-post.yml`). Run `/gsd-execute-phase 03`.
 
 ---
 

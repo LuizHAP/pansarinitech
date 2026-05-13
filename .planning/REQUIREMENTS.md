@@ -39,7 +39,7 @@
 ### Generation
 
 - [ ] **PIPE-01**: A Claude Code scheduled agent runs every 5 days and generates a bilingual (PT + EN) MDX blog post draft
-- [ ] **PIPE-02**: Topics rotate in round-robin across 4 areas: Next.js/React/frontend, Software Engineering/career, AI applied to development, Personal projects/open source
+- [x] **PIPE-02**: Topics rotate in round-robin across 4 areas: Next.js/React/frontend, Software Engineering/career, AI applied to development, Personal projects/open source
 - [ ] **PIPE-03**: Generated MDX files include all required frontmatter (title, description, publishedAt, tags, slug) valid against the existing `PostFrontmatter` Zod schema, for both locales
 
 ### Publishing Flow
@@ -49,8 +49,8 @@
 
 ### Quality
 
-- [ ] **PIPE-06**: Pipeline tracks recently generated topic history to avoid consecutive duplicate themes
-- [ ] **PIPE-07**: Generated posts follow site's existing MDX content conventions: `content/blog/[slug].[locale].mdx` file structure, frontmatter schema, no inline JS or dynamic imports (respects `blockJS: true` default from next-mdx-remote v6)
+- [x] **PIPE-06**: Pipeline tracks recently generated topic history to avoid consecutive duplicate themes
+- [x] **PIPE-07**: Generated posts follow site's existing MDX content conventions: `content/blog/[slug].[locale].mdx` file structure, frontmatter schema, no inline JS or dynamic imports (respects `blockJS: true` default from next-mdx-remote v6)
 
 ---
 

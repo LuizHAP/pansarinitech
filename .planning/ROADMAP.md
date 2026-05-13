@@ -65,7 +65,7 @@
   3. A GitHub PR is opened automatically for each generated post, and merging that PR triggers the existing Vercel CI deploy with no additional configuration required
   4. Generated MDX files contain no inline JS, dynamic imports, or constructs that would be stripped by `next-mdx-remote` v6's `blockJS: true` default — posts render correctly in the existing blog pipeline
 **Plans**: 3 plans
-  - [ ] 03-01-PLAN.md — Static artifacts: generate-post-prompt.md prompt template + .pipeline-state.json initial state
+  - [x] 03-01-PLAN.md — Static artifacts: generate-post-prompt.md prompt template + .pipeline-state.json initial state
   - [ ] 03-02-PLAN.md — GitHub Actions workflow: generate-post.yml (schedule + dispatch, claude invocation, verify:posts gate, branch + PR creation)
   - [ ] 03-03-PLAN.md — Human enablement: repo settings + ANTHROPIC_API_KEY secret + manual workflow_dispatch end-to-end verification
 
@@ -87,7 +87,7 @@
 |-------|----------------|--------|-----------|
 | 1. Cmd+K Command Palette | 2/2 | Complete   | 2026-05-13 |
 | 2. UX Polish — Testing, Interactions & Animations | 3/3 | Complete   | 2026-05-13 |
-| 3. Automated Content Pipeline | 0/3 | Not started | - |
+| 3. Automated Content Pipeline | 1/3 | In Progress|  |
 | 4. SEO Enrichment | 0/TBD | Not started | - |
 
 ---
