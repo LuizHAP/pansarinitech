@@ -29,7 +29,7 @@ export function NowPreview() {
       <p className="mt-4">
         <Link
           href="/now"
-          className="underline decoration-primary underline-offset-2 hover:opacity-80"
+          className="underline decoration-primary decoration-2 underline-offset-4 hover:decoration-foreground"
         >
           {t('previewLink')} →
         </Link>
