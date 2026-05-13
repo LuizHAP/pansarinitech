@@ -35,7 +35,7 @@ function StatusBadge({
 }
 
 function ProjectScreenshot({ project }: { project: PersonalProject }) {
-  if (project.screenshot) {
+  if (project.screenshot && !project.screenshotDraft) {
     return (
       <div className="aspect-[16/10] w-full overflow-hidden bg-muted">
         <Image

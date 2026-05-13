@@ -79,7 +79,9 @@ describe('<CopyEmailButton />', () => {
 
     const btn = screen.getByRole('button');
     expect(btn).toBeInTheDocument();
-    expect(btn).toHaveAttribute('aria-live', 'polite');
+    // aria-live must be on the inner text span, not the interactive button (ARIA spec / CR-01)
+    const liveSpan = btn.querySelector('[aria-live="polite"]');
+    expect(liveSpan).toBeInTheDocument();
     expect(btn).toHaveTextContent('Copy email');
   });
 

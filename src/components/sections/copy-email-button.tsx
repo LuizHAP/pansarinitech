@@ -72,7 +72,6 @@ export function CopyEmailButton({ email, className }: CopyEmailButtonProps) {
     <button
       type="button"
       onClick={handleCopy}
-      aria-live="polite"
       className={
         className ??
         'inline-flex h-11 items-center justify-center gap-2 rounded-md border border-border px-4 text-sm font-medium transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50'
@@ -102,7 +101,9 @@ export function CopyEmailButton({ email, className }: CopyEmailButtonProps) {
           </motion.span>
         )}
       </AnimatePresence>
-      <span>{copied ? t('copied') : t('copyButton')}</span>
+      <span aria-live="polite" aria-atomic="true">
+        {copied ? t('copied') : t('copyButton')}
+      </span>
     </button>
   );
 }
