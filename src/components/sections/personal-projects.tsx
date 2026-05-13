@@ -34,8 +34,14 @@ function StatusBadge({
   );
 }
 
-function ProjectScreenshot({ project }: { project: PersonalProject }) {
-  if (project.screenshot && !project.screenshotDraft) {
+function ProjectScreenshot({
+  project,
+  priority,
+}: {
+  project: PersonalProject;
+  priority?: boolean;
+}) {
+  if (project.screenshot) {
     return (
       <div className="aspect-[16/10] w-full overflow-hidden bg-muted">
         <Image
@@ -44,6 +50,7 @@ function ProjectScreenshot({ project }: { project: PersonalProject }) {
           width={640}
           height={400}
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 400px"
+          priority={priority}
           className="h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
         />
       </div>
@@ -79,10 +86,10 @@ export function PersonalProjects() {
       </div>
 
       <RevealGroup className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3" stagger={0.07}>
-        {personalProjects.map((project) => (
+        {personalProjects.map((project, index) => (
           <RevealItem key={project.id}>
             <Card className="group h-full overflow-hidden transition hover:-translate-y-0.5 hover:shadow-md">
-              <ProjectScreenshot project={project} />
+              <ProjectScreenshot project={project} priority={index === 0} />
 
               <CardHeader className="pb-2">
                 <div className="flex items-start justify-between gap-2">
