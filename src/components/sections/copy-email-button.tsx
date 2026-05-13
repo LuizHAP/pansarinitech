@@ -10,7 +10,8 @@
 //
 // Locale-aware toast messages come from messages/{en,pt}.json `contact.copied` /
 // `contact.copyFailed`. Sonner Toaster is mounted in [locale]/layout.tsx (Wave 1).
-import { CopyIcon } from 'lucide-react';
+import { Check, CopyIcon } from 'lucide-react';
+import { AnimatePresence, motion } from 'motion/react';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { toast } from 'sonner';
@@ -77,7 +78,30 @@ export function CopyEmailButton({ email, className }: CopyEmailButtonProps) {
         'inline-flex h-11 items-center justify-center gap-2 rounded-md border border-border px-4 text-sm font-medium transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50'
       }
     >
-      <CopyIcon className="size-4" aria-hidden="true" />
+      <AnimatePresence mode="wait" initial={false}>
+        {copied ? (
+          <motion.span
+            key="check"
+            className="text-green-600 dark:text-green-400"
+            initial={{ opacity: 0, scale: 0.6 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.6 }}
+            transition={{ duration: 0.15, ease: 'easeOut' }}
+          >
+            <Check className="size-4" aria-hidden="true" />
+          </motion.span>
+        ) : (
+          <motion.span
+            key="copy"
+            initial={{ opacity: 0, scale: 0.6 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.6 }}
+            transition={{ duration: 0.15, ease: 'easeOut' }}
+          >
+            <CopyIcon className="size-4" aria-hidden="true" />
+          </motion.span>
+        )}
+      </AnimatePresence>
       <span>{copied ? t('copied') : t('copyButton')}</span>
     </button>
   );
