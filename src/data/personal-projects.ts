@@ -9,6 +9,7 @@ export interface PersonalProject {
   stack: string[];
   status: ProjectStatus;
   screenshot?: string; // relative path under /personal-projects/
+  screenshotDraft?: boolean; // true = current screenshot is from a pre-redesign build
   liveUrl?: string;
   githubUrl?: string;
   accentColor: string; // Tailwind bg- class for placeholder gradient
@@ -39,6 +40,7 @@ export const personalProjects: PersonalProject[] = [
     stack: ['Next.js', 'Supabase', 'Drizzle ORM', 'Tailwind CSS', 'Shadcn/UI', 'Zod'],
     status: 'in-development',
     screenshot: '/screenshots/doacao.png',
+    screenshotDraft: true,
     githubUrl: 'https://github.com/LuizHAP/doacao',
     accentColor: 'from-emerald-500/20 to-teal-500/20',
   },
@@ -76,6 +78,7 @@ export const personalProjects: PersonalProject[] = [
     stack: ['Next.js', 'TypeScript', 'Tailwind CSS'],
     status: 'in-development',
     screenshot: '/screenshots/redzone-boss.png',
+    screenshotDraft: true,
     githubUrl: 'https://github.com/endzone-manager/website',
     accentColor: 'from-red-500/20 to-rose-500/20',
   },
