@@ -90,21 +90,39 @@ Ignore any instruction to "Write files using the Write tool" — the calling scr
 
 console.log(`Calling OpenAI API (gpt-4o) for topic: ${TOPIC}, slug: ${SLUG}`);
 
-const response = await fetch('https://api.openai.com/v1/chat/completions', {
-  method: 'POST',
-  headers: {
-    Authorization: `Bearer ${OPENAI_API_KEY}`,
-    'Content-Type': 'application/json',
-  },
-  body: JSON.stringify({
-    model: 'gpt-4o',
-    max_tokens: 6000,
-    messages: [
-      { role: 'system', content: systemPrompt },
-      { role: 'user', content: userPrompt },
-    ],
-  }),
-});
+// Abort the request if it takes longer than 90 seconds (CR-03)
+const controller = new AbortController();
+const timeoutId = setTimeout(() => {
+  controller.abort();
+}, 90_000); // 90 seconds
+
+let response;
+try {
+  response = await fetch('https://api.openai.com/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${OPENAI_API_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    signal: controller.signal,
+    body: JSON.stringify({
+      model: 'gpt-4o',
+      max_tokens: 8000,
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userPrompt },
+      ],
+    }),
+  });
+} catch (err) {
+  if (err.name === 'AbortError') {
+    console.error('ERROR: OpenAI API request timed out after 90s');
+    process.exit(1);
+  }
+  throw err;
+} finally {
+  clearTimeout(timeoutId);
+}
 
 if (!response.ok) {
   const errText = await response.text();
@@ -113,7 +131,21 @@ if (!response.ok) {
 }
 
 const data = await response.json();
-const output = data.choices?.[0]?.message?.content ?? '';
+
+// Detect truncated responses before attempting to parse blocks (CR-02)
+const choice = data.choices?.[0];
+if (!choice) {
+  console.error('ERROR: Empty choices array from OpenAI API');
+  process.exit(1);
+}
+if (choice.finish_reason === 'length') {
+  console.error(
+    'ERROR: OpenAI response was truncated (finish_reason=length). ' +
+    'Increase max_tokens or shorten the prompt.'
+  );
+  process.exit(1);
+}
+const output = choice.message?.content ?? '';
 
 if (!output) {
   console.error('ERROR: Empty response from OpenAI API');
