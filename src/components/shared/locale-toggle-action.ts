@@ -1,5 +1,5 @@
 // src/components/shared/locale-toggle-action.ts
-// Server action: validates target locale, sets NEXT_LOCALE cookie, redirects to /{target}{stripped-path}.
+// Server action: validates target locale, sets NEXT_LOCALE cookie, redirects to same path.
 // D-01 / D-02 cookie persistence + D-03 path-preserving locale switch.
 'use server';
 import { type Locale, routing } from '@/i18n/routing';
@@ -25,8 +25,8 @@ export async function switchLocale(target: Locale) {
   });
 
   // Compute equivalent path in target locale (D-03 path-preserving).
-  // Strategy: read referer to find the current pathname, strip the leading /en or /pt segment,
-  // then let next-intl's locale-aware redirect re-prefix with the target locale.
+  // Strategy: read referer to find the current pathname. With localePrefix:'never',
+  // paths have no locale prefix, so no stripping is needed — redirect to same pathname.
   // T-02-02 mitigation: validate referer against same-origin to prevent open-redirect via crafted referer.
   const referer = h.get('referer');
   let pathname = '/';
@@ -41,7 +41,7 @@ export async function switchLocale(target: Locale) {
       pathname = '/';
     }
   }
-  const stripped = pathname.replace(/^\/(en|pt)(?=\/|$)/, '') || '/';
+  const stripped = pathname || '/';
 
   redirect({ href: stripped, locale: target });
 }
