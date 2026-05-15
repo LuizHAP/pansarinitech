@@ -19,7 +19,7 @@
 - [x] **Phase 1: Cmd+K Command Palette** — Full-featured keyboard command palette accessible from anywhere on the site (completed 2026-05-13)
 - [x] **Phase 2: UX Polish — Testing, Interactions & Animations** — Copy-email tests, Personal Projects polish, and micro-interaction refinements across all sections (completed 2026-05-13)
 - [x] **Phase 3: Automated Content Pipeline** — Scheduled Claude Code agent that generates bilingual MDX posts and opens GitHub PRs for human review (completed 2026-05-15)
-- [ ] **Phase 4: SEO Enrichment** — MDX heading typography fix + JSON-LD structured data for blog and project posts
+- [x] **Phase 4: SEO Enrichment** — MDX heading typography fix + JSON-LD structured data for blog and project posts (completed 2026-05-15)
 
 ---
 
@@ -79,7 +79,7 @@
   3. Lighthouse SEO score remains ≥ 95 and no structured data errors appear in Google's Rich Results Test
 **Plans**: 1 plan
 Plans:
-- [ ] 04-P1-PLAN.md — Create JsonLd RSC + wire Article/WebPage schemas and prose heading overrides into blog and project post pages
+- [x] 04-P1-PLAN.md — Create JsonLd RSC + wire Article/WebPage schemas and prose heading overrides into blog and project post pages
 
 ---
 
@@ -90,7 +90,7 @@ Plans:
 | 1. Cmd+K Command Palette | 2/2 | Complete   | 2026-05-13 |
 | 2. UX Polish — Testing, Interactions & Animations | 3/3 | Complete   | 2026-05-13 |
 | 3. Automated Content Pipeline | 3/3 | Complete   | 2026-05-15 |
-| 4. SEO Enrichment | 0/TBD | Not started | - |
+| 4. SEO Enrichment | 1/1 | Complete   | 2026-05-15 |
 
 ---
 

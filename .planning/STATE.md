@@ -3,19 +3,19 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: UX Polish + Automated Content Pipeline
 status: executing
-last_updated: "2026-05-15T15:00:00.000Z"
+last_updated: "2026-05-15T22:01:11.093Z"
 last_activity: 2026-05-15
 progress:
-  total_phases: 4
-  completed_phases: 3
-  total_plans: 8
-  completed_plans: 8
-  percent: 75
+  total_phases: 6
+  completed_phases: 6
+  total_plans: 15
+  completed_plans: 15
+  percent: 100
 ---
 
 # Project State — pansarinitech
 
-**Last updated:** 2026-05-13 after 03-02 executed — GitHub Actions workflow generate-post.yml created with cron+dispatch triggers, claude CLI invocation, assert-files step, verify:posts gate, HHMM branch, D-10 PR checklist
+**Last updated:** 2026-05-15 after Phase 04 P1 execution — shared JsonLd RSC + prose heading overrides delivered. SEO-01 and SEO-02 complete. Phase 4 complete.
 
 ---
 
@@ -33,10 +33,10 @@ progress:
 
 ## Current Position
 
-Phase: 3
-Plan: 2 complete, 1 remaining (03-03)
-Status: In Progress
-Last activity: 2026-05-13
+Phase: 4
+Plan: 1/1
+Status: Complete
+Last activity: 2026-05-15
 
 ---
 
@@ -45,6 +45,7 @@ Last activity: 2026-05-13
 - [x] **Phase 1: Cmd+K Command Palette** — Full-featured keyboard command palette (UX-01 to UX-07) — completed 2026-05-13
 - [x] **Phase 2: UX Polish — Testing, Interactions & Animations** — Copy-email tests, Personal Projects polish, micro-interactions (UX-08 to UX-12) — completed 2026-05-13
 - [x] **Phase 3: Automated Content Pipeline** — OpenAI gpt-4o generates bilingual MDX + opens PRs (PIPE-01 to PIPE-07) — completed 2026-05-15
+- [x] **Phase 4: SEO Enrichment** — Shared JsonLd RSC + Article/WebPage schema injection + prose heading overrides (SEO-01, SEO-02) — completed 2026-05-15
 
 ---
 
@@ -92,6 +93,8 @@ Last activity: 2026-05-13
 | External prompt file (scripts/generate-post-prompt.md) over heredoc in YAML | YAML-escape-free editing; independently reviewable in PRs; injects via $(cat scripts/generate-post-prompt.md) | 03-01-SUMMARY.md |
 | HHMM suffix in branch name (content/auto-post-YYYY-MM-DD-HHMM) | Prevents same-day collision when workflow_dispatch is used multiple times on the same day (RESEARCH.md Pitfall 5 + D-11 extended) | 03-02-SUMMARY.md |
 | Assert-files-exist step before pnpm verify:posts | Catches silent zero-file writes (Pitfall 6: claude exits 0 but files not written without --permission-mode acceptEdits) with clear error message before the verify script is invoked | 03-02-SUMMARY.md |
+| Export SITE_URL from seo.ts | Single canonical URL source for both buildMetadata and JsonLd — avoids duplication | 04-P1-SUMMARY.md |
+| JsonLd RSC with biome-ignore for noDangerouslySetInnerHtml | Idiomatic JSON-LD pattern; content is Zod-validated owner-only MDX frontmatter — no user input | 04-P1-SUMMARY.md |
 
 ### Open TODOs
 
@@ -134,13 +137,13 @@ Last activity: 2026-05-13
 
 ### Last Session
 
-- Executed 03-02: Created .github/workflows/generate-post.yml — cron + dispatch triggers, claude CLI invocation via --print -p, external prompt template ($(cat scripts/generate-post-prompt.md)), assert-files step, pnpm verify:posts gate, HHMM branch naming, D-10 PR checklist, upload-artifact on failure
-- Commits: `b2f2c53` (generate-post.yml workflow)
-- 200 tests pass, 0 regressions; pnpm verify:posts passes
+- Executed 04-P1: Created src/components/json-ld.tsx (shared JsonLd RSC), exported SITE_URL from seo.ts, injected Article schema into blog post pages and WebPage schema into project post pages, added prose heading override classes to both prose wrappers
+- Commits: `15ae0b5` (JsonLd RSC + SITE_URL export), `91f3cd9` (prose overrides + JsonLd injection in both post pages)
+- 200 tests pass, 0 regressions; pnpm build exits 0; SEO-01 and SEO-02 complete
 
 ### Next Session
 
-Phase 4 — SEO Enrichment. Run `/gsd-discuss-phase 04` or `/gsd-plan-phase 04`.
+Phase 4 complete. All phases of v1.2 milestone delivered.
 
 ---
 

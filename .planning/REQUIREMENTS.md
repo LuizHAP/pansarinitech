@@ -58,8 +58,8 @@
 
 ### MDX Content Quality
 
-- [ ] **SEO-01**: Blog and project MDX posts render headings with proper vertical spacing and visual hierarchy — `h1`/`h2`/`h3` are clearly distinguished, margins separate them from surrounding body text, and the heading structure reads as an outline for crawlers
-- [ ] **SEO-02**: Every blog post and project post page includes a JSON-LD `<script type="application/ld+json">` block — `Article` schema for blog posts, `SoftwareApplication` or `WebPage` schema for project posts — with `name`, `description`, `author`, `datePublished`, `url`, and `inLanguage` fields populated from the MDX frontmatter
+- [x] **SEO-01**: Blog and project MDX posts render headings with proper vertical spacing and visual hierarchy — `h1`/`h2`/`h3` are clearly distinguished, margins separate them from surrounding body text, and the heading structure reads as an outline for crawlers
+- [x] **SEO-02**: Every blog post and project post page includes a JSON-LD `<script type="application/ld+json">` block — `Article` schema for blog posts, `SoftwareApplication` or `WebPage` schema for project posts — with `name`, `description`, `author`, `datePublished`, `url`, and `inLanguage` fields populated from the MDX frontmatter
 
 ---
 
