@@ -77,7 +77,9 @@
   1. Rendering any blog or project MDX post shows clearly spaced, visually distinct `h1`/`h2`/`h3` headings — each heading has enough top/bottom margin that it reads as a section break, not a run-on paragraph
   2. Every blog post route (`/[locale]/blog/[slug]`) and project post route (if applicable) includes a valid `<script type="application/ld+json">` block — `Article` for blog posts, appropriate schema for project posts — populated from the post's MDX frontmatter
   3. Lighthouse SEO score remains ≥ 95 and no structured data errors appear in Google's Rich Results Test
-**Plans**: TBD
+**Plans**: 1 plan
+Plans:
+- [ ] 04-P1-PLAN.md — Create JsonLd RSC + wire Article/WebPage schemas and prose heading overrides into blog and project post pages
 
 ---
 
