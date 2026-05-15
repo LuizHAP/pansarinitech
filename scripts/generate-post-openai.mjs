@@ -2,10 +2,11 @@
  * OpenAI-powered blog post generator.
  * Called by .github/workflows/generate-post.yml when OPENAI_API_KEY is used.
  *
- * Outputs three file blocks parsed from the model response:
+ * Parses TWO file blocks from the model response:
  *   content/blog/${SLUG}.en.mdx
  *   content/blog/${SLUG}.pt.mdx
- *   content/blog/.pipeline-state.json
+ *
+ * The pipeline state file is written directly from computed newState (not from model output).
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -72,9 +73,10 @@ const newState = {
 
 // System prompt instructs the model to output parseable file blocks
 // (overrides the "Write tool" instruction in the user prompt template)
+// Note: pipeline-state.json is written directly from newState, not from model output.
 const systemPrompt = `You are a bilingual technical blog post writer for pansarini.tech.
 
-IMPORTANT: Do NOT use any tools. Instead, output EXACTLY three file blocks in the following format — start immediately with the first marker, no preamble:
+IMPORTANT: Do NOT use any tools. Instead, output EXACTLY two file blocks in the following format — start immediately with the first marker, no preamble:
 
 ===FILE: content/blog/${SLUG}.en.mdx
 <full English MDX file content>
@@ -84,11 +86,6 @@ IMPORTANT: Do NOT use any tools. Instead, output EXACTLY three file blocks in th
 <full Brazilian Portuguese MDX file content>
 ===ENDFILE
 
-===FILE: content/blog/.pipeline-state.json
-${JSON.stringify(newState, null, 2)}
-===ENDFILE
-
-The pipeline-state.json block must contain exactly the JSON shown above — do not modify it.
 Ignore any instruction to "Write files using the Write tool" — the calling script handles file writing from your text output.`;
 
 console.log(`Calling OpenAI API (gpt-4o) for topic: ${TOPIC}, slug: ${SLUG}`);
@@ -143,9 +140,26 @@ if (!blocks[ptPath]) {
   process.exit(1);
 }
 
-// Write all parsed file blocks
+// Only write model-output blocks for the two expected MDX paths (allowlist).
+// Any other path returned by the model is silently skipped to prevent
+// path traversal / unexpected writes (CR-01).
+const ALLOWED_PATHS = new Set([
+  enPath,
+  ptPath,
+]);
+
 for (const [filePath, content] of Object.entries(blocks)) {
+  if (!ALLOWED_PATHS.has(filePath)) {
+    console.warn(`Skipping unexpected file path from model: ${filePath}`);
+    continue;
+  }
   fs.mkdirSync(path.dirname(filePath), { recursive: true });
   fs.writeFileSync(filePath, content);
-  console.log(`✓ Written: ${filePath}`);
+  console.log(`Written: ${filePath}`);
 }
+
+// Write pipeline state directly from computed newState (not from model output)
+// to guarantee state integrity regardless of what the model echoes back (WR-01).
+fs.mkdirSync(path.dirname(stateFile), { recursive: true });
+fs.writeFileSync(stateFile, JSON.stringify(newState, null, 2) + '\n');
+console.log(`Written: ${stateFile}`);
