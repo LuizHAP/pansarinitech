@@ -23,7 +23,13 @@ if (!SLUG || !TOPIC || !TODAY) {
 }
 
 // Read style reference
-const styleRef = fs.readFileSync('content/blog/building-this-portfolio.en.mdx', 'utf8');
+let styleRef;
+try {
+  styleRef = fs.readFileSync('content/blog/building-this-portfolio.en.mdx', 'utf8');
+} catch (err) {
+  console.error('ERROR: Could not read style reference file:', err.message);
+  process.exit(1);
+}
 
 // Read projects context (optional — directory may not exist yet)
 let projectsContext = '';
@@ -35,14 +41,16 @@ if (fs.existsSync(projDir)) {
     .join('\n\n---\n\n');
 }
 
-// Substitute all template variables
+// Substitute all template variables.
+// Replacer functions are used to prevent String.replace() from interpreting
+// special patterns like $& or $` in the replacement string (WR-04).
 let userPrompt = fs.readFileSync('scripts/generate-post-prompt.md', 'utf8');
 userPrompt = userPrompt
-  .replace(/\$\{SLUG\}/g, SLUG)
-  .replace(/\$\{TOPIC\}/g, TOPIC)
-  .replace(/\$\{TODAY\}/g, TODAY)
-  .replace(/\$\{PROJECTS_CONTEXT\}/g, projectsContext || '(no project context available)')
-  .replace(/\$\{STYLE_REF\}/g, styleRef);
+  .replace(/\$\{SLUG\}/g, () => SLUG)
+  .replace(/\$\{TOPIC\}/g, () => TOPIC)
+  .replace(/\$\{TODAY\}/g, () => TODAY)
+  .replace(/\$\{PROJECTS_CONTEXT\}/g, () => projectsContext || '(no project context available)')
+  .replace(/\$\{STYLE_REF\}/g, () => styleRef);
 
 // Build updated pipeline state (the model receives the exact JSON to write)
 let pipelineState = {

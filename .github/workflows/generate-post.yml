@@ -47,7 +47,15 @@ jobs:
           NEXT=$(node -e "
             const seq = ['nextjs-react-frontend','software-engineering-career','ai-in-development','personal-projects-open-source'];
             const last = process.argv[1] === 'null' ? null : process.argv[1];
-            const idx = last === null ? 0 : (seq.indexOf(last) + 1) % seq.length;
+            const idx = (() => {
+              if (last === null) return 0;
+              const found = seq.indexOf(last);
+              if (found === -1) {
+                process.stderr.write('ERROR: last_topic \"' + last + '\" not in sequence\n');
+                process.exit(1);
+              }
+              return (found + 1) % seq.length;
+            })();
             console.log(seq[idx]);
           " "$LAST")
           SLUG=$(echo "${NEXT}-$(date -u +%Y%m%d)" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9-]/-/g')
