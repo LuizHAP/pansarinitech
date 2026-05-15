@@ -28,9 +28,6 @@ jobs:
       - name: Install (frozen lockfile)
         run: pnpm install --frozen-lockfile
 
-      - name: Install Claude CLI
-        run: npm install -g @anthropic-ai/claude-code
-
       - name: Configure git identity
         run: |
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -60,27 +57,11 @@ jobs:
 
       - name: Generate bilingual MDX post
         env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           TOPIC: ${{ steps.topic.outputs.topic }}
           SLUG: ${{ steps.topic.outputs.slug }}
           TODAY: ${{ steps.topic.outputs.today }}
-        run: |
-          STYLE_REF=$(cat content/blog/building-this-portfolio.en.mdx)
-          PROJECTS_CONTEXT=$(cat content/projects-context/*.md 2>/dev/null || echo "")
-          PROMPT_TEMPLATE=$(cat scripts/generate-post-prompt.md)
-          PROMPT=$(echo "$PROMPT_TEMPLATE" | sed "s|\${SLUG}|${SLUG}|g; s|\${TOPIC}|${TOPIC}|g; s|\${TODAY}|${TODAY}|g")
-          FULL_PROMPT="${PROMPT}
-
-          ## Project context (learnings from my projects — use as raw material when relevant):
-          ${PROJECTS_CONTEXT}
-
-          ## Style reference (match this voice and structure):
-          ${STYLE_REF}"
-          claude --print -p "$FULL_PROMPT" \
-            --permission-mode acceptEdits \
-            --allowedTools "Read,Write,Edit,Bash(git status)" \
-            --no-session-persistence \
-            --model claude-sonnet-4-6
+        run: node scripts/generate-post-openai.mjs
 
       - name: Assert generated files exist
         env:
