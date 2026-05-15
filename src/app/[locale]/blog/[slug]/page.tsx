@@ -10,6 +10,7 @@
 // TOC components render only when extractToc returns ≥1 entry (default
 // threshold 1000 words; CONTEXT D-07).
 import { TocMobile, TocSidebar } from '@/components/blog';
+import JsonLd, { AUTHOR_PERSON, SITE_URL } from '@/components/json-ld';
 import { type Locale, routing } from '@/i18n/routing';
 import { formatDate } from '@/lib/i18n/helpers';
 import { Link } from '@/lib/i18n/navigation';
@@ -64,6 +65,22 @@ export default async function BlogPostPage({
 
   return (
     <article className="mx-auto max-w-5xl px-4 py-12 lg:grid lg:grid-cols-[1fr_240px] lg:gap-10">
+      <JsonLd
+        schema={{
+          '@context': 'https://schema.org',
+          '@type': 'Article',
+          headline: post.title,
+          description: post.excerpt,
+          author: AUTHOR_PERSON,
+          publisher: AUTHOR_PERSON,
+          datePublished: post.date,
+          url: `${SITE_URL}/blog/${post.slug}`,
+          inLanguage: locale === 'pt' ? 'pt-BR' : 'en',
+          keywords: post.tags.join(', '),
+          image: `${SITE_URL}/${locale}/blog/${post.slug}/opengraph-image`,
+          wordCount: Math.round(post.readingTime.minutes * 200),
+        }}
+      />
       <div className="min-w-0">
         <Link
           href="/blog"
@@ -91,7 +108,9 @@ export default async function BlogPostPage({
 
         <TocMobile entries={toc} label={tToc('label')} />
 
-        <div className="prose prose-neutral mt-8 max-w-none dark:prose-invert">{post.content}</div>
+        <div className="prose prose-neutral mt-8 max-w-none dark:prose-invert prose-h2:mt-10 prose-h3:mt-8 prose-headings:scroll-mt-20">
+          {post.content}
+        </div>
       </div>
 
       <TocSidebar entries={toc} label={tToc('label')} />

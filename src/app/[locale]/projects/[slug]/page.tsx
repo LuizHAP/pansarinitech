@@ -1,3 +1,4 @@
+import JsonLd, { AUTHOR_PERSON, SITE_URL } from '@/components/json-ld';
 import { CaseStudyHero } from '@/components/sections';
 import { type Locale, routing } from '@/i18n/routing';
 import { getAllSlugs, getProject } from '@/lib/mdx/projects';
@@ -46,8 +47,24 @@ export default async function CaseStudyPage({
 
   return (
     <article>
+      <JsonLd
+        schema={{
+          '@context': 'https://schema.org',
+          '@type': 'WebPage',
+          name: project.title,
+          description: project.blurb,
+          author: AUTHOR_PERSON,
+          publisher: AUTHOR_PERSON,
+          datePublished: `${project.year}-01-01`,
+          url: `${SITE_URL}/projects/${slug}`,
+          inLanguage: locale === 'pt' ? 'pt-BR' : 'en',
+          keywords: project.stack.join(', '),
+          image: project.heroImage,
+          wordCount: Math.round(project.readingTime.minutes * 200),
+        }}
+      />
       <CaseStudyHero project={project} locale={locale} />
-      <div className="prose prose-neutral mx-auto max-w-3xl px-4 py-8 dark:prose-invert">
+      <div className="prose prose-neutral mx-auto max-w-3xl px-4 py-8 dark:prose-invert prose-h2:mt-10 prose-h3:mt-8 prose-headings:scroll-mt-20">
         {project.content}
       </div>
     </article>
