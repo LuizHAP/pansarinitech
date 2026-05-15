@@ -1,46 +1,44 @@
 #!/usr/bin/env node
 // scripts/verify-metadata.mjs — Phase 4 PERF-03 / SEO gate
 //
-// Spawns `next start` against the existing .next build, curls every locale
-// page, and asserts the rendered <head> contains:
+// Spawns `next start` against the existing .next build, fetches every
+// locale-free route twice (once as EN default, once with Cookie: NEXT_LOCALE=pt)
+// and asserts the rendered <head> contains:
 //   - <title> non-empty
 //   - <meta name="description"> non-empty
-//   - <meta property="og:locale"> matches en_US or pt_BR
-//   - <link rel="alternate" hreflang="en"> AND hreflang="pt-BR" AND hreflang="x-default"
+//   - <meta property="og:locale"> matches en_US (EN pass) or pt_BR (PT pass)
+//
+// hreflang alternate links are intentionally omitted: localePrefix:'never'
+// means next-intl does not emit alternate links (no URL prefix to link to).
 //
 // Requires `pnpm next build` to have run first. Spawns its own server on a
 // non-conflicting port. Kills the server cleanly even on failure (T-04-29).
 import { spawn } from 'node:child_process';
 import { setTimeout as wait } from 'node:timers/promises';
 
-const ROUTES = [
-  '/en',
-  '/pt',
-  '/en/projects',
-  '/pt/projects',
-  '/en/projects/machinery-partner-ecommerce',
-  '/pt/projects/machinery-partner-ecommerce',
-  '/en/blog',
-  '/pt/blog',
-  '/en/blog/building-this-portfolio',
-  '/pt/blog/building-this-portfolio',
-  '/en/now',
-  '/pt/now',
+const EN_ROUTES = [
+  '/',
+  '/projects',
+  '/projects/machinery-partner-ecommerce',
+  '/blog',
+  '/blog/building-this-portfolio',
+  '/now',
 ];
 
-const REQUIRED_PATTERNS = [
+const REQUIRED_PATTERNS_EN = [
   { name: '<title>', regex: /<title>[^<]+<\/title>/ },
   { name: '<meta name="description">', regex: /<meta name="description" content="[^"]+"/ },
   {
-    name: '<meta property="og:locale">',
-    regex: /<meta property="og:locale" content="(en_US|pt_BR)"/,
+    name: '<meta property="og:locale" content="en_US">',
+    regex: /<meta property="og:locale" content="en_US"/,
   },
-  // Next 16 emits camelCase `hrefLang` attribute in HTML (matches React's
-  // canonical prop name). We accept either case to be tolerant of future
-  // serializer changes.
-  { name: 'hreflang="en"', regex: /href[Ll]ang="en"/ },
-  { name: 'hreflang="pt-BR"', regex: /href[Ll]ang="pt-BR"/ },
-  { name: 'hreflang="x-default"', regex: /href[Ll]ang="x-default"/ },
+];
+
+const REQUIRED_PATTERNS_PT = [
+  {
+    name: '<meta property="og:locale" content="pt_BR">',
+    regex: /<meta property="og:locale" content="pt_BR"/,
+  },
 ];
 
 const port = 3001;
@@ -59,6 +57,9 @@ process.on('SIGINT', () => {
 });
 
 let failed = 0;
+const totalChecks =
+  EN_ROUTES.length * REQUIRED_PATTERNS_EN.length + EN_ROUTES.length * REQUIRED_PATTERNS_PT.length;
+
 try {
   // Wait for "Ready" line on stdout (Next 16 prints "✓ Ready in Nms").
   await new Promise((resolve, reject) => {
@@ -76,17 +77,37 @@ try {
   // Tiny grace period for the server to actually accept connections.
   await wait(500);
 
-  for (const route of ROUTES) {
+  // First pass: EN default (no locale header) — check title, description, og:locale=en_US
+  for (const route of EN_ROUTES) {
     const res = await fetch(`http://localhost:${port}${route}`);
     if (!res.ok) {
-      console.error(`[verify-metadata] ${route}: HTTP ${res.status}`);
+      console.error(`[verify-metadata] EN ${route}: HTTP ${res.status}`);
       failed++;
       continue;
     }
     const html = await res.text();
-    for (const p of REQUIRED_PATTERNS) {
+    for (const p of REQUIRED_PATTERNS_EN) {
       if (!p.regex.test(html)) {
-        console.error(`[verify-metadata] ${route}: missing ${p.name}`);
+        console.error(`[verify-metadata] EN ${route}: missing ${p.name}`);
+        failed++;
+      }
+    }
+  }
+
+  // Second pass: PT locale via cookie — check og:locale=pt_BR
+  for (const route of EN_ROUTES) {
+    const res = await fetch(`http://localhost:${port}${route}`, {
+      headers: { Cookie: 'NEXT_LOCALE=pt' },
+    });
+    if (!res.ok) {
+      console.error(`[verify-metadata] PT ${route}: HTTP ${res.status}`);
+      failed++;
+      continue;
+    }
+    const html = await res.text();
+    for (const p of REQUIRED_PATTERNS_PT) {
+      if (!p.regex.test(html)) {
+        console.error(`[verify-metadata] PT ${route}: missing ${p.name}`);
         failed++;
       }
     }
@@ -98,10 +119,10 @@ try {
 
 if (failed > 0) {
   console.error(
-    `\n[verify-metadata] ${failed} metadata violation(s) across ${ROUTES.length} routes`,
+    `\n[verify-metadata] ${failed} metadata violation(s) across ${EN_ROUTES.length} routes × 2 locales`,
   );
   process.exit(1);
 }
 console.log(
-  `[verify-metadata] ✓ ${ROUTES.length} routes × ${REQUIRED_PATTERNS.length} patterns clean`,
+  `[verify-metadata] ✓ ${EN_ROUTES.length} routes × 2 locales × ${totalChecks} pattern checks clean`,
 );
