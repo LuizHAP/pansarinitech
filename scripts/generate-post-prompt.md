@@ -56,7 +56,7 @@ excerpt: "<YOUR EXCERPT: count characters, must be 40–280>"
 tags:
   - <tag1>
   - <tag2>
-draft: true
+draft: false
 ---
 ```
 
@@ -64,7 +64,8 @@ draft: true
 
 - `date` must be exactly `"${TODAY}"` — a 10-character string in YYYY-MM-DD format. Do not write `"May 13, 2026"` or `"2026-05-13T09:00:00Z"` or any other format. Use the exact value provided.
 - `excerpt` MUST be between 40 and 280 characters inclusive. Count the characters explicitly before writing. Do not write fewer than 40 characters. A minimum viable excerpt: `"A deep dive into ${TOPIC} from a Principal Engineer building at BR scale."` (that is 73 characters — aim for similar or longer). If your draft excerpt is under 40 characters, expand it before writing the file.
-- `draft: true` — always. Luiz will flip to `false` before publishing.
+- `draft: false` — posts are published immediately when the PR is merged. Set to `true` during PR review if you want to merge without publishing yet.
+- `title` must be non-empty and in the post's language (English for `.en.mdx`, Portuguese for `.pt.mdx`).
 - `title` must be non-empty and in the post's language (English for `.en.mdx`, Portuguese for `.pt.mdx`).
 - `tags` are optional but encouraged; if present must be a YAML string array.
 

@@ -153,6 +153,10 @@
     "viewCode": "View code",
     "newTab": "opens in a new tab"
   },
+  "blogPreview": {
+    "title": "Recent posts",
+    "viewAll": "View all posts →"
+  },
   "seo": {
     "homeTitle": "Principal Software Engineer",
     "siteDescription": "Luiz Pansarini — Principal Software Engineer (Brazil/US). Bilingual portfolio: case studies, blog, and contact.",

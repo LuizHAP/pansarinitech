@@ -1,4 +1,5 @@
 export { About } from './about';
+export { BlogPreview } from './blog-preview';
 export { CareerTimeline } from './career-timeline';
 export { CaseStudyHero } from './case-study-hero';
 export { Contact } from './contact';

@@ -1,5 +1,6 @@
 import {
   About,
+  BlogPreview,
   CareerTimeline,
   Contact,
   FeaturedProjectsTeaser,
@@ -47,6 +48,7 @@ export default async function HomePage({
       <CareerTimeline />
       <Skills />
       <NowPreview />
+      <BlogPreview locale={locale} />
       <Contact />
     </>
   );
