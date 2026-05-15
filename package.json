@@ -35,6 +35,7 @@
   "dependencies": {
     "@formatjs/intl-localematcher": "^0.8.5",
     "@iconify/react": "^6.0.2",
+    "@tailwindcss/typography": "^0.5.19",
     "@vercel/analytics": "^2.0.1",
     "@vercel/speed-insights": "^2.0.0",
     "class-variance-authority": "^0.7.1",

@@ -1,5 +1,6 @@
 /* src/app/globals.css */
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 
 /* Tailwind v4 dark variant — UI-SPEC §"CSS Token Declaration" */
 @custom-variant dark (&:where(.dark, .dark *));

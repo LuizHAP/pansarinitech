@@ -38,6 +38,10 @@ test.describe('Locale switch + NEXT_LOCALE cookie persistence', () => {
     // Anchored regex /^pt$/i matches the PT button exactly (Pitfall 8 — avoids
     // matching "Newsletter (PT)" or other loose substrings if added later).
     await page.getByRole('button', { name: /^pt$/i }).click();
+    // Wait for the Server Action redirect + Set-Cookie response to complete
+    // before reading cookies — the action sets NEXT_LOCALE in the response
+    // headers and the cookie is only visible after the redirect finishes.
+    await page.waitForLoadState('networkidle');
 
     const cookies = await context.cookies();
     const localeCookie = cookies.find((c) => c.name === 'NEXT_LOCALE');

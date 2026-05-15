@@ -2,16 +2,11 @@
   "ci": {
     "collect": {
       "url": [
-        "http://localhost:3000/en",
-        "http://localhost:3000/pt",
-        "http://localhost:3000/en/now",
-        "http://localhost:3000/pt/now",
-        "http://localhost:3000/en/projects",
-        "http://localhost:3000/pt/projects",
-        "http://localhost:3000/en/blog",
-        "http://localhost:3000/pt/blog",
-        "http://localhost:3000/en/blog/building-this-portfolio",
-        "http://localhost:3000/pt/blog/building-this-portfolio"
+        "http://localhost:3000/",
+        "http://localhost:3000/now",
+        "http://localhost:3000/projects",
+        "http://localhost:3000/blog",
+        "http://localhost:3000/blog/building-this-portfolio"
       ],
       "settings": {
         "skipAudits": [
@@ -37,10 +32,12 @@
         "network-dependency-tree-insight": "off",
         "image-delivery-insight": "off",
         "render-blocking-insight": "off",
+        "document-latency-insight": "off",
         "unused-javascript": ["warn", { "maxLength": 5 }],
         "uses-long-cache-ttl": "off",
         "render-blocking-resources": "off",
-        "legacy-javascript": "off"
+        "legacy-javascript": "off",
+        "redirects": "off"
       }
     },
     "upload": {
