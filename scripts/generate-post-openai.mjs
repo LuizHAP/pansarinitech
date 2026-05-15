@@ -149,7 +149,7 @@ if (!choice) {
 if (choice.finish_reason === 'length') {
   console.error(
     'ERROR: OpenAI response was truncated (finish_reason=length). ' +
-    'Increase max_tokens or shorten the prompt.'
+      'Increase max_tokens or shorten the prompt.',
   );
   process.exit(1);
 }
@@ -183,10 +183,7 @@ if (!blocks[ptPath]) {
 // Only write model-output blocks for the two expected MDX paths (allowlist).
 // Any other path returned by the model is silently skipped to prevent
 // path traversal / unexpected writes (CR-01).
-const ALLOWED_PATHS = new Set([
-  enPath,
-  ptPath,
-]);
+const ALLOWED_PATHS = new Set([enPath, ptPath]);
 
 for (const [filePath, content] of Object.entries(blocks)) {
   if (!ALLOWED_PATHS.has(filePath)) {
@@ -201,5 +198,5 @@ for (const [filePath, content] of Object.entries(blocks)) {
 // Write pipeline state directly from computed newState (not from model output)
 // to guarantee state integrity regardless of what the model echoes back (WR-01).
 fs.mkdirSync(path.dirname(stateFile), { recursive: true });
-fs.writeFileSync(stateFile, JSON.stringify(newState, null, 2) + '\n');
+fs.writeFileSync(stateFile, `${JSON.stringify(newState, null, 2)}\n`);
 console.log(`Written: ${stateFile}`);
