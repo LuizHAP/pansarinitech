@@ -1,4 +1,4 @@
-import { type Locale, routing } from '@/i18n/routing';
+import type { Locale } from '@/i18n/routing';
 // src/lib/seo.ts — Phase 4 D-28, D-29 (per RESEARCH §5)
 //
 // Centralized Next 16 Metadata API factory. Single source of truth for:
@@ -17,8 +17,6 @@ const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://pansarinitech.verc
 const SITE_NAME = 'Luiz Pansarini';
 
 const OG_LOCALE: Record<Locale, string> = { en: 'en_US', pt: 'pt_BR' };
-// Google's hreflang spec wants `pt-BR` (regional), NOT bare `pt`. T-04-06.
-const HREFLANG: Record<Locale, string> = { en: 'en', pt: 'pt-BR' };
 
 export type BuildMetadataInput = {
   locale: Locale;
@@ -45,13 +43,7 @@ export function buildMetadata(input: BuildMetadataInput): Metadata {
   } = input;
 
   const fullTitle = `${title} — ${SITE_NAME}`;
-  const canonicalUrl = `${SITE_URL}/${locale}${path}`;
-
-  const languages: Record<string, string> = {};
-  for (const l of routing.locales) {
-    languages[HREFLANG[l]] = `${SITE_URL}/${l}${path}`;
-  }
-  languages['x-default'] = `${SITE_URL}/${routing.defaultLocale}${path}`;
+  const canonicalUrl = `${SITE_URL}${path || '/'}`;
 
   // robots layer: per-page meta-tag noindex on Vercel preview deploys
   // (VERCEL_ENV defined but != 'production'). On local dev (VERCEL_ENV
@@ -79,7 +71,7 @@ export function buildMetadata(input: BuildMetadataInput): Metadata {
     metadataBase: new URL(SITE_URL),
     title: fullTitle,
     description,
-    alternates: { canonical: canonicalUrl, languages },
+    alternates: { canonical: canonicalUrl },
     openGraph,
     twitter: {
       card: 'summary_large_image',

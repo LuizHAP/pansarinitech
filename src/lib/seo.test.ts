@@ -117,25 +117,24 @@ describe('buildMetadata() — type / openGraph article branches', () => {
   });
 });
 
-describe('buildMetadata() — locale + languages map', () => {
-  it("locale='en' -> openGraph.locale 'en_US' and hreflang keys 'en', 'pt-BR', 'x-default'", () => {
+describe('buildMetadata() — locale + canonical URLs (localePrefix:never)', () => {
+  it("locale='en' -> openGraph.locale 'en_US' and locale-free canonical URL", () => {
     vi.stubEnv('VERCEL_ENV', 'production');
     const meta = buildMetadata({ locale: 'en', path: '/blog/foo', title: 'T', description: 'D' });
     expect(meta.openGraph?.locale).toBe('en_US');
-    const langs = meta.alternates?.languages as Record<string, string>;
-    expect(Object.keys(langs).sort()).toEqual(['en', 'pt-BR', 'x-default']);
-    expect(langs.en).toContain('/en/blog/foo');
-    expect(langs['pt-BR']).toContain('/pt/blog/foo');
-    expect(meta.alternates?.canonical).toContain('/en/blog/foo');
+    // No hreflang languages map — both locales share the same URL with localePrefix:never
+    expect(meta.alternates?.languages).toBeUndefined();
+    expect(meta.alternates?.canonical).toContain('/blog/foo');
+    expect(meta.alternates?.canonical).not.toContain('/en/');
   });
 
-  it("locale='pt' -> openGraph.locale 'pt_BR' and pt-BR hreflang", () => {
+  it("locale='pt' -> openGraph.locale 'pt_BR' and locale-free canonical, no languages map", () => {
     vi.stubEnv('VERCEL_ENV', 'production');
     const meta = buildMetadata({ locale: 'pt', path: '', title: 'T', description: 'D' });
     expect(meta.openGraph?.locale).toBe('pt_BR');
-    const langs = meta.alternates?.languages as Record<string, string>;
-    expect(langs['pt-BR']).toMatch(/\/pt$/);
-    expect(langs['x-default']).toMatch(/\/en$/); // routing.defaultLocale
+    expect(meta.alternates?.languages).toBeUndefined();
+    // home path '' normalises to '/'
+    expect(meta.alternates?.canonical).toMatch(/\/$/);
   });
 });
 
