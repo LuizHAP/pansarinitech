@@ -7,9 +7,10 @@
 // against the same `pnpm next start` web server that test:a11y / test:sith use
 // (configured in playwright.config.ts).
 //
-// Plan 02-02 un-skipped the /en/now and /pt/now placeholders now that the
-// route ships. All 4 scenarios run live across all 4 Playwright projects
-// (en/pt × light/dark) — 16 active tests total, 0 skips.
+// localePrefix:'never' — URLs are locale-free. The 4 Playwright projects (en/pt ×
+// light/dark) each set locale: 'en-US' or locale: 'pt-BR' via Accept-Language so
+// middleware serves the correct locale for every scenario. 6 scenarios × 4 projects
+// = 24 active tests total, 0 skips.
 import { expect, test } from '@playwright/test';
 
 const iPhoneSEViewport = { width: 375, height: 667 } as const;
@@ -17,20 +18,12 @@ const iPhoneSEViewport = { width: 375, height: 667 } as const;
 type Scenario = { url: string };
 
 const scenarios: Scenario[] = [
-  { url: '/en' },
-  { url: '/pt' },
-  { url: '/en/now' },
-  { url: '/pt/now' },
-  // Phase 3 additions (PROJ-01..05):
-  { url: '/en/projects' },
-  { url: '/pt/projects' },
-  { url: '/en/projects/machinery-partner-ecommerce' },
-  { url: '/pt/projects/machinery-partner-ecommerce' },
-  // Phase 4 additions (BLOG-01..04):
-  { url: '/en/blog' },
-  { url: '/pt/blog' },
-  { url: '/en/blog/building-this-portfolio' },
-  { url: '/pt/blog/building-this-portfolio' },
+  { url: '/' },
+  { url: '/now' },
+  { url: '/projects' },
+  { url: '/projects/machinery-partner-ecommerce' },
+  { url: '/blog' },
+  { url: '/blog/building-this-portfolio' },
 ];
 
 for (const { url } of scenarios) {

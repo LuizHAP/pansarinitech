@@ -2,53 +2,44 @@
 //
 // D-14 — Full WCAG 2.1 AA axe-core matrix.
 //
-// 4 projects (en×light, en×dark, pt×light, pt×dark) × 2 pages (home, 404) = 8 tests.
+// 4 projects (en×light, en×dark, pt×light, pt×dark) × 6 pages = 24 tests.
 // 0 violations required (D-18 fail-build on first violation).
 // Runs with playwright fullyParallel + workers: 4 to stay under D-19's < 3 min budget.
 //
 // Additive to tests/sith-contrast.spec.ts (the Wave 2 fast-feedback Sith subset).
 // Both run in CI; this spec is the broader gate, sith-contrast.spec.ts is the
 // regression smoke that locks in THEME-06.
+//
+// localePrefix:'never' — URLs are locale-free. The 4 Playwright projects each set
+// locale: 'en-US' or locale: 'pt-BR' via Accept-Language so middleware serves the
+// correct locale without a URL prefix. No URL prefix assertions here.
 import { AxeBuilder } from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 
-const projectLocale = (name: string): 'en' | 'pt' => (name.startsWith('en') ? 'en' : 'pt');
 const isDark = (name: string) => name.endsWith('-dark');
 
 // Pages exercised in every locale × theme combo.
-//   /                              → home (placeholder Phase 1)
-//   /<locale>/non-existent-route   → routes through [locale]/[...rest] → notFound()
-//                                    → renders [locale]/not-found.tsx (locale-aware 404)
+//   /                              → home
+//   /non-existent-route-for-404   → routes through [...rest] → notFound()
+//                                    → renders not-found.tsx (locale-aware 404)
+// Locale is served by middleware via Accept-Language (localePrefix:'never').
 const PAGES = [
-  { path: (locale: 'en' | 'pt') => `/${locale}`, desc: 'home' },
-  {
-    path: (locale: 'en' | 'pt') => `/${locale}/non-existent-route-for-404`,
-    desc: '404',
-  },
+  { path: () => '/', desc: 'home' },
+  { path: () => '/non-existent-route-for-404', desc: '404' },
   // Phase 3 additions (PROJ-01..05):
-  { path: (locale: 'en' | 'pt') => `/${locale}/projects`, desc: 'projects-listing' },
-  {
-    path: (locale: 'en' | 'pt') => `/${locale}/projects/machinery-partner-ecommerce`,
-    desc: 'projects-case-study',
-  },
+  { path: () => '/projects', desc: 'projects-listing' },
+  { path: () => '/projects/machinery-partner-ecommerce', desc: 'projects-case-study' },
   // Phase 4 additions (BLOG-01..04):
-  { path: (locale: 'en' | 'pt') => `/${locale}/blog`, desc: 'blog-listing' },
-  {
-    path: (locale: 'en' | 'pt') => `/${locale}/blog/building-this-portfolio`,
-    desc: 'blog-post',
-  },
+  { path: () => '/blog', desc: 'blog-listing' },
+  { path: () => '/blog/building-this-portfolio', desc: 'blog-post' },
 ];
 
 test.describe('a11y matrix — WCAG 2.1 AA across en/pt × light/dark × home/404', () => {
   for (const { path, desc } of PAGES) {
     test(`${desc}`, async ({ page }, testInfo) => {
-      const locale = projectLocale(testInfo.project.name);
       const dark = isDark(testInfo.project.name);
 
-      await page.goto(path(locale));
-
-      // Verify locale routing landed correctly.
-      await expect(page).toHaveURL(new RegExp(`^http://localhost:3000/${locale}(/|$)`));
+      await page.goto(path());
 
       if (dark) {
         // Inject .dark on <html> manually so the saber-red Sith palette is the
