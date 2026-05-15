@@ -25,7 +25,7 @@ export default function JsonLd({ schema }: JsonLdProps) {
     <script
       type="application/ld+json"
       // biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD script tags require dangerouslySetInnerHTML; content comes from Zod-validated frontmatter (site owner only — no user input)
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema).replace(/</g, '\\u003c') }}
     />
   );
 }

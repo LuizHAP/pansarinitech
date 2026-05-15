@@ -22,6 +22,7 @@ export async function generateMetadata({
   params: Promise<{ locale: Locale; slug: string }>;
 }): Promise<Metadata> {
   const { locale, slug } = await params;
+  if (!routing.locales.includes(locale)) return {};
   const project = await getProject(slug, locale);
   if (!project) return {};
   return buildMetadata({
@@ -40,6 +41,7 @@ export default async function CaseStudyPage({
   params: Promise<{ locale: Locale; slug: string }>;
 }) {
   const { locale, slug } = await params;
+  if (!routing.locales.includes(locale)) notFound();
   setRequestLocale(locale);
 
   const project = await getProject(slug, locale);
@@ -59,7 +61,9 @@ export default async function CaseStudyPage({
           url: `${SITE_URL}/projects/${slug}`,
           inLanguage: locale === 'pt' ? 'pt-BR' : 'en',
           keywords: project.stack.join(', '),
-          image: project.heroImage,
+          image: /^https?:\/\//.test(project.heroImage)
+            ? project.heroImage
+            : `${SITE_URL}/${project.heroImage.replace(/^\.?\//, '')}`,
           wordCount: Math.round(project.readingTime.minutes * 200),
         }}
       />
