@@ -1,0 +1,47 @@
+---
+title: "Construindo um Frontend em Next.js e React para Escalabilidade e Performance"
+date: "2026-05-15"
+excerpt: "Uma exploração detalhada sobre como construir um frontend com Next.js e React, priorizando escalabilidade e performance a partir de experiências práticas."
+tags:
+  - nextjs
+  - react
+  - frontend
+draft: true
+---
+
+## Introdução
+
+No dinâmico mundo do desenvolvimento web, criar um frontend escalável e performático é essencial. Com a evolução das tecnologias, o **Next.js** se destacou como uma das principais escolhas para construir aplicações web robustas. Neste post, compartilho insights ao desenvolver um frontend em Next.js e React, destacando as decisões e concessões feitas ao longo do caminho.
+
+## Optando pelo Next.js para uma Arquitetura Escalável
+
+Ao iniciar o projeto, o objetivo principal era assegurar a escalabilidade sem comprometer a performance. O **Next.js** foi a escolha óbvia devido à sua capacidade de gerar páginas estáticas e renderizar componentes no servidor de forma integrada. Essa abordagem híbrida permitiu pré-renderizar conteúdo sempre que possível, melhorando os tempos de carregamento e reduzindo a carga no servidor.
+
+### Geração Estática vs. Renderização no Servidor
+
+Uma das decisões críticas foi escolher entre **Geração Estática** e **Renderização no Servidor** (SSR). A geração estática oferecia carregamento rápido ao servir HTML pré-construído, em cache no nível CDN. No entanto, a SSR era necessária para páginas que exigiam dados em tempo real. Um mix de ambos, utilizando `getStaticProps` e `getServerSideProps`, forneceu uma solução equilibrada adaptada às necessidades de cada página.
+
+## Implementando a Regeneração Estática Incremental
+
+Para otimizar ainda mais a performance, implementamos a **Regeneração Estática Incremental**. Este recurso permite que as páginas sejam atualizadas em segundo plano caso estejam desatualizadas, enquanto ainda servem conteúdo estático. Ao definir intervalos de revalidação apropriados, garantimos que os usuários recebessem dados atualizados sem longos rebuilds de página, mantendo tempos de resposta rápidos.
+
+## Estilização com CSS-in-JS
+
+Para estilização, o **CSS-in-JS** com bibliotecas como `styled-components` permitiu estilos modulares e sustentáveis, limitados aos componentes. Esta abordagem foi crucial para lidar com necessidades de estilos dinâmicos sem poluir os estilos globais, garantindo consistência em toda a aplicação.
+
+## Otimizando a Performance do Lado do Cliente
+
+Embora considerações do lado do servidor sejam fundamentais, otimizar o lado do cliente é igualmente crítico. Aproveitar os **recursos concorrentes do React**, como `useTransition` e `useDeferredValue`, ajudou a evitar bloqueios de UI durante transições de estado. Isso contribuiu para uma experiência de usuário mais suave, especialmente nas partes interativas da aplicação.
+
+## Gerenciamento de Estado Global
+
+Gerenciar o estado global de maneira eficiente foi um desafio, especialmente com o crescimento da aplicação. Optamos pelo `Recoil` em vez do `Redux`, pois oferecia uma API mais simples adequada às nossas necessidades. O **modelo de átomos e seletores do Recoil** permitiu controle minucioso sobre o estado, habilitando re-renders eficientes ao apenas inscrever componentes em alterações de estado relevantes.
+
+## Aproveitando as Rotas de API do Next.js
+
+Outro recurso poderoso do Next.js são as **rotas de API**, que nos permitiram criar funções serverless diretamente na aplicação. Isso foi particularmente benéfico para lidar com autenticação de usuários e outras lógicas de backend, sem precisar configurar um ambiente de backend completo.
+
+## Conclusão
+
+Construir um frontend com Next.js e React envolveu várias decisões arquiteturais voltadas para alcançar escalabilidade e performance. Cada escolha, desde o uso de geração estática para velocidade até as rotas de API para lógica de backend, foi feita com cuidado, considerando as necessidades e restrições do projeto. Ao compartilhar essas experiências, espero fornecer insights valiosos para seu próximo projeto usando Next.js e React.
+
