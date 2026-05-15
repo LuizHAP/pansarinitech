@@ -21,6 +21,7 @@
     "verify:no-highlighter": "node scripts/verify-no-highlighter.mjs",
     "verify:message-length": "node scripts/check-message-length.mjs",
     "verify:metadata": "node scripts/verify-metadata.mjs",
+    "verify:ci-safety": "node scripts/check-ci-safety.mjs",
     "analyze": "ANALYZE=true pnpm build",
     "test:sith": "playwright test tests/sith-contrast.spec.ts",
     "test:a11y": "playwright test tests/a11y-matrix.spec.ts",

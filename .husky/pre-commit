@@ -1,2 +1,3 @@
 pnpm lint
+pnpm verify:ci-safety
 pnpm test:unit
