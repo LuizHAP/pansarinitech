@@ -77,7 +77,8 @@ jobs:
         run: |
           test -f "content/blog/${SLUG}.en.mdx" || { echo "ERROR: EN file not generated"; exit 1; }
           test -f "content/blog/${SLUG}.pt.mdx" || { echo "ERROR: PT file not generated"; exit 1; }
-          echo "Both locale files present."
+          test -f "content/blog/.pipeline-state.json" || { echo "ERROR: pipeline-state.json not written"; exit 1; }
+          echo "All required files present."
 
       - name: Verify blog content (parity + Zod)
         run: pnpm verify:posts
