@@ -1,22 +1,16 @@
 // tests/sith-contrast.spec.ts
 // Day-one Sith-red WCAG sanity check (Pitfall 11).
-// 4 tests: /en + /pt × light + dark. Dark mode .dark class injected manually
-// before running axe to ensure the saber-red palette is the active one.
-// Plan 03 expands to full WCAG 2.1 AA matrix.
+// 4 tests: home × light + dark, en/pt via Accept-Language from Playwright project config.
+// Dark mode .dark class injected manually before running axe to ensure the saber-red
+// palette is the active one. Plan 03 expands to full WCAG 2.1 AA matrix.
 import { AxeBuilder } from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 
-const projectLocale = (name: string) => (name.startsWith('en') ? 'en' : 'pt');
 const isDark = (name: string) => name.endsWith('-dark');
 
 test.describe('Sith-red contrast — Pitfall 11 day-one verification', () => {
   test('axe-core (color-contrast + focus): home page', async ({ page }, testInfo) => {
-    const locale = projectLocale(testInfo.project.name);
-
-    await page.goto(`/${locale}`);
-
-    // Verify we're on the expected locale subtree.
-    await expect(page).toHaveURL(new RegExp(`^http://localhost:3000/${locale}(/|$)`));
+    await page.goto('/');
 
     if (isDark(testInfo.project.name)) {
       // Inject .dark class manually so the saber-red Sith palette is active for axe.
