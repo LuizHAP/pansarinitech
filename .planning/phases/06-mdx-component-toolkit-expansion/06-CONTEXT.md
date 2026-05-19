@@ -30,6 +30,7 @@ Does NOT include authoring the blog post (Phase 7), changing existing component 
 - **D-06:** **Custom `<span>` chip** — NOT Shadcn `<Badge>`. A thin custom component: `<span className="inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium ...">`. Renders inline in prose without breaking line height. Shadcn `<Badge>` is `<div>` by default and would require `asChild` wrapping to be inline-safe.
 - **D-07:** **4 semantic variants**: `primary`, `secondary`, `muted`, `destructive` — matches MDX-02 spec exactly. Each variant uses the corresponding CSS variable token pair (`text-primary border-primary/30`, `text-secondary-foreground bg-secondary`, `text-muted-foreground border-border`, `text-destructive border-destructive/30`). WCAG AA contrast required on both Jedi (light) and Sith (dark) themes.
 - **D-08:** `primary` is the default variant (no `variant` prop required for the common case).
+- **D-09:** **`secondary` variant token override** — `--secondary` is not defined in `globals.css` (the `@theme inline` block has no `secondary` entry), so `bg-secondary text-secondary-foreground` specified in D-07 would render transparent. The `secondary` variant MUST use `bg-muted text-muted-foreground` instead. This supersedes D-07's secondary token pair only; all other D-07 variant tokens remain unchanged.
 
 ### Claude's Discretion
 - **InlineBadge is pure sync RSC** — no `getTranslations`, no locale dependency. The label content is always provided by the author as `children`; nothing to translate at the component level.

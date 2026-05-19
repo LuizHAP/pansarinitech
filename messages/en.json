@@ -142,6 +142,9 @@
     },
     "toc": {
       "label": "Contents"
+    },
+    "codeFilename": {
+      "ariaPrefix": "File"
     }
   },
   "personalProjects": {

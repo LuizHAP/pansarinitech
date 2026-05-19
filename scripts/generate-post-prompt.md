@@ -71,6 +71,64 @@ draft: false
 
 ---
 
+## AVAILABLE MDX COMPONENTS
+
+The following JSX components are registered in `mdxComponents` and are available in all MDX bodies (blog posts and project case studies). Use **only** these components — no other component tags will render. Because `next-mdx-remote@6` has `blockJS: true` by default, `import` statements inside MDX bodies are silently stripped — **you do not need to import these components**; they are already available.
+
+**`<Callout>`** — A highlighted aside block for notes, warnings, or errors. Use for important clarifications that should stand out from prose.
+
+```mdx
+<Callout type="info">This note stands out from the surrounding prose.</Callout>
+<Callout type="warn">Something to watch out for here.</Callout>
+<Callout type="error">This approach has a known failure mode.</Callout>
+```
+
+**`<Note>`** — Shorthand for `<Callout type="info">`. Prefer this for informational asides.
+
+```mdx
+<Note>A quick clarification inline in the narrative.</Note>
+```
+
+**`<Warning>`** — Shorthand for `<Callout type="warn">`. Prefer this for cautions and gotchas.
+
+```mdx
+<Warning>Watch out for this common mistake.</Warning>
+```
+
+**`<CodeFilename>`** — Renders a filename label above a fenced code block, creating a unified visual block. Use when showing code from a specific file. The inner fenced block uses triple backticks as usual — `CodeFilename` wraps it as children.
+
+```mdx
+<CodeFilename filename="src/app/page.tsx">
+```tsx
+export default function Page() {
+  return <main>Hello</main>;
+}
+```
+</CodeFilename>
+```
+
+**`<InlineBadge>`** — A small inline chip for labeling concepts, states, or categories in prose. Renders without breaking line height. Variants: `primary` (default, accent color), `secondary` (muted surface), `muted` (lowest visual weight), `destructive` (error/breaking-change color).
+
+```mdx
+This API is <InlineBadge>stable</InlineBadge> in Next.js 16.
+The old approach is <InlineBadge variant="destructive">deprecated</InlineBadge>.
+This feature is <InlineBadge variant="muted">experimental</InlineBadge>.
+```
+
+**`<Stat>`** — Displays a large numeric impact figure with a label below it. Use for measurable outcomes in case-study-style sections.
+
+```mdx
+<Stat number="97%" label="reduction in cold-start latency after the cache layer shipped" />
+```
+
+**Automatic: pre copy button** — Every fenced code block automatically gets a copy-to-clipboard button. No component tag needed — `PreWithCopyButton` is registered as the `pre` override in `mdxComponents`. Just write standard triple-backtick fenced code blocks.
+
+Do NOT use any other JSX component tags — only the components listed above are registered. Unknown component names are silently ignored by `next-mdx-remote@6`.
+
+> **Exception to the CONTENT RULES FORBIDDEN JSX rule:** The components listed above ARE permitted — they are registered in `mdxComponents` and safe to use.
+
+---
+
 ## CONTENT RULES
 
 - **Length:** 800–1200 words per locale. Count approximately. Do not pad; write substantive content.

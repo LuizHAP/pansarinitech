@@ -36,6 +36,8 @@ const COMPONENT_FILES = [
   'src/components/mdx/warning.tsx',
   'src/components/mdx/stat.tsx',
   'src/components/mdx/pre-with-copy-button.tsx',
+  'src/components/mdx/code-filename.tsx',
+  'src/components/mdx/inline-badge.tsx',
   'src/components/sections/personal-projects.tsx',
   'src/components/blog/post-card.tsx',
   'src/components/blog/toc-mobile.tsx',
