@@ -2,20 +2,20 @@
 gsd_state_version: 1.0
 milestone: v1.3
 milestone_name: Blog Enrichment + Quality Hardening
-status: active
-last_updated: "2026-05-16T00:00:00.000Z"
-last_activity: 2026-05-16
+status: executing
+last_updated: "2026-05-19T19:37:53.444Z"
+last_activity: 2026-05-19 — Plans created, verification passed
 progress:
   total_phases: 3
   completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
-  percent: 0
+  total_plans: 4
+  completed_plans: 1
+  percent: 25
 ---
 
 # Project State — pansarinitech
 
-**Last updated:** 2026-05-16 — Phase 5 UI-SPEC approved (4 PASS, 2 non-blocking FLAG). Ready for plan-phase.
+**Last updated:** 2026-05-19 — Phase 5 Plan 01 complete: 5 MDX component test files, 12 new tests, 212 total passing.
 
 ---
 
@@ -34,9 +34,9 @@ progress:
 ## Current Position
 
 Phase: Phase 5 — Test Coverage Sweep
-Plan: —
-Status: Not started
-Last activity: 2026-05-16 — Roadmap created
+Plan: 2 of 4 (05-02 next)
+Status: Executing — Plan 01 complete
+Last activity: 2026-05-19 — 05-01 complete: MDX component tests (callout, note, warning, stat, pre-with-copy-button)
 
 ---
 
@@ -98,6 +98,8 @@ Last activity: 2026-05-16 — Roadmap created
 | Assert-files-exist step before pnpm verify:posts | Catches silent zero-file writes (Pitfall 6: claude exits 0 but files not written without --permission-mode acceptEdits) with clear error message before the verify script is invoked | 03-02-SUMMARY.md |
 | Export SITE_URL from seo.ts | Single canonical URL source for both buildMetadata and JsonLd — avoids duplication | 04-P1-SUMMARY.md |
 | JsonLd RSC with biome-ignore for noDangerouslySetInnerHtml | Idiomatic JSON-LD pattern; content is Zod-validated owner-only MDX frontmatter — no user input | 04-P1-SUMMARY.md |
+| Async RSC delegation tests (note/warning): test via Callout directly | Note/Warning are sync delegates returning un-awaited async JSX; RTL cannot execute async components in jsdom — testing Callout with the delegated type gives equivalent coverage | 05-01-SUMMARY.md |
+| next-intl partial mock requires importOriginal | vi.mock('next-intl', () => {...}) breaks renderWithLocale which imports NextIntlClientProvider; use importOriginal to preserve all exports | 05-01-SUMMARY.md |
 
 ### Open TODOs
 
@@ -141,15 +143,14 @@ Last activity: 2026-05-16 — Roadmap created
 
 ### Last Session
 
-- Executed 04-P1: Created src/components/json-ld.tsx (shared JsonLd RSC), exported SITE_URL from seo.ts, injected Article schema into blog post pages and WebPage schema into project post pages, added prose heading override classes to both prose wrappers
-- Commits: `15ae0b5` (JsonLd RSC + SITE_URL export), `91f3cd9` (prose overrides + JsonLd injection in both post pages)
-- 200 tests pass, 0 regressions; pnpm build exits 0; SEO-01 and SEO-02 complete
-- v1.2 milestone complete and archived
+- Executed 05-01: Added 5 MDX component test files (callout, note, warning, stat, pre-with-copy-button). 12 new tests. 212 total passing. TEST-01 components covered.
+- Commits: `995e01a` (callout/note/warning tests), `c9da7da` (stat/pre-with-copy-button tests)
+- 212 tests pass, 0 regressions; biome check exits 0
 
 ### Next Session
 
-Run `/gsd-plan-phase 5` to plan Phase 5: Test Coverage Sweep.
-UI-SPEC approved at `.planning/phases/05-test-coverage-sweep/05-UI-SPEC.md` — planner will use as design context.
+Continue Phase 5 — Wave 1 remaining plans: 05-02 (json-ld + blog components) and 05-03 (vitest.config coverage expansion).
+Run `/gsd-execute-phase 5` to continue.
 
 ---
 
