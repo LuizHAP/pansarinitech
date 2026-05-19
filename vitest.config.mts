@@ -31,6 +31,15 @@ const COMPONENT_FILES = [
   'src/components/shared/easter-egg.tsx',
   'src/components/shared/theme-provider.tsx',
   'src/components/shared/command-palette.tsx',
+  'src/components/mdx/callout.tsx',
+  'src/components/mdx/note.tsx',
+  'src/components/mdx/warning.tsx',
+  'src/components/mdx/stat.tsx',
+  'src/components/mdx/pre-with-copy-button.tsx',
+  'src/components/sections/personal-projects.tsx',
+  'src/components/blog/post-card.tsx',
+  'src/components/blog/toc-mobile.tsx',
+  'src/components/blog/toc-sidebar.tsx',
 ];
 
 const PURE_100 = { statements: 100, branches: 100, functions: 100, lines: 100 };
@@ -51,7 +60,7 @@ export default defineConfig({
       provider: 'v8',
       reporter: ['text', 'lcov'],
       reportsDirectory: './coverage',
-      include: [...LIB_DATA_FILES, ...COMPONENT_FILES],
+      include: [...LIB_DATA_FILES, ...COMPONENT_FILES, 'src/components/json-ld.tsx'],
       thresholds: {
         // Surgical 100% gate on pure-logic TS modules — UNCHANGED.
         ...Object.fromEntries(LIB_DATA_FILES.map((f) => [f, PURE_100])),
@@ -60,6 +69,8 @@ export default defineConfig({
         // Per-file overrides for structurally unreachable branches (pop() ?? fallback).
         'src/components/sections/hero.tsx': UNREACHABLE_NULL_COALESCE,
         'src/components/sections/contact.tsx': UNREACHABLE_NULL_COALESCE,
+        // json-ld.tsx is a pure RSC component with no unreachable branches — 100% required.
+        'src/components/json-ld.tsx': PURE_100,
       },
     },
     testTimeout: 15000,
