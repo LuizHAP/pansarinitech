@@ -29,7 +29,7 @@ Full archive: `milestones/v1.2-ROADMAP.md`
 
 ### 📋 v1.3 — Blog Enrichment + Quality Hardening
 
-- [ ] **Phase 5: Test Coverage Sweep** — Expand coverage config to all zero-coverage components; `pnpm test:coverage` exits 0 across full scope
+- [x] **Phase 5: Test Coverage Sweep** — Expand coverage config to all zero-coverage components; `pnpm test:coverage` exits 0 across full scope (completed 2026-05-19)
 - [ ] **Phase 6: MDX Component Toolkit Expansion** — Build CodeFilename and InlineBadge components, test all 7 MDX components, update pipeline prompt
 - [ ] **Phase 7: Blog Post + SEO Hardening** — Publish bilingual "View Transitions" post, emit hreflang alternates on all routes, add AUTHOR_PERSON JSON-LD
 
@@ -52,7 +52,7 @@ Plans:
 - [x] 05-01-PLAN.md — MDX component tests (callout, note, warning, stat, pre-with-copy-button)
 - [x] 05-02-PLAN.md — json-ld.tsx tests (script output, XSS escape, exported constants)
 - [x] 05-03-PLAN.md — Blog-layer component tests (post-card, toc-mobile, toc-sidebar)
-- [ ] 05-04-PLAN.md — vitest.config.mts expansion + pnpm test:coverage gate verification
+- [x] 05-04-PLAN.md — vitest.config.mts expansion + pnpm test:coverage gate verification
 **UI hint**: yes
 
 ### Phase 6: MDX Component Toolkit Expansion
@@ -65,7 +65,11 @@ Plans:
   3. Both new components are registered in `mdxComponents` and work in a real blog post and project case-study MDX body without any import needed inside the MDX file
   4. `scripts/generate-post-prompt.md` documents all 7 MDX components (pre-existing 5 + new 2) with usage examples that the OpenAI pipeline can follow
   5. `pnpm test:coverage` continues to exit 0 with the two new component files tracked at ≥70/60/70/70
-**Plans**: TBD
+**Plans**: 3 plans
+Plans:
+- [ ] 06-01-PLAN.md — CodeFilename + InlineBadge components, i18n keys, mdxComponents registration (MDX-01, MDX-02, MDX-03)
+- [ ] 06-02-PLAN.md — Tests for both new components + vitest.config.mts coverage expansion (MDX-05)
+- [ ] 06-03-PLAN.md — Pipeline prompt AVAILABLE MDX COMPONENTS section (MDX-04)
 **UI hint**: yes
 
 ### Phase 7: Blog Post + SEO Hardening
@@ -91,8 +95,8 @@ Plans:
 | 2. UX Polish — Testing, Interactions & Animations | v1.2 | 3/3 | Complete | 2026-05-13 |
 | 3. Automated Content Pipeline | v1.2 | 3/3 | Complete | 2026-05-15 |
 | 4. SEO Enrichment | v1.2 | 1/1 | Complete | 2026-05-15 |
-| 5. Test Coverage Sweep | v1.3 | 3/4 | In Progress|  |
-| 6. MDX Component Toolkit Expansion | v1.3 | 0/? | Not started | - |
+| 5. Test Coverage Sweep | v1.3 | 4/4 | Complete   | 2026-05-19 |
+| 6. MDX Component Toolkit Expansion | v1.3 | 0/3 | Not started | - |
 | 7. Blog Post + SEO Hardening | v1.3 | 0/? | Not started | - |
 
 ---
