@@ -2,20 +2,20 @@
 gsd_state_version: 1.0
 milestone: v1.3
 milestone_name: Blog Enrichment + Quality Hardening
-status: executing
-last_updated: "2026-05-19T19:47:07.424Z"
-last_activity: 2026-05-19
+status: planning
+last_updated: "2026-05-19T20:25:28.965Z"
+last_activity: "2026-05-19 — Phase 5 complete: 229 tests, TEST-01–05 all fulfilled, verification passed"
 progress:
   total_phases: 3
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 4
-  completed_plans: 3
-  percent: 75
+  completed_plans: 4
+  percent: 100
 ---
 
 # Project State — pansarinitech
 
-**Last updated:** 2026-05-19 — Phase 5 Plan 03 complete: blog component tests (TocMobile 4 tests, TocSidebar 5 tests, PostCard 4 tests). 229 total passing.
+**Last updated:** 2026-05-19 — Phase 5 complete: Test Coverage Sweep verified. 229 tests, 27 tracked files, all per-file thresholds passing. Ready for Phase 6.
 
 ---
 
@@ -27,16 +27,16 @@ progress:
 
 **If everything else fails:** the site must load fast on a recruiter's phone, communicate "Principal-level full-stack engineer" within 5 seconds, and offer a clear path to "contact / hire / message me."
 
-**Current focus:** v1.3 Blog Enrichment + Quality Hardening — Phase 5: Test Coverage Sweep
+**Current focus:** v1.3 Blog Enrichment + Quality Hardening — Phase 6: MDX Component Toolkit Expansion
 
 ---
 
 ## Current Position
 
-Phase: Phase 5 — Test Coverage Sweep
-Plan: 4 of 4 (05-04 next)
-Status: Executing — Plan 03 complete
-Last activity: 2026-05-19 — 05-03 complete: blog component tests (TocMobile, TocSidebar, PostCard)
+Phase: Phase 6 — MDX Component Toolkit Expansion
+Plan: —
+Status: Ready to plan (Phase 5 verified and complete)
+Last activity: 2026-05-19 — Phase 5 complete: 229 tests, TEST-01–05 all fulfilled, verification passed
 
 ---
 
@@ -46,7 +46,7 @@ Last activity: 2026-05-19 — 05-03 complete: blog component tests (TocMobile, T
 - [x] **Phase 2: UX Polish — Testing, Interactions & Animations** — Copy-email tests, Personal Projects polish, micro-interactions (UX-08 to UX-12) — completed 2026-05-13
 - [x] **Phase 3: Automated Content Pipeline** — OpenAI gpt-4o generates bilingual MDX + opens PRs (PIPE-01 to PIPE-07) — completed 2026-05-15
 - [x] **Phase 4: SEO Enrichment** — Shared JsonLd RSC + Article/WebPage schema injection + prose heading overrides (SEO-01, SEO-02) — completed 2026-05-15
-- [ ] **Phase 5: Test Coverage Sweep** — Expand coverage to all zero-coverage components; pnpm test:coverage exits 0 (TEST-01 to TEST-05)
+- [x] **Phase 5: Test Coverage Sweep** — Expand coverage to all zero-coverage components; pnpm test:unit:coverage exits 0 (TEST-01 to TEST-05) — completed 2026-05-19
 - [ ] **Phase 6: MDX Component Toolkit Expansion** — Build CodeFilename + InlineBadge, test all 7 MDX components, update pipeline prompt (MDX-01 to MDX-05)
 - [ ] **Phase 7: Blog Post + SEO Hardening** — Bilingual "View Transitions" post live, hreflang on all routes, AUTHOR_PERSON JSON-LD (BLOG-01, BLOG-02, SEO-03, SEO-04)
 
@@ -71,6 +71,7 @@ Last activity: 2026-05-19 — 05-03 complete: blog component tests (TocMobile, T
 | Phase 01-cmd-k-command-palette P2 | 90 | 2 tasks | 4 files |
 | Phase 05-test-coverage-sweep P02 | 64 | 1 tasks | 1 files |
 | Phase 05-test-coverage-sweep P03 | 5 minutes | 2 tasks | 3 files |
+| Phase 05-test-coverage-sweep P04 | 7min | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -101,6 +102,7 @@ Last activity: 2026-05-19 — 05-03 complete: blog component tests (TocMobile, T
 | Export SITE_URL from seo.ts | Single canonical URL source for both buildMetadata and JsonLd — avoids duplication | 04-P1-SUMMARY.md |
 | JsonLd RSC with biome-ignore for noDangerouslySetInnerHtml | Idiomatic JSON-LD pattern; content is Zod-validated owner-only MDX frontmatter — no user input | 04-P1-SUMMARY.md |
 | Async RSC delegation tests (note/warning): test via Callout directly | Note/Warning are sync delegates returning un-awaited async JSX; RTL cannot execute async components in jsdom — testing Callout with the delegated type gives equivalent coverage | 05-01-SUMMARY.md |
+| note/warning coverage: invoke component directly then assert element.type/props | Note()/Warning() must be called in their tests to register coverage; assert element.type === Callout + element.props.type for delegation contract; use Callout() for rendering assertions | 05-04-SUMMARY.md |
 | next-intl partial mock requires importOriginal | vi.mock('next-intl', () => {...}) breaks renderWithLocale which imports NextIntlClientProvider; use importOriginal to preserve all exports | 05-01-SUMMARY.md |
 | Use optional chaining (?.) instead of non-null assertion (!) in json-ld tests | biome lint/style/noNonNullAssertion forbids !; expect(scriptEl).not.toBeNull() already guards the flow so ?. is equivalent | 05-02-SUMMARY.md |
 | Split-text-node reading-time assertion: use paragraph.textContent (not getByText) | getByText fails on text split by sibling elements (<time> node + bare text node); textContent concatenates all child text nodes | 05-03-SUMMARY.md |
@@ -148,14 +150,13 @@ Last activity: 2026-05-19 — 05-03 complete: blog component tests (TocMobile, T
 
 ### Last Session
 
-- Executed 05-03: Added blog component tests (TocMobile 4 tests, TocSidebar 5 tests, PostCard 4 tests). 13 new tests. 229 total passing. TEST-04 covered.
-- Commits: `29cc47a` (toc tests), `a5c1f44` (post-card tests)
-- 229 tests pass, 0 regressions; biome check exits 0
+- Discussed Phase 6: MDX Component Toolkit Expansion. Locked implementation decisions for CodeFilename (wrapper shape, unified block visual, FileIcon, async RSC aria-label i18n) and InlineBadge (custom span chip, 4 semantic variants, sync RSC).
+- Commit: `24127cc` (phase 6 context + discussion log)
 
 ### Next Session
 
-Continue Phase 5 — Wave 1 final plan: 05-04 (coverage thresholds).
-Run `/gsd-execute-phase 5` to continue.
+Phase 6 context gathered. Ready to plan.
+Run `/gsd-plan-phase 6` to continue.
 
 ---
 
