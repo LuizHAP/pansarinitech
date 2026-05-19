@@ -3,19 +3,19 @@ gsd_state_version: 1.0
 milestone: v1.3
 milestone_name: Blog Enrichment + Quality Hardening
 status: executing
-last_updated: "2026-05-19T19:41:45.323Z"
+last_updated: "2026-05-19T19:47:07.424Z"
 last_activity: 2026-05-19
 progress:
   total_phases: 3
   completed_phases: 0
   total_plans: 4
-  completed_plans: 2
-  percent: 50
+  completed_plans: 3
+  percent: 75
 ---
 
 # Project State — pansarinitech
 
-**Last updated:** 2026-05-19 — Phase 5 Plan 02 complete: json-ld test file, 4 new tests, 216 total passing.
+**Last updated:** 2026-05-19 — Phase 5 Plan 03 complete: blog component tests (TocMobile 4 tests, TocSidebar 5 tests, PostCard 4 tests). 229 total passing.
 
 ---
 
@@ -34,9 +34,9 @@ progress:
 ## Current Position
 
 Phase: Phase 5 — Test Coverage Sweep
-Plan: 3 of 4 (05-03 next)
-Status: Executing — Plan 02 complete
-Last activity: 2026-05-19 — 05-02 complete: json-ld test file (script output, XSS escape, constants)
+Plan: 4 of 4 (05-04 next)
+Status: Executing — Plan 03 complete
+Last activity: 2026-05-19 — 05-03 complete: blog component tests (TocMobile, TocSidebar, PostCard)
 
 ---
 
@@ -70,6 +70,7 @@ Last activity: 2026-05-19 — 05-02 complete: json-ld test file (script output, 
 | Phase 01-cmd-k-command-palette P1 | 216 | 2 tasks | 12 files |
 | Phase 01-cmd-k-command-palette P2 | 90 | 2 tasks | 4 files |
 | Phase 05-test-coverage-sweep P02 | 64 | 1 tasks | 1 files |
+| Phase 05-test-coverage-sweep P03 | 5 minutes | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -102,6 +103,8 @@ Last activity: 2026-05-19 — 05-02 complete: json-ld test file (script output, 
 | Async RSC delegation tests (note/warning): test via Callout directly | Note/Warning are sync delegates returning un-awaited async JSX; RTL cannot execute async components in jsdom — testing Callout with the delegated type gives equivalent coverage | 05-01-SUMMARY.md |
 | next-intl partial mock requires importOriginal | vi.mock('next-intl', () => {...}) breaks renderWithLocale which imports NextIntlClientProvider; use importOriginal to preserve all exports | 05-01-SUMMARY.md |
 | Use optional chaining (?.) instead of non-null assertion (!) in json-ld tests | biome lint/style/noNonNullAssertion forbids !; expect(scriptEl).not.toBeNull() already guards the flow so ?. is equivalent | 05-02-SUMMARY.md |
+| Split-text-node reading-time assertion: use paragraph.textContent (not getByText) | getByText fails on text split by sibling elements (<time> node + bare text node); textContent concatenates all child text nodes | 05-03-SUMMARY.md |
+| PostCard formatDate mock: mock @/lib/i18n/helpers.formatDate to return fixed string | Avoids Intl locale differences across CI environments; keeps assertions locale-agnostic | 05-03-SUMMARY.md |
 
 ### Open TODOs
 
@@ -145,13 +148,13 @@ Last activity: 2026-05-19 — 05-02 complete: json-ld test file (script output, 
 
 ### Last Session
 
-- Executed 05-02: Added json-ld test file (script output, XSS escape, AUTHOR_PERSON, SITE_URL). 4 new tests. 216 total passing. TEST-02 covered.
-- Commits: `d229a5e` (json-ld tests)
-- 216 tests pass, 0 regressions; biome check exits 0
+- Executed 05-03: Added blog component tests (TocMobile 4 tests, TocSidebar 5 tests, PostCard 4 tests). 13 new tests. 229 total passing. TEST-04 covered.
+- Commits: `29cc47a` (toc tests), `a5c1f44` (post-card tests)
+- 229 tests pass, 0 regressions; biome check exits 0
 
 ### Next Session
 
-Continue Phase 5 — Wave 1 remaining plans: 05-03 (vitest.config coverage expansion) and 05-04 (coverage thresholds).
+Continue Phase 5 — Wave 1 final plan: 05-04 (coverage thresholds).
 Run `/gsd-execute-phase 5` to continue.
 
 ---
