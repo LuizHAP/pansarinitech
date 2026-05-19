@@ -56,7 +56,8 @@ export async function CaseStudyHero({
           src={heroSrc}
           alt={project.title}
           sizes="(max-width: 768px) 100vw, 80vw"
-          preload
+          priority
+          fetchPriority="high"
           placeholder="blur"
           className="h-auto w-full"
         />
