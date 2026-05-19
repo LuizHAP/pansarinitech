@@ -37,6 +37,18 @@ Key additions in v1.2:
 
 **Not yet live:** custom domain `pansarini.tech` rollout (currently `pansarinitech.vercel.app`).
 
+## Current Milestone: v1.3 Blog Enrichment + Quality Hardening
+
+**Goal:** Ship a richer blog authoring baseline (MDX component toolkit usable in all future posts), achieve full 100% test coverage across the codebase, and complete hreflang + Knowledge Graph SEO hardening.
+
+**Target features:**
+- MDX component toolkit: Callouts/Admonitions, Code-with-filename blocks, Copy-to-clipboard on code blocks, Inline badges/tags — bilingual-compatible, a11y-clean, foundation for all future posts
+- Automated pipeline updated to reference the new components so AI-generated posts use them
+- New blog post: "View Transitions API on the theme toggle" — authored bilingually (PT + EN), showcases the new toolkit
+- Full 100% test coverage sweep: audit all components (TD-07 remainder: case-study-hero, easter-egg, theme-provider; json-ld.tsx; all others below threshold)
+- hreflang `alternates.languages` emitted via `buildMetadata` on all routes
+- `AUTHOR_PERSON` JSON-LD: `url` + `sameAs` (GitHub, LinkedIn) in the existing JsonLd RSC
+
 ## Requirements
 
 ### Validated
@@ -102,15 +114,14 @@ Key additions in v1.2:
 
 <!-- Next milestone candidates. Hypotheses until validated. -->
 
-**v1.3 — To Be Planned** (run `/gsd-new-milestone`)
+**v1.3 Blog Enrichment + Quality Hardening** (in planning)
 
-Candidates:
-- [ ] `pansarini.tech` custom domain cutover
-- [ ] RSS feed (when blog reaches 3+ posts)
-- [ ] `case-study-hero.tsx`, `easter-egg.tsx`, `theme-provider.tsx` test coverage (TD-07 remainder)
+- [ ] MDX component toolkit: Callouts, Code-with-filename, Copy-to-clipboard, Inline badges (bilingual-compatible, a11y-clean)
+- [ ] Automated pipeline updated to reference new MDX components
+- [ ] Blog post "View Transitions API on the theme toggle" (PT + EN, code-heavy)
+- [ ] Full 100% test coverage sweep (all components; TD-07 remainder + json-ld.tsx + others below threshold)
 - [ ] `hreflang alternates.languages` in `buildMetadata` (currently only canonical emitted)
 - [ ] `AUTHOR_PERSON` Knowledge Graph linkage (`url` + `sameAs` in JSON-LD)
-- [ ] Blog post authoring workflow improvements
 
 ### Out of Scope
 
@@ -223,4 +234,4 @@ This document evolves at phase transitions and milestone boundaries.
 5. Update Current State + Next Milestone Goals sections
 
 ---
-*Last updated: 2026-05-15 after v1.2 milestone — gsd-complete-milestone*
+*Last updated: 2026-05-16 — v1.3 milestone started*

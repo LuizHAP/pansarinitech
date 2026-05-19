@@ -1,7 +1,7 @@
 # Roadmap — pansarinitech
 
-**Last updated:** 2026-05-15
-**Status:** Planning v1.3
+**Last updated:** 2026-05-16
+**Status:** Active — v1.3 in progress
 
 ---
 
@@ -27,17 +27,54 @@ Full archive: `milestones/v1.2-ROADMAP.md`
 
 </details>
 
-### 📋 v1.3 — To Be Planned
+### 📋 v1.3 — Blog Enrichment + Quality Hardening
 
-Run `/gsd-new-milestone` to define the next milestone's goals, research, and roadmap.
+- [ ] **Phase 5: Test Coverage Sweep** — Expand coverage config to all zero-coverage components; `pnpm test:coverage` exits 0 across full scope
+- [ ] **Phase 6: MDX Component Toolkit Expansion** — Build CodeFilename and InlineBadge components, test all 7 MDX components, update pipeline prompt
+- [ ] **Phase 7: Blog Post + SEO Hardening** — Publish bilingual "View Transitions" post, emit hreflang alternates on all routes, add AUTHOR_PERSON JSON-LD
 
-**Candidates (from v1.2 deferred items):**
-- `pansarini.tech` custom domain cutover
-- RSS feed (when blog reaches 3+ posts)
-- `case-study-hero.tsx`, `easter-egg.tsx`, `theme-provider.tsx` test coverage (TD-07 remainder)
-- `hreflang alternates.languages` in `buildMetadata`
-- `AUTHOR_PERSON` Knowledge Graph linkage (`url` + `sameAs`)
-- Blog post authoring improvements
+---
+
+## Phase Details
+
+### Phase 5: Test Coverage Sweep
+**Goal**: Every component tracked in `vitest.config.mts` has tests that meet its threshold; `pnpm test:coverage` exits 0 with zero uncovered files in scope
+**Depends on**: Nothing (builds on existing Vitest infrastructure from v1.1)
+**Requirements**: TEST-01, TEST-02, TEST-03, TEST-04, TEST-05
+**Success Criteria** (what must be TRUE):
+  1. `pnpm test:coverage` exits 0 with all per-file thresholds passing across the expanded scope (MDX components, json-ld.tsx, personal-projects.tsx, blog-layer components)
+  2. `json-ld.tsx` is covered at 100/100/100/100 — a developer running the suite sees no uncovered branch in the JSON-LD serialization logic
+  3. All five pre-existing MDX components (`callout.tsx`, `note.tsx`, `warning.tsx`, `stat.tsx`, `pre-with-copy-button.tsx`) are tracked in the coverage config and their tests pass at ≥70/60/70/70
+  4. Blog-layer components (`post-card.tsx`, `toc-mobile.tsx`, `toc-sidebar.tsx`) and `personal-projects.tsx` have tests that render the component contract and are tracked in coverage config at ≥70/60/70/70
+  5. CI gate runs the expanded coverage check and blocks merge on any threshold regression
+**Plans**: TBD
+**UI hint**: yes
+
+### Phase 6: MDX Component Toolkit Expansion
+**Goal**: Two new MDX components (`CodeFilename`, `InlineBadge`) are built, accessible, registered for use in all MDX bodies, tested, and the OpenAI content pipeline prompt documents all 7 components so generated posts can reference them
+**Depends on**: Phase 5 (new components need to be in coverage scope from day one)
+**Requirements**: MDX-01, MDX-02, MDX-03, MDX-04, MDX-05
+**Success Criteria** (what must be TRUE):
+  1. A `<CodeFilename>` component renders a filename label above a fenced code block in any MDX body — bilingual label support works via next-intl and both Jedi and Sith themes pass WCAG AA contrast
+  2. An `<InlineBadge>` component renders an inline chip using CSS variable theme tokens (primary, secondary, muted, destructive variants) — visible in prose on both light and dark themes and passing WCAG AA
+  3. Both new components are registered in `mdxComponents` and work in a real blog post and project case-study MDX body without any import needed inside the MDX file
+  4. `scripts/generate-post-prompt.md` documents all 7 MDX components (pre-existing 5 + new 2) with usage examples that the OpenAI pipeline can follow
+  5. `pnpm test:coverage` continues to exit 0 with the two new component files tracked at ≥70/60/70/70
+**Plans**: TBD
+**UI hint**: yes
+
+### Phase 7: Blog Post + SEO Hardening
+**Goal**: A new code-heavy bilingual blog post is live on both locales using the MDX toolkit, every route emits `alternates.languages` hreflang metadata, and the JSON-LD payload includes the author's identity links for Knowledge Graph coverage
+**Depends on**: Phase 6 (post uses the new MDX components built there)
+**Requirements**: BLOG-01, BLOG-02, SEO-03, SEO-04
+**Success Criteria** (what must be TRUE):
+  1. The "View Transitions API on the theme toggle" post appears correctly in the blog listing on both `/en/blog` and `/pt/blog`, with valid frontmatter (title, description, date, tags) in both locales
+  2. The post body uses at least one callout, one code-filename block, and one inline badge — demonstrating the Phase 6 toolkit in a real post
+  3. Viewing page source (or snapshot test output) on any route shows `<link rel="alternate" hreflang>` tags for `en`, `pt-BR`, and `x-default`
+  4. The `seo.test.ts` snapshot for `buildMetadata()` includes `alternates.languages` with the correct locale keys
+  5. Article and WebPage JSON-LD payloads include an `author` object with `url` and `sameAs` (GitHub, LinkedIn) — verifiable via the existing `json-ld.tsx` snapshot tests
+**Plans**: TBD
+**UI hint**: yes
 
 ---
 
@@ -49,6 +86,9 @@ Run `/gsd-new-milestone` to define the next milestone's goals, research, and roa
 | 2. UX Polish — Testing, Interactions & Animations | v1.2 | 3/3 | Complete | 2026-05-13 |
 | 3. Automated Content Pipeline | v1.2 | 3/3 | Complete | 2026-05-15 |
 | 4. SEO Enrichment | v1.2 | 1/1 | Complete | 2026-05-15 |
+| 5. Test Coverage Sweep | v1.3 | 0/? | Not started | - |
+| 6. MDX Component Toolkit Expansion | v1.3 | 0/? | Not started | - |
+| 7. Blog Post + SEO Hardening | v1.3 | 0/? | Not started | - |
 
 ---
 

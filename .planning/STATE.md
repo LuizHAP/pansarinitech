@@ -1,21 +1,21 @@
 ---
 gsd_state_version: 1.0
 milestone: v1.3
-milestone_name: To Be Planned
-status: planning
-last_updated: "2026-05-15T23:00:00.000Z"
-last_activity: 2026-05-15
+milestone_name: Blog Enrichment + Quality Hardening
+status: active
+last_updated: "2026-05-16T00:00:00.000Z"
+last_activity: 2026-05-16
 progress:
-  total_phases: 4
-  completed_phases: 4
-  total_plans: 9
-  completed_plans: 9
-  percent: 100
+  total_phases: 3
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 # Project State — pansarinitech
 
-**Last updated:** 2026-05-15 — v1.2 milestone complete and archived. 4 phases, 9 plans shipped. Planning v1.3.
+**Last updated:** 2026-05-16 — Phase 5 UI-SPEC approved (4 PASS, 2 non-blocking FLAG). Ready for plan-phase.
 
 ---
 
@@ -27,16 +27,16 @@ progress:
 
 **If everything else fails:** the site must load fast on a recruiter's phone, communicate "Principal-level full-stack engineer" within 5 seconds, and offer a clear path to "contact / hire / message me."
 
-**Current focus:** Planning v1.3
+**Current focus:** v1.3 Blog Enrichment + Quality Hardening — Phase 5: Test Coverage Sweep
 
 ---
 
 ## Current Position
 
-Phase: v1.2 complete
-Plan: 9/9 shipped
-Status: Planning next milestone
-Last activity: 2026-05-15
+Phase: Phase 5 — Test Coverage Sweep
+Plan: —
+Status: Not started
+Last activity: 2026-05-16 — Roadmap created
 
 ---
 
@@ -46,6 +46,9 @@ Last activity: 2026-05-15
 - [x] **Phase 2: UX Polish — Testing, Interactions & Animations** — Copy-email tests, Personal Projects polish, micro-interactions (UX-08 to UX-12) — completed 2026-05-13
 - [x] **Phase 3: Automated Content Pipeline** — OpenAI gpt-4o generates bilingual MDX + opens PRs (PIPE-01 to PIPE-07) — completed 2026-05-15
 - [x] **Phase 4: SEO Enrichment** — Shared JsonLd RSC + Article/WebPage schema injection + prose heading overrides (SEO-01, SEO-02) — completed 2026-05-15
+- [ ] **Phase 5: Test Coverage Sweep** — Expand coverage to all zero-coverage components; pnpm test:coverage exits 0 (TEST-01 to TEST-05)
+- [ ] **Phase 6: MDX Component Toolkit Expansion** — Build CodeFilename + InlineBadge, test all 7 MDX components, update pipeline prompt (MDX-01 to MDX-05)
+- [ ] **Phase 7: Blog Post + SEO Hardening** — Bilingual "View Transitions" post live, hreflang on all routes, AUTHOR_PERSON JSON-LD (BLOG-01, BLOG-02, SEO-03, SEO-04)
 
 ---
 
@@ -108,6 +111,7 @@ Last activity: 2026-05-15
 - Phase 1 added: Vitest + Unit Test Baseline — Vitest + RTL setup, 100% coverage on pure-logic files, coverage CI gate, co-located tests
 - Phase 2 added: Code Quality Baseline — barrel exports, naming conventions, import reorder commit
 - v1.2 roadmap created: 3 phases (Cmd+K palette, UX polish, content pipeline), 19 requirements mapped
+- v1.3 roadmap created: 3 phases (Test Coverage Sweep, MDX Toolkit Expansion, Blog Post + SEO Hardening), 14 requirements mapped
 
 ### Blockers
 
@@ -140,10 +144,12 @@ Last activity: 2026-05-15
 - Executed 04-P1: Created src/components/json-ld.tsx (shared JsonLd RSC), exported SITE_URL from seo.ts, injected Article schema into blog post pages and WebPage schema into project post pages, added prose heading override classes to both prose wrappers
 - Commits: `15ae0b5` (JsonLd RSC + SITE_URL export), `91f3cd9` (prose overrides + JsonLd injection in both post pages)
 - 200 tests pass, 0 regressions; pnpm build exits 0; SEO-01 and SEO-02 complete
+- v1.2 milestone complete and archived
 
 ### Next Session
 
-Phase 4 complete. All phases of v1.2 milestone delivered.
+Run `/gsd-plan-phase 5` to plan Phase 5: Test Coverage Sweep.
+UI-SPEC approved at `.planning/phases/05-test-coverage-sweep/05-UI-SPEC.md` — planner will use as design context.
 
 ---
 
