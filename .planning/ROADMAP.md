@@ -1,6 +1,6 @@
 # Roadmap — pansarinitech
 
-**Last updated:** 2026-05-16
+**Last updated:** 2026-05-19
 **Status:** Active — v1.3 in progress
 
 ---
@@ -47,7 +47,12 @@ Full archive: `milestones/v1.2-ROADMAP.md`
   3. All five pre-existing MDX components (`callout.tsx`, `note.tsx`, `warning.tsx`, `stat.tsx`, `pre-with-copy-button.tsx`) are tracked in the coverage config and their tests pass at ≥70/60/70/70
   4. Blog-layer components (`post-card.tsx`, `toc-mobile.tsx`, `toc-sidebar.tsx`) and `personal-projects.tsx` have tests that render the component contract and are tracked in coverage config at ≥70/60/70/70
   5. CI gate runs the expanded coverage check and blocks merge on any threshold regression
-**Plans**: TBD
+**Plans**: 4 plans
+Plans:
+- [ ] 05-01-PLAN.md — MDX component tests (callout, note, warning, stat, pre-with-copy-button)
+- [ ] 05-02-PLAN.md — json-ld.tsx tests (script output, XSS escape, exported constants)
+- [ ] 05-03-PLAN.md — Blog-layer component tests (post-card, toc-mobile, toc-sidebar)
+- [ ] 05-04-PLAN.md — vitest.config.mts expansion + pnpm test:coverage gate verification
 **UI hint**: yes
 
 ### Phase 6: MDX Component Toolkit Expansion
@@ -86,7 +91,7 @@ Full archive: `milestones/v1.2-ROADMAP.md`
 | 2. UX Polish — Testing, Interactions & Animations | v1.2 | 3/3 | Complete | 2026-05-13 |
 | 3. Automated Content Pipeline | v1.2 | 3/3 | Complete | 2026-05-15 |
 | 4. SEO Enrichment | v1.2 | 1/1 | Complete | 2026-05-15 |
-| 5. Test Coverage Sweep | v1.3 | 0/? | Not started | - |
+| 5. Test Coverage Sweep | v1.3 | 0/4 | Not started | - |
 | 6. MDX Component Toolkit Expansion | v1.3 | 0/? | Not started | - |
 | 7. Blog Post + SEO Hardening | v1.3 | 0/? | Not started | - |
 
