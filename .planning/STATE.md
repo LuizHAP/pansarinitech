@@ -3,19 +3,19 @@ gsd_state_version: 1.0
 milestone: v1.3
 milestone_name: Blog Enrichment + Quality Hardening
 status: executing
-last_updated: "2026-05-19T19:37:53.444Z"
-last_activity: 2026-05-19 — Plans created, verification passed
+last_updated: "2026-05-19T19:41:45.323Z"
+last_activity: 2026-05-19
 progress:
   total_phases: 3
   completed_phases: 0
   total_plans: 4
-  completed_plans: 1
-  percent: 25
+  completed_plans: 2
+  percent: 50
 ---
 
 # Project State — pansarinitech
 
-**Last updated:** 2026-05-19 — Phase 5 Plan 01 complete: 5 MDX component test files, 12 new tests, 212 total passing.
+**Last updated:** 2026-05-19 — Phase 5 Plan 02 complete: json-ld test file, 4 new tests, 216 total passing.
 
 ---
 
@@ -34,9 +34,9 @@ progress:
 ## Current Position
 
 Phase: Phase 5 — Test Coverage Sweep
-Plan: 2 of 4 (05-02 next)
-Status: Executing — Plan 01 complete
-Last activity: 2026-05-19 — 05-01 complete: MDX component tests (callout, note, warning, stat, pre-with-copy-button)
+Plan: 3 of 4 (05-03 next)
+Status: Executing — Plan 02 complete
+Last activity: 2026-05-19 — 05-02 complete: json-ld test file (script output, XSS escape, constants)
 
 ---
 
@@ -69,6 +69,7 @@ Last activity: 2026-05-19 — 05-01 complete: MDX component tests (callout, note
 ---
 | Phase 01-cmd-k-command-palette P1 | 216 | 2 tasks | 12 files |
 | Phase 01-cmd-k-command-palette P2 | 90 | 2 tasks | 4 files |
+| Phase 05-test-coverage-sweep P02 | 64 | 1 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -100,6 +101,7 @@ Last activity: 2026-05-19 — 05-01 complete: MDX component tests (callout, note
 | JsonLd RSC with biome-ignore for noDangerouslySetInnerHtml | Idiomatic JSON-LD pattern; content is Zod-validated owner-only MDX frontmatter — no user input | 04-P1-SUMMARY.md |
 | Async RSC delegation tests (note/warning): test via Callout directly | Note/Warning are sync delegates returning un-awaited async JSX; RTL cannot execute async components in jsdom — testing Callout with the delegated type gives equivalent coverage | 05-01-SUMMARY.md |
 | next-intl partial mock requires importOriginal | vi.mock('next-intl', () => {...}) breaks renderWithLocale which imports NextIntlClientProvider; use importOriginal to preserve all exports | 05-01-SUMMARY.md |
+| Use optional chaining (?.) instead of non-null assertion (!) in json-ld tests | biome lint/style/noNonNullAssertion forbids !; expect(scriptEl).not.toBeNull() already guards the flow so ?. is equivalent | 05-02-SUMMARY.md |
 
 ### Open TODOs
 
@@ -143,13 +145,13 @@ Last activity: 2026-05-19 — 05-01 complete: MDX component tests (callout, note
 
 ### Last Session
 
-- Executed 05-01: Added 5 MDX component test files (callout, note, warning, stat, pre-with-copy-button). 12 new tests. 212 total passing. TEST-01 components covered.
-- Commits: `995e01a` (callout/note/warning tests), `c9da7da` (stat/pre-with-copy-button tests)
-- 212 tests pass, 0 regressions; biome check exits 0
+- Executed 05-02: Added json-ld test file (script output, XSS escape, AUTHOR_PERSON, SITE_URL). 4 new tests. 216 total passing. TEST-02 covered.
+- Commits: `d229a5e` (json-ld tests)
+- 216 tests pass, 0 regressions; biome check exits 0
 
 ### Next Session
 
-Continue Phase 5 — Wave 1 remaining plans: 05-02 (json-ld + blog components) and 05-03 (vitest.config coverage expansion).
+Continue Phase 5 — Wave 1 remaining plans: 05-03 (vitest.config coverage expansion) and 05-04 (coverage thresholds).
 Run `/gsd-execute-phase 5` to continue.
 
 ---
