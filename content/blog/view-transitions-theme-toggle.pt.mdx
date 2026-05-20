@@ -1,0 +1,172 @@
+---
+title: "View Transitions API no Alternador de Tema"
+date: "2026-05-19"
+excerpt: "Como conectei a View Transitions API a uma revelação radial via clip-path no alternador de tema, com fallback de dois níveis para movimento reduzido e enhancement progressivo para navegadores antigos."
+tags:
+  - nextjs
+  - view-transitions
+  - css
+  - animations
+  - accessibility
+draft: false
+---
+
+## Suporte dos navegadores
+
+A View Transitions API chegou ao Chromium 111 <InlineBadge variant="secondary">Chrome 111+</InlineBadge>, ao Safari 18 <InlineBadge variant="secondary">Safari 18+</InlineBadge> e ao Firefox 144 <InlineBadge variant="secondary">Firefox 144+</InlineBadge>. Isso cobre a grande maioria dos navegadores em 2026, mas "grande maioria" não é "todos." Recrutadores em um laptop corporativo desatualizado, ou com um celular que não recebeu atualizações há um ano, vão receber a troca instantânea de tema que já existia antes de todo esse código entrar. Isso é progressive enhancement por design, não por acidente.
+
+O bloco inteiro de View Transitions vive dentro de um guard `@supports (view-transition-name: root)` no CSS e de uma detecção de feature explícita no handler JavaScript. Navegadores que não entendem `startViewTransition` tomam o caminho de retorno antecipado e chamam `setTheme` diretamente. Sem polyfill, sem shim, sem biblioteca de fallback — o comportamento pré-existente já é o fallback correto.
+
+Escolhi a API porque o alternador de tema já era o momento visualmente mais marcante do site. Toda outra interação é texto ou link. O toggle é o único lugar onde algo dramático acontece, e a revelação radial pareceu um encaixe natural para a narrativa da paleta Jedi/Sith — um sabre de luz acendendo a partir do ponto de contato.
+
+## Como a revelação radial funciona
+
+O modelo mental por trás do `startViewTransition` é baseado em snapshots. Quando você chama `document.startViewTransition(callback)`, o navegador imediatamente captura um screenshot da página atual — o snapshot ANTIGO. Em seguida, executa o callback, que neste caso chama `setTheme`. O DOM agora reflete o novo tema. O navegador captura um segundo screenshot — o snapshot NOVO. Animações CSS controlam como acontece a transição do ANTIGO para o NOVO na tela.
+
+O snapshot NOVO fica em cima do snapshot ANTIGO em um contexto de composição empilhado. O comportamento padrão do navegador faz um cross-fade de opacidade entre eles ao longo de aproximadamente 250ms. É aceitável para a maioria das transições, mas fica embaçado em uma troca de paleta onde ambas as superfícies têm fundos sólidos. A revelação parece lamacenta.
+
+Substitui o padrão por `clip-path`. O snapshot ANTIGO permanece totalmente visível e com opacidade total — `animation: none` em `::view-transition-old(root)`. O snapshot NOVO começa como um círculo com raio `0%` centralizado nas coordenadas do clique e se expande até `150%` — grande o suficiente para cobrir o viewport inteiro independentemente de onde o toggle esteja. O efeito é que o novo tema varre de dentro para fora a partir do botão, não das bordas da tela.
+
+O valor `150%` não é arbitrário. Na distância máxima de um toggle posicionado num canto até o canto mais distante do viewport, você precisa de pouco menos de 142% para garantir cobertura total em qualquer tamanho de tela. Arredondei para `150%` como margem segura.
+
+## Configurando a animação clip-path
+
+O CSS fica em `globals.css` dentro de um guard composto: `@media (prefers-reduced-motion: no-preference)` envolvendo `@supports (view-transition-name: root)`. Os dois guards precisam ser verdadeiros. Se o usuário preferir movimento reduzido, este bloco não se aplica, e o bloco de fallback de movimento reduzido entra em ação (coberto na próxima seção).
+
+<CodeFilename filename="src/app/globals.css">
+```css
+@media (prefers-reduced-motion: no-preference) {
+  @supports (view-transition-name: root) {
+    /* Snapshot ANTIGO fica parado; NOVO varre por cima. */
+    ::view-transition-old(root) {
+      animation: none;
+      mix-blend-mode: normal;
+    }
+    ::view-transition-new(root) {
+      animation: vt-reveal 420ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+      mix-blend-mode: normal;
+      z-index: 1;
+    }
+
+    @keyframes vt-reveal {
+      from {
+        clip-path: circle(0% at var(--vt-x, 50%) var(--vt-y, 50%));
+      }
+      to {
+        clip-path: circle(150% at var(--vt-x, 50%) var(--vt-y, 50%));
+      }
+    }
+  }
+}
+```
+</CodeFilename>
+
+As propriedades customizadas `--vt-x` e `--vt-y` são definidas pelo handler JavaScript imediatamente antes de chamar `startViewTransition`. Os valores padrão (`50% 50%`) significam que, se o handler não as definir por algum motivo, a revelação se origina do centro do viewport em vez de um canto — um fallback aceitável.
+
+O override `mix-blend-mode: normal` em ambos os pseudo-elementos é obrigatório. Alguns navegadores aplicam um blend mode não-normal por padrão ao snapshot ANTIGO, o que produz um artefato visível quando o ANTIGO fica sob um NOVO parcialmente transparente. Definir os dois como `normal` elimina o artefato.
+
+A duração de 420ms e o easing (`cubic-bezier(0.4, 0, 0.2, 1)` é o easing "standard" do Material Design) foram calibrados visualmente contra vários tamanhos de viewport. Mais rápido parecia apressado; mais lento parecia estado de carregamento em vez de transição.
+
+## Fallback para movimento reduzido
+
+<Callout type="info">Movimento reduzido não é preferência estética — é uma acomodação médica. Transtornos vestibulares (condições do ouvido interno que afetam equilíbrio e percepção espacial) podem ser desencadeados por movimentos de grande escala na tela. A revelação radial varre o viewport inteiro em 420ms. Para um usuário com condição vestibular, isso não é um efeito sutil. O fallback de dois níveis implementado aqui é consequência direta de levar a sério a intenção do WCAG para `prefers-reduced-motion`: "reduzir, não necessariamente eliminar" o movimento.</Callout>
+
+Implementei duas camadas de proteção para movimento reduzido, e as duas camadas são necessárias.
+
+A primeira camada é JavaScript: se `window.matchMedia('(prefers-reduced-motion: reduce)').matches`, o handler retorna imediatamente após chamar `setTheme`, sem chamar `startViewTransition`. Esta é a acomodação mais limpa possível — a maquinaria de snapshot nunca roda, nenhum pseudo-elemento é criado, e a troca de tema é instantânea. Zero movimento, zero trabalho de GPU.
+
+A segunda camada é CSS. O bloco de movimento reduzido que existia desde a Phase 1 aplicava `* { transition: none; animation: none }`. Esse bloco **não** alcança `::view-transition-old` e `::view-transition-new` — esses pseudo-elementos vivem na shadow tree da UA e são invisíveis para o seletor universal. Sem um override explícito, um navegador que executasse `startViewTransition` tocaria seu cross-fade padrão de ~250ms mesmo para um usuário com movimento reduzido.
+
+A camada CSS existe como medida de defesa em profundidade. Se a camada JavaScript falhar (improvável, mas possível sob alguma condição de corrida ou mudança futura de comportamento do navegador), o fallback CSS garante que a transição seja um fade de opacidade calmo de 200ms em vez de uma varredura que ocupa o viewport.
+
+<CodeFilename filename="src/app/globals.css">
+```css
+@media (prefers-reduced-motion: reduce) {
+  @supports (view-transition-name: root) {
+    ::view-transition-old(root),
+    ::view-transition-new(root) {
+      animation: vt-fade 200ms linear forwards !important;
+      mix-blend-mode: normal;
+    }
+    /* ANTIGO faz fade 1 → 0; NOVO faz fade 0 → 1 (reverso). */
+    ::view-transition-new(root) {
+      animation-direction: reverse !important;
+    }
+    @keyframes vt-fade {
+      from { opacity: 1; }
+      to   { opacity: 0; }
+    }
+  }
+}
+```
+</CodeFilename>
+
+O `animation-direction: reverse` em `::view-transition-new` é a parte mais fácil de errar. `vt-fade` anima opacidade de `1` para `0`. Aplicado na direção normal em ambos os pseudo-elementos, o ANTIGO some e o NOVO também some — deixando o usuário olhando para o fundo de composição com os dois snapshots invisíveis por um instante. Inverter o NOVO faz ele animar de `0` para `1`, que é um cross-fade correto: o ANTIGO se dissolve enquanto o NOVO materializa.
+
+## Troca de paleta Jedi e Sith
+
+O alternador de tema chama `setTheme('dark')` ou `setTheme('light')`. Por baixo, o `next-themes` escreve ou remove a classe `.dark` no elemento `<html>` em um tick síncrono, e atualiza o `localStorage` ao mesmo tempo. Esse é o mecanismo inteiro — nenhum re-render React na raiz é necessário.
+
+O Tailwind v4 resolve as variáveis CSS OKLCH sob a regra `@custom-variant dark (&:where(.dark, .dark *))`. Quando `.dark` chega ao `<html>`, todos os elementos descendentes adotam a paleta Sith: o vermelho do sabre como cor primária em `oklch(54% 0.21 28)`, o fundo escuro, os tokens de texto ajustados. Quando `.dark` é removido, a paleta Jedi se restaura: o azul do sabre como primário, a superfície clara, o texto padrão.
+
+O mecanismo de snapshot de View Transitions captura o estado visual antes e depois dessa troca de classe. O snapshot ANTIGO é a página Jedi em resolução total. O snapshot NOVO é a página Sith em resolução total. A animação clip-path revela o NOVO a partir do ponto de origem do clique, então a nova paleta varre desde onde o toggle está na tela.
+
+O efeito — uma varredura radial se expandindo a partir do alternador de tema — parece um sabre de luz acendendo no ponto de contato. Não planejei que fosse parecer assim; emergiu da mecânica. O toggle já era o momento mais marcante de UX no site, e a revelação amplifica isso sem cruzar a linha do artifício.
+
+## O handler do toggle
+
+A implementação completa do `onClick` é curta o suficiente para percorrer em um bloco. Cada linha existe por um motivo que não era imediatamente óbvio durante a implementação.
+
+<CodeFilename filename="src/components/shared/theme-toggle.tsx">
+```tsx
+const onClick = (event: MouseEvent<HTMLButtonElement>) => {
+  const next = isDark ? 'light' : 'dark';
+
+  // Detecção de feature (Safari <18 / Firefox <144 / Chromium antigo) E
+  // bypass em prefers-reduced-motion (CSS cuida do fade visual; ignoramos
+  // a maquinaria de snapshot para honrar a intenção "reduce" na camada JS).
+  if (
+    typeof document === 'undefined' ||
+    !('startViewTransition' in document) ||
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  ) {
+    setTheme(next);
+    return;
+  }
+
+  // Captura das coordenadas do clique com fallback para teclado.
+  // Ativação por teclado (Enter/Space) envia clientX:0/clientY:0; o
+  // fallback via getBoundingClientRect calcula o centro do botão para que
+  // a revelação radial se origine do toggle, não do canto superior esquerdo.
+  const rect = event.currentTarget.getBoundingClientRect();
+  const x = event.clientX || rect.left + rect.width / 2;
+  const y = event.clientY || rect.top + rect.height / 2;
+
+  document.documentElement.style.setProperty('--vt-x', `${x}px`);
+  document.documentElement.style.setProperty('--vt-y', `${y}px`);
+
+  // setTheme é síncrono — o next-themes escreve atributo + localStorage
+  // em um tick. startViewTransition captura o snapshot ANTIGO, executa o
+  // callback e então anima para o NOVO.
+  document.startViewTransition(() => {
+    setTheme(next);
+  });
+};
+```
+</CodeFilename>
+
+O guard `typeof document === 'undefined'` é para o caminho de execução SSR. O Next.js executa componentes client no servidor durante a hidratação; `document` não existe lá. Sem o guard, a verificação de `startViewTransition` lançaria um ReferenceError no ambiente Node.js.
+
+O fallback de coordenadas para teclado é o detalhe que quase esqueci. Quando um usuário navega até o toggle via Tab e o ativa com Enter ou Space, o navegador dispara um evento de clique com `clientX: 0` e `clientY: 0`. Sem o fallback, a revelação se originaria do canto superior esquerdo do viewport — visualmente quebrado em qualquer layout onde o toggle não esteja no canto superior esquerdo. O fallback via `getBoundingClientRect` calcula o centro geométrico do elemento botão, que é onde a atenção do usuário de teclado está.
+
+A atribuição das propriedades customizadas acontece em `document.documentElement` — o elemento `<html>` — imediatamente antes de `startViewTransition`. O navegador lê as propriedades durante a animação CSS, depois que o snapshot foi tirado e o callback foi executado. O timing é síncrono dentro da task, então as propriedades sempre estão definidas antes de a animação começar.
+
+## O que isso desbloqueia
+
+A revelação radial é um progressive enhancement. Recrutadores no Chrome 80, Firefox 130 ou qualquer navegador que não suporte a View Transitions API veem exatamente o que viam antes desse código ser entregue: uma troca instantânea de paleta. Sem layout shift, sem estilos quebrados, sem animação ausente. A feature simplesmente não existe para eles, que é o comportamento correto.
+
+Usuários que preferem movimento reduzido recebem um fade controlado de 200ms — calmo o suficiente para honrar a acomodação, presente o suficiente para sinalizar que algo mudou. Usuários com movimento completo habilitado recebem a revelação radial a partir da origem do toggle.
+
+A abordagem de dois níveis — bypass em JavaScript mais defesa em profundidade no CSS — significa que a cadeia de fallback está coberta tanto na engine quanto no nível de renderização. Uma camada falhando não quebra a outra. Esse tipo de defesa em profundidade tem menos a ver com paranoia e mais com o fato de que o comportamento do navegador nas bordas de APIs novas nem sempre é previsível.
+
+O padrão generaliza. Qualquer transição de âmbito amplo — trocas de rota, entradas de modal, slides de painel — pode usar o mesmo wrapper `startViewTransition` com a mesma detecção de feature e verificação de movimento reduzido. A definição do keyframe CSS é a parte variável; o scaffolding JavaScript ao redor permanece idêntico.
