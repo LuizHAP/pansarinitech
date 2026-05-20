@@ -50,11 +50,17 @@ export default async function BlogListingPage({
           {posts.length === 0 ? (
             <li className="text-muted-foreground">{t('noPosts')}</li>
           ) : (
-            posts.map((p) => (
+            posts.map((p, index) => (
               <li key={p.slug}>
-                <RevealItem>
+                {/* First post is the likely LCP element — skip animation so it paints
+                    immediately without waiting for JS + IntersectionObserver. */}
+                {index === 0 ? (
                   <PostCard post={p} locale={locale} />
-                </RevealItem>
+                ) : (
+                  <RevealItem>
+                    <PostCard post={p} locale={locale} />
+                  </RevealItem>
+                )}
               </li>
             ))
           )}

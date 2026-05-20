@@ -1,0 +1,47 @@
+{
+  "ci": {
+    "collect": {
+      "url": [
+        "http://localhost:3001/",
+        "http://localhost:3001/now",
+        "http://localhost:3001/projects",
+        "http://localhost:3001/blog",
+        "http://localhost:3001/blog/building-this-portfolio"
+      ],
+      "settings": {
+        "skipAudits": [
+          "installable-manifest",
+          "service-worker",
+          "splash-screen",
+          "themed-omnibox",
+          "content-width",
+          "apple-touch-icon",
+          "maskable-icon"
+        ]
+      },
+      "numberOfRuns": 1
+    },
+    "assert": {
+      "preset": "lighthouse:recommended",
+      "assertions": {
+        "categories:performance": ["error", { "minScore": 0.85 }],
+        "categories:accessibility": ["error", { "minScore": 1 }],
+        "categories:best-practices": ["error", { "minScore": 0.95 }],
+        "categories:seo": ["error", { "minScore": 0.95 }],
+        "legacy-javascript-insight": "off",
+        "network-dependency-tree-insight": "off",
+        "image-delivery-insight": "off",
+        "render-blocking-insight": "off",
+        "document-latency-insight": "off",
+        "unused-javascript": ["warn", { "maxLength": 5 }],
+        "uses-long-cache-ttl": "off",
+        "render-blocking-resources": "off",
+        "legacy-javascript": "off",
+        "redirects": "off"
+      }
+    },
+    "upload": {
+      "target": "temporary-public-storage"
+    }
+  }
+}

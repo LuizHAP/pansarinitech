@@ -1,0 +1,11 @@
+#!/usr/bin/env sh
+# Only run Lighthouse check when pushing to main/master on origin.
+# Skip with:  git push --no-verify
+REMOTE="$1"
+BRANCH=$(git rev-parse --abbrev-ref HEAD)
+
+if [[ "$REMOTE" == "origin" && ("$BRANCH" == "main" || "$BRANCH" == "master") ]]; then
+  echo "🔍 Running local Lighthouse check before push to main…"
+  echo "   (skip with git push --no-verify)"
+  pnpm lh:local
+fi

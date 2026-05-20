@@ -60,9 +60,10 @@ export async function FeaturedProjectsTeaser({ locale }: { locale: Locale }) {
         </div>
       </div>
       <RevealGroup className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3" stagger={0.08}>
-        {featured.map((p, index) => (
-          <RevealItem key={p.slug}>
+        {featured.map((p, index) => {
+          const inner = (
             <Link
+              key={p.slug}
               href={`/projects/${p.slug}`}
               className="block transition hover:-translate-y-0.5 hover:shadow-md"
             >
@@ -89,8 +90,15 @@ export async function FeaturedProjectsTeaser({ locale }: { locale: Locale }) {
                 </CardContent>
               </Card>
             </Link>
-          </RevealItem>
-        ))}
+          );
+          // First card is the likely LCP element — render without animation so it
+          // paints immediately rather than waiting for JS + IntersectionObserver.
+          return index === 0 ? (
+            <div key={p.slug}>{inner}</div>
+          ) : (
+            <RevealItem key={p.slug}>{inner}</RevealItem>
+          );
+        })}
       </RevealGroup>
     </section>
   );
