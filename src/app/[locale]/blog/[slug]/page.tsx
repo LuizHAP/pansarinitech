@@ -108,7 +108,7 @@ export default async function BlogPostPage({
 
         <TocMobile entries={toc} label={tToc('label')} />
 
-        <div className="prose prose-neutral mt-8 max-w-none dark:prose-invert prose-h2:mt-10 prose-h3:mt-8 prose-headings:scroll-mt-20">
+        <div className="prose prose-neutral mt-8 max-w-none dark:prose-invert prose-headings:scroll-mt-20 prose-h2:mt-10 prose-h2:pb-3 prose-h2:font-semibold prose-h2:tracking-tight prose-h2:border-b prose-h2:border-border prose-h3:mt-8 prose-h3:font-semibold prose-h3:tracking-tight prose-a:text-primary prose-a:decoration-primary prose-a:font-normal prose-code:before:content-none prose-code:after:content-none prose-code:bg-muted prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded-sm prose-code:text-sm prose-code:font-mono prose-code:text-foreground">
           {post.content}
         </div>
       </div>
