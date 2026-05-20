@@ -1,6 +1,6 @@
 # Roadmap — pansarinitech
 
-**Last updated:** 2026-05-19
+**Last updated:** 2026-05-20
 **Status:** Active — v1.3 in progress
 
 ---
@@ -82,7 +82,10 @@ Plans:
   3. Viewing page source (or snapshot test output) on any route shows `<link rel="alternate" hreflang>` tags for `en`, `pt-BR`, and `x-default`
   4. The `seo.test.ts` snapshot for `buildMetadata()` includes `alternates.languages` with the correct locale keys
   5. Article and WebPage JSON-LD payloads include an `author` object with `url` and `sameAs` (GitHub, LinkedIn) — verifiable via the existing `json-ld.tsx` snapshot tests
-**Plans**: TBD
+**Plans**: 2 plans
+Plans:
+- [ ] 07-01-PLAN.md — Bilingual blog post content (view-transitions-theme-toggle.{en,pt}.mdx) (BLOG-01, BLOG-02)
+- [ ] 07-02-PLAN.md — hreflang in buildMetadata() + AUTHOR_PERSON identity + test coverage (SEO-03, SEO-04)
 **UI hint**: yes
 
 ---
@@ -97,7 +100,7 @@ Plans:
 | 4. SEO Enrichment | v1.2 | 1/1 | Complete | 2026-05-15 |
 | 5. Test Coverage Sweep | v1.3 | 4/4 | Complete   | 2026-05-19 |
 | 6. MDX Component Toolkit Expansion | v1.3 | 0/3 | Not started | - |
-| 7. Blog Post + SEO Hardening | v1.3 | 0/? | Not started | - |
+| 7. Blog Post + SEO Hardening | v1.3 | 0/2 | Not started | - |
 
 ---
 
