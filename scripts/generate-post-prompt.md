@@ -125,7 +125,19 @@ This feature is <InlineBadge variant="muted">experimental</InlineBadge>.
 
 Do NOT use any other JSX component tags — only the components listed above are registered. Unknown component names are silently ignored by `next-mdx-remote@6`.
 
-> **Exception to the CONTENT RULES FORBIDDEN JSX rule:** The components listed above ARE permitted — they are registered in `mdxComponents` and safe to use.
+## REQUIRED COMPONENT USAGE
+
+Every post **must** include all three of the following — they are what makes the blog visually distinct from generic Markdown:
+
+| Component | Minimum | Where |
+|-----------|---------|-------|
+| `<Callout>` or `<Note>` or `<Warning>` | 1 | A section where a non-obvious caveat, gotcha, or best practice needs to stand out from prose |
+| `<CodeFilename filename="...">` | 1 | Wrapping any real code snippet that comes from an identifiable file in the project |
+| `<InlineBadge>` | 1 | Inline in prose — e.g. API status (`<InlineBadge>stable</InlineBadge>`), version (`<InlineBadge variant="secondary">v4+</InlineBadge>`), or label |
+
+If the topic does not produce a natural code-from-file moment, use `<CodeFilename filename="config/example.ts">` for a configuration example. If there is no caveat, add a `<Note>` with a helpful tip or performance note. `<InlineBadge>` fits naturally in almost any technical sentence — use it to label a library name, a status, or a version constraint.
+
+A post that reaches its word count without using these three components is **incomplete** — revise before writing the files.
 
 ---
 
@@ -142,8 +154,8 @@ Do NOT use any other JSX component tags — only the components listed above are
   - JavaScript expressions: `{value}`, `{expression}`, `{(100 * 0.97).toFixed(1)}`, or any `{...}` syntax
   - `import` statements
   - `export` statements
-  - JSX component syntax (e.g. `<MyComponent />`) other than standard Markdown
-  - `next-mdx-remote@6` has `blockJS: true` by default — these would be silently stripped at render time, producing broken output
+  - JSX tags that are NOT in the AVAILABLE MDX COMPONENTS list above (unknown tags are silently dropped)
+  - `next-mdx-remote@6` has `blockJS: true` by default — JS expressions and import/export are silently stripped at render time. The registered components (`<Callout>`, `<Note>`, `<Warning>`, `<CodeFilename>`, `<InlineBadge>`, `<Stat>`) are NOT affected by this rule — use them freely.
 - **FORBIDDEN — wrong date format:** The `date` field value must be exactly `"${TODAY}"` (a 10-character YYYY-MM-DD string). Never write `"May 13, 2026"` or any human-readable or ISO-8601 timestamp variant.
 - **FORBIDDEN — uppercase or special characters in slug:** The slug in the filenames must be exactly `${SLUG}` — already lowercase alphanumeric with hyphens. Do not modify it.
 - **PT version:** Must read naturally in idiomatic Brazilian Portuguese. Rethink phrasing for each section rather than translating word-for-word.

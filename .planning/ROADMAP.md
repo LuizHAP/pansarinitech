@@ -30,7 +30,7 @@ Full archive: `milestones/v1.2-ROADMAP.md`
 ### 📋 v1.3 — Blog Enrichment + Quality Hardening
 
 - [x] **Phase 5: Test Coverage Sweep** — Expand coverage config to all zero-coverage components; `pnpm test:coverage` exits 0 across full scope (completed 2026-05-19)
-- [ ] **Phase 6: MDX Component Toolkit Expansion** — Build CodeFilename and InlineBadge components, test all 7 MDX components, update pipeline prompt
+- [x] **Phase 6: MDX Component Toolkit Expansion** — Build CodeFilename and InlineBadge components, test all 7 MDX components, update pipeline prompt (completed 2026-05-20)
 - [x] **Phase 7: Blog Post + SEO Hardening** — Publish bilingual "View Transitions" post, emit hreflang alternates on all routes, add AUTHOR_PERSON JSON-LD (completed 2026-05-20)
 
 ---
