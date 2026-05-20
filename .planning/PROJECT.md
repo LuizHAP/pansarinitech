@@ -12,18 +12,21 @@ If everything else fails, the site must load fast on a recruiter's phone, commun
 
 ## Current State
 
-**✅ v1.2 shipped 2026-05-15** — 4 phases, 9 plans, 135 files changed, ~9,200 insertions. Full archive: `.planning/milestones/v1.2-ROADMAP.md`.
+**✅ v1.3 shipped 2026-05-20** — 3 phases, 9 plans, 241 tests, 36 test files. Blog infrastructure and SEO foundations complete.
 
-Key additions in v1.2:
-- Cmd+K command palette (14 commands, keyboard-accessible, 22 RTL tests)
-- UX polish: CopyEmailButton tests (TD-07 resolved), Personal Projects stagger animations, micro-interactions
-- Automated bilingual content pipeline: OpenAI gpt-4o generates PT+EN MDX posts, opens GitHub PRs
-- JSON-LD structured data (Article + WebPage schema.org) on all blog and project post pages
+Key additions in v1.3:
+- Full test coverage sweep: 27 files tracked in `vitest.config.mts`, `pnpm test:unit:coverage` exits 0
+- MDX toolkit: `<CodeFilename>` + `<InlineBadge>` components, bilingual, WCAG AA, registered globally
+- Pipeline prompt updated: all 7 MDX components documented for OpenAI gpt-4o content generation
+- "View Transitions API on the theme toggle" bilingual post live on both `/en/blog` and `/pt/blog`
+- hreflang: `buildMetadata()` emits `alternates.languages` on every route (SEO-03)
+- AUTHOR_PERSON: JSON-LD includes `url` + `sameAs` [GitHub, LinkedIn] (SEO-04)
 
+**Previously shipped:** v1.2 UX Polish + Automated Content Pipeline (2026-05-15) — full archive: `.planning/milestones/v1.2-ROADMAP.md`.
 **Previously shipped:** v1.1 Polish, Quality & Test Baseline (2026-05-04) — full archive: `.planning/milestones/v1.1-ROADMAP.md`.
 **Previously shipped:** v1.0 Public Launch (2026-05-02) — full archive: `.planning/milestones/v1.0-ROADMAP.md`.
 
-**Next milestone:** Planning v1.3 — run `/gsd-new-milestone`.
+**Next milestone:** Planning v1.4 — run `/gsd-new-milestone`.
 
 **Live deliverables:**
 - Bilingual portfolio (PT + EN) at `/pt` and `/en` with browser auto-detect, path-preserving locale toggle, and hreflang reciprocity.
@@ -37,17 +40,15 @@ Key additions in v1.2:
 
 **Not yet live:** custom domain `pansarini.tech` rollout (currently `pansarinitech.vercel.app`).
 
-## Current Milestone: v1.3 Blog Enrichment + Quality Hardening
+## Current Milestone: v1.4 (Planning)
 
-**Goal:** Ship a richer blog authoring baseline (MDX component toolkit usable in all future posts), achieve full 100% test coverage across the codebase, and complete hreflang + Knowledge Graph SEO hardening.
+**Goal:** To be defined via `/gsd-new-milestone`.
 
-**Target features:**
-- MDX component toolkit: Callouts/Admonitions, Code-with-filename blocks, Copy-to-clipboard on code blocks, Inline badges/tags — bilingual-compatible, a11y-clean, foundation for all future posts
-- Automated pipeline updated to reference the new components so AI-generated posts use them
-- New blog post: "View Transitions API on the theme toggle" — authored bilingually (PT + EN), showcases the new toolkit
-- Full 100% test coverage sweep: audit all components (TD-07 remainder: case-study-hero, easter-egg, theme-provider; json-ld.tsx; all others below threshold)
-- hreflang `alternates.languages` emitted via `buildMetadata` on all routes
-- `AUTHOR_PERSON` JSON-LD: `url` + `sameAs` (GitHub, LinkedIn) in the existing JsonLd RSC
+**Candidates from deferred backlog:**
+- `pansarini.tech` custom domain cutover (SITE_URL swap + Vercel domain config + robots + OG)
+- RSS feed `/feed.xml` + `/feed.pt.xml` (blog has 2+ posts now)
+- Additional case study: UAUBox Design System
+- Second blog post using the Phase 6 MDX toolkit (pipeline-generated or manual)
 
 ## Requirements
 
@@ -110,18 +111,24 @@ Key additions in v1.2:
 - ✓ JSON-LD Article + WebPage schema.org on all blog and project post pages — v1.2 Phase 4
 - ✓ Prose heading overrides (`prose-h2:mt-10 prose-h3:mt-8`) for visual hierarchy — v1.2 Phase 4
 
+**v1.3 Blog Enrichment + Quality Hardening (shipped 2026-05-20)**
+- ✓ Test coverage sweep: 27 files in `vitest.config.mts`, `pnpm test:unit:coverage` exits 0 — v1.3 Phase 5
+- ✓ `<CodeFilename>` + `<InlineBadge>` MDX components (bilingual, WCAG AA, globally registered) — v1.3 Phase 6
+- ✓ Pipeline prompt documents all 7 MDX components for OpenAI gpt-4o generation — v1.3 Phase 6
+- ✓ "View Transitions API on the theme toggle" bilingual blog post live — v1.3 Phase 7
+- ✓ `hreflang alternates.languages` emitted by `buildMetadata()` on every route — v1.3 Phase 7
+- ✓ `AUTHOR_PERSON` JSON-LD with `url` + `sameAs` [GitHub, LinkedIn] — v1.3 Phase 7
+
 ### Active
 
 <!-- Next milestone candidates. Hypotheses until validated. -->
 
-**v1.3 Blog Enrichment + Quality Hardening** (in planning)
+**v1.4 (planning):**
 
-- [ ] MDX component toolkit: Callouts, Code-with-filename, Copy-to-clipboard, Inline badges (bilingual-compatible, a11y-clean)
-- [ ] Automated pipeline updated to reference new MDX components
-- [ ] Blog post "View Transitions API on the theme toggle" (PT + EN, code-heavy)
-- [ ] Full 100% test coverage sweep (all components; TD-07 remainder + json-ld.tsx + others below threshold)
-- [ ] `hreflang alternates.languages` in `buildMetadata` (currently only canonical emitted)
-- [ ] `AUTHOR_PERSON` Knowledge Graph linkage (`url` + `sameAs` in JSON-LD)
+- [ ] `pansarini.tech` custom domain cutover (SITE_URL swap + Vercel config + robots + OG)
+- [ ] RSS feed `/feed.xml` + `/feed.pt.xml`
+- [ ] Additional case study: UAUBox Design System
+- [ ] Additional blog posts using the MDX toolkit
 
 ### Out of Scope
 
@@ -214,6 +221,10 @@ Key additions in v1.2:
 | OpenAI gpt-4o as content pipeline model instead of Claude CLI (v1.2 Phase 3) | Anthropic account lacked credits at time of implementation; OpenAI key was immediately available; `===FILE:/===ENDFILE` delimiter scheme parses multi-file output without tool calls | ✓ Validated (v1.2) |
 | `JSON.stringify(schema).replace(/</g, '\\u003c')` in JsonLd RSC (v1.2 Phase 4) | Raw `JSON.stringify` doesn't escape `</script>` sequences — a browser terminates a script block on `</` regardless of JSON context; `<` is semantically equivalent but HTML-safe | ✓ Validated (v1.2) |
 | `export const SITE_URL` from `seo.ts` as single source of truth (v1.2 Phase 4) | Both `buildMetadata` (metadata API) and `JsonLd` (structured data) need the canonical URL; sharing it from `seo.ts` prevents drift between hreflang and JSON-LD urls | ✓ Validated (v1.2) |
+| `note/warning` coverage via direct call + `.type === Callout` assertion (v1.3 Phase 5) | Delegate pattern where only Callout was called resulted in 0% coverage for Note/Warning; calling the aliases directly registers coverage; asserting `.type === Callout` verifies the delegation contract | ✓ Validated (v1.3) |
+| `bg-muted text-muted-foreground` for InlineBadge `secondary` variant (v1.3 Phase 6) | `bg-secondary` token is not defined in globals.css; semantic override preserves visual intent without introducing undefined CSS variables | ✓ Validated (v1.3) |
+| `import { SITE_URL }; export { SITE_URL }` over bare re-export in json-ld.tsx (v1.3 Phase 7) | `export { X } from '...'` re-exports the binding but does not make `X` available as a local identifier inside the same module; needed `import` to use SITE_URL inside `AUTHOR_PERSON` | ✓ Validated (v1.3) |
+| `alternates.languages` in `buildMetadata()` over inline `<link rel="alternate">` tags (v1.3 Phase 7) | Next 16 Metadata API emits hreflang automatically from `alternates.languages` — single source of truth; per-page inline tags would drift | ✓ Validated (v1.3) |
 
 ## Evolution
 
@@ -234,4 +245,4 @@ This document evolves at phase transitions and milestone boundaries.
 5. Update Current State + Next Milestone Goals sections
 
 ---
-*Last updated: 2026-05-16 — v1.3 milestone started*
+*Last updated: 2026-05-20 after v1.3 milestone*

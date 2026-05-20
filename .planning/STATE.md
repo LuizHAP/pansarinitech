@@ -2,9 +2,9 @@
 gsd_state_version: 1.0
 milestone: v1.3
 milestone_name: Blog Enrichment + Quality Hardening
-status: completed
-last_updated: "2026-05-20T12:45:01.171Z"
-last_activity: "2026-05-20 — 07-02 complete: hreflang alternates + AUTHOR_PERSON url/sameAs (SEO-03, SEO-04). Commit: bebeacf"
+status: archived
+last_updated: "2026-05-20T00:00:00.000Z"
+last_activity: "2026-05-20 — v1.3 milestone archived. 3 phases, 9 plans, 241 tests. Tag: v1.3"
 progress:
   total_phases: 3
   completed_phases: 3
@@ -15,7 +15,7 @@ progress:
 
 # Project State — pansarinitech
 
-**Last updated:** 2026-05-20 — 07-02 complete. buildMetadata() now emits hreflang alternates; AUTHOR_PERSON has url + sameAs. 241 tests pass. SEO-03 and SEO-04 fulfilled.
+**Last updated:** 2026-05-20 — v1.3 milestone archived. 3 phases (5–7), 9 plans complete, 241 tests passing. Archived to `.planning/milestones/v1.3-ROADMAP.md`. Tagged v1.3.
 
 ---
 
@@ -27,28 +27,28 @@ progress:
 
 **If everything else fails:** the site must load fast on a recruiter's phone, communicate "Principal-level full-stack engineer" within 5 seconds, and offer a clear path to "contact / hire / message me."
 
-**Current focus:** v1.3 Blog Enrichment + Quality Hardening — Phase 7: Blog Post + SEO Hardening
+**Current focus:** v1.3 archived — planning v1.4 via `/gsd-new-milestone`
 
 ---
 
 ## Current Position
 
-Phase: Phase 7 — Blog Post + SEO Hardening
-Plan: 07-02 complete (2/2 plans done)
-Status: Phase 7 complete
-Last activity: 2026-05-20 — 07-02 complete: hreflang alternates + AUTHOR_PERSON url/sameAs (SEO-03, SEO-04). Commit: bebeacf
+Phase: v1.3 complete — all 3 phases (5–7), 9 plans done
+Status: Milestone archived — ready for v1.4 planning
+Last activity: 2026-05-20 — v1.3 milestone archived. Tag v1.3 created.
 
 ---
 
 ## Roadmap Snapshot
 
-- [x] **Phase 1: Cmd+K Command Palette** — Full-featured keyboard command palette (UX-01 to UX-07) — completed 2026-05-13
-- [x] **Phase 2: UX Polish — Testing, Interactions & Animations** — Copy-email tests, Personal Projects polish, micro-interactions (UX-08 to UX-12) — completed 2026-05-13
-- [x] **Phase 3: Automated Content Pipeline** — OpenAI gpt-4o generates bilingual MDX + opens PRs (PIPE-01 to PIPE-07) — completed 2026-05-15
-- [x] **Phase 4: SEO Enrichment** — Shared JsonLd RSC + Article/WebPage schema injection + prose heading overrides (SEO-01, SEO-02) — completed 2026-05-15
-- [x] **Phase 5: Test Coverage Sweep** — Expand coverage to all zero-coverage components; pnpm test:unit:coverage exits 0 (TEST-01 to TEST-05) — completed 2026-05-19
-- [ ] **Phase 6: MDX Component Toolkit Expansion** — Build CodeFilename + InlineBadge, test all 7 MDX components, update pipeline prompt (MDX-01 to MDX-05)
-- [x] **Phase 7: Blog Post + SEO Hardening** — Bilingual "View Transitions" post live, hreflang on all routes, AUTHOR_PERSON JSON-LD (BLOG-01, BLOG-02, SEO-03, SEO-04) — completed 2026-05-20
+v1.3 complete — all phases archived. See `.planning/milestones/v1.3-ROADMAP.md` for full details.
+
+**v1.3 phases (all complete):**
+- [x] Phase 5: Test Coverage Sweep — completed 2026-05-19
+- [x] Phase 6: MDX Component Toolkit Expansion — completed 2026-05-19
+- [x] Phase 7: Blog Post + SEO Hardening — completed 2026-05-20
+
+**Next:** `/gsd-new-milestone` to define v1.4
 
 ---
 
@@ -150,13 +150,12 @@ Last activity: 2026-05-20 — 07-02 complete: hreflang alternates + AUTHOR_PERSO
 
 ### Last Session
 
-- Discussed Phase 6: MDX Component Toolkit Expansion. Locked implementation decisions for CodeFilename (wrapper shape, unified block visual, FileIcon, async RSC aria-label i18n) and InlineBadge (custom span chip, 4 semantic variants, sync RSC).
-- Commit: `24127cc` (phase 6 context + discussion log)
+- v1.3 milestone archived. All 3 phases (5–7), 9 plans complete. ROADMAP.md, REQUIREMENTS.md, PROJECT.md, MILESTONES.md, RETROSPECTIVE.md updated. Tag v1.3 created.
 
 ### Next Session
 
-Phase 6 context gathered. Ready to plan.
-Run `/gsd-plan-phase 6` to continue.
+v1.3 archived. Ready to plan v1.4.
+Run `/gsd-new-milestone` to define the next milestone.
 
 ---
 

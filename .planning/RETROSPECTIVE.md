@@ -2,6 +2,51 @@
 
 *A living document updated after each milestone. Lessons feed forward into future planning.*
 
+## Milestone: v1.3 — Blog Enrichment + Quality Hardening
+
+**Shipped:** 2026-05-20
+**Phases:** 3 (Phases 5–7) | **Plans:** 9
+**Timeline:** 2026-05-19 → 2026-05-20 (2 days, 29 commits)
+**Test suite at close:** 241 tests, 36 test files
+
+### What Was Built
+
+- **Phase 5 — Test Coverage Sweep.** `vitest.config.mts` COMPONENT_FILES expanded from 17 to 26 entries + json-ld.tsx at PURE_100 threshold. 10 new test files covering MDX components (callout, note, warning, stat, pre-with-copy-button), json-ld.tsx, and blog-layer components (post-card, toc-mobile, toc-sidebar). Fixed a subtle coverage gap in note/warning tests. `pnpm test:unit:coverage` exits 0 as a CI gate before Playwright.
+- **Phase 6 — MDX Component Toolkit.** Two new MDX components: `<CodeFilename>` (async RSC, bilingual aria-label, `FileIcon`) and `<InlineBadge>` (sync RSC, 4 semantic variants). Registered in the closed `mdxComponents` map — available in all MDX bodies without any import. Pipeline prompt extended with `## AVAILABLE MDX COMPONENTS` section documenting all 7 components with JSX examples.
+- **Phase 7 — Blog Post + SEO Hardening.** "View Transitions API on the theme toggle" post authored bilingual (EN + PT), code-heavy, using 2 CodeFilename + 3 InlineBadge + 1 Callout blocks. `buildMetadata()` extended to emit `alternates.languages` on every route (Next 16 auto-emits hreflang). `AUTHOR_PERSON` in json-ld.tsx extended with `url` + `sameAs` for Google Knowledge Graph. 241 tests passing.
+
+### What Worked
+
+- **Two-day sprint intensity.** All 9 plans shipped in 2 calendar days — the phase sizes were well-calibrated. Phase 5 (4 plans) and Phase 6 (3 plans) on day 1; Phase 7 (2 plans) on day 2. No plan took more than ~1 hour.
+- **SUMMARY.md files as instant progress evidence.** At milestone close, all SUMMARY.md files existed, making it trivial to verify completion — even when ROADMAP.md was stale on Phase 6's status.
+- **Closed `mdxComponents` map.** Registering new components once in index.ts made them available everywhere immediately. The "no imports inside MDX bodies" contract held across all 3 phases.
+- **TDD discipline in Phase 7.** Writing seo.test.ts assertions before implementing `alternates.languages` in seo.ts caught the stale `toBeUndefined()` assertions that would have passed incorrectly.
+
+### What Was Inefficient
+
+- **ROADMAP.md not updated after Phase 6 commit.** The `9c9170a` commit added Phase 6 functionality but didn't update the ROADMAP.md checklist (Phase 6 remained `0/3 Not started`). Caught at milestone close but could have caused confusion. **Fix for v1.4:** Add ROADMAP update to the executor's exit checklist.
+- **REQUIREMENTS.md traceability table never updated.** All 14 rows stayed `Pending` throughout the milestone — fixed at close but wasted effort. **Fix for v1.4:** Update traceability table in each plan's SUMMARY commit.
+- **STATE.md roadmap snapshot inconsistency.** The snapshot showed Phase 6 as `[ ]` but `completed_plans: 9` — both can't be right. The progress counter was correct; the snapshot was stale. Snapshot is now redundant with the `<details>` blocks in ROADMAP.md.
+
+### Patterns Established
+
+- **Delegate-component coverage pattern:** `Note()/Warning()` → call directly to register function coverage → assert `.type === Callout` for delegation contract → use `Callout()` for rendering assertions. Documents a testing pattern for all future alias/delegate components.
+- **`import { X }; export { X }` over bare re-export:** When a symbol needs to be both re-exported and used as a local value in the same module, a bare `export { X } from '...'` doesn't bind it locally. Add explicit `import` first.
+- **Pipeline prompt as a first-class artifact:** The `## AVAILABLE MDX COMPONENTS` section in `generate-post-prompt.md` is now a dependency of all future blog-post phases — it must be updated when new components are added.
+
+### Key Lessons
+
+1. **Update ROADMAP.md in the same commit as the feature.** The SUMMARY commit pattern (docs commit after feature commit) should also include ROADMAP checklist updates — otherwise the plan tracking drifts from reality.
+2. **Phase size of 2–4 plans is the sweet spot.** Phase 5 (4 plans) was the maximum comfortable size; each plan stayed under 30 minutes. Phase 7 (2 plans) was the minimum — both were medium-complexity plans that warranted separation.
+3. **Closed maps scale well.** The `mdxComponents` closed map pattern (introduced in v1.0) paid off again — Phase 6's additions required exactly one file change to register two new components everywhere.
+
+### Cost Observations
+
+- Sessions: 3 (Phase 5, Phase 6, Phase 7)
+- Notable: Phase 6 was the highest-value session — three plans shipped atomically in a single commit (`9c9170a`)
+
+---
+
 ## Milestone: v1.0 — Public Launch
 
 **Shipped:** 2026-05-02
