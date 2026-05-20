@@ -19,15 +19,15 @@ done
 
 # ── Build ──────────────────────────────────────────────────────────────────────
 if [[ "$SKIP_BUILD" == "false" ]]; then
-  echo "▶ Building…"
+  echo "Building..."
   pnpm next build
 else
-  echo "▶ Skipping build (--skip-build)"
+  echo "Skipping build (--skip-build)"
   [[ -d ".next" ]] || { echo "✗ .next/ not found — run without --skip-build first"; exit 1; }
 fi
 
 # ── Start server ───────────────────────────────────────────────────────────────
-echo "▶ Starting next start on port $PORT…"
+echo "Starting next start on port ${PORT}..."
 pnpm next start -p "$PORT" &
 SERVER_PID=$!
 
