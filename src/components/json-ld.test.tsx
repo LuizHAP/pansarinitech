@@ -32,9 +32,12 @@ describe('<JsonLd />', () => {
 });
 
 describe('AUTHOR_PERSON export', () => {
-  it('has @type === "Person" and name === "Luiz Pansarini"', () => {
+  it('has @type === "Person", name === "Luiz Pansarini", url, and sameAs', () => {
     expect(AUTHOR_PERSON['@type']).toBe('Person');
     expect(AUTHOR_PERSON.name).toBe('Luiz Pansarini');
+    expect(AUTHOR_PERSON.url).toBe(SITE_URL);
+    expect(AUTHOR_PERSON.sameAs).toContain('https://github.com/LuizHAP');
+    expect(AUTHOR_PERSON.sameAs).toContain('https://linkedin.com/in/luizpansarini');
   });
 });
 

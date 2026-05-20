@@ -8,12 +8,15 @@
 //   import JsonLd, { AUTHOR_PERSON, SITE_URL } from '@/components/json-ld'
 //   <JsonLd schema={{ "@context": "https://schema.org", "@type": "Article", ... }} />
 
-export { SITE_URL } from '@/lib/seo';
+import { SITE_URL } from '@/lib/seo';
+export { SITE_URL };
 
 /** Single-author Person object reused in both author and publisher fields. */
 export const AUTHOR_PERSON = {
   '@type': 'Person',
   name: 'Luiz Pansarini',
+  url: SITE_URL,
+  sameAs: ['https://github.com/LuizHAP', 'https://linkedin.com/in/luizpansarini'],
 } as const;
 
 interface JsonLdProps {

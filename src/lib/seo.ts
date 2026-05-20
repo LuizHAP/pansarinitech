@@ -71,7 +71,14 @@ export function buildMetadata(input: BuildMetadataInput): Metadata {
     metadataBase: new URL(SITE_URL),
     title: fullTitle,
     description,
-    alternates: { canonical: canonicalUrl },
+    alternates: {
+      canonical: canonicalUrl,
+      languages: {
+        en: `${SITE_URL}/en${path || '/'}`,
+        'pt-BR': `${SITE_URL}/pt${path || '/'}`,
+        'x-default': `${SITE_URL}/en${path || '/'}`,
+      },
+    },
     openGraph,
     twitter: {
       card: 'summary_large_image',

@@ -1,6 +1,6 @@
 // src/lib/seo.test.ts — Phase 01 Plan 03 (100% coverage on Next 16 Metadata factory)
 import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
-import { buildHomeMetadata, buildMetadata } from './seo';
+import { SITE_URL, buildHomeMetadata, buildMetadata } from './seo';
 
 afterEach(() => {
   vi.unstubAllEnvs();
@@ -122,19 +122,38 @@ describe('buildMetadata() — locale + canonical URLs (localePrefix:never)', () 
     vi.stubEnv('VERCEL_ENV', 'production');
     const meta = buildMetadata({ locale: 'en', path: '/blog/foo', title: 'T', description: 'D' });
     expect(meta.openGraph?.locale).toBe('en_US');
-    // No hreflang languages map — both locales share the same URL with localePrefix:never
-    expect(meta.alternates?.languages).toBeUndefined();
     expect(meta.alternates?.canonical).toContain('/blog/foo');
     expect(meta.alternates?.canonical).not.toContain('/en/');
   });
 
-  it("locale='pt' -> openGraph.locale 'pt_BR' and locale-free canonical, no languages map", () => {
+  it("locale='pt' -> openGraph.locale 'pt_BR' and locale-free canonical", () => {
     vi.stubEnv('VERCEL_ENV', 'production');
     const meta = buildMetadata({ locale: 'pt', path: '', title: 'T', description: 'D' });
     expect(meta.openGraph?.locale).toBe('pt_BR');
-    expect(meta.alternates?.languages).toBeUndefined();
     // home path '' normalises to '/'
     expect(meta.alternates?.canonical).toMatch(/\/$/);
+  });
+});
+
+describe('buildMetadata() — hreflang alternates (D-01)', () => {
+  it('emits en, pt-BR, and x-default language alternates for a blog path', () => {
+    vi.stubEnv('VERCEL_ENV', 'production');
+    const meta = buildMetadata({ locale: 'en', path: '/blog/foo', title: 'T', description: 'D' });
+    expect(meta.alternates?.languages).toEqual({
+      en: `${SITE_URL}/en/blog/foo`,
+      'pt-BR': `${SITE_URL}/pt/blog/foo`,
+      'x-default': `${SITE_URL}/en/blog/foo`,
+    });
+  });
+
+  it('normalizes empty path to "/" in all three hreflang entries', () => {
+    vi.stubEnv('VERCEL_ENV', 'production');
+    const meta = buildMetadata({ locale: 'pt', path: '', title: 'T', description: 'D' });
+    expect(meta.alternates?.languages).toEqual({
+      en: `${SITE_URL}/en/`,
+      'pt-BR': `${SITE_URL}/pt/`,
+      'x-default': `${SITE_URL}/en/`,
+    });
   });
 });
 
