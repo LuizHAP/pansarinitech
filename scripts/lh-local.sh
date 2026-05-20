@@ -28,7 +28,7 @@ fi
 
 # ── Start server ───────────────────────────────────────────────────────────────
 echo "▶ Starting next start on port $PORT…"
-PORT=$PORT pnpm next start --port $PORT &
+pnpm next start -p "$PORT" &
 SERVER_PID=$!
 
 # Wait until the server is ready (max 30s)
