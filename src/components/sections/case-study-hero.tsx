@@ -13,11 +13,13 @@ import Image, { type StaticImageData } from 'next/image';
 import machineryEcommerce from '../../../content/projects/machinery-partner-ecommerce/images/hero.jpg';
 import machineryMigration from '../../../content/projects/machinery-partner-migration/images/hero.jpg';
 import magaluSuperapp from '../../../content/projects/magazine-luiza-superapp/images/hero.jpg';
+import uauboxHero from '../../../content/projects/uaubox-design-system/images/hero.jpg';
 
 const HERO_IMAGES: Record<string, StaticImageData> = {
   'machinery-partner-ecommerce': machineryEcommerce,
   'machinery-partner-migration': machineryMigration,
   'magazine-luiza-superapp': magaluSuperapp,
+  'uaubox-design-system': uauboxHero,
 };
 
 export async function CaseStudyHero({

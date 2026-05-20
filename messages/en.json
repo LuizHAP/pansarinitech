@@ -75,7 +75,7 @@
   "projects": {
     "title": "Projects",
     "listingIntro": "Selected technical case studies from 14 years building software — IT support to Principal Engineer, BR scale to US market.",
-    "listingDescription": "Three case studies in heavy machinery e-commerce, no-code → Next.js migration, and React Native at scale.",
+    "listingDescription": "Four case studies: heavy machinery e-commerce, no-code → Next.js migration, React Native at scale, and a design system built from scratch.",
     "viewProject": "Read more",
     "cta": {
       "readMore": "Read more →",
@@ -166,7 +166,7 @@
     "siteSuffix": "Luiz Pansarini",
     "descriptions": {
       "home": "Luiz Pansarini — Principal Software Engineer (Brazil/US). Bilingual portfolio: case studies, blog, and contact.",
-      "projects": "Three case studies in heavy machinery e-commerce, no-code → Next.js migration, and React Native at scale.",
+      "projects": "Four case studies: heavy machinery e-commerce, no-code → Next.js migration, React Native at scale, and a design system built from scratch.",
       "blog": "Occasional engineering posts. Mostly about what I had to look up twice.",
       "now": "What I'm working on, reading, and learning right now."
     }

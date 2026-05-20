@@ -1,0 +1,100 @@
+---
+title: "Design System UAUBox"
+role: "Principal Software Engineer"
+year: 2021
+stack:
+  - Design Tokens
+  - React
+  - TypeScript
+  - Storybook
+  - Figma
+  - OKLCH
+  - CSS Custom Properties
+blurb: "Design system construído do zero na UAUBox — pipeline de tokens, biblioteca de componentes React e catálogo Storybook que reduziu os ciclos de QA em 3×."
+heroImage: "./uaubox-design-system/images/hero.jpg"
+tags:
+  - design-system
+  - component-library
+  - design-tokens
+featured: true
+order: 4
+---
+
+{/* TODO(Luiz): confirm UAUBox DS work year — placeholder 2021 */}
+
+## Problema
+
+A UAUBox estava escalando rápido — vários squads de produto entregando UI
+simultaneamente — e o codebase mostrava isso. Cada squad tinha suas próprias
+variáveis de cor, suas próprias variantes de botão, seu próprio modelo mental de
+espaçamento. O que parecia um problema de inconsistência de design era na verdade
+um problema de contrato: não havia acordo compartilhado entre design e engenharia
+sobre o que "botão primário" ou "azul de marca" significavam no código.
+
+Os ciclos de QA eram lentos porque cada componente era entregue com revisão manual
+entre squads. Uma mudança de espaçamento no Card de um squad podia silenciosamente
+quebrar o ritmo de espaçamento no Modal de outro. A pressão de negócio era alta:
+iteração mais rápida de produto estava no OKR, e cada mudança de UI descoordenada
+custava velocidade a toda a empresa.
+
+## Solução
+
+Liderei o design system do zero, começando com uma decisão arquitetural deliberada
+que desbloqueou todo o resto: construir o pipeline de tokens antes de tocar em
+qualquer componente.
+
+<Callout type="info">
+Construir o pipeline de tokens primeiro — antes de qualquer trabalho de componente
+— comprou três meses de velocidade de design. Cada componente se tornou um
+consumidor de tokens, não um ponto de decisão de design. O contrato de tokens foi
+a linguagem compartilhada entre Figma e TypeScript.
+</Callout>
+
+O pipeline ia do Figma até um passo de build que exportava tanto CSS custom
+properties quanto constantes JavaScript tipadas da mesma fonte. O design podia
+atualizar o plugin de tokens no Figma e a saída era determinística. A engenharia
+podia referenciar as constantes JS com total type safety.
+
+<CodeFilename filename="tokens/color.ts">
+```typescript
+export const color = {
+  primary: 'oklch(55% 0.2 220)',
+  primaryForeground: 'oklch(98% 0.01 220)',
+  secondary: 'oklch(65% 0.15 240)',
+  secondaryForeground: 'oklch(15% 0.02 240)',
+} as const;
+```
+</CodeFilename>
+
+Com a camada de tokens no lugar, a biblioteca de componentes React se seguiu.
+Os componentes consumiam tokens — nunca valores hex brutos — então uma troca de
+paleta exigia tocar exatamente um arquivo. O Storybook servia como o catálogo vivo:
+cada componente tinha sua story, cada story tinha sua anotação de acessibilidade,
+e o catálogo era entregue como site estático que o time de design podia favoritar.
+
+O pipeline exportava <InlineBadge variant="primary">CSS custom properties</InlineBadge> e <InlineBadge variant="secondary">constantes JS</InlineBadge> da mesma fonte do Figma,
+mantendo o design e o TypeScript sincronizados sem uma etapa manual de handoff.
+
+## Impacto
+
+O pipeline de tokens foi entregue primeiro e removeu imediatamente o custo de
+coordenação entre squads para decisões de cor e espaçamento. Quando a biblioteca
+de componentes chegou à v1.0, o processo de QA por componente foi substituído por
+snapshot tests do Storybook — um pull request ou passava no diff visual ou não.
+
+<Stat number="3×" label="ciclos de QA de componentes mais rápidos após o pipeline de tokens" />
+
+<Stat number="40+" label="componentes na biblioteca v1.0" />
+
+Integrar um novo engenheiro ao design system levava uma tarde em vez de uma semana.
+O catálogo Storybook respondia à pergunta "como esse componente se parece nesses
+estados?" antes de alguém precisar perguntar. Design e engenharia entregavam
+funcionalidades de produto com um vocabulário compartilhado em vez de negociá-lo
+a cada sprint.
+
+## Stack
+
+- **Design tokens:** Figma → plugin de tokens → CSS custom properties + constantes JS tipadas (mesmo passo de build, fonte única da verdade)
+- **Biblioteca de componentes:** React + TypeScript strict, 40+ componentes na v1.0, referências de cor e espaçamento somente por tokens
+- **Catálogo:** Storybook (story por componente, addon de a11y, snapshot testing de diff visual)
+- **Modelo de cor:** OKLCH — perceptualmente uniforme, seguro para troca de paleta entre temas claro e escuro

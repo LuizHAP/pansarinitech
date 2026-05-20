@@ -1,0 +1,97 @@
+---
+title: "UAUBox Design System"
+role: "Principal Software Engineer"
+year: 2021
+stack:
+  - Design Tokens
+  - React
+  - TypeScript
+  - Storybook
+  - Figma
+  - OKLCH
+  - CSS Custom Properties
+blurb: "Design system built from scratch at UAUBox — token pipeline, React component library, and Storybook catalogue that cut component QA cycles by 3×."
+heroImage: "./uaubox-design-system/images/hero.jpg"
+tags:
+  - design-system
+  - component-library
+  - design-tokens
+featured: true
+order: 4
+---
+
+{/* TODO(Luiz): confirm UAUBox DS work year — placeholder 2021 */}
+
+## Problem
+
+UAUBox was scaling fast — multiple product squads shipping UI simultaneously — and
+the codebase showed it. Each squad had its own color variables, its own button
+variants, its own spacing mental model. What looked like a design inconsistency
+problem was really a contract problem: there was no shared agreement between design
+and engineering about what "primary button" or "brand blue" actually meant in code.
+
+QA cycles were slow because every component shipped with manual cross-squad review.
+A spacing change in one squad's Card could silently break the spacing rhythm in
+another squad's Modal. Business pressure was high: faster product iteration was on
+the OKR, and every uncoordinated UI change was directly costing velocity across
+the company.
+
+## Solution
+
+I led the design system from scratch, starting with a deliberate architectural
+decision that unlocked everything else: build the token pipeline before touching
+a single component.
+
+<Callout type="info">
+Building the token pipeline first — before any component work — bought three months
+of design velocity. Every component became a token consumer, not a design decision
+point. The token contract was the shared language between Figma and TypeScript.
+</Callout>
+
+The pipeline ran from Figma through a build step that exported both CSS custom
+properties and typed JavaScript constants from the same source. Design could update
+the Figma token plugin and the output was deterministic. Engineering could reference
+the JS constants with full type safety.
+
+<CodeFilename filename="tokens/color.ts">
+```typescript
+export const color = {
+  primary: 'oklch(55% 0.2 220)',
+  primaryForeground: 'oklch(98% 0.01 220)',
+  secondary: 'oklch(65% 0.15 240)',
+  secondaryForeground: 'oklch(15% 0.02 240)',
+} as const;
+```
+</CodeFilename>
+
+With the token layer in place, the React component library followed. Components
+consumed tokens — never raw hex values — so a palette swap required touching exactly
+one file. Storybook served as the living catalogue: each component had its story,
+each story had its accessibility annotation, and the catalogue shipped as a static
+site the design team could bookmark.
+
+The pipeline exported <InlineBadge variant="primary">CSS custom properties</InlineBadge> and <InlineBadge variant="secondary">JS constants</InlineBadge> from the same Figma source,
+keeping design tooling and TypeScript in sync without a manual handoff step.
+
+## Impact
+
+The token pipeline shipped first and immediately removed the cross-squad coordination
+tax on color and spacing decisions. Once the component library reached v1.0, the
+per-component QA process was replaced by Storybook snapshot tests — a pull request
+either passed the visual diff or it did not.
+
+<Stat number="3×" label="faster component QA cycles after token pipeline shipped" />
+
+<Stat number="40+" label="components in the v1.0 library" />
+
+Onboarding a new engineer into the design system took an afternoon instead of a
+week. The Storybook catalogue answered the "what does this component look like in
+these states?" question before anyone had to ask it. Design and engineering shipped
+product features with a shared vocabulary instead of negotiating it per sprint.
+
+## Stack
+
+- **Design tokens:** Figma → token plugin → CSS custom properties + typed JS constants (same build step, one source of truth)
+- **Component library:** React + TypeScript strict, 40+ components at v1.0, token-only color/spacing references
+- **Catalogue:** Storybook (story per component, a11y addon, visual diff snapshot testing)
+- **Color model:** OKLCH — perceptually uniform, palette-swap-safe across light and dark themes

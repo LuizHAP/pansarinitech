@@ -52,8 +52,8 @@ export default async function CaseStudyPage({
       <JsonLd
         schema={{
           '@context': 'https://schema.org',
-          '@type': 'WebPage',
-          name: project.title,
+          '@type': 'Article',
+          headline: project.title,
           description: project.blurb,
           author: AUTHOR_PERSON,
           publisher: AUTHOR_PERSON,

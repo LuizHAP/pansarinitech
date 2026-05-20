@@ -75,7 +75,7 @@
   "projects": {
     "title": "Projetos",
     "listingIntro": "Estudos de caso técnicos selecionados de 14 anos construindo software — do suporte de TI a Engenheiro Principal, da escala BR ao mercado dos EUA.",
-    "listingDescription": "Três estudos de caso em e-commerce de máquinas pesadas, migração no-code → Next.js e React Native em escala.",
+    "listingDescription": "Quatro estudos de caso: e-commerce de máquinas pesadas, migração no-code → Next.js, React Native em escala e um design system construído do zero.",
     "viewProject": "Ver mais",
     "cta": {
       "readMore": "Ver mais →",
@@ -166,7 +166,7 @@
     "siteSuffix": "Luiz Pansarini",
     "descriptions": {
       "home": "Luiz Pansarini — Principal Software Engineer (Brasil/EUA). Portfólio bilíngue: estudos de caso, blog e contato.",
-      "projects": "Três estudos de caso em e-commerce de máquinas pesadas, migração no-code → Next.js e React Native em escala.",
+      "projects": "Quatro estudos de caso: e-commerce de máquinas pesadas, migração no-code → Next.js, React Native em escala e um design system construído do zero.",
       "blog": "Posts ocasionais sobre engenharia. Quase sempre sobre coisas que precisei consultar duas vezes.",
       "now": "O que estou trabalhando, lendo e aprendendo no momento."
     }
