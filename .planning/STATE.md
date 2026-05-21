@@ -3,19 +3,19 @@ gsd_state_version: 1.0
 milestone: v1.4
 milestone_name: UAUBox Design System Case Study
 status: executing
-last_updated: "2026-05-20T20:28:07.589Z"
-last_activity: 2026-05-20 — Phase 8 planned (1 plan, 9 requirements covered)
+last_updated: "2026-05-21T22:29:01.030Z"
+last_activity: 2026-05-21
 progress:
   total_phases: 2
   completed_phases: 1
-  total_plans: 1
-  completed_plans: 1
-  percent: 100
+  total_plans: 3
+  completed_plans: 2
+  percent: 50
 ---
 
 # Project State — pansarinitech
 
-**Last updated:** 2026-05-20 — Phase 8 complete. UAUBox Design System case study live in both EN/PT locales. CASE-01 through CASE-09 closed. Phase 9 (Quality Verification) remaining.
+**Last updated:** 2026-05-21 — Phase 9 planned. 2 plans in 2 waves. CASE-10 through CASE-14 mapped. Ready to execute.
 
 ---
 
@@ -27,16 +27,16 @@ progress:
 
 **If everything else fails:** the site must load fast on a recruiter's phone, communicate "Principal-level full-stack engineer" within 5 seconds, and offer a clear path to "contact / hire / message me."
 
-**Current focus:** Phase 8 complete. Run `/gsd-plan-phase 9` to begin Quality Verification.
+**Current focus:** Phase 09 — quality-verification
 
 ---
 
 ## Current Position
 
-Phase: 8 — Author + Integrate UAUBox DS Case Study
-Plan: 08-01 (1 plan, wave 1)
+Phase: 09 (quality-verification) — EXECUTING
+Plan: 2 of 2
 Status: Ready to execute
-Last activity: 2026-05-20 — Phase 8 planned (1 plan, 9 requirements covered)
+Last activity: 2026-05-21
 
 ---
 
@@ -46,10 +46,10 @@ Last activity: 2026-05-20 — Phase 8 planned (1 plan, 9 requirements covered)
 
 | Phase | Goal | Requirements | Status |
 |-------|------|--------------|--------|
-| 8 — Author + Integrate UAUBox DS Case Study | UAUBox DS case study live and discoverable in both locales | CASE-01 through CASE-09 (9 req) | Ready to execute (1 plan) |
+| 8 — Author + Integrate UAUBox DS Case Study | UAUBox DS case study live and discoverable in both locales | CASE-01 through CASE-09 (9 req) | ✅ Complete (2026-05-20) |
 | 9 — Quality Verification | All quality gates pass on new pages; zero regressions | CASE-10 through CASE-14 (5 req) | Not started |
 
-**Next:** `/gsd-plan-phase 8`
+**Next:** `/gsd-plan-phase 9`
 
 ---
 
@@ -73,6 +73,7 @@ Last activity: 2026-05-20 — Phase 8 planned (1 plan, 9 requirements covered)
 | Phase 05-test-coverage-sweep P02 | 64 | 1 tasks | 1 files |
 | Phase 05-test-coverage-sweep P03 | 5 minutes | 2 tasks | 3 files |
 | Phase 05-test-coverage-sweep P04 | 7min | 2 tasks | 3 files |
+| Phase 09-quality-verification P01 | 9min | 3 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -110,6 +111,7 @@ Last activity: 2026-05-20 — Phase 8 planned (1 plan, 9 requirements covered)
 | PostCard formatDate mock: mock @/lib/i18n/helpers.formatDate to return fixed string | Avoids Intl locale differences across CI environments; keeps assertions locale-agnostic | 05-03-SUMMARY.md |
 | JSON-LD Article migration is global across all project pages (not just UAUBox) | schema.org Article is semantically correct for case studies; global change makes all 4 project pages consistent; no test breakage (json-ld.test.tsx already uses Article fixture) | 08-01-SUMMARY.md |
 | MDX comments use JSX syntax {/* */} not HTML <!-- --> | next-mdx-remote MDX parser throws on HTML comment syntax; MDX-compatible JSX comment is the correct idiom and is consumed at parse time without output | 08-01-SUMMARY.md |
+| --badge-primary-text CSS token (oklch 70% 0.21 28) for InlineBadge primary text on dark backgrounds | --primary (54%) gives only 3.67:1 against Sith dark bg (oklch 10%) — fails WCAG AA 4.5:1 for small text; separate token keeps --primary calibrated for button usage (white text on red bg) while providing contrast-safe text color; dark:text-[var(--badge-primary-text)] override in InlineBadge preserves test assertion (className still contains text-primary) | 09-01-SUMMARY.md |
 
 ### Open TODOs
 
@@ -146,7 +148,7 @@ Last activity: 2026-05-20 — Phase 8 planned (1 plan, 9 requirements covered)
 
 - `next-mdx-remote` archived 2026-04-09 — works in Next 16 but no future fixes; 12-month migration plan to Fumadocs MDX
 - Vercel Hobby image quota (5K/month) — pre-resize source images to budgeted breakpoints
-- Sith red palette failing 4.5:1 contrast — picked intentionally with WebAIM checker; axe-core CI catches regressions
+- Sith red as text color (InlineBadge primary) — fixed in 09-01 via --badge-primary-text token; any new text-as-primary usage on dark backgrounds must use this token
 
 ---
 
@@ -154,11 +156,11 @@ Last activity: 2026-05-20 — Phase 8 planned (1 plan, 9 requirements covered)
 
 ### Last Session
 
-- v1.4 roadmap created: 2 phases (Phase 8: Author + Integrate UAUBox DS Case Study; Phase 9: Quality Verification). 14 requirements mapped across both phases with 100% coverage. ROADMAP.md, STATE.md, and REQUIREMENTS.md traceability table all updated.
+Completed Phase 09 Plan 01 (Quality Verification) — 2026-05-21. Extended a11y matrix (24→28 tests) and iPhone SE gate (24→28 tests) to include UAUBox case study. Added UAUBox hero mock to unit tests. Auto-fixed WCAG AA contrast on InlineBadge primary variant in Sith dark mode. All 4 quality gates pass. CASE-10, CASE-11, CASE-12, CASE-14 closed.
 
 ### Next Session
 
-Run `/gsd-plan-phase 8` to begin planning the authoring and integration phase.
+Execute Phase 09 Plan 02 — Lighthouse gate on UAUBox case study + Sith contrast smoke check (CASE-13).
 
 ---
 
