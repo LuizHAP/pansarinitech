@@ -39,6 +39,8 @@
   --border: oklch(82% 0.018 250);
   --primary: oklch(55% 0.18 250);
   --primary-foreground: oklch(98% 0.005 250);
+  /* badge-primary-text: color for text-as-primary on light bg (same as primary at 55%) */
+  --badge-primary-text: oklch(55% 0.18 250);
   --accent: oklch(55% 0.18 250);
   --accent-foreground: oklch(98% 0.005 250);
   --destructive: oklch(50% 0.22 27);
@@ -64,6 +66,12 @@
      WCAG 1.4.3 AA. 54% gives ~5.0:1 with pure white. Visually still saber red.
      Verified by axe in tests/a11y-matrix.spec.ts (404 page CTA button). [Rule 1] */
   --primary: oklch(54% 0.21 28);
+  /* badge-primary-text: lighter saber red for text-as-primary in dark-bg contexts
+     (InlineBadge primary variant, small text). The main --primary (54%) gives only
+     3.67:1 against bg (oklch 10%), failing WCAG 1.4.3 AA for small text (need 4.5:1).
+     oklch(70% 0.21 28) achieves ≥5.0:1 against the dark bg and is still saber red.
+     [Rule 1 - A11y] */
+  --badge-primary-text: oklch(70% 0.21 28);
   --primary-foreground: oklch(100% 0 0);
   --accent: oklch(54% 0.21 28);
   --accent-foreground: oklch(100% 0 0);

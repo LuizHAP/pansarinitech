@@ -1,21 +1,21 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.3
-milestone_name: Blog Enrichment + Quality Hardening
-status: archived
-last_updated: "2026-05-20T00:00:00.000Z"
-last_activity: "2026-05-20 — v1.3 milestone archived. 3 phases, 9 plans, 241 tests. Tag: v1.3"
+milestone: v1.4
+milestone_name: UAUBox Design System Case Study
+status: executing
+last_updated: "2026-05-20T20:28:07.589Z"
+last_activity: 2026-05-20 — Phase 8 planned (1 plan, 9 requirements covered)
 progress:
-  total_phases: 3
-  completed_phases: 3
-  total_plans: 9
-  completed_plans: 9
+  total_phases: 2
+  completed_phases: 1
+  total_plans: 1
+  completed_plans: 1
   percent: 100
 ---
 
 # Project State — pansarinitech
 
-**Last updated:** 2026-05-20 — v1.3 milestone archived. 3 phases (5–7), 9 plans complete, 241 tests passing. Archived to `.planning/milestones/v1.3-ROADMAP.md`. Tagged v1.3.
+**Last updated:** 2026-05-20 — Phase 8 complete. UAUBox Design System case study live in both EN/PT locales. CASE-01 through CASE-09 closed. Phase 9 (Quality Verification) remaining.
 
 ---
 
@@ -27,28 +27,29 @@ progress:
 
 **If everything else fails:** the site must load fast on a recruiter's phone, communicate "Principal-level full-stack engineer" within 5 seconds, and offer a clear path to "contact / hire / message me."
 
-**Current focus:** v1.3 archived — planning v1.4 via `/gsd-new-milestone`
+**Current focus:** Phase 8 complete. Run `/gsd-plan-phase 9` to begin Quality Verification.
 
 ---
 
 ## Current Position
 
-Phase: v1.3 complete — all 3 phases (5–7), 9 plans done
-Status: Milestone archived — ready for v1.4 planning
-Last activity: 2026-05-20 — v1.3 milestone archived. Tag v1.3 created.
+Phase: 8 — Author + Integrate UAUBox DS Case Study
+Plan: 08-01 (1 plan, wave 1)
+Status: Ready to execute
+Last activity: 2026-05-20 — Phase 8 planned (1 plan, 9 requirements covered)
 
 ---
 
 ## Roadmap Snapshot
 
-v1.3 complete — all phases archived. See `.planning/milestones/v1.3-ROADMAP.md` for full details.
+**v1.4 — 2 phases, 14 requirements mapped**
 
-**v1.3 phases (all complete):**
-- [x] Phase 5: Test Coverage Sweep — completed 2026-05-19
-- [x] Phase 6: MDX Component Toolkit Expansion — completed 2026-05-19
-- [x] Phase 7: Blog Post + SEO Hardening — completed 2026-05-20
+| Phase | Goal | Requirements | Status |
+|-------|------|--------------|--------|
+| 8 — Author + Integrate UAUBox DS Case Study | UAUBox DS case study live and discoverable in both locales | CASE-01 through CASE-09 (9 req) | Ready to execute (1 plan) |
+| 9 — Quality Verification | All quality gates pass on new pages; zero regressions | CASE-10 through CASE-14 (5 req) | Not started |
 
-**Next:** `/gsd-new-milestone` to define v1.4
+**Next:** `/gsd-plan-phase 8`
 
 ---
 
@@ -107,6 +108,8 @@ v1.3 complete — all phases archived. See `.planning/milestones/v1.3-ROADMAP.md
 | Use optional chaining (?.) instead of non-null assertion (!) in json-ld tests | biome lint/style/noNonNullAssertion forbids !; expect(scriptEl).not.toBeNull() already guards the flow so ?. is equivalent | 05-02-SUMMARY.md |
 | Split-text-node reading-time assertion: use paragraph.textContent (not getByText) | getByText fails on text split by sibling elements (<time> node + bare text node); textContent concatenates all child text nodes | 05-03-SUMMARY.md |
 | PostCard formatDate mock: mock @/lib/i18n/helpers.formatDate to return fixed string | Avoids Intl locale differences across CI environments; keeps assertions locale-agnostic | 05-03-SUMMARY.md |
+| JSON-LD Article migration is global across all project pages (not just UAUBox) | schema.org Article is semantically correct for case studies; global change makes all 4 project pages consistent; no test breakage (json-ld.test.tsx already uses Article fixture) | 08-01-SUMMARY.md |
+| MDX comments use JSX syntax {/* */} not HTML <!-- --> | next-mdx-remote MDX parser throws on HTML comment syntax; MDX-compatible JSX comment is the correct idiom and is consumed at parse time without output | 08-01-SUMMARY.md |
 
 ### Open TODOs
 
@@ -121,6 +124,7 @@ v1.3 complete — all phases archived. See `.planning/milestones/v1.3-ROADMAP.md
 - Phase 2 added: Code Quality Baseline — barrel exports, naming conventions, import reorder commit
 - v1.2 roadmap created: 3 phases (Cmd+K palette, UX polish, content pipeline), 19 requirements mapped
 - v1.3 roadmap created: 3 phases (Test Coverage Sweep, MDX Toolkit Expansion, Blog Post + SEO Hardening), 14 requirements mapped
+- v1.4 roadmap created: 2 phases (Author + Integrate UAUBox DS Case Study, Quality Verification), 14 requirements mapped
 
 ### Blockers
 
@@ -150,12 +154,11 @@ v1.3 complete — all phases archived. See `.planning/milestones/v1.3-ROADMAP.md
 
 ### Last Session
 
-- v1.3 milestone archived. All 3 phases (5–7), 9 plans complete. ROADMAP.md, REQUIREMENTS.md, PROJECT.md, MILESTONES.md, RETROSPECTIVE.md updated. Tag v1.3 created.
+- v1.4 roadmap created: 2 phases (Phase 8: Author + Integrate UAUBox DS Case Study; Phase 9: Quality Verification). 14 requirements mapped across both phases with 100% coverage. ROADMAP.md, STATE.md, and REQUIREMENTS.md traceability table all updated.
 
 ### Next Session
 
-v1.3 archived. Ready to plan v1.4.
-Run `/gsd-new-milestone` to define the next milestone.
+Run `/gsd-plan-phase 8` to begin planning the authoring and integration phase.
 
 ---
 
@@ -175,4 +178,4 @@ Run `/gsd-new-milestone` to define the next milestone.
 | `.planning/config.json` | Workflow config (granularity: coarse) |
 
 ---
-*Generated by gsd-roadmapper*
+*Generated by gsd-roadmapper — v1.4 roadmap created 2026-05-20*
