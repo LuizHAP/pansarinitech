@@ -6,7 +6,8 @@
         "http://localhost:3001/now",
         "http://localhost:3001/projects",
         "http://localhost:3001/blog",
-        "http://localhost:3001/blog/building-this-portfolio"
+        "http://localhost:3001/blog/building-this-portfolio",
+        "http://localhost:3001/projects/uaubox-design-system"
       ],
       "settings": {
         "skipAudits": [
