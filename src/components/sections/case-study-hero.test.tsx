@@ -58,6 +58,15 @@ vi.mock('../../../content/projects/magazine-luiza-superapp/images/hero.jpg', () 
   },
 }));
 
+vi.mock('../../../content/projects/uaubox-design-system/images/hero.jpg', () => ({
+  default: {
+    src: '/hero-uaubox.jpg',
+    width: 1024,
+    height: 640,
+    blurDataURL: 'data:image/png;base64,xx',
+  },
+}));
+
 import enMessages from '../../../messages/en.json';
 import ptMessages from '../../../messages/pt.json';
 
