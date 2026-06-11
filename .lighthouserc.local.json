@@ -7,7 +7,8 @@
         "http://localhost:3001/projects",
         "http://localhost:3001/blog",
         "http://localhost:3001/blog/building-this-portfolio",
-        "http://localhost:3001/projects/uaubox-design-system"
+        "http://localhost:3001/projects/uaubox-design-system",
+        "http://localhost:3001/projects/machinery-mobile-first"
       ],
       "settings": {
         "skipAudits": [
