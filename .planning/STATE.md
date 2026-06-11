@@ -1,21 +1,21 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.4
-milestone_name: UAUBox Design System Case Study
-status: verifying
-last_updated: "2026-05-21T22:36:01.710Z"
-last_activity: 2026-05-21
+milestone: v1.5
+milestone_name: Mobile-First Case Study + Lighthouse Fix
+status: planning
+last_updated: "2026-06-11T00:00:00.000Z"
+last_activity: 2026-06-11
 progress:
   total_phases: 2
-  completed_phases: 2
-  total_plans: 3
-  completed_plans: 3
-  percent: 100
+  completed_phases: 0
+  total_plans: 2
+  completed_plans: 0
+  percent: 0
 ---
 
 # Project State — pansarinitech
 
-**Last updated:** 2026-05-21 — Phase 9 planned. 2 plans in 2 waves. CASE-10 through CASE-14 mapped. Ready to execute.
+**Last updated:** 2026-06-11 — v1.5 milestone started. Phase 10 planned. CASE-13 (Lighthouse LCP), CASE-15 through CASE-20 mapped. Ready to execute.
 
 ---
 
@@ -27,16 +27,16 @@ progress:
 
 **If everything else fails:** the site must load fast on a recruiter's phone, communicate "Principal-level full-stack engineer" within 5 seconds, and offer a clear path to "contact / hire / message me."
 
-**Current focus:** Phase 09 — quality-verification
+**Current focus:** Phase 10 — author Heavy Machinery Mobile-First case study
 
 ---
 
 ## Current Position
 
-Phase: 09 (quality-verification) — COMPLETE
-Plan: 2 of 2 (all plans executed)
-Status: Phase complete — 4/5 requirements closed (CASE-13 not closed; local LH perf 0.85 < 0.95 target)
-Last activity: 2026-05-21
+Phase: 10 (author Heavy Machinery Mobile-First case study) — PLANNING
+Plan: 0 of 2 (both plans pending)
+Status: Milestone started — CASE-13 (Lighthouse LCP), CASE-15 through CASE-20 mapped
+Last activity: 2026-06-11
 
 ---
 
@@ -47,9 +47,16 @@ Last activity: 2026-05-21
 | Phase | Goal | Requirements | Status |
 |-------|------|--------------|--------|
 | 8 — Author + Integrate UAUBox DS Case Study | UAUBox DS case study live and discoverable in both locales | CASE-01 through CASE-09 (9 req) | ✅ Complete (2026-05-20) |
-| 9 — Quality Verification | All quality gates pass on new pages; zero regressions | CASE-10 through CASE-14 (5 req) | Not started |
+| 9 — Quality Verification | All quality gates pass on new pages; zero regressions | CASE-10 through CASE-14 (5 req) | ✅ Complete (2026-05-21) |
 
-**Next:** `/gsd-plan-phase 9`
+**v1.5 — 2 phases, 8 requirements mapped**
+
+| Phase | Goal | Requirements | Status |
+|-------|------|--------------|--------|
+| 10 — Author Heavy Machinery Mobile-First Case Study | Fifth case study live and discoverable in both locales (mobile-first/React Native angle) | CASE-15 through CASE-20 (6 req) | 🔄 Planning |
+| 11 — Lighthouse Performance Fix + Quality Verification | UAUBox Lighthouse ≥ 0.95; all gates pass on new case study | CASE-13, CASE-15 through CASE-17 (4 req) | 🔄 Planning |
+
+**Next:** `/gsd-plan-phase 10`
 
 ---
 

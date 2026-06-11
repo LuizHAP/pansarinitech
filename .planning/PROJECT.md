@@ -26,7 +26,7 @@ Key additions in v1.3:
 **Previously shipped:** v1.1 Polish, Quality & Test Baseline (2026-05-04) — full archive: `.planning/milestones/v1.1-ROADMAP.md`.
 **Previously shipped:** v1.0 Public Launch (2026-05-02) — full archive: `.planning/milestones/v1.0-ROADMAP.md`.
 
-**Next milestone:** Planning v1.4 — run `/gsd-new-milestone`.
+**Next milestone:** Planning v1.5 — run `/gsd-new-milestone`.
 
 **Live deliverables:**
 - Bilingual portfolio (PT + EN) at `/pt` and `/en` with browser auto-detect, path-preserving locale toggle, and hreflang reciprocity.
@@ -40,19 +40,16 @@ Key additions in v1.3:
 
 **Not yet live:** custom domain `pansarini.tech` rollout (currently `pansarinitech.vercel.app`).
 
-## Current Milestone: v1.4 UAUBox Design System Case Study
+## Current Milestone: v1.5 Mobile-First Case Study + Lighthouse Fix
 
-**Goal:** Ship the UAUBox Design System as the fourth portfolio case study — authored bilingually (PT + EN), demonstrating DS leadership (built from scratch), React component library + Figma-to-code token pipeline, and a dev velocity gain narrative.
+**Goal:** Ship a fifth portfolio case study with a mobile-first/React Native angle on the Heavy Machinery project, and fix the UAUBox Lighthouse Performance gap (CASE-13: LCP 0.85 → 0.95).
 
 **Target features:**
-- UAUBox DS case study authored in PT + EN MDX (matching existing case study structure)
-- Design tokens section: Figma → CSS/JS token pipeline
-- React component library section: component count, Storybook docs
-- Accessibility wins section: WCAG AA coverage across all components
-- Dev velocity gain as the headline outcome metric
-- All quality gates pass: unit tests, Playwright E2E, a11y matrix, iPhone SE, Lighthouse ≥ 95 (pipeline-generated or manual)
+- Heavy Machinery Mobile-first case study authored in PT + EN MDX (distinct from existing ecommerce case — focuses on React Native + Expo, mobile UX on low-connectivity, App Store review, cart-state contract)
+- CASE-13: UAUBox Lighthouse Performance ≥ 0.95 (LCP bottleneck investigation — hero image optimization, LCP element analysis)
+- All existing quality gates pass (unit tests, Playwright, a11y matrix, Lighthouse ≥ 95)
 
-## Requirements
+### Active
 
 ### Validated
 
@@ -125,12 +122,11 @@ Key additions in v1.3:
 
 <!-- Next milestone candidates. Hypotheses until validated. -->
 
-**v1.4 UAUBox Design System Case Study (active):**
+**v1.5 Mobile-First Case Study + Lighthouse Fix (active):**
 
-- [ ] UAUBox DS case study MDX in PT + EN — design tokens, React component library, a11y wins, dev velocity gain narrative
-- [ ] Screenshot / visuals for UAUBox DS case study (gradient placeholder acceptable if unavailable)
-- [ ] JSON-LD Article schema on UAUBox case study pages
-- [ ] OG image for UAUBox case study (Sith-red dynamic via next/og)
+- [ ] Heavy Machinery Mobile-first case study MDX in PT + EN — React Native + Expo, mobile UX on low-connectivity, App Store review, cart-state contract
+- [ ] Hero image for mobile-first case study
+- [ ] CASE-13: UAUBox Lighthouse Performance ≥ 0.95 (LCP bottleneck investigation)
 - [ ] All existing quality gates pass (unit tests, Playwright, a11y matrix, Lighthouse ≥ 95)
 
 ### Out of Scope

@@ -1,7 +1,7 @@
 # Roadmap — pansarinitech
 
-**Last updated:** 2026-05-21
-**Status:** Active — v1.4 UAUBox Design System Case Study
+**Last updated:** 2026-06-11
+**Status:** Active — v1.5 Mobile-First Case Study + Lighthouse Fix
 
 ---
 
@@ -11,7 +11,7 @@
 - ✅ **v1.1 Polish, Quality & Test Baseline** — Phases 1-2 (shipped 2026-05-04) — see `milestones/v1.1-ROADMAP.md`
 - ✅ **v1.2 UX Polish + Automated Content Pipeline** — Phases 1-4 (shipped 2026-05-15) — see `milestones/v1.2-ROADMAP.md`
 - ✅ **v1.3 Blog Enrichment + Quality Hardening** — Phases 5-7 (shipped 2026-05-20) — see `milestones/v1.3-ROADMAP.md`
-- 🔄 **v1.4 UAUBox Design System Case Study** — Phases 8-9 (active)
+- 🔄 **v1.5 Mobile-First Case Study + Lighthouse Fix** — Phases 10-11 (active)
 
 ---
 
@@ -44,6 +44,9 @@ Full archive: `milestones/v1.3-ROADMAP.md`
 
 - [x] **Phase 8: Author + Integrate UAUBox DS Case Study** — Bilingual MDX case study authored and integrated into the existing pipeline (routing, metadata, JSON-LD, listing) (completed 2026-05-20)
 - [x] **Phase 9: Quality Verification** — All quality gates confirmed clean on the new case study pages; no regressions (completed 2026-05-21)
+
+- [ ] **Phase 10: Author Heavy Machinery Mobile-First Case Study** — Bilingual MDX case study authored and integrated into the existing pipeline (routing, metadata, JSON-LD, listing) (in progress)
+- [ ] **Phase 11: Lighthouse Performance Fix + Quality Verification** — CASE-13: UAUBox Lighthouse Performance ≥ 0.95; all quality gates pass on new case study pages
 
 ---
 
@@ -81,6 +84,41 @@ Full archive: `milestones/v1.3-ROADMAP.md`
 - [x] 09-01-PLAN.md — Verify unit coverage + E2E baseline; add UAUBox to a11y matrix and iPhone SE specs; add UAUBox hero mock
 - [x] 09-02-PLAN.md — Add UAUBox URL to Lighthouse configs; run local Lighthouse audit (Performance ≥ 95)
 
+### Phase 10: Author Heavy Machinery Mobile-First Case Study
+
+**Goal**: A fifth portfolio case study is live and discoverable — authored bilingually, with a distinct mobile-first/React Native angle on the Heavy Machinery project (distinct from the existing ecommerce case), integrated into the existing MDX pipeline, and surfacing correctly in listings, metadata, and JSON-LD
+
+**Depends on**: Nothing (infrastructure is pre-built from previous milestones)
+
+**Requirements**: CASE-15, CASE-16, CASE-17, CASE-18, CASE-19, CASE-20
+
+**Success Criteria** (what must be TRUE):
+  1. A visitor can navigate to `/en/projects/machinery-mobile-first` and `/pt/projetos/machinery-mobile-first` and read the full case study with Problem / Solution / Results structure, React Native + Expo narrative, mobile UX on low-connectivity, App Store review process, and cart-state contract as key technical details
+  2. The case study is listed on both `/en/projects` and `/pt/projetos` — it appears alongside the existing four case studies
+  3. The browser tab, social share cards, and OG preview all show a correct title, description, and image for each locale (no fallbacks, no empty strings, no broken OG images)
+  4. Viewing source or a JSON-LD inspector on either locale page reveals an Article schema matching the v1.2 Phase 4 pattern
+  5. The MDX body uses at least one MDX toolkit component (`<CodeFilename>`, `<InlineBadge>`, or `<Callout>`) in a meaningful, non-decorative way
+**Plans**: 1 plan
+- [ ] 10-01-PLAN.md — Author bilingual Heavy Machinery Mobile-First MDX, wire HERO_IMAGES x2, register in projects listing + featured teaser, JSON-LD Article schema
+**UI hint**: yes
+
+### Phase 11: Lighthouse Performance Fix + Quality Verification
+
+**Goal**: UAUBox case study pages achieve Lighthouse Performance ≥ 0.95 (LCP bottleneck resolved), and all quality gates pass on the new Heavy Machinery Mobile-First case study pages
+
+**Depends on**: Phase 10
+
+**Requirements**: CASE-13, CASE-15, CASE-16, CASE-17
+
+**Success Criteria** (what must be TRUE):
+  1. UAUBox case study pages score ≥ 0.95 on Lighthouse Performance (local and CI)
+  2. LCP is the primary contributor to the Performance score and is within budget
+  3. The Heavy Machinery Mobile-First case study passes all quality gates: unit tests, Playwright E2E, a11y matrix, iPhone SE, Lighthouse ≥ 95
+  4. No regressions on existing case study pages (UAB, Magalu, both Machinery cases)
+**Plans**: 1 plan
+- [ ] 11-01-PLAN.md — Investigate LCP bottleneck (hero image optimization, LCP element analysis), run Lighthouse CI, verify all quality gates on new case study
+**UI hint**: no
+
 ---
 
 ## Progress
@@ -96,7 +134,9 @@ Full archive: `milestones/v1.3-ROADMAP.md`
 | 7. Blog Post + SEO Hardening | v1.3 | 2/2 | Complete | 2026-05-20 |
 | 8. Author + Integrate UAUBox DS Case Study | v1.4 | 1/1 | Complete   | 2026-05-20 |
 | 9. Quality Verification | v1.4 | 2/2 | Complete   | 2026-05-21 |
+| 10. Author Heavy Machinery Mobile-First Case Study | v1.5 | 0/1 | Pending  | — |
+| 11. Lighthouse Performance Fix + Quality Verification | v1.5 | 0/1 | Pending  | — |
 
 ---
 
-*Generated by gsd-roadmapper — v1.4 roadmap created 2026-05-20*
+*Generated by gsd-roadmapper — v1.5 roadmap created 2026-06-11*
