@@ -34,6 +34,8 @@ const PAGES = [
   { path: () => '/blog/building-this-portfolio', desc: 'blog-post' },
   // Phase 8 addition (CASE-11): UAUBox Design System case study
   { path: () => '/projects/uaubox-design-system', desc: 'projects-case-study-uaubox' },
+  // Phase 10 addition (CASE-15): Heavy Machinery mobile-first case study
+  { path: () => '/projects/machinery-mobile-first', desc: 'projects-case-study-mobile-first' },
 ];
 
 test.describe('a11y matrix — WCAG 2.1 AA across en/pt × light/dark × home/404', () => {

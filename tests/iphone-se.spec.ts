@@ -25,6 +25,7 @@ const scenarios: Scenario[] = [
   { url: '/blog' },
   { url: '/blog/building-this-portfolio' },
   { url: '/projects/uaubox-design-system' },
+  { url: '/projects/machinery-mobile-first' },
 ];
 
 for (const { url } of scenarios) {

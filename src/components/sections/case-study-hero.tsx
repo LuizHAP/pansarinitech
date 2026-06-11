@@ -59,7 +59,9 @@ export async function CaseStudyHero({
         <Image
           src={heroSrc}
           alt={project.title}
-          sizes="(max-width: 768px) 100vw, 80vw"
+          width={1024}
+          height={640}
+          sizes="(max-width: 768px) 100vw, 768px"
           priority
           fetchPriority="high"
           placeholder="blur"
