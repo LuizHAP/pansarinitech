@@ -40,15 +40,17 @@ Key additions in v1.3:
 
 **Not yet live:** custom domain `pansarini.tech` rollout (currently `pansarinitech.vercel.app`).
 
-## Current Milestone: v1.4 (Planning)
+## Current Milestone: v1.4 UAUBox Design System Case Study
 
-**Goal:** To be defined via `/gsd-new-milestone`.
+**Goal:** Ship the UAUBox Design System as the fourth portfolio case study — authored bilingually (PT + EN), demonstrating DS leadership (built from scratch), React component library + Figma-to-code token pipeline, and a dev velocity gain narrative.
 
-**Candidates from deferred backlog:**
-- `pansarini.tech` custom domain cutover (SITE_URL swap + Vercel domain config + robots + OG)
-- RSS feed `/feed.xml` + `/feed.pt.xml` (blog has 2+ posts now)
-- Additional case study: UAUBox Design System
-- Second blog post using the Phase 6 MDX toolkit (pipeline-generated or manual)
+**Target features:**
+- UAUBox DS case study authored in PT + EN MDX (matching existing case study structure)
+- Design tokens section: Figma → CSS/JS token pipeline
+- React component library section: component count, Storybook docs
+- Accessibility wins section: WCAG AA coverage across all components
+- Dev velocity gain as the headline outcome metric
+- All quality gates pass: unit tests, Playwright E2E, a11y matrix, iPhone SE, Lighthouse ≥ 95 (pipeline-generated or manual)
 
 ## Requirements
 
@@ -123,12 +125,13 @@ Key additions in v1.3:
 
 <!-- Next milestone candidates. Hypotheses until validated. -->
 
-**v1.4 (planning):**
+**v1.4 UAUBox Design System Case Study (active):**
 
-- [ ] `pansarini.tech` custom domain cutover (SITE_URL swap + Vercel config + robots + OG)
-- [ ] RSS feed `/feed.xml` + `/feed.pt.xml`
-- [ ] Additional case study: UAUBox Design System
-- [ ] Additional blog posts using the MDX toolkit
+- [ ] UAUBox DS case study MDX in PT + EN — design tokens, React component library, a11y wins, dev velocity gain narrative
+- [ ] Screenshot / visuals for UAUBox DS case study (gradient placeholder acceptable if unavailable)
+- [ ] JSON-LD Article schema on UAUBox case study pages
+- [ ] OG image for UAUBox case study (Sith-red dynamic via next/og)
+- [ ] All existing quality gates pass (unit tests, Playwright, a11y matrix, Lighthouse ≥ 95)
 
 ### Out of Scope
 
@@ -245,4 +248,4 @@ This document evolves at phase transitions and milestone boundaries.
 5. Update Current State + Next Milestone Goals sections
 
 ---
-*Last updated: 2026-05-20 after v1.3 milestone*
+*Last updated: 2026-05-20 — v1.4 milestone started*

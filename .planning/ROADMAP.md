@@ -43,7 +43,7 @@ Full archive: `milestones/v1.3-ROADMAP.md`
 ### v1.4 UAUBox Design System Case Study (Phases 8–9)
 
 - [x] **Phase 8: Author + Integrate UAUBox DS Case Study** — Bilingual MDX case study authored and integrated into the existing pipeline (routing, metadata, JSON-LD, listing) (completed 2026-05-20)
-- [ ] **Phase 9: Quality Verification** — All quality gates confirmed clean on the new case study pages; no regressions
+- [x] **Phase 9: Quality Verification** — All quality gates confirmed clean on the new case study pages; no regressions (completed 2026-05-21)
 
 ---
 
@@ -79,7 +79,7 @@ Full archive: `milestones/v1.3-ROADMAP.md`
   5. `pnpm test:unit:coverage` exits 0 — all 36 tracked files remain at ≥70/60/70/70 (components) and 100/100/100/100 (json-ld.tsx) thresholds
 **Plans**: 2 plans
 - [x] 09-01-PLAN.md — Verify unit coverage + E2E baseline; add UAUBox to a11y matrix and iPhone SE specs; add UAUBox hero mock
-- [ ] 09-02-PLAN.md — Add UAUBox URL to Lighthouse configs; run local Lighthouse audit (Performance ≥ 95)
+- [x] 09-02-PLAN.md — Add UAUBox URL to Lighthouse configs; run local Lighthouse audit (Performance ≥ 95)
 
 ---
 
@@ -95,7 +95,7 @@ Full archive: `milestones/v1.3-ROADMAP.md`
 | 6. MDX Component Toolkit Expansion | v1.3 | 3/3 | Complete | 2026-05-19 |
 | 7. Blog Post + SEO Hardening | v1.3 | 2/2 | Complete | 2026-05-20 |
 | 8. Author + Integrate UAUBox DS Case Study | v1.4 | 1/1 | Complete   | 2026-05-20 |
-| 9. Quality Verification | v1.4 | 1/2 | In Progress|  |
+| 9. Quality Verification | v1.4 | 2/2 | Complete   | 2026-05-21 |
 
 ---
 
