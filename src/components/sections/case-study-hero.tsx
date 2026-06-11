@@ -8,6 +8,7 @@ import { getTranslations } from 'next-intl/server';
 // (Open Question #3 → option (a)). 3 imports = 3 case studies; adding a 4th
 // case requires editing HERO_IMAGES below in the same PR.
 import Image, { type StaticImageData } from 'next/image';
+import machineryMobileFirst from '../../../content/projects/machinery-mobile-first/images/hero.jpg';
 // Static-imported hero images. blurDataURL is auto-generated at build time
 // by Next.js's static-import path (Phase 2 hero.tsx pattern).
 import machineryEcommerce from '../../../content/projects/machinery-partner-ecommerce/images/hero.jpg';
@@ -20,6 +21,7 @@ const HERO_IMAGES: Record<string, StaticImageData> = {
   'machinery-partner-migration': machineryMigration,
   'magazine-luiza-superapp': magaluSuperapp,
   'uaubox-design-system': uauboxHero,
+  'machinery-mobile-first': machineryMobileFirst,
 };
 
 export async function CaseStudyHero({

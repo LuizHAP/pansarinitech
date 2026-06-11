@@ -25,6 +25,7 @@ export async function generateMetadata({
 // loader.getProjects(locale). Cards link via @/lib/i18n/navigation Link to
 // preserve the locale prefix on the slug route.
 import Image from 'next/image';
+import machineryMobileFirst from '../../../../content/projects/machinery-mobile-first/images/hero.jpg';
 import machineryEcommerce from '../../../../content/projects/machinery-partner-ecommerce/images/hero.jpg';
 import machineryMigration from '../../../../content/projects/machinery-partner-migration/images/hero.jpg';
 import magaluSuperapp from '../../../../content/projects/magazine-luiza-superapp/images/hero.jpg';
@@ -35,6 +36,7 @@ const HERO_IMAGES = {
   'machinery-partner-migration': machineryMigration,
   'magazine-luiza-superapp': magaluSuperapp,
   'uaubox-design-system': uauboxHero,
+  'machinery-mobile-first': machineryMobileFirst,
 } as const;
 
 export default async function ProjectsListingPage({

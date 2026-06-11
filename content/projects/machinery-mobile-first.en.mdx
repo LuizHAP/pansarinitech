@@ -1,0 +1,62 @@
+---
+title: "Heavy Machinery mobile-first"
+role: "Principal Software Engineer"
+year: 2024
+stack:
+  - React Native
+  - Expo
+  - TypeScript
+  - Fastify
+  - Bun
+  - Odoo
+blurb: "Native mobile app for US heavy machinery buyers — React Native + Expo, offline cart-state contract, and App Store review."
+heroImage: "./machinery-mobile-first/images/hero.jpg"
+tags:
+  - mobile
+  - react-native
+  - e-commerce
+featured: true
+order: 5
+---
+
+## Problem
+
+Field workers at US heavy machinery dealerships need to browse, configure, and order equipment from mobile devices while on-site at job sites. They don't carry laptops, connectivity at construction sites is unreliable, and the existing web app was too slow and clunky on a phone screen.
+
+Sales reps were losing deals because they couldn't show real-time pricing and configuration options to buyers in the field. The web app's desktop-first design meant touch targets were too small, navigation required too many taps, and page loads took 8+ seconds on LTE.
+
+## Solution
+
+We built a native mobile app using React Native + Expo, designed from the ground up for field use. The architecture decision that had the biggest impact was building the cart-state contract first — before any UI work. Every screen became a consumer of the same state machine, which meant the offline mode worked on day one.
+
+<Callout type="info">
+Building the cart-state contract first — before any UI work — meant the offline mode worked on day one. Every screen was a consumer of the same state machine.
+</Callout>
+
+The app uses Expo for the development workflow (fast reloads, EAS builds) and OTA (Over-The-Air) updates for quick iteration between App Store review cycles. The App Store review process was a learning curve — Apple flagged the initial submission for in-app purchase configuration, which required a 2-week correction cycle before approval.
+
+<CodeFilename filename="mobile/cart-state.ts">
+```ts
+export type CartState = {
+  items: CartItem[];
+  version: number;
+  synced: boolean;
+};
+```
+</CodeFilename>
+
+The backend gateway bridges the mobile app to the existing Odoo ERP. We built a Fastify + Bun service that translates mobile API calls into Odoo XML-RPC requests, with Zod validation boundaries at every layer to prevent bad data from reaching the ERP.
+
+## Impact
+
+<Stat number="98%" label="cart operations available offline before network sync" />
+
+<Stat number="4.8★" label="App Store rating after first release" />
+
+Field workers can now configure and quote heavy machinery orders on-site, with cart operations fully available offline and automatic sync when connectivity returns. The App Store rating of 4.8 stars reflects the reliability of the offline-first approach — buyers trust the app to work even at remote job sites with no signal.
+
+## Stack
+
+- **Mobile:** React Native + Expo (OTA updates, EAS builds, App Store review)
+- **Gateway:** Fastify + Bun (XML-RPC to Odoo, Zod validation boundaries)
+- **Cart-state:** Offline-first contract, version-based sync

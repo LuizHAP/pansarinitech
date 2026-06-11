@@ -15,6 +15,7 @@ import { getTranslations } from 'next-intl/server';
 // REWRITE of Phase 2 placeholder — async RSC consuming real getProjects(locale).
 // Critical: async RSC cannot read the locale via the client hook (Pitfall 8); locale is a prop.
 import Image from 'next/image';
+import machineryMobileFirst from '../../../content/projects/machinery-mobile-first/images/hero.jpg';
 import machineryEcommerce from '../../../content/projects/machinery-partner-ecommerce/images/hero.jpg';
 import machineryMigration from '../../../content/projects/machinery-partner-migration/images/hero.jpg';
 import magaluSuperapp from '../../../content/projects/magazine-luiza-superapp/images/hero.jpg';
@@ -23,6 +24,7 @@ const HERO_IMAGES = {
   'machinery-partner-ecommerce': machineryEcommerce,
   'machinery-partner-migration': machineryMigration,
   'magazine-luiza-superapp': magaluSuperapp,
+  'machinery-mobile-first': machineryMobileFirst,
 } as const;
 
 export async function FeaturedProjectsTeaser({ locale }: { locale: Locale }) {

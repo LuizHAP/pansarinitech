@@ -1,0 +1,62 @@
+---
+title: "Mobile-first de máquinas pesadas"
+role: "Engenheiro de Software Principal"
+year: 2024
+stack:
+  - React Native
+  - Expo
+  - TypeScript
+  - Fastify
+  - Bun
+  - Odoo
+blurb: "App mobile nativo para compradores de máquinas pesadas nos EUA — React Native + Expo, contrato de carrinho offline e revisão da App Store."
+heroImage: "./machinery-mobile-first/images/hero.jpg"
+tags:
+  - mobile
+  - react-native
+  - e-commerce
+featured: true
+order: 5
+---
+
+## Problema
+
+Trabalhadores de campo em concessionárias de máquinas pesadas nos EUA precisam navegar, configurar e fazer pedidos de equipamentos a partir de dispositivos móveis enquanto estão nos canteiros de obra. Eles não carregam laptops, a conectividade nos canteiros de obra é instável e o web app existente era muito lento e travoso na tela do celular.
+
+Representantes comerciais estavam perdindo vendas porque não conseguiam mostrar preços em tempo real e opções de configuração para compradores em campo. O design desktop-first do web app significava que os botões eram muito pequenos, a navegação exigia muitos toques e os carregamentos de página demoravam mais de 8 segundos na rede LTE.
+
+## Solução
+
+Construímos um aplicativo mobile nativo usando React Native + Expo, projetado do zero para uso em campo. A decisão de arquitetura que teve o maior impacto foi construir o contrato do carrinho primeiro — antes de qualquer trabalho de UI. Cada tela se tornou consumidora da mesma máquina de estado, o que significava que o modo offline funcionava desde o primeiro dia.
+
+<Callout type="info">
+Construir o contrato do carrinho primeiro — antes da UI — significava que o modo offline funcionava desde o primeiro dia. Cada tela consumia a mesma máquina de estado.
+</Callout>
+
+O app usa Expo para o fluxo de desenvolvimento (recarregamento rápido, builds EAS) e atualizações OTA (Over-The-AIR) para iteração rápida entre os ciclos de revisão da App Store. O processo de revisão da App Store foi um aprendizado — a Apple sinalizou a submissão inicial por configuração de compra no app, o que exigiu um ciclo de correção de 2 semanas antes da aprovação.
+
+<CodeFilename filename="mobile/cart-state.ts">
+```ts
+export type CartState = {
+  items: CartItem[];
+  version: number;
+  synced: boolean;
+};
+```
+</CodeFilename>
+
+O gateway backend conecta o app mobile ao ERP Odoo existente. Construímos um serviço Fastify + Bun que traduz chamadas de API mobile em requisições XML-RPC do Odoo, com limites de validação Zod em cada camada para impedir que dados incorretos cheguem ao ERP.
+
+## Impacto
+
+<Stat number="98%" label="operações do carrinho disponíveis offline antes da sincronização" />
+
+<Stat number="4.8★" label="avaliação na App Store após o primeiro lançamento" />
+
+Trabalhadores de campo agora podem configurar e cotar pedidos de máquinas pesadas em campo, com operações do carrinho totalmente disponíveis offline e sincronização automática quando a conectividade retorna. A avaliação de 4.8 estrelas na App Store reflete a confiabilidade da abordagem offline-first — os compradores confiam no app para funcionar mesmo em canteiros de obra remotos sem sinal.
+
+## Stack
+
+- **Mobile:** React Native + Expo (atualizações OTA, builds EAS, revisão da App Store)
+- **Gateway:** Fastify + Bun (XML-RPC para Odoo, limites de validação Zod)
+- **Carrinho:** Contrato offline-first, sincronização baseada em versão
