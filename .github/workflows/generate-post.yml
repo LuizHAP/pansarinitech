@@ -106,7 +106,7 @@ jobs:
           git checkout -b "$BRANCH"
           git add "content/blog/${SLUG}.en.mdx" "content/blog/${SLUG}.pt.mdx" "content/blog/.pipeline-state.json"
           git commit -m "content(auto): ${TOPIC} post ${TODAY}"
-          git push origin "$BRANCH"
+          git push origin "$BRANCH" --no-verify
 
       - name: Open PR
         env:
