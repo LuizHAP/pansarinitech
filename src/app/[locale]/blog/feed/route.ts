@@ -1,10 +1,10 @@
 // src/app/[locale]/blog/feed/route.ts — Phase 12 CASE-21, CASE-22, CASE-23
 // RSS 2.0 route handler — generates XML dynamically at request time.
 // Picks up new posts automatically without rebuild.
-import { NextResponse } from 'next/server';
 import { SITE_URL } from '@/components/json-ld';
-import { getPosts } from '@/lib/mdx/blog';
 import type { Locale } from '@/i18n/routing';
+import { getPosts } from '@/lib/mdx/blog';
+import { NextResponse } from 'next/server';
 
 export async function GET(_request: Request, { params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
