@@ -24,6 +24,14 @@ vi.mock('@/lib/i18n/navigation', async () => {
   };
 });
 
+// Mock the deferred command palette to render the real component in tests.
+// In production, ssr:false defers hydration until user interaction.
+// In jsdom tests, we need the component to render immediately.
+vi.mock('./deferred-command-palette', async () => {
+  const { CommandPaletteRoot } = await import('./command-palette');
+  return { CommandPaletteRoot };
+});
+
 import { Header } from './header';
 
 describe('<Header />', () => {

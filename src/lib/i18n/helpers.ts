@@ -5,7 +5,7 @@
 // formatDate / formatPeriod: Intl.DateTimeFormat-based formatters for the career timeline
 //   and the Now page's <time> element. Locale string is sourced from the hard-coded
 //   Locale literal type — never user input (T-02-2-02).
-import type { Role } from '@/data/schemas';
+import type { Role } from '@/data/types';
 import type { Locale } from '@/i18n/routing';
 
 export function pickLocale<T>(field: { en: T; pt: T }, locale: Locale): T {

@@ -1,11 +1,11 @@
 import { Link } from '@/lib/i18n/navigation';
 // src/components/shared/header.tsx
 // 56px sticky header — D-20: brand + locale toggle + command palette trigger + theme toggle.
-// CommandPaletteRoot is a 'use client' component; RSC parents can render client children.
-// Option B chosen (P2 Task 2): CommandPaletteRoot owns the open state; trigger and palette
-// are co-located in one client tree. No module-scoped singleton pattern needed.
+// CommandPaletteRoot is dynamically imported via a client wrapper (deferred-command-palette.tsx)
+// to defer its large JS bundle (10 lucide icons + shadcn/ui) until first Cmd+K press —
+// reduces initial main-thread blocking, directly improving LCP.
 import { useTranslations } from 'next-intl';
-import { CommandPaletteRoot } from './command-palette';
+import { CommandPaletteRoot } from './deferred-command-palette';
 import { LocaleToggle } from './locale-toggle';
 import { ThemeToggle } from './theme-toggle';
 
