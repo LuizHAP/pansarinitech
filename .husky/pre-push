@@ -4,8 +4,10 @@
 REMOTE="$1"
 BRANCH=$(git rev-parse --abbrev-ref HEAD)
 
-if [ "$REMOTE" = "origin" ] && { [ "$BRANCH" = "main" ] || [ "$BRANCH" = "master" ]; }; then
-  echo "🔍 Running local Lighthouse check before push to main…"
-  echo "   (skip with git push --no-verify)"
-  pnpm lh:local
+if [ "$REMOTE" = "origin" ]; then
+  if [ "$BRANCH" = "main" ] || [ "$BRANCH" = "master" ]; then
+    echo "🔍 Running local Lighthouse check before push to main…"
+    echo "   (skip with git push --no-verify)"
+    pnpm lh:local
+  fi
 fi
