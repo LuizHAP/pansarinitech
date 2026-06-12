@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 # Only run Lighthouse check when pushing to main/master on origin.
 # Skip with:  git push --no-verify
 REMOTE="$1"
