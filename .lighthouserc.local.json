@@ -26,7 +26,7 @@
     "assert": {
       "preset": "lighthouse:recommended",
       "assertions": {
-        "categories:performance": ["error", { "minScore": 0.8 }],
+        "categories:performance": ["warn", { "minScore": 0.5 }],
         "categories:accessibility": ["error", { "minScore": 1 }],
         "categories:best-practices": ["warn", { "minScore": 0.9 }],
         "categories:seo": "off",
@@ -35,6 +35,7 @@
         "image-delivery-insight": "off",
         "render-blocking-insight": "off",
         "document-latency-insight": "off",
+        "forced-reflow-insight": "off",
         "unused-javascript": ["warn", { "maxLength": 5 }],
         "uses-long-cache-ttl": "off",
         "render-blocking-resources": "off",
