@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Luiz Pansarini — Blog</title>
+    <link>https://pansarini.tech/blog</link>
+    <description>Principal Software Engineer — technical writing</description>
+    <language>pt-BR</language>
+    <atom:link href="https://pansarini.tech/feed.pt.xml" rel="self" type="application/rss+xml"/>
+    <lastBuildDate>Tue, 19 May 2026 00:00:00 GMT</lastBuildDate>
+    <item>
+      <title>View Transitions API no Alternador de Tema</title>
+      <link>https://pansarini.tech/blog/view-transitions-theme-toggle</link>
+      <pubDate>Tue, 19 May 2026 00:00:00 GMT</pubDate>
+      <description>Como conectei a View Transitions API a uma revelação radial via clip-path no alternador de tema, com fallback de dois níveis para movimento reduzido e enhancement progressivo para navegadores antigos.</description>
+      <guid>https://pansarini.tech/blog/view-transitions-theme-toggle</guid>
+    </item>
+    <item>
+      <title>Navegando a Carreira em Engenharia de Software</title>
+      <link>https://pansarini.tech/blog/software-engineering-career-20260516</link>
+      <pubDate>Sat, 16 May 2026 00:00:00 GMT</pubDate>
+      <description>Reflexões sobre minha jornada na engenharia de software, enfatizando a importância de decisões técnicas estratégicas e aprendizado contínuo em um campo em constante evolução.</description>
+      <guid>https://pansarini.tech/blog/software-engineering-career-20260516</guid>
+    </item>
+    <item>
+      <title>Construindo um Frontend em Next.js e React para Escalabilidade e Performance</title>
+      <link>https://pansarini.tech/blog/nextjs-react-frontend-20260515</link>
+      <pubDate>Fri, 15 May 2026 00:00:00 GMT</pubDate>
+      <description>Uma exploração detalhada sobre como construir um frontend com Next.js e React, priorizando escalabilidade e performance a partir de experiências práticas.</description>
+      <guid>https://pansarini.tech/blog/nextjs-react-frontend-20260515</guid>
+    </item>
+    <item>
+      <title>Construindo este portfolio</title>
+      <link>https://pansarini.tech/blog/building-this-portfolio</link>
+      <pubDate>Sat, 02 May 2026 00:00:00 GMT</pubDate>
+      <description>Diário arquitetural de um portfolio bilíngue, mobile-first e acessível AA. Justificativa de stack, correções de contraste, padrão fábrica MDX e o que ficou de fora.</description>
+      <guid>https://pansarini.tech/blog/building-this-portfolio</guid>
+    </item>
+  </channel>
+</rss>

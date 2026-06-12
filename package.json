@@ -8,7 +8,7 @@
   "packageManager": "pnpm@10.33.2",
   "scripts": {
     "dev": "next dev",
-    "prebuild": "node scripts/extract-skill-icons.mjs",
+    "prebuild": "node scripts/extract-skill-icons.mjs && node scripts/generate-feed.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "biome check .",
