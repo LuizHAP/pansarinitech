@@ -1,7 +1,7 @@
 # Roadmap — pansarinitech
 
-**Last updated:** 2026-06-11
-**Status:** Active — v1.5 Mobile-First Case Study + Lighthouse Fix
+**Last updated:** 2026-06-12
+**Status:** Active — v1.6 RSS Feed + JS Bundle Optimization + Content
 
 ---
 
@@ -11,7 +11,7 @@
 - ✅ **v1.1 Polish, Quality & Test Baseline** — Phases 1-2 (shipped 2026-05-04) — see `milestones/v1.1-ROADMAP.md`
 - ✅ **v1.2 UX Polish + Automated Content Pipeline** — Phases 1-4 (shipped 2026-05-15) — see `milestones/v1.2-ROADMAP.md`
 - ✅ **v1.3 Blog Enrichment + Quality Hardening** — Phases 5-7 (shipped 2026-05-20) — see `milestones/v1.3-ROADMAP.md`
-- 🔄 **v1.5 Mobile-First Case Study + Lighthouse Fix** — Phases 10-11 (active)
+- 🔄 **v1.6 RSS Feed + JS Bundle Optimization + Content** — Phases 12-15 (active)
 
 ---
 
@@ -119,6 +119,77 @@ Full archive: `milestones/v1.3-ROADMAP.md`
 - [ ] 11-01-PLAN.md — Investigate LCP bottleneck (hero image optimization, LCP element analysis), run Lighthouse CI, verify all quality gates on new case study
 **UI hint**: no
 
+### Phase 12: RSS Feed for Blog
+
+**Goal**: Blog readers can subscribe via RSS/Atom. Two feeds: `/feed.xml` (EN) and `/feed.pt.xml` (PT), each listing up to 20 recent posts sorted by date descending, with proper XML namespaces, atom-compliant structure, and full post content (not just excerpts).
+
+**Depends on**: Nothing (blog posts already exist as MDX files)
+
+**Requirements**: CASE-21, CASE-22, CASE-23
+
+**Success Criteria** (what must be TRUE):
+  1. `GET /feed.xml` returns `application/rss+xml` with valid RSS 2.0 or Atom 1.0, listing up to 20 most recent blog posts
+  2. `GET /feed.pt.xml` returns the same posts with PT translations of title/description
+  3. Each feed item includes: title, link, pubDate, description, and author
+  4. Feed is statically generated at build time (no runtime dependency)
+  5. Feed validates against RSS/Atom schema (no malformed XML)
+**Plans**: 1 plan
+- [ ] 12-01-PLAN.md — Create RSS feed generator, register routes, add feed link tags to head
+**UI hint**: no
+
+### Phase 13: JS Bundle Optimization
+
+**Goal**: Reduce total JS bundle from 608KB → ~200KB by identifying and eliminating wasted bytes. The primary bottleneck is 16 scripts blocking the main thread, with Zod (226KB), lucide icons (10+), and shadcn/ui components in the client bundle.
+
+**Depends on**: Nothing
+
+**Requirements**: CASE-24, CASE-25, CASE-26
+
+**Success Criteria** (what must be TRUE):
+  1. Total JS transfer size reduced by ≥ 50% (608KB → ≤ 300KB target)
+  2. Lighthouse Performance score improves (current CI: 0.75, target: ≥ 0.85)
+  3. No regressions in functionality (all interactive elements still work)
+  4. No regressions in tests (unit, e2e, a11y all pass)
+**Plans**: 1 plan
+- [ ] 13-01-PLAN.md — Analyze bundle with `next bundle analyzer`, identify top consumers, apply optimizations (tree-shaking, code-splitting, defer non-critical client components)
+**UI hint**: no
+
+### Phase 14: New Blog Post via Pipeline
+
+**Goal**: Generate and publish a new bilingual blog post via the existing OpenAI gpt-4o automated pipeline. The post should cover a relevant software engineering topic that showcases Luiz's expertise.
+
+**Depends on**: Nothing (pipeline is pre-built from v1.2)
+
+**Requirements**: CASE-27, CASE-28
+
+**Success Criteria** (what must be TRUE):
+  1. New blog post exists as `content/blog/{slug}.{en,pt}.mdx`
+  2. Post is discoverable at `/en/blog/{slug}` and `/pt/blog/{slug}`
+  3. Post includes proper metadata (title, date, description, OG image)
+  4. Post is included in RSS feed (Phase 12)
+  5. Post passes all quality gates (a11y, iPhone SE, Lighthouse)
+**Plans**: 1 plan
+- [ ] 14-01-PLAN.md — Generate post via pipeline, wire metadata, verify quality gates
+**UI hint**: yes
+
+### Phase 15: New Case Study
+
+**Goal**: Add a sixth portfolio case study — a new project not yet covered. The case study must follow the established bilingual MDX pattern with Problem/Solution/Impact/Stack structure.
+
+**Depends on**: Nothing (MDX pipeline is pre-built from v1.2)
+
+**Requirements**: CASE-29, CASE-30, CASE-31
+
+**Success Criteria** (what must be TRUE):
+  1. New case study MDX files exist in PT + EN
+  2. Hero image registered in all three HERO_IMAGES maps
+  3. Case study is listed on `/projects` and renders correctly in both locales
+  4. JSON-LD Article schema is present
+  5. All quality gates pass (unit tests, Playwright, a11y matrix, iPhone SE)
+**Plans**: 1 plan
+- [ ] 15-01-PLAN.md — Author bilingual MDX, wire HERO_IMAGES, register in projects listing, JSON-LD
+**UI hint**: yes
+
 ---
 
 ## Progress
@@ -136,7 +207,11 @@ Full archive: `milestones/v1.3-ROADMAP.md`
 | 9. Quality Verification | v1.4 | 2/2 | Complete   | 2026-05-21 |
 | 10. Author Heavy Machinery Mobile-First Case Study | v1.5 | 1/1 | Complete   | 2026-06-11 |
 | 11. Lighthouse Performance Fix + Quality Verification | v1.5 | 1/1 | Complete   | 2026-06-11 |
+| 12. RSS Feed for Blog | v1.6 | 0/1 | Pending  | — |
+| 13. JS Bundle Optimization | v1.6 | 0/1 | Pending  | — |
+| 14. New Blog Post via Pipeline | v1.6 | 0/1 | Pending  | — |
+| 15. New Case Study | v1.6 | 0/1 | Pending  | — |
 
 ---
 
-*Generated by gsd-roadmapper — v1.5 roadmap created 2026-06-11*
+*Generated by gsd-roadmapper — v1.6 roadmap created 2026-06-12*

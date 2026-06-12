@@ -26,28 +26,30 @@ Key additions in v1.3:
 **Previously shipped:** v1.1 Polish, Quality & Test Baseline (2026-05-04) — full archive: `.planning/milestones/v1.1-ROADMAP.md`.
 **Previously shipped:** v1.0 Public Launch (2026-05-02) — full archive: `.planning/milestones/v1.0-ROADMAP.md`.
 
-**Next milestone:** Planning v1.5 — run `/gsd-new-milestone`.
+**Next milestone:** Planning v1.6 — run `/gsd-new-milestone`.
 
 **Live deliverables:**
 - Bilingual portfolio (PT + EN) at `/pt` and `/en` with browser auto-detect, path-preserving locale toggle, and hreflang reciprocity.
 - Light/Dark theme as Jedi/Sith with View Transitions API radial-reveal toggle (~420ms clip-path circle from click coordinate, 200ms `vt-fade` fallback under `prefers-reduced-motion`, instant-swap fallback on unsupported browsers).
-- Hero / About / Featured Projects (3 case studies) / Career timeline / Skills / Now / Contact / 404 sections — all bilingual.
-- 3 case studies authored bilingually (Heavy Machinery e-commerce, no-code → Next.js migration, Magazine Luiza Superapp) via `next-mdx-remote@^6` RSC pipeline with build-time syntax highlighting (Shiki dual-theme).
-- Blog scaffolding + first launch post (`building-this-portfolio.{en,pt}.mdx`, ~1500 words).
+- Hero / About / Featured Projects (5 case studies) / Career timeline / Skills / Now / Contact / 404 sections — all bilingual.
+- 5 case studies authored bilingually (Heavy Machinery e-commerce, no-code → Next.js migration, Magazine Luiza Superapp, UAUBox DS, Heavy Machinery mobile-first) via `next-mdx-remote@^6` RSC pipeline with build-time syntax highlighting (Shiki dual-theme).
+- Blog scaffolding + 3+ posts via automated OpenAI gpt-4o pipeline (GitHub Actions, PR-per-post).
 - Full SEO: `generateMetadata` on every route, multilingual sitemap (`xhtml:link` hreflang triplets), env-gated robots, dynamic Sith-red OG images per route, favicons + manifest, X-Robots-Tag preview defense.
-- CI gate: a11y matrix (24/24) + iPhone SE (48/48) + Sith contrast (4/4) + Phase 5 e2e (9/9 across 6 critical flows) — chromium-only, retries: 1 in CI, < 3 min total.
+- CI gate: a11y matrix (28/28) + iPhone SE (56/56) + Sith contrast (4/4) + Phase 5 e2e (9/9 across 6 critical flows) — chromium-only, retries: 1 in CI, < 3 min total.
 - Vercel Analytics + Speed Insights ingest live on Hobby tier.
 
 **Not yet live:** custom domain `pansarini.tech` rollout (currently `pansarinitech.vercel.app`).
 
-## Current Milestone: v1.5 Mobile-First Case Study + Lighthouse Fix
+## Current Milestone: v1.6 RSS Feed + JS Bundle Optimization + Content
 
-**Goal:** Ship a fifth portfolio case study with a mobile-first/React Native angle on the Heavy Machinery project, and fix the UAUBox Lighthouse Performance gap (CASE-13: LCP 0.85 → 0.95).
+**Goal:** Ship RSS feeds for the blog, reduce the 608KB JS bundle blocking LCP, and add more content (new blog post + new case study).
 
 **Target features:**
-- Heavy Machinery Mobile-first case study authored in PT + EN MDX (distinct from existing ecommerce case — focuses on React Native + Expo, mobile UX on low-connectivity, App Store review, cart-state contract)
-- CASE-13: UAUBox Lighthouse Performance ≥ 0.95 (LCP bottleneck investigation — hero image optimization, LCP element analysis)
-- All existing quality gates pass (unit tests, Playwright, a11y matrix, Lighthouse ≥ 95)
+- RSS feed: `/feed.xml` + `/feed.pt.xml` for blog posts, with proper XML namespaces and atom-compliant structure
+- JS Bundle Optimization: reduce total JS from 608KB → ~200KB (tree-shaking, code-splitting, remove unused deps, defer non-critical client components)
+- New blog post via automated pipeline (OpenAI gpt-4o, bilingual PT + EN)
+- New case study (bilingual MDX, integrated into existing pipeline)
+- All existing quality gates pass (unit tests, Playwright, a11y matrix, Lighthouse ≥ 0.7 CI)
 
 ### Active
 
@@ -122,12 +124,13 @@ Key additions in v1.3:
 
 <!-- Next milestone candidates. Hypotheses until validated. -->
 
-**v1.5 Mobile-First Case Study + Lighthouse Fix (active):**
+**v1.6 RSS Feed + JS Bundle Optimization + Content (active):**
 
-- [ ] Heavy Machinery Mobile-first case study MDX in PT + EN — React Native + Expo, mobile UX on low-connectivity, App Store review, cart-state contract
-- [ ] Hero image for mobile-first case study
-- [ ] CASE-13: UAUBox Lighthouse Performance ≥ 0.95 (LCP bottleneck investigation)
-- [ ] All existing quality gates pass (unit tests, Playwright, a11y matrix, Lighthouse ≥ 95)
+- [ ] RSS feed: `/feed.xml` + `/feed.pt.xml` for blog posts (atom-compliant, proper XML namespaces)
+- [ ] JS Bundle Optimization: reduce 608KB → ~200KB (tree-shaking, code-splitting, defer non-critical client components)
+- [ ] New blog post via automated pipeline (OpenAI gpt-4o, bilingual PT + EN)
+- [ ] New case study (bilingual MDX, integrated into existing pipeline)
+- [ ] All existing quality gates pass (unit tests, Playwright, a11y matrix, Lighthouse ≥ 0.7 CI)
 
 ### Out of Scope
 
