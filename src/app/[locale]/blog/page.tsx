@@ -40,32 +40,36 @@ export default async function BlogListingPage({
   const posts = await getPosts(locale);
 
   return (
-    <section aria-labelledby="blog-heading" className="mx-auto max-w-3xl px-4 py-12">
-      <h1 id="blog-heading" className="text-3xl font-semibold tracking-tight sm:text-4xl">
-        {t('pageTitle')}
-      </h1>
-      <p className="mt-3 max-w-2xl text-base text-muted-foreground">{t('listingIntro')}</p>
-      <RevealGroup stagger={0.06}>
-        <ul className="mt-8 space-y-6">
-          {posts.length === 0 ? (
-            <li className="text-muted-foreground">{t('noPosts')}</li>
-          ) : (
-            posts.map((p, index) => (
-              <li key={p.slug}>
-                {/* First post is the likely LCP element — skip animation so it paints
+    <>
+      <link rel="alternate" type="application/rss+xml" title="Blog (EN)" href="/feed.xml" />
+      <link rel="alternate" type="application/rss+xml" title="Blog (PT)" href="/feed.pt.xml" />
+      <section aria-labelledby="blog-heading" className="mx-auto max-w-3xl px-4 py-12">
+        <h1 id="blog-heading" className="text-3xl font-semibold tracking-tight sm:text-4xl">
+          {t('pageTitle')}
+        </h1>
+        <p className="mt-3 max-w-2xl text-base text-muted-foreground">{t('listingIntro')}</p>
+        <RevealGroup stagger={0.06}>
+          <ul className="mt-8 space-y-6">
+            {posts.length === 0 ? (
+              <li className="text-muted-foreground">{t('noPosts')}</li>
+            ) : (
+              posts.map((p, index) => (
+                <li key={p.slug}>
+                  {/* First post is the likely LCP element — skip animation so it paints
                     immediately without waiting for JS + IntersectionObserver. */}
-                {index === 0 ? (
-                  <PostCard post={p} locale={locale} />
-                ) : (
-                  <RevealItem>
+                  {index === 0 ? (
                     <PostCard post={p} locale={locale} />
-                  </RevealItem>
-                )}
-              </li>
-            ))
-          )}
-        </ul>
-      </RevealGroup>
-    </section>
+                  ) : (
+                    <RevealItem>
+                      <PostCard post={p} locale={locale} />
+                    </RevealItem>
+                  )}
+                </li>
+              ))
+            )}
+          </ul>
+        </RevealGroup>
+      </section>
+    </>
   );
 }

@@ -64,56 +64,60 @@ export default async function BlogPostPage({
   const toc = extractToc(post.rawBody);
 
   return (
-    <article className="mx-auto max-w-5xl px-4 py-12 lg:grid lg:grid-cols-[1fr_240px] lg:gap-10">
-      <JsonLd
-        schema={{
-          '@context': 'https://schema.org',
-          '@type': 'Article',
-          headline: post.title,
-          description: post.excerpt,
-          author: AUTHOR_PERSON,
-          publisher: AUTHOR_PERSON,
-          datePublished: post.date,
-          url: `${SITE_URL}/blog/${post.slug}`,
-          inLanguage: locale === 'pt' ? 'pt-BR' : 'en',
-          keywords: post.tags.join(', '),
-          image: `${SITE_URL}/${locale}/blog/${post.slug}/opengraph-image`,
-          wordCount: Math.round(post.readingTime.minutes * 200),
-        }}
-      />
-      <div className="min-w-0">
-        <Link
-          href="/blog"
-          className="text-sm text-muted-foreground decoration-primary hover:underline"
-        >
-          {t('cta.backToBlog')}
-        </Link>
-        <header className="mt-3">
-          <h1 className="text-3xl font-semibold tracking-tight md:text-4xl">{post.title}</h1>
-          <p className="mt-2 text-sm text-muted-foreground">
-            <time dateTime={post.date}>{formatDate(post.date, locale)}</time>
-            {' · '}
-            {t('readingTime', { minutes: post.readingTime.minutes })}
-          </p>
-          {post.tags.length > 0 && (
-            <ul className="mt-3 flex flex-wrap gap-2">
-              {post.tags.map((tag) => (
-                <li key={tag} className="text-xs text-muted-foreground">
-                  #{tag}
-                </li>
-              ))}
-            </ul>
-          )}
-        </header>
+    <>
+      <link rel="alternate" type="application/rss+xml" title="Blog (EN)" href="/feed.xml" />
+      <link rel="alternate" type="application/rss+xml" title="Blog (PT)" href="/feed.pt.xml" />
+      <article className="mx-auto max-w-5xl px-4 py-12 lg:grid lg:grid-cols-[1fr_240px] lg:gap-10">
+        <JsonLd
+          schema={{
+            '@context': 'https://schema.org',
+            '@type': 'Article',
+            headline: post.title,
+            description: post.excerpt,
+            author: AUTHOR_PERSON,
+            publisher: AUTHOR_PERSON,
+            datePublished: post.date,
+            url: `${SITE_URL}/blog/${post.slug}`,
+            inLanguage: locale === 'pt' ? 'pt-BR' : 'en',
+            keywords: post.tags.join(', '),
+            image: `${SITE_URL}/${locale}/blog/${post.slug}/opengraph-image`,
+            wordCount: Math.round(post.readingTime.minutes * 200),
+          }}
+        />
+        <div className="min-w-0">
+          <Link
+            href="/blog"
+            className="text-sm text-muted-foreground decoration-primary hover:underline"
+          >
+            {t('cta.backToBlog')}
+          </Link>
+          <header className="mt-3">
+            <h1 className="text-3xl font-semibold tracking-tight md:text-4xl">{post.title}</h1>
+            <p className="mt-2 text-sm text-muted-foreground">
+              <time dateTime={post.date}>{formatDate(post.date, locale)}</time>
+              {' · '}
+              {t('readingTime', { minutes: post.readingTime.minutes })}
+            </p>
+            {post.tags.length > 0 && (
+              <ul className="mt-3 flex flex-wrap gap-2">
+                {post.tags.map((tag) => (
+                  <li key={tag} className="text-xs text-muted-foreground">
+                    #{tag}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </header>
 
-        <TocMobile entries={toc} label={tToc('label')} />
+          <TocMobile entries={toc} label={tToc('label')} />
 
-        <div className="prose prose-neutral mt-8 max-w-none dark:prose-invert prose-headings:scroll-mt-20 prose-h2:mt-10 prose-h2:pb-3 prose-h2:font-semibold prose-h2:tracking-tight prose-h2:border-b prose-h2:border-border prose-h3:mt-8 prose-h3:font-semibold prose-h3:tracking-tight prose-a:text-primary prose-a:decoration-primary prose-a:font-normal prose-code:before:content-none prose-code:after:content-none prose-code:bg-muted prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded-sm prose-code:text-sm prose-code:font-mono prose-code:text-foreground">
-          {post.content}
+          <div className="prose prose-neutral mt-8 max-w-none dark:prose-invert prose-headings:scroll-mt-20 prose-h2:mt-10 prose-h2:pb-3 prose-h2:font-semibold prose-h2:tracking-tight prose-h2:border-b prose-h2:border-border prose-h3:mt-8 prose-h3:font-semibold prose-h3:tracking-tight prose-a:text-primary prose-a:decoration-primary prose-a:font-normal prose-code:before:content-none prose-code:after:content-none prose-code:bg-muted prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded-sm prose-code:text-sm prose-code:font-mono prose-code:text-foreground">
+            {post.content}
+          </div>
         </div>
-      </div>
 
-      <TocSidebar entries={toc} label={tToc('label')} />
-    </article>
+        <TocSidebar entries={toc} label={tToc('label')} />
+      </article>
+    </>
   );
 }
