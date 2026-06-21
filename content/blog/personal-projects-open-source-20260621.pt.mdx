@@ -1,0 +1,58 @@
+---
+title: "Projetos Pessoais em Código Aberto"
+date: "2026-06-21"
+excerpt: "Como transformar projetos pessoais em iniciativas de código aberto, focando em decisões arquiteturais e desafios técnicos enfrentados ao longo dessa trajetória."
+tags:
+  - open-source
+  - desenvolvimento-software
+draft: false
+---
+
+## Introdução
+
+Em minha trajetória como engenheiro de software, a transição de projetos pessoais para o **código aberto** tem sido uma experiência recompensadora e desafiadora. Compartilhar insights de projetos como **DoAção**, **MTG Price Monitor** e **NotificaMe** visa revelar as decisões técnicas e arquitetônicas essenciais para o sucesso.
+
+## Do Pessoal ao Código Aberto
+
+### DoAção: Conectando Voluntários e Empresas
+
+O **DoAção** começou como uma plataforma para conectar voluntários a empresas locais em Jundiaí, facilitando ações sociais como doações de sangue e campanhas de roupas. A motivação por trás desse projeto foi aproveitar tecnologias modernas como **Next.js** e **Supabase** para criar uma plataforma colaborativa. A transição para o código aberto exigiu garantir o processamento de dados em tempo real e a verificação de ações robusta e escalável.
+
+<Note>A contagem de pontos em tempo real e a verificação de ações foram fundamentais, envolvendo configurações complexas de políticas RLS do Supabase e um esquema Drizzle bem projetado.</Note>
+
+A integração desses componentes permitiu que os voluntários ganhassem pontos e resgatassem recompensas sem complicações, apresentando desafios únicos, como manter a integridade dos dados e otimizar o desempenho das consultas.
+
+### MTG Price Monitor: Rastreamento de Preços em Tempo Real
+
+O projeto **MTG Price Monitor** monitora preços de cartas do Magic: The Gathering em diversos marketplaces. Inicialmente criado com uma arquitetura simples usando **Next.js**, **Drizzle ORM** e **Discord.js**, a mudança para código aberto exigiu a solução de limites de taxa de API e a garantia da confiabilidade de fluxos de dados em tempo real.
+
+<InlineBadge>TypeScript</InlineBadge> desempenhou um papel vital na manutenção da qualidade do código, enquanto o **Drizzle** facilitou interações eficientes com o banco de dados necessárias para lidar com rápidas notificações de mudanças de preço.
+
+O desafio crítico foi desenvolver um esquema capaz de capturar instantâneos do histórico de preços e implementar lógica de desduplicação de alertas para evitar o envio excessivo de notificações aos usuários.
+
+## Arquitetando para Escala
+
+### NotificaMe: Fila Com Base em Geolocalização
+
+Com o **NotificaMe**, concentrei-me em criar um sistema inteligente de gestão de filas usando **NestJS**, **Prisma** e **Redis**. A transição para código aberto destacou a necessidade de uma arquitetura escalável que pudesse lidar com check-ins automáticos baseados em geolocalização e gerenciar notificações SMS/WhatsApp do Twilio sem problemas.
+
+Uma aprendizagem significativa foi equilibrar as filas do **Redis** com a persistência do **PostgreSQL** para desempenho e confiabilidade de dados ótimos.
+
+<Warning>Problemas de confiabilidade com webhooks do Twilio exigiram o design de um mecanismo de failover para garantir a entrega de mensagens em caso de interrupções na rede.</Warning>
+
+### Engajamento com a Comunidade Open Source
+
+Engajar-se com a comunidade de código aberto foi fundamental para refinar esses projetos. O feedback facilitou melhorias iterativas, especialmente em áreas como localizações e acessibilidade.
+
+<CodeFilename filename="guia-contribuicao-open-source.md">
+```markdown
+# Contribuindo para Nossos Projetos de Código Aberto
+Diretrizes para envio de issues, pull requests e participação nas discussões da comunidade.
+```
+</CodeFilename>
+
+Incentivar contribuições e fomentar um ambiente colaborativo enfatizou a mudança de empreendimentos individuais para o desenvolvimento comunitário.
+
+## Conclusão
+
+Transformar projetos pessoais em plataformas de **código aberto** não apenas expandiu seu alcance, mas também os enriqueceu através da colaboração comunitária. Cada projeto mostrou que decisões arquitetônicas chave e o engajamento comunitário são críticos para transformar uma visão pessoal em realidade compartilhada. Através dessa experiência, continuo aprendendo e evoluindo como desenvolvedor, contribuindo para o cenário de código aberto.
