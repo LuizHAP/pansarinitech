@@ -1,0 +1,58 @@
+---
+title: "Giving AI Agents a Safe Workspace with Jean + OpenCode"
+date: "2026-06-25"
+excerpt: "How Jean acts as a dedicated orchestrator for AI agents, using isolated Git worktrees and context aggregation to let open-source LLMs work safely on your codebase."
+tags:
+  - ai-agents
+  - open-source
+  - developer-tools
+  - workflow
+draft: false
+---
+
+## Safe Autonomy for AI Agents
+
+Letting an AI agent touch your local codebase is nerve-wracking. One stray write to the wrong branch and you are digging through `git reflog` at 2 AM. I have been experimenting with **Jean** (by coollabs) — an open-source desktop tool that rethinks how AI agents interact with your projects — and big thanks to Daniel Henrique for the recommendation, it is genuinely impressive.
+
+Jean solves the trust problem by acting as a dedicated **orchestration harness** for AI agents. Instead of giving an agent raw filesystem access, it creates controlled, isolated environments for every task.
+
+## Isolated Workspaces via Git Worktrees
+
+The killer feature is how Jean handles isolation. Under the hood, it uses **Git worktrees** — each AI agent gets its own completely separate working directory. The agent can modify files, run commands, even delete entire directories, and your main branch stays untouched.
+
+<CodeFilename filename=".git/worktrees/agent-task-42/index">
+```text
+This worktree is a throwaway environment.
+Agent changes live here until you review and merge.
+```
+</CodeFilename>
+
+This means I can let an agent go wild exploring refactors or prototyping features without the usual anxiety. If the result is garbage, I delete the worktree. If it is good, I merge from a clean PR. No contamination.
+
+## Context Aggregation Across Repos
+
+Another pain point Jean addresses is **context fragmentation**. When you are working with open-source LLMs on local hardware, every token of context matters. Jean bridges multiple repositories into a unified knowledge base, letting the agent see the full picture without manually pasting files into prompts.
+
+<Note>For local models with small context windows, this aggregation is the difference between a useful suggestion and hallucinated nonsense.</Note>
+
+It connects to your **GitHub** and **Linear** issues too. You can feed Jean an issue ID and let the agent map out the implementation plan autonomously — reading relevant code, drafting changes, and presenting a PR.
+
+## How I Use It for Side Projects
+
+My typical flow: I drop a GitHub issue link into Jean, it spawns a worktree, and the agent starts investigating. The agent reads the codebase, proposes a plan, and iterates on implementation — all inside the isolated worktree. When it is done, I review the diff and merge if it passes muster.
+
+<InlineBadge variant="secondary">open-source stack</InlineBadge> is key here. Jean pairs naturally with **OpenCode** and local models like Llama or Qwen, giving you that premium "AI-native IDE" feeling without sending data to third-party APIs.
+
+<Callout type="info">Jean does not replace your editor or CLI — it wraps them. Your existing OpenCode setup, linting, tests, and git hooks all work the same way inside a worktree.</Callout>
+
+## Should You Try It?
+
+If you are already using AI coding tools and want more control over how they interact with your repos, Jean is worth a look. It is particularly good for:
+
+- **Open-source model users** who need efficient context management on local hardware
+- **Multi-repo projects** where an agent needs to understand cross-cutting concerns
+- **Anyone tired of regenerating the same prompts** because the agent lost context between sessions
+
+The project is open-source and self-hostable. Check it out at [jean.build](https://jean.build/).
+
+<Warning>Treat worktrees as ephemeral. If the agent needs persistent state (database snapshots, long-running services), wire those in separately — worktrees are for filesystem isolation, not infrastructure.</Warning>

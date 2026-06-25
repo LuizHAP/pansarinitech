@@ -1,0 +1,58 @@
+---
+title: "Dando um Espaço de Trabalho Seguro para Agentes de IA com Jean + OpenCode"
+date: "2026-06-25"
+excerpt: "Como o Jean atua como orquestrador dedicado para agentes de IA, usando Git worktrees isolados e agregação de contexto para LLMs open-source trabalharem com segurança no seu código."
+tags:
+  - agentes-de-ia
+  - open-source
+  - ferramentas-de-desenvolvimento
+  - workflow
+draft: false
+---
+
+## Autonomia Segura para Agentes de IA
+
+Deixar um agente de IA mexer no seu repositório local é tensão na certa. Um write acidental na branch errada e você está revirando o `git reflog` às 2 da manhã. Venho experimentando o **Jean** (da coollabs) — uma ferramenta open-source de desktop que repensa como agentes de IA interagem com seus projetos — e fica aqui o agradecimento ao Daniel Henrique pela indicação, o bagulho é bom demais.
+
+O Jean resolve o problema de confiança atuando como um **harness de orquestração** dedicado para agentes de IA. Em vez de dar acesso bruto ao sistema de arquivos, ele cria ambientes controlados e isolados para cada tarefa.
+
+## Workspaces Isolados com Git Worktrees
+
+A _killer feature_ é como o Jean lida com isolamento. Por baixo dos panos, ele usa **Git worktrees** — cada agente de IA ganha um diretório de trabalho completamente separado. O agente pode modificar arquivos, rodar comandos, até deletar diretórios inteiros, e sua branch principal permanece intacta.
+
+<CodeFilename filename=".git/worktrees/agent-task-42/index">
+```text
+Este worktree é um ambiente descartável.
+As alterações do agente ficam aqui até você revisar e mesclar.
+```
+</CodeFilename>
+
+Isso significa que posso deixar um agente explorar refactors ou prototipar features à vontade, sem a ansiedade de sempre. Se o resultado for lixo, é só deletar o worktree. Se for bom, faço o merge por uma PR limpa. Sem contaminação.
+
+## Agregação de Contexto entre Repositórios
+
+Outro ponto que o Jean resolve é a **fragmentação de contexto**. Quando você trabalha com LLMs open-source em hardware local, cada token de contexto importa. O Jean conecta múltiplos repositórios em uma base de conhecimento unificada, permitindo que o agente enxergue o panorama completo sem você precisar colar arquivos manualmente nos prompts.
+
+<Note>Para modelos locais com janelas de contexto pequenas, essa agregação é a diferença entre uma sugestão útil e uma alucinação sem sentido.</Note>
+
+Ele também se conecta com suas issues do **GitHub** e **Linear**. Você passa um ID de issue para o Jean e deixa o agente mapear o plano de implementação autonomamente — lendo código relevante, criando alterações e apresentando uma PR pronta para revisão.
+
+## Como Uso nos Meus Projetos
+
+Meu fluxo típico: jogo o link de uma issue do GitHub no Jean, ele cria um worktree, e o agente começa a investigar. O agente lê a codebase, propõe um plano e itera na implementação — tudo dentro do worktree isolado. Quando termina, reviso o diff e faço o merge se estiver bom.
+
+<InlineBadge variant="secondary">stack open-source</InlineBadge> é o ponto chave aqui. O Jean casa naturalmente com o **OpenCode** e modelos locais como Llama ou Qwen, entregando aquela sensação premium de "IDE com IA" sem enviar dados para APIs de terceiros.
+
+<Callout type="info">O Jean não substitui seu editor ou CLI — ele os envolve. Seu OpenCode, linters, testes e hooks do git continuam funcionando normalmente dentro de um worktree.</Callout>
+
+## Vale a Pena Testar?
+
+Se você já usa ferramentas de codificação com IA e quer mais controle sobre como elas interagem com seus repositórios, o Jean merece uma olhada. É particularmente bom para:
+
+- **Usuários de modelos open-source** que precisam de gerenciamento de contexto eficiente em hardware local
+- **Projetos com múltiplos repositórios** onde o agente precisa entender dependências transversais
+- **Quem está cansado de regenerar os mesmos prompts** porque o agente perdeu contexto entre sessões
+
+O projeto é open-source e auto-hospedável. Confira em [jean.build](https://jean.build/).
+
+<Warning>Trate worktrees como efêmeros. Se o agente precisar de estado persistente (snapshots de banco, serviços longos), configure isso separadamente — worktrees são para isolamento de sistema de arquivos, não de infraestrutura.</Warning>

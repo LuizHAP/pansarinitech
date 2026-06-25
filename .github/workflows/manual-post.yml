@@ -1,0 +1,141 @@
+name: Manual Blog Post
+
+on:
+  workflow_dispatch:
+    inputs:
+      topic:
+        description: "Topic slug for the post (e.g. 'ai-workspace-jean-opencode')"
+        required: true
+        type: string
+      custom_instructions:
+        description: "Optional custom instructions for the AI — what to focus on, specific projects to mention, etc."
+        required: false
+        type: string
+
+jobs:
+  generate-manual-post:
+    environment: manual-post
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Owner-only gate
+        if: github.actor != 'LuizHAP'
+        run: |
+          echo "ERROR: Only the repository owner (LuizHAP) can trigger manual posts."
+          echo "Triggered by: ${{ github.actor }}"
+          exit 1
+
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install (frozen lockfile)
+        run: pnpm install --frozen-lockfile
+
+      - name: Configure git identity
+        run: |
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+
+      - name: Resolve slug and date
+        id: meta
+        run: |
+          TOPIC="${{ inputs.topic }}"
+          SLUG="${TOPIC}-$(date -u +%Y%m%d)"
+          TODAY=$(date -u +%Y-%m-%d)
+          echo "slug=$SLUG" >> $GITHUB_OUTPUT
+          echo "today=$TODAY" >> $GITHUB_OUTPUT
+
+      - name: Generate bilingual MDX post
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          TOPIC: ${{ inputs.topic }}
+          SLUG: ${{ steps.meta.outputs.slug }}
+          TODAY: ${{ steps.meta.outputs.today }}
+          MANUAL_INSTRUCTIONS: ${{ inputs.custom_instructions }}
+        run: node scripts/generate-manual-post.mjs
+
+      - name: Assert generated files exist
+        env:
+          SLUG: ${{ steps.meta.outputs.slug }}
+        run: |
+          test -f "content/blog/${SLUG}.en.mdx" || { echo "ERROR: EN file not generated"; exit 1; }
+          test -f "content/blog/${SLUG}.pt.mdx" || { echo "ERROR: PT file not generated"; exit 1; }
+          echo "All required files present."
+
+      - name: Extract post title
+        id: post-meta
+        env:
+          SLUG: ${{ steps.meta.outputs.slug }}
+        run: |
+          TITLE=$(node -e "
+            const fs = require('fs');
+            const content = fs.readFileSync('content/blog/' + process.env.SLUG + '.en.mdx', 'utf8');
+            const match = content.match(/^title:\s*[\"']?(.+?)[\"']?\s*$/m);
+            console.log(match ? match[1] : process.env.SLUG);
+          ")
+          echo "title=$TITLE" >> $GITHUB_OUTPUT
+
+      - name: Verify blog content
+        run: pnpm verify:posts
+
+      - name: Create branch and commit
+        env:
+          SLUG: ${{ steps.meta.outputs.slug }}
+          TODAY: ${{ steps.meta.outputs.today }}
+        run: |
+          BRANCH="content/manual-post-$(date -u +%Y-%m-%d-%H%M)"
+          git checkout -b "$BRANCH"
+          git add "content/blog/${SLUG}.en.mdx" "content/blog/${SLUG}.pt.mdx"
+          git commit -m "content(manual): ${{ inputs.topic }} post ${TODAY}"
+          git push origin "$BRANCH" --no-verify
+
+      - name: Open PR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TODAY: ${{ steps.meta.outputs.today }}
+          POST_TITLE: ${{ steps.post-meta.outputs.title }}
+          SLUG: ${{ steps.meta.outputs.slug }}
+        run: |
+          gh pr create \
+            --title "[manual] ${POST_TITLE} (${TODAY})" \
+            --body "$(cat <<BODY
+          ## ${POST_TITLE}
+
+          **Topic:** ${{ inputs.topic }}
+          **Slug:** \`${SLUG}\`
+          **Date:** ${TODAY}
+
+          ---
+
+          ## Review checklist
+
+          - [ ] Title and excerpt are accurate and compelling
+          - [ ] PT version reads naturally — not a literal translation
+          - [ ] No inline JS or dynamic imports in MDX body
+          - [ ] Content is technically accurate and on-brand
+          - [ ] Post is published with \`draft: false\` (default) — set to \`true\` to merge without publishing
+
+          > Manual post generated via workflow_dispatch by @${{ github.actor }}.
+          BODY
+          )" \
+            --base main
+
+      - name: Upload generated files on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: manual-post-debug
+          path: content/blog/
+          retention-days: 7
