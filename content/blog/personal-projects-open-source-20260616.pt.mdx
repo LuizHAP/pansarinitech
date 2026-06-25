@@ -1,0 +1,51 @@
+---
+title: "Navegando Projetos Pessoais em Open Source"
+date: "2026-06-16"
+excerpt: "Uma exploração dos desafios e aprendizagens chave em projetos open source pessoais, integrando stacks modernos para resolver problemas reais."
+tags:
+  - open-source
+  - projetos-pessoais
+draft: false
+---
+
+## Introdução a Projetos Pessoais de Código Aberto
+
+Como Engenheiro de Software Principal, projetos de código aberto pessoais são mais do que apenas código — eles são o tecido do aprendizado e da experimentação. Este post explora as nuances de se construir tais projetos e as estratégias cuidadosas que levaram a resultados bem-sucedidos.
+
+### Projeto: DoAção
+
+**DoAção** foi idealizado para conectar voluntários e negócios locais em Jundiaí. A stack combinava **Next.js**, **Supabase** e **Drizzle ORM**, cada uma desempenhando papéis cruciais. Integrar contagem de pontos em tempo real exigiu um entendimento profundo do **Supabase Realtime**, conectando-o com **Drizzle ORM** para interações contínuas entre o sistema de pontos e os incentivos de negócios.
+
+**Desafios**: Um grande erro foi, inicialmente, subestimar as políticas de **Segurança em Nível de Linha (RLS)** do Supabase. Implementar essas medidas de segurança exigiu um design robusto para permitir transações de pontos seguras, mas transparentes. O design do esquema Drizzle também apresentou alguns desafios iniciais, especialmente no balanço das estruturas SQL relacionais com a flexibilidade que o Supabase exigia.
+
+<CodeFilename filename="config/supabase-security.ts">
+```typescript
+export const rlsConfig = {
+  policies: [
+    { table: "user_points", role: "volunteer", condition: "user_id = auth.user_id" }
+  ],
+};
+```
+</CodeFilename>
+
+Este bloco destaca nossa tentativa de alinhar Drizzle ORM com o RLS do Supabase. A sincronização perfeita das estruturas ORM com Supabase é crucial para proteger dados sensíveis de acessos não autorizados.
+
+<Note>Integrar o feedback real dos usuários desde cedo nos permitiu redirecionar possíveis armadilhas nos fluxos de engajamento do usuário.</Note>
+
+### Projeto: MTG Price Monitor
+
+Este projeto baseado em **Next.js** e **Discord.js** focou em rastrear preços de cartas de `Magic: The Gathering` em vários marketplaces. O verdadeiro desafio foi realizar scraping de APIs sem violar limites de taxas impostos pelo Discord. Um estudo aprofundado sobre as **políticas de limites de taxa do bot do Discord** foi essencial para encontrar o equilíbrio correto.
+
+Enfrentamos um desafio particularmente complicado ao arquitetar a lógica de deduplicação de alertas. Inicialmente, nossos alertas eram duplicados devido à assincronia entre diferentes chamadas de scraping. Implementar uma fila de deduplicação suportada por Redis resolveu isso.
+
+<InlineBadge variant="secondary">v1.0.1</InlineBadge> inclui melhorias no manuseio de limite de taxa e esquemas Drizzle ORM otimizados para dados históricos de preço.
+
+<Warning>Certifique-se de que as chaves de API sejam armazenadas com segurança; exposição pode levar a cobranças inesperadas e bloqueios em chamadas de API devido a uso indevido.</Warning>
+
+### Principais Insights e Aprendizados
+
+- **Abordagem Iterativa**: Cada projeto utilizou uma abordagem de desenvolvimento iterativa. Ciclos de feedback constantes e implantações em pequena escala foram fundamentais para refinar o produto com base no comportamento real do usuário.
+- **Domínio da Ferramenta vs. Recursos**: Entender profundamente ferramentas como **Supabase** e **Drizzle** permitiu a criação de soluções que foram tanto eficientes quanto robustas.
+
+Em conclusão, enquanto projetos pessoais avançam a maestria técnica, eles também te posicionam de forma única para tomar decisões arquitetônicas informadas em um contexto real. Com o foco certo em segurança, design centrado no usuário e ciclos de melhoria responsiva, sua jornada open source pode se tornar uma ferramenta profunda de crescimento.
+
