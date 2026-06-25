@@ -1,0 +1,58 @@
+---
+title: "Personal Projects Transitioning to Open Source"
+date: "2026-06-21"
+excerpt: "Exploring the transformation of personal projects into open source initiatives, focusing on architectural decisions and technical hurdles faced during this journey."
+tags:
+  - open-source
+  - software-development
+draft: false
+---
+
+## Introduction
+
+In my journey as a software engineer, transitioning personal projects into **open source** ventures has been both a rewarding and challenging experience. By sharing insights from projects like **DoAção**, **MTG Price Monitor**, and **NotificaMe**, I aim to shed light on the technical and architectural decisions critical for success.
+
+## From Personal to Open Source
+
+### DoAção: Connecting Volunteers and Businesses
+
+**DoAção** began as a platform to connect volunteers with local businesses in Jundiaí, facilitating social actions like blood donations and clothing drives. The motivation behind this project was to leverage **Next.js**, **Supabase**, and other modern technologies to create a community-driven platform. Transitioning to open source meant ensuring real-time data processing and action verification were robust and scalable.
+
+<Note>Real-time point tallying and action verification were paramount, involving intricate Supabase RLS policy configurations and a carefully designed Drizzle schema.</Note>
+
+Integrating these components allowed volunteers to earn points and redeem rewards seamlessly, presenting unique challenges such as maintaining data integrity and optimizing query performance.
+
+### MTG Price Monitor: Real-Time Price Tracking
+
+The **MTG Price Monitor** project monitors Magic: The Gathering card prices across various marketplaces. Initially designed with a simple architecture using **Next.js**, **Drizzle ORM**, and **Discord.js**, the shift to open source required addressing API rate limits and ensuring the reliability of real-time data streams.
+
+<InlineBadge>TypeScript</InlineBadge> played a vital role in maintaining code quality, while **Drizzle** facilitated efficient database interactions necessary for handling rapid price change notifications.
+
+The critical challenge was developing a schema capable of capturing price history snapshots and implementing alert deduplication logic to avoid spamming users.
+
+## Architecting for Scale
+
+### NotificaMe: Geolocation-Based Queuing
+
+With **NotificaMe**, I focused on creating a smart queue management system using **NestJS**, **Prisma**, and **Redis**. The open source transition highlighted the need for a scalable architecture that could handle geolocation-based auto-check-ins and manage Twilio SMS/WhatsApp notifications without hiccups.
+
+A significant learning was balancing **Redis** queues with **PostgreSQL** persistence for optimal performance and data reliability.
+
+<Warning>Twilio webhook reliability issues required designing a failover mechanism to ensure message delivery in case of network disruptions.</Warning>
+
+### Open Source Community Engagement
+
+Engaging with the open source community was instrumental in refining these projects. Feedback facilitated iterative improvements, especially in areas like localization and accessibility.
+
+<CodeFilename filename="open-source-contribution-guide.md">
+```markdown
+# Contributing to Our Open Source Projects
+Guidelines for submitting issues, pull requests, and taking part in our community discussions.
+```
+</CodeFilename>
+
+Encouraging contributions and fostering a collaborative environment emphasized the shift from individual undertakings to community-oriented development.
+
+## Conclusion
+
+Transitioning personal projects to **open source** platforms has not only expanded their reach but also enriched them through community collaboration. Each project has shown that key architectural decisions and community engagement are critical to transforming personal vision into shared reality. Through this experience, I continue to learn and evolve as a developer, contributing to the open source landscape.
