@@ -1,0 +1,51 @@
+---
+title: "Navigating Personal Open Source Projects"
+date: "2026-06-16"
+excerpt: "An exploration of challenges and key learnings from personal open source projects, blending modern tech stacks to solve real-world problems."
+tags:
+  - open-source
+  - personal-projects
+draft: false
+---
+
+## Introduction to Personal Open Source Projects
+
+As a Principal Software Engineer, personal open-source projects are more than just code—they are the fabric of learning and experimentation. This post delves into the nuances of building such projects and the seasoned strategies that led to successful outcomes.
+
+### Project: DoAção
+
+**DoAção** was conceptualized to bridge volunteers and local businesses in Jundiaí. The stack combined **Next.js**, **Supabase**, and **Drizzle ORM**, each playing crucial roles. Integrating real-time point tallying demanded a deep understanding of **Supabase Realtime**, connecting it with **Drizzle ORM** for seamless interactions between the points system and business incentives.
+
+**Challenges**: One major oversight was initially underestimating Supabase's **Row-Level Security (RLS)** policies. Implementing these security measures required a robust design to enable secure yet transparent point transactions. Drizzle's schema design also posed some initial setup challenges, especially in balancing relational SQL structures with the flexibility Supabase demanded.
+
+<CodeFilename filename="config/supabase-security.ts">
+```typescript
+export const rlsConfig = {
+  policies: [
+    { table: "user_points", role: "volunteer", condition: "user_id = auth.user_id" }
+  ],
+};
+```
+</CodeFilename>
+
+This block highlights our attempt to align Drizzle ORM with Supabase's RLS. The seamless syncing of ORM structures with Supabase is crucial to protect sensitive data from unauthorized access.
+
+<Note>Integrating real-user feedback early on allowed us to redirect potential pitfalls in user engagement flows.</Note>
+
+### Project: MTG Price Monitor
+
+This **Next.js** and **Discord.js** based project focused on tracking `Magic: The Gathering` card prices across varied marketplaces. The real challenge was in scraping APIs without breaching rate limits imposed by Discord. A thorough study into **Discord's bot rate limit policies** was essential to find the right balance.
+
+We faced a particularly tricky challenge when architecting alert deduplication logic. Initially, our alerts were duplicated due to asynchrony across different scraping calls. Implementing a Redis-backed deduplication queue resolved this.
+
+<InlineBadge variant="secondary">v1.0.1</InlineBadge> includes improvements in rate limit handling and optimized Drizzle ORM schemas for historical price data.
+
+<Warning>Ensure that API keys are securely stored; exposure can lead to unexpected overages and bans on API calls due to misuse.</Warning>
+
+### Key Insights and Takeaways
+
+- **Iterative Approach**: Each project leveraged an iterative development approach. Constant feedback loops and small-scale deployments were instrumental in refining the product based on actual user behavior.
+- **Tool Mastery vs. Features**: Understanding tools like **Supabase** and **Drizzle** deeply allowed crafting solutions that were both efficient and robust.
+
+In conclusion, while personal projects advance technical mastery, they also uniquely position you to make informed architectural decisions in a real-world context. With the right focus on security, user-centric design, and responsive improvement cycles, your open-source journey can become a profound tool for growth.
+
