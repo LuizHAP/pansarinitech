@@ -22,6 +22,41 @@ const isProduction = process.env.VERCEL_ENV === 'production';
 const nextConfig: NextConfig = {
   // Phase 1 baseline preserved — no images.remotePatterns needed (all images are
   // local static imports through next/image), no experimental flags.
+  async redirects() {
+    return [
+      // Remove dates from blog post slugs (date-suffixed slugs are legacy)
+      {
+        source: '/:locale(en|pt)/blog/ai-in-development-20260612',
+        destination: '/:locale/blog/ai-in-development',
+        permanent: true,
+      },
+      {
+        source: '/:locale(en|pt)/blog/ai-workspace-jean-opencode-20250625',
+        destination: '/:locale/blog/ai-workspace-jean-opencode',
+        permanent: true,
+      },
+      {
+        source: '/:locale(en|pt)/blog/nextjs-react-frontend-20260515',
+        destination: '/:locale/blog/nextjs-react-frontend',
+        permanent: true,
+      },
+      {
+        source: '/:locale(en|pt)/blog/personal-projects-open-source-20260616',
+        destination: '/:locale/blog/navigating-personal-open-source',
+        permanent: true,
+      },
+      {
+        source: '/:locale(en|pt)/blog/personal-projects-open-source-20260621',
+        destination: '/:locale/blog/personal-projects-open-source',
+        permanent: true,
+      },
+      {
+        source: '/:locale(en|pt)/blog/software-engineering-career-20260516',
+        destination: '/:locale/blog/software-engineering-career',
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     if (isProduction) return [];
     return [

@@ -58,7 +58,17 @@ jobs:
             })();
             console.log(seq[idx]);
           " "$LAST")
-          SLUG=$(echo "${NEXT}-$(date -u +%Y%m%d)" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9-]/-/g')
+          SLUG=$(node -e "
+            const seq = ['nextjs-react-frontend','software-engineering-career','ai-in-development','personal-projects-open-source'];
+            const fs = require('fs');
+            const state = fs.existsSync('content/blog/.pipeline-state.json')
+              ? JSON.parse(fs.readFileSync('content/blog/.pipeline-state.json', 'utf8'))
+              : { run_count: 0, topic_sequence: seq };
+            const runCount = state.run_count ?? 0;
+            const cycle = Math.floor(runCount / seq.length);
+            const suffix = cycle > 0 ? '-v' + (cycle + 1) : '';
+            console.log(process.argv[1] + suffix);
+          " "$NEXT")
           echo "today=$TODAY" >> $GITHUB_OUTPUT
           echo "topic=$NEXT" >> $GITHUB_OUTPUT
           echo "slug=$SLUG" >> $GITHUB_OUTPUT

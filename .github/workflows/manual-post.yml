@@ -52,7 +52,7 @@ jobs:
         id: meta
         run: |
           TOPIC="${{ inputs.topic }}"
-          SLUG="${TOPIC}-$(date -u +%Y%m%d)"
+          SLUG="${TOPIC}"
           TODAY=$(date -u +%Y-%m-%d)
           echo "slug=$SLUG" >> $GITHUB_OUTPUT
           echo "today=$TODAY" >> $GITHUB_OUTPUT
