@@ -24,6 +24,7 @@ export async function PostCard({ post, locale }: { post: Post; locale: Locale })
     <Link
       href={`/blog/${post.slug}`}
       className="block transition hover:-translate-y-0.5 hover:shadow-md"
+      scroll={true}
     >
       <Card className="h-full">
         <CardHeader>

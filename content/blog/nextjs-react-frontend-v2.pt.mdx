@@ -1,0 +1,62 @@
+---
+title: "Escalando Frontends de Alta Performance com Next.js"
+date: "2026-06-26"
+excerpt: "Explorando estratégias técnicas para a construção de frontends de alta performance utilizando Next.js e React, com integração do Tailwind CSS de maneira semântica."
+tags:
+  - nextjs
+  - react
+  - frontend
+  - desenvolvimento-web
+draft: false
+---
+
+## Introdução
+
+Desenvolver aplicações web de alta performance é um desafio constante à medida que as expectativas dos usuários aumentam. Neste artigo, compartilho minha experiência com **Next.js** e **React** na criação de frontends robustos e escaláveis. Abordamos decisões arquiteturais, estratégias de otimização e os desafios enfrentados em projetos como o DoAção e o MTG Price Monitor.
+
+## Adotando o Next.js 16 com Componentes de Servidor do React
+
+O **Next.js 16** trouxe mudanças significativas com seu App Router e Componentes de Servidor do React, proporcionando melhorias notáveis em performance e experiência do desenvolvedor. Os componentes de servidor permitem renderizar partes da UI no servidor, reduzindo substancialmente o JavaScript necessário no cliente, um divisor de águas para manter tempos de carga rápidos e otimizar SEO.
+
+<Callout type="info">
+Os componentes de servidor ajudam a reduzir o tamanho do bundle da aplicação, melhorando a performance de carregamento.
+</Callout>
+
+## Tailwind CSS com Tokens de Design Semânticos
+
+A mudança para o **Tailwind CSS v4** facilitou a criação de uma arquitetura de estilo mais sustentável e escalável. A mudança para uma configuração centrada em CSS, especialmente com a diretiva `@theme`, foi crucial. Essa abordagem permitiu definir cores, como o tema Jedi/Sith, usando valores OKLCH (Luminância, Croma, Matiz), garantindo conformidade com acessibilidade sem sacrificar a integridade do design.
+
+<CodeFilename filename="globals.css">
+```css
+@theme {
+  --primary-color: oklch(54% 0.21 28);
+}
+```
+</CodeFilename>
+
+Essa configuração eliminou a necessidade do `tailwind.config.js` e resultou em cores percebidamente uniformes, vibrantes e conforme os padrões WCAG 2.1 AA.
+
+## Manipulação de Conteúdo Dinâmico com Zod e Supabase
+
+Projetos como o DoAção exigiram uma estratégia sólida de manipulação de dados, integrando **Supabase** e **Zod** para validação e gestão de dados em tempo real. **Zod** forneceu uma biblioteca robusta de validação de esquemas que assegurou a integridade dos dados antes da renderização em nossos componentes. Nesta lógica, as capacidades em tempo real do Supabase foram aproveitadas para manter a interface atualizada sem a necessidade de atualizar a página manualmente.
+
+<InlineBadge>Supabase</InlineBadge> foi particularmente útil pela fácil configuração e por oferecer bases de dados na nuvem abrangentes, proporcionando uma experiência de desenvolvimento fluida.
+
+## Estratégias de SEO e Roteamento
+
+Em termos de manutenção das melhores práticas de SEO no Next.js, o uso do **next-intl** foi fundamental. Com um `localePrefix` de 'always', as URLs foram estruturadas de forma consistente, aprimorando o SEO e tornando o gerenciamento de conteúdo mais intuitivo. Essa mudança melhorou o manuseio da localização, garantindo que nossas aplicações estivessem acessíveis a um público mais amplo.
+
+<Note>
+Mantenha URLs canônicas claras e consistentes para melhorar a indexação pelos motores de busca e o ranqueamento das páginas.
+</Note>
+
+## Além do Básico: Otimização Contínua
+
+Além do lançamento inicial, manter frontends de alta performance exige otimização contínua. Utilizar ferramentas como a análise da Vercel para monitorar a performance em tempo real e identificar gargalos mostrou-se benéfico. Auditorias regulares com ferramentas como axe-core asseguraram que questões de acessibilidade fossem tratadas prontamente, mantendo uma experiência amigável ao usuário durante todo o ciclo de vida do projeto.
+
+## Conclusão
+
+Construir com Next.js e React continua a evoluir com a introdução de novas tecnologias e práticas. Integrando essas ferramentas de maneira eficaz, melhorei consideravelmente a performance e a escalabilidade dos meus projetos, alcançando eficiência engenheira sem comprometer a experiência do usuário. Este processo iterativo de adotar novas ferramentas e técnicas mantém minhas aplicações resilientes e prontas para o futuro.
+
+Para qualquer desenvolvedor que busca escalar seu frontend React, adotar práticas modernas como Componentes de Servidor do React, configurações semânticas do Tailwind CSS e gestão de dados em tempo real com Supabase fornecerá seguramente uma base robusta para o sucesso.
+
