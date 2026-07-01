@@ -1,0 +1,51 @@
+---
+title: "Navegando na Carreira de Engenharia de Software"
+date: "2026-07-01"
+excerpt: "Abordagem de um engenheiro experiente para evolução na carreira de software, enfrentando desafios, acolhendo aprendizados e tomando decisões impactantes."
+tags:
+  - engenharia-de-software
+  - desenvolvimento-profissional
+draft: false
+---
+
+## Definindo Seu Caminho
+
+Na engenharia de software, a jornada é frequentemente tão importante quanto o destino. Minha trajetória pessoal reflete essa noção, marcada por desafios, aprendizado deliberado e decisões calculadas. Cada passo dado foi guiado pelo foco no crescimento, eficiência e impacto do meu trabalho.
+
+## Aprendendo com os Desafios
+
+Um dos principais desafios que enfrentei foi durante o desenvolvimento do MTG Price Monitor. A complexidade de fazer scraping de múltiplas APIs de marketplace de forma confiável exigiu um entendimento profundo sobre limites de taxa de API e manejo de erros. Gerenciar essas complexidades não apenas aprimorou minhas habilidades técnicas, mas também refinou minha capacidade de criar sistemas resilientes. Além disso, lidar com os limites de taxa do bot no Discord me impulsionou a revisar minha abordagem para a lógica de deduplicação de alertas. Essas experiências reforçaram a importância de ser adaptável e proativo quando surgem desafios inesperados.
+
+<Note>A adaptabilidade é crucial na tecnologia, pois desafios frequentemente requerem aprendizado e resolução de problemas em tempo real.</Note>
+
+## Abraçando a Tecnologia
+
+A tecnologia está em constante evolução, e como engenheiros, precisamos evoluir com ela. Ao construir a plataforma NotificaMe, encontrei-me diante de decisões sobre utilizar Redis versus PostgreSQL para persistência e gerenciar a confiabilidade dos webhooks do Twilio. Escolher Redis para a gestão dinâmica de filas foi estratégico, pois ofereceu a velocidade necessária para atualizações em tempo real. Da mesma forma, empregar precisão de geolocalização para o raio de auto-check-in foi crucial para proporcionar uma experiência de usuário fluida. Essas escolhas foram informadas tanto pelo cenário tecnológico atual quanto pela escalabilidade futura.
+
+## Desenvolvimento por Experimentação
+
+A experimentação alimenta o aprendizado. No desenvolvimento do DoAção, explorei o design de um sistema de pontos usando Drizzle ORM, que era desconhecido para mim na época. O design de schema para um sistema de pontos/recompensas exigiu planejamento cuidadoso para garantir a consistência e integridade dos dados. Experimentar políticas RLS do Supabase também destacou a importância da segurança e acesso eficiente aos dados em aplicações centradas no usuário.
+
+<CodeFilename filename="config/schema.ts">
+```ts
+export const PointSchema = drizzle.schema({
+  id: drizzle.serial('id').primaryKey(),
+  points: drizzle.integer('points'),
+  actionType: drizzle.enum('action_type', ['donation', 'volunteering']),
+  userId: drizzle.integer('user_id').foreignKey<User>('users.id'),
+});
+```
+</CodeFilename>
+
+Ao abraçar novas tecnologias e metodologias, não apenas melhorei os desfechos do projeto, mas também expandi meu domínio e confiança em construir aplicações escaláveis e seguras.
+
+## Insights sobre Crescimento na Carreira
+
+Como desenvolvedores, o crescimento na carreira não se baseia apenas em habilidades técnicas, mas também em compreender o valor de cada desafio enfrentado e de cada decisão tomada. A transição de desenvolvedor de software para engenheiro principal envolveu sintetizar conhecimento técnico com liderança. As decisões agora ressoam além das necessidades técnicas imediatas, alinhando-se à estratégia de negócios mais ampla e à satisfação do usuário.
+
+Para engenheiros que aspiram ao crescimento, sugiro focar não apenas no código em si, mas no impacto de suas contribuições. Compreenda os problemas empresariais que você está resolvendo e priorize o aprendizado contínuo, seja por meio da educação formal, interações com pares ou projetos autodidatas.
+
+<InlineBadge variant="secondary">aprendizado-contínuo</InlineBadge> é essencial nesta indústria para se manter relevante e impulsionar a inovação.
+
+Com cada projeto, alinhe seus objetivos com o objetivo final de criar experiências significativas para o usuário e sistemas eficientes e sustentáveis. A jornada de crescimento na carreira de engenharia de software é contínua, definida por cada desafio único e pela capacidade de pivotar com agilidade quando o cenário muda.
+
