@@ -175,8 +175,12 @@ jobs:
             echo "No preview URL — skipping PR update"
             exit 0
           fi
-          gh pr edit "$PR_NUMBER" \
-            --add-body "🔗 **Vercel Preview:** $VERCEL_PREVIEW_URL"
+          CURRENT_BODY="$(gh pr view "$PR_NUMBER" --json body --jq .body)"
+          {
+            printf '%s\n\n' "$CURRENT_BODY"
+            printf '🔗 **Vercel Preview:** %s\n' "$VERCEL_PREVIEW_URL"
+          } > /tmp/pr-body.md
+          gh pr edit "$PR_NUMBER" --body-file /tmp/pr-body.md
 
       - name: Upload generated files on failure
         if: failure()

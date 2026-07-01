@@ -52,6 +52,17 @@ const RULES = [
       'verify-metadata.mjs must use locale-free routes (localePrefix is "never"). ' +
       'Replace "/en/..." and "/pt/..." with "/" and "/...".',
   },
+  // gh pr edit has no --add-body flag. This breaks post-generation workflows
+  // after the PR is created and the Vercel preview is deployed.
+  {
+    id: 'NO_GH_PR_EDIT_ADD_BODY',
+    description: 'unsupported gh pr edit --add-body flag in workflow',
+    files: ['.github/workflows/*.yml'],
+    pattern: /\bgh\s+pr\s+edit\b.*--add-body|--add-body\b/,
+    message:
+      'Use gh pr edit --body-file to replace the body after appending text, ' +
+      'or gh pr comment --body to add a PR comment.',
+  },
 ];
 
 // ---------------------------------------------------------------------------
