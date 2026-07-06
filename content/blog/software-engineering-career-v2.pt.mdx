@@ -1,0 +1,60 @@
+---
+title: "Explorando a Trajetória de Engenheiro de Software Principal"
+date: "2026-07-06"
+excerpt: "Uma exploração das complexidades de avançar na carreira de engenharia de software, focando em decisões estratégicas e lições aprendidas."
+tags:
+  - carreira
+  - engenharia-de-software
+draft: false
+---
+
+## Introdução
+
+Alcançar o papel de Engenheiro de Software Principal é um marco significativo na carreira de um desenvolvedor. Não se trata apenas de dominar linguagens ou frameworks, mas de compreender profundamente as decisões arquitetônicas, gerenciar trade-offs e liderar equipes diante de desafios complexos.
+
+## Compreendendo o Papel
+
+Como Engenheiro de Software Principal, espera-se que você vá além das contribuições individuais e lidere estratégias de engenharia alinhadas com os objetivos de negócio. Suas decisões têm impactos amplos, afetando tudo, desde a escalabilidade do produto até a eficiência da equipe.
+
+Aprendi que navegar com sucesso nesse papel envolve equilibrar a **profundidade técnica** com a **visão estratégica**. Trata-se de saber quando mergulhar fundo no código e quando delegar para promover o desenvolvimento da equipe.
+
+## Tomada de Decisão e Trade-offs
+
+Um aspecto crítico é lidar com a tomada de decisões em condições de incerteza. Por exemplo, ao trabalhar no projeto `NotificaMe`, tivemos que escolher entre **Redis** e **PostgreSQL** para o gerenciamento de filas. O Redis oferecia baixa latência e alto desempenho, mas introduzia complexidade operacional. Optamos pelo PostgreSQL devido à sua simplicidade e capacidades transacionais robustas, apesar da latência ligeiramente maior. Essa decisão foi um **trade-off** entre velocidade e manutenibilidade.
+
+<Warning>Otimizar demais para desempenho sem considerar manutenibilidade pode resultar em dívida técnica.</Warning>
+
+## Aprendendo com Falhas
+
+Falhas são inevitáveis, mas essenciais para o crescimento. Ao construir o `MTG Price Monitor`, subestimamos inicialmente os limites de taxa da API do Discord, causando falhas frequentes que tornaram os alertas pouco confiáveis. Esse contratempo nos forçou a implementar um mecanismo de controle de taxa mais sofisticado, garantindo notificações consistentes.
+
+<Note>Post-mortems estruturados podem transformar falhas em valiosas oportunidades de aprendizado para a equipe.</Note>
+
+## Habilidades Chave para o Crescimento
+
+Para prosperar como Engenheiro Principal, foque em desenvolver as seguintes habilidades:
+
+- **Expertise Técnica:** Mantenha-se atualizado com tecnologias e ferramentas em evolução. Familiaridade com stacks como **Next.js** e **TypeScript** é crucial.
+- **Liderança e Comunicação:** Cultive habilidades interpessoais para liderar equipes efetivamente e comunicar ideias complexas de forma simples.
+- **Pensamento Estratégico:** Alinhe objetivos de engenharia com resultados de negócios. Essa habilidade vem do entendimento dos domínios técnico e de negócios.
+
+## Mentoria e Compartilhamento de Conhecimento
+
+Mentorar engenheiros juniores é tanto uma responsabilidade quanto um privilégio. É uma oportunidade de transmitir lições aprendidas e ajudar outros a evitar armadilhas comuns. Além disso, isso promove um ambiente de aprendizado contínuo e inovação dentro da equipe.
+
+<InlineBadge variant="secondary">Mentoria</InlineBadge> é uma via de mão dupla; não é apenas sobre ensinar, mas também sobre aprender com novas perspectivas.
+
+## Conclusão
+
+Avançar para Engenheiro de Software Principal requer uma mudança de mentalidade de codificador para líder. Trata-se de tomar decisões informadas, aprender com experiências e guiar equipes para o sucesso. Esse papel não apenas molda projetos, mas também influencia a cultura de engenharia mais ampla.
+
+Para aqueles nesse caminho, lembre-se de que suas experiências, tanto sucessos quanto falhas, contribuem para o conhecimento coletivo de sua equipe e organização.
+
+<CodeFilename filename="decisoes/tradeoffs.md">
+```mdx
+# Documentação de Decisões
+## Redis vs PostgreSQL
+- Redis: Mais rápido, operações complexas
+- PostgreSQL: Simplicidade, confiabilidade
+```
+</CodeFilename>
