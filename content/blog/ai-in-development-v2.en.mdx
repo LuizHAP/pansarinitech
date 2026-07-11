@@ -1,0 +1,52 @@
+---
+title: "AI in Development: Challenges and Learnings from the Field"
+date: "2026-07-11"
+excerpt: "Exploring real-world challenges and learnings from implementing AI in development projects, highlighting key technical decisions and trade-offs."
+tags:
+  - ai
+  - development
+  - engineering
+draft: false
+---
+
+## Unpacking AI in Development
+
+As AI technology surges forward, integrating it into development processes has become both an opportunity and a challenge. From maintaining system efficiency to ensuring ethical AI practices, the journey is far from simple. Here, I aim to break down some of the key experiences and lessons learned from incorporating AI in various development projects.
+
+## The Integration Challenge
+
+One of the first hurdles we encountered was integrating AI capabilities into existing solutions. This involved not just the technical aspect of embedding AI models, but also rethinking architecture to support these modules.
+
+The choice of **Next.js** and **Supabase** as our stack when building the DoAção project serves as an example. We had to evaluate whether Supabase’s real-time capabilities could handle the dynamic nature of our AI-driven action verification system. It became evident that **real-time point tallying** required a shift from traditional data handling methods to more dynamic, event-driven models.
+
+## Managing AI Workflows
+
+With AI, maintaining efficiency isn't just about performance but also workflow management. For our MTG Price Monitor project, which involves real-time data analysis and predictions, we had to ensure that our AI components didn't introduce significant latency. The key was leveraging **Drizzle ORM** for efficient data handling and **Discord.js** for seamless updates to users. Setting up **alert deduplication logic** turned into an intricate task, balancing performance requirements and avoiding redundant notifications.
+
+<CodeFilename filename="src/config/alerts.ts">
+```typescript
+const deduplicateAlerts = (alerts) => {
+  // Logic to filter out redundant alerts
+};
+```
+</CodeFilename>
+
+## Ethical Considerations
+
+Incorporating AI responsibly was crucial, especially in projects like NotificaMe, where decisions impact user privacy and autonomy. Here, we relied heavily on **PostgreSQL** and **Redis**, weighing the trade-offs between persistent storage and rapid data retrieval to keep user data secure while maintaining system responsiveness. 
+
+<Note>Implementing GDPR compliance checks were integral throughout development, especially during data processing and storage phases.</Note>
+
+## AI and User Experience
+
+Ensuring a seamless user experience while integrating AI was another dimension altogether. For our portfolio, creating a bilingual interface involved using **next-intl** for locale management, which required careful planning to align AI-driven enhancements with user expectations and accessibility standards.
+
+The challenge was not just technical but also design-oriented, ensuring that AI features didn't disrupt the user's journey but rather enhanced it. Using tools like **tailwind CSS** enabled us to maintain visual consistency across different AI-driven components.
+
+## Looking Forward
+
+The development of AI presents ongoing challenges that require constant adaptation and learning. Each project has reinforced the importance of ethical considerations, efficient system architectures, and the capacity to pivot as new AI capabilities and frameworks emerge.
+
+**AI in development** is not just about adopting new technologies; it's about integrating them thoughtfully into systems that serve real people in ethical and impactful ways. As we continue to develop and implement AI, the focus remains on balancing innovation with responsibility.
+
+<InlineBadge>AI</InlineBadge> development is a journey, not a destination. As we navigate this landscape, the key is continuous learning and openness to change. Together, these elements drive the successful integration of AI into our software development processes.
