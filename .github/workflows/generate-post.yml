@@ -170,6 +170,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_NUMBER: ${{ steps.open-pr.outputs.pr-number }}
           VERCEL_PREVIEW_URL: ${{ env.VERCEL_PREVIEW_URL }}
+          SLUG: ${{ steps.topic.outputs.slug }}
         run: |
           if [ -z "$VERCEL_PREVIEW_URL" ]; then
             echo "No preview URL — skipping PR update"
@@ -178,7 +179,7 @@ jobs:
           CURRENT_BODY="$(gh pr view "$PR_NUMBER" --json body --jq .body)"
           {
             printf '%s\n\n' "$CURRENT_BODY"
-            printf '🔗 **Vercel Preview:** %s\n' "$VERCEL_PREVIEW_URL"
+            printf '🔗 **Vercel Preview:** %s/blog/%s\n' "$VERCEL_PREVIEW_URL" "$SLUG"
           } > /tmp/pr-body.md
           gh pr edit "$PR_NUMBER" --body-file /tmp/pr-body.md
 

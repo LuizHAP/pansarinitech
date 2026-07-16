@@ -170,6 +170,16 @@ ${PROJECTS_CONTEXT}
 
 ---
 
+## EXISTING POSTS - AVOID COVERING THE SAME GROUND
+
+These posts already exist. Read their titles, tags, and excerpts to understand what has been covered. Your post's content and tag choices should be DISTINCT from these:
+
+${EXISTING_POSTS}
+
+If your topic overlaps with an existing post, pick a different angle, a deeper technical layer, or a specific project use case that hasn't been explored. Aim for 2-4 tags. At least one tag should not appear (or be semantically similar) in any existing post's tag list.
+
+---
+
 ## STYLE REFERENCE
 
 Match this voice and structure. This is an existing post from the same blog — use it to calibrate tone, heading style, paragraph density, and how technical decisions are narrated:

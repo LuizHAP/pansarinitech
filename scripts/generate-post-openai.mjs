@@ -41,6 +41,39 @@ if (fs.existsSync(projDir)) {
     .join('\n\n---\n\n');
 }
 
+// Extract existing posts metadata (title + excerpt + tags) for content diversity
+function extractExistingPosts(currentSlug) {
+  const posts = [];
+  const dir = 'content/blog';
+  if (!fs.existsSync(dir)) return '(no existing posts)';
+  const files = fs
+    .readdirSync(dir)
+    .filter((f) => f.endsWith('.en.mdx') && f !== `${currentSlug}.en.mdx`);
+  for (const file of files) {
+    const content = fs.readFileSync(path.join(dir, file), 'utf8');
+    const frontmatter = content.match(/^---\n([\s\S]*?)\n---/);
+    if (!frontmatter) continue;
+    const title = frontmatter[1].match(/^title:\s*"?(.+?)"?\s*$/m);
+    const excerpt = frontmatter[1].match(/^excerpt:\s*"?(.+?)"?\s*$/m);
+    const tagSection = frontmatter[1].match(/^tags:\n((?:\s+- .+\n?)*)/m);
+    let tags = [];
+    if (tagSection) {
+      const fileTags = tagSection[1].match(/- .+/g);
+      if (fileTags) tags = fileTags.map((t) => t.replace(/^- /, '').trim());
+    }
+    posts.push({
+      title: title?.[1]?.trim() || file,
+      excerpt: excerpt?.[1]?.trim() || '',
+      tags,
+    });
+  }
+  if (posts.length === 0) return '(no existing posts)';
+  return posts
+    .map((p) => `- "${p.title}" — ${p.tags.join(', ') || '(no tags)'}\n  ${p.excerpt}`)
+    .join('\n\n');
+}
+const existingPosts = extractExistingPosts(SLUG);
+
 // Substitute all template variables.
 // Replacer functions are used to prevent String.replace() from interpreting
 // special patterns like $& or $` in the replacement string (WR-04).
@@ -50,7 +83,8 @@ userPrompt = userPrompt
   .replace(/\$\{TOPIC\}/g, () => TOPIC)
   .replace(/\$\{TODAY\}/g, () => TODAY)
   .replace(/\$\{PROJECTS_CONTEXT\}/g, () => projectsContext || '(no project context available)')
-  .replace(/\$\{STYLE_REF\}/g, () => styleRef);
+  .replace(/\$\{STYLE_REF\}/g, () => styleRef)
+  .replace(/\$\{EXISTING_POSTS\}/g, () => existingPosts);
 
 // Build updated pipeline state (the model receives the exact JSON to write)
 let pipelineState = {
