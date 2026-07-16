@@ -1,0 +1,58 @@
+---
+title: "AI in Development: Insights and Challenges"
+date: "2026-07-16"
+excerpt: "Exploring AI's integration in modern development workflows, focusing on real-world applications and engineering challenges."
+tags:
+  - AI
+  - development
+  - engineering
+draft: false
+---
+
+## AI in Modern Development: Harnessing the Potential
+
+The integration of **Artificial Intelligence** (AI) in software development is a topic that has garnered significant attention. As a Principal Software Engineer, my journey with AI has been both enlightening and filled with complex challenges. This post explores some key insights from integrating AI into development workflows, highlighting both technical decisions and lessons learned from real-world applications.
+
+## Navigating the AI Landscape
+
+The first step in leveraging AI effectively is understanding the landscape. AI offers tools that can automate mundane tasks, enhance decision-making, and improve user experiences. In one of my projects, a Magic: The Gathering card price tracker, AI was instrumental in scraping data across various APIs. However, ensuring reliable API calls across multiple marketplaces was a non-trivial task. **API rate limits** and data consistency were major concerns. Incorporating `retry` mechanisms and `backoff` strategies helped mitigate these issues, ensuring data integrity.
+
+<Note>Always account for rate limiting in your API strategy to avoid data discrepancies.</Note>
+
+## AI-Driven Development Tools
+
+AI-driven tools, such as **automated code reviews** and **intelligent error detection**, are becoming increasingly popular. During the development of a queue management system, utilizing AI for automated testing significantly reduced the time spent on manual tests. AI detected potential bugs early, which allowed for quicker iterations. Here, the choice of AI tool played a crucial role. Opting for a platform with an active community and regular updates ensured that the tool evolved alongside project requirements.
+
+## Designing with AI: Schema and Architecture
+
+When it comes to architecture, AI's impact is profound. Designing a system that leverages AI requires thoughtful consideration of data schema and flow. For example, in the DoAção platform, designing a **Drizzle ORM schema** that efficiently mapped points to rewards required iterating over multiple models. Real-time updates to user points demanded a robust data handling mechanism. Here, Supabase's real-time capabilities offered a seamless integration point, allowing for fluid synchronization between the database and the front-end.
+
+<CodeFilename filename="models/pointSchema.ts">
+```typescript
+export const PointSchema = model('Point', {
+  userId: type.string(),
+  points: type.number(),
+  lastUpdated: type.timestamp(),
+});
+```
+</CodeFilename>
+
+## AI and Microservice Architectures
+
+AI's ability to enhance microservice architectures cannot be overstated. In the NotificaMe project, AI optimized geolocation-based services, managing customer queues dynamically. A key challenge was maintaining precision in geofencing for accurate customer notifications, which required fine-tuning Twilio's webhooks for reliability. **Redis** served as a transient data store, striking a balance between speed and persistence, a decision that paid off in performance enhancements.
+
+<Warning>Ensuring webhook reliability is crucial in notification services. Test extensively under varying network conditions.</Warning>
+
+## The Human Element: Balancing AI Automation
+
+While AI brings automation, the human element remains indispensable. Developers need to interpret AI recommendations, discern false positives, and make informed decisions. In my stack choice for pansarini.tech, integrating `next-intl` with `localePrefix: 'always'` was a human-driven decision aimed at improving SEO. Despite AI’s prowess, human oversight ensures alignment with overarching business goals and user expectations.
+
+<InlineBadge variant="primary">next-intl</InlineBadge> integration was pivotal for SEO, balancing AI's automated prowess with human strategic thinking.
+
+## Conclusion
+
+AI's role in software development is transformative, offering unprecedented capabilities and efficiencies. However, the integration process is intricate, requiring careful planning and execution. As we continue to explore AI's potential, the insights gathered from practical applications guide us in navigating challenges and leveraging AI's full potential to build robust, user-centered solutions.
+
+As developers and engineers, we stand at the frontier of AI in development, where innovation meets implementation. The lessons shared here serve as both a roadmap and a reminder of the exciting journey that lies ahead in AI-driven development.
+
+I invite you to share your experiences and challenges with AI in your development workflows to further our collective understanding in this rapidly evolving field.
