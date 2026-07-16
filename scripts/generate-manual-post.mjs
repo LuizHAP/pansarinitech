@@ -37,6 +37,35 @@ if (fs.existsSync(projDir)) {
     .join('\n\n---\n\n');
 }
 
+// Extract existing tags from all published posts (for tag diversity)
+function extractExistingTags(currentSlug) {
+  const tags = new Set();
+  const dir = 'content/blog';
+  if (!fs.existsSync(dir)) return '(no existing posts)';
+  const files = fs
+    .readdirSync(dir)
+    .filter((f) => f.endsWith('.en.mdx') && f !== `${currentSlug}.en.mdx`);
+  for (const file of files) {
+    const content = fs.readFileSync(path.join(dir, file), 'utf8');
+    const frontmatter = content.match(/^---\n([\s\S]*?)\n---/);
+    if (!frontmatter) continue;
+    const tagSection = frontmatter[1].match(/^tags:\n((?:\s+- .+\n?)*)/m);
+    if (!tagSection) continue;
+    const fileTags = tagSection[1].match(/- .+/g);
+    if (!fileTags) continue;
+    for (const tag of fileTags) {
+      tags.add(tag.replace(/^- /, '').trim());
+    }
+  }
+  return (
+    [...tags]
+      .sort()
+      .map((t) => `  - ${t}`)
+      .join('\n') || '(none yet)'
+  );
+}
+const existingTags = extractExistingTags(SLUG);
+
 // Build prompt
 let userPrompt = fs.readFileSync('scripts/generate-post-prompt.md', 'utf8');
 userPrompt = userPrompt
@@ -44,7 +73,8 @@ userPrompt = userPrompt
   .replace(/\$\{TOPIC\}/g, () => TOPIC)
   .replace(/\$\{TODAY\}/g, () => TODAY)
   .replace(/\$\{PROJECTS_CONTEXT\}/g, () => projectsContext || '(no project context available)')
-  .replace(/\$\{STYLE_REF\}/g, () => styleRef);
+  .replace(/\$\{STYLE_REF\}/g, () => styleRef)
+  .replace(/\$\{EXISTING_TAGS\}/g, () => existingTags);
 
 if (MANUAL_INSTRUCTIONS) {
   userPrompt += `\n\n## CUSTOM INSTRUCTIONS\n\nThe blog owner provided these specific instructions for this post:\n\n${MANUAL_INSTRUCTIONS}`;

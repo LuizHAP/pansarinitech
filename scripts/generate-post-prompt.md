@@ -170,6 +170,16 @@ ${PROJECTS_CONTEXT}
 
 ---
 
+## EXISTING TAGS - CREATE DIVERSE TAGS
+
+These tags are ALREADY used on other posts. Create tags that are DIFFERENT from these — semantically distinct, not just synonyms:
+
+${EXISTING_TAGS}
+
+If your tag ideas overlap semantically with existing tags, pick a more specific technical aspect or a non-obvious angle of the post content. Aim for 2-4 tags. At least one tag must be unique to this post (not present or semantically similar to the list above).
+
+---
+
 ## STYLE REFERENCE
 
 Match this voice and structure. This is an existing post from the same blog — use it to calibrate tone, heading style, paragraph density, and how technical decisions are narrated:

@@ -41,6 +41,35 @@ if (fs.existsSync(projDir)) {
     .join('\n\n---\n\n');
 }
 
+// Extract existing tags from all published posts (for tag diversity)
+function extractExistingTags(currentSlug) {
+  const tags = new Set();
+  const dir = 'content/blog';
+  if (!fs.existsSync(dir)) return '(no existing posts)';
+  const files = fs
+    .readdirSync(dir)
+    .filter((f) => f.endsWith('.en.mdx') && f !== `${currentSlug}.en.mdx`);
+  for (const file of files) {
+    const content = fs.readFileSync(path.join(dir, file), 'utf8');
+    const frontmatter = content.match(/^---\n([\s\S]*?)\n---/);
+    if (!frontmatter) continue;
+    const tagSection = frontmatter[1].match(/^tags:\n((?:\s+- .+\n?)*)/m);
+    if (!tagSection) continue;
+    const fileTags = tagSection[1].match(/- .+/g);
+    if (!fileTags) continue;
+    for (const tag of fileTags) {
+      tags.add(tag.replace(/^- /, '').trim());
+    }
+  }
+  return (
+    [...tags]
+      .sort()
+      .map((t) => `  - ${t}`)
+      .join('\n') || '(none yet)'
+  );
+}
+const existingTags = extractExistingTags(SLUG);
+
 // Substitute all template variables.
 // Replacer functions are used to prevent String.replace() from interpreting
 // special patterns like $& or $` in the replacement string (WR-04).
@@ -50,7 +79,8 @@ userPrompt = userPrompt
   .replace(/\$\{TOPIC\}/g, () => TOPIC)
   .replace(/\$\{TODAY\}/g, () => TODAY)
   .replace(/\$\{PROJECTS_CONTEXT\}/g, () => projectsContext || '(no project context available)')
-  .replace(/\$\{STYLE_REF\}/g, () => styleRef);
+  .replace(/\$\{STYLE_REF\}/g, () => styleRef)
+  .replace(/\$\{EXISTING_TAGS\}/g, () => existingTags);
 
 // Build updated pipeline state (the model receives the exact JSON to write)
 let pipelineState = {
