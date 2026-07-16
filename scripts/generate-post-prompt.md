@@ -170,13 +170,13 @@ ${PROJECTS_CONTEXT}
 
 ---
 
-## EXISTING TAGS - CREATE DIVERSE TAGS
+## EXISTING POSTS - AVOID COVERING THE SAME GROUND
 
-These tags are ALREADY used on other posts. Create tags that are DIFFERENT from these — semantically distinct, not just synonyms:
+These posts already exist. Read their titles, tags, and excerpts to understand what has been covered. Your post's content and tag choices should be DISTINCT from these:
 
-${EXISTING_TAGS}
+${EXISTING_POSTS}
 
-If your tag ideas overlap semantically with existing tags, pick a more specific technical aspect or a non-obvious angle of the post content. Aim for 2-4 tags. At least one tag must be unique to this post (not present or semantically similar to the list above).
+If your topic overlaps with an existing post, pick a different angle, a deeper technical layer, or a specific project use case that hasn't been explored. Aim for 2-4 tags. At least one tag should not appear (or be semantically similar) in any existing post's tag list.
 
 ---
 

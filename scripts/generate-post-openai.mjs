@@ -41,9 +41,9 @@ if (fs.existsSync(projDir)) {
     .join('\n\n---\n\n');
 }
 
-// Extract existing tags from all published posts (for tag diversity)
-function extractExistingTags(currentSlug) {
-  const tags = new Set();
+// Extract existing posts metadata (title + excerpt + tags) for content diversity
+function extractExistingPosts(currentSlug) {
+  const posts = [];
   const dir = 'content/blog';
   if (!fs.existsSync(dir)) return '(no existing posts)';
   const files = fs
@@ -53,22 +53,26 @@ function extractExistingTags(currentSlug) {
     const content = fs.readFileSync(path.join(dir, file), 'utf8');
     const frontmatter = content.match(/^---\n([\s\S]*?)\n---/);
     if (!frontmatter) continue;
+    const title = frontmatter[1].match(/^title:\s*"?(.+?)"?\s*$/m);
+    const excerpt = frontmatter[1].match(/^excerpt:\s*"?(.+?)"?\s*$/m);
     const tagSection = frontmatter[1].match(/^tags:\n((?:\s+- .+\n?)*)/m);
-    if (!tagSection) continue;
-    const fileTags = tagSection[1].match(/- .+/g);
-    if (!fileTags) continue;
-    for (const tag of fileTags) {
-      tags.add(tag.replace(/^- /, '').trim());
+    let tags = [];
+    if (tagSection) {
+      const fileTags = tagSection[1].match(/- .+/g);
+      if (fileTags) tags = fileTags.map((t) => t.replace(/^- /, '').trim());
     }
+    posts.push({
+      title: title?.[1]?.trim() || file,
+      excerpt: excerpt?.[1]?.trim() || '',
+      tags,
+    });
   }
-  return (
-    [...tags]
-      .sort()
-      .map((t) => `  - ${t}`)
-      .join('\n') || '(none yet)'
-  );
+  if (posts.length === 0) return '(no existing posts)';
+  return posts
+    .map((p) => `- "${p.title}" — ${p.tags.join(', ') || '(no tags)'}\n  ${p.excerpt}`)
+    .join('\n\n');
 }
-const existingTags = extractExistingTags(SLUG);
+const existingPosts = extractExistingPosts(SLUG);
 
 // Substitute all template variables.
 // Replacer functions are used to prevent String.replace() from interpreting
@@ -80,7 +84,7 @@ userPrompt = userPrompt
   .replace(/\$\{TODAY\}/g, () => TODAY)
   .replace(/\$\{PROJECTS_CONTEXT\}/g, () => projectsContext || '(no project context available)')
   .replace(/\$\{STYLE_REF\}/g, () => styleRef)
-  .replace(/\$\{EXISTING_TAGS\}/g, () => existingTags);
+  .replace(/\$\{EXISTING_POSTS\}/g, () => existingPosts);
 
 // Build updated pipeline state (the model receives the exact JSON to write)
 let pipelineState = {
