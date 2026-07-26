@@ -1,0 +1,64 @@
+---
+title: "Explorando Desafios em Projetos Open Source"
+date: "2026-07-26"
+excerpt: "Uma imersão nas decisões técnicas e desafios enfrentados na construção de projetos pessoais open source, com foco em aprendizados e inovações."
+tags:
+  - open-source
+  - desenvolvimento-de-software
+  - projetos-pessoais
+draft: false
+---
+
+## Introdução
+
+A jornada de qualquer engenheiro no desenvolvimento open source é única, moldada por experiências e desafios pessoais. Neste post, exploro minhas aventuras técnicas ao construir projetos open source, destacando as decisões que moldaram suas trajetórias e as dificuldades superadas ao longo do caminho.
+
+## Equilibrando Inovação e Praticidade
+
+Trabalhar com projetos open source muitas vezes envolve equilibrar inovação e praticidade. O **Next.js** permitiu prototipagem rápida com seus **React Server Components** e **Turbopack**, facilitando iterações ágeis mantendo o desempenho.
+
+### **Decisões com Supabase**
+
+Para o projeto **DoAção**, plataforma que conecta voluntários a empresas locais, utilizar o **Supabase** foi crucial. A plataforma exigia atualizações em tempo real e segurança robusta, e as **políticas de segurança em nível de linha (RLS)** do Supabase foram fundamentais para garantir a integridade dos dados enquanto gerenciavam informações pessoais dos usuários com segurança.
+
+<Note>O `RLS` do Supabase ajuda no acesso e modificação de dados de forma segura, reduzindo riscos de violação de dados associados ao acesso direto ao banco.</Note>
+
+## Principais Desafios
+
+### Integração com Discord para MTG Price Monitor
+
+**Integrações em tempo real** são frequentemente mais complexas do que aparentam. No projeto **MTG Price Monitor**, utilizando **Discord.js** para notificar usuários sobre mudanças de preços de cartas de Magic: The Gathering, enfrentei desafios ao lidar com limites de taxas do bot do Discord e garantir atualizações consistentes de dados em vários marketplaces.
+
+<Warning>Adira sempre aos limites da API do Discord para evitar ser banido. Manipule cuidadosamente o tempo de requisição e a lógica de repetição.</Warning>
+
+### Design de Esquema no Drizzle ORM
+
+Outro desafio foi projetar esquemas no **Drizzle ORM** de forma eficaz. É essencial considerar a escalabilidade futura ao implementar esquemas de banco de dados, para prevenir reformulações custosas quando o sistema exigir maior complexidade ou novas funcionalidades.
+
+<CodeFilename filename="src/server/banco_de_dados.ts">
+```typescript
+import { definaEsquema } from 'drizzle-orm';
+
+const schema = definaEsquema({
+  pontos: {
+    tipo: 'integer',
+    primário: true,
+  },
+  recompensas: {
+    tipo: 'texto',
+    único: true,
+  },
+});
+```
+</CodeFilename>
+
+## Abraçando o Feedback da Comunidade
+
+No open source, o feedback da comunidade é inestimável. Ele oferece perspectivas diversas que podem revelar casos extremos não considerados ou ressaltar funcionalidades que geram valor significativo. Interagir com a comunidade não só ajuda os projetos a evoluírem, mas também reforça o conhecimento técnico e a capacidade de resolução de problemas.
+
+O <InlineBadge>desenvolvimento impulsionado pela comunidade</InlineBadge> acelera a inovação ao incorporar diversas opiniões e melhorar o código de forma iterativa.
+
+## Conclusão
+
+Cada projeto pessoal é uma jornada de aprendizado. Os que são bem-sucedidos integram **feedback da comunidade**, adotam tecnologias eficientes e antecipam complexidades futuras. O desenvolvimento open source é tanto sobre colaboração quanto sobre codificação. Engajar-se com essa comunidade proporciona insights e experiências que nenhum livro ou tutorial pode oferecer. Abrace os desafios e prospere no mundo open source.
+

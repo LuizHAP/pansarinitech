@@ -1,0 +1,64 @@
+---
+title: "Exploring Challenges in Open Source Projects"
+date: "2026-07-26"
+excerpt: "Delve into the technical decisions and challenges faced in building personal open source projects, focusing on key learnings and innovations."
+tags:
+  - open-source
+  - software-development
+  - personal-projects
+draft: false
+---
+
+## Introduction
+
+Every engineer's journey through open source development is unique, shaped by personal experiences and challenges. In this post, I explore my technical adventures in building open source projects, highlighting the decisions that shaped their trajectories, and the pitfalls I navigated along the way.
+
+## Balancing Innovation with Practicality
+
+Working with open source projects often involves striking a balance between innovation and practicality. **Next.js** allowed for rapid prototyping with its **React Server Components** and **Turbopack**, enabling swift iterations while maintaining performance.
+
+### **Decision-Making with Supabase**
+
+For the **DoAção** project, a platform connecting volunteers with local businesses, leveraging **Supabase** was crucial. The platform required real-time updates and robust security, and Supabase's **row-level security (RLS)** played a key role in ensuring data integrity while handling users' personal information securely.
+
+<Note>Supabase's `RLS` helps in accessing and modifying data securely, reducing data breaches associated with direct database access.</Note>
+
+## Key Challenges
+
+### Integration with Discord for MTG Price Monitor
+
+**Real-time integrations** are often more complex than they seem. In the **MTG Price Monitor** project, using **Discord.js** to notify users of Magic: The Gathering card price changes, I faced challenges in handling Discord bot rate limits and ensuring consistent data updates across multiple marketplaces.
+
+<Warning>Always adhere to Discord's API limits to avoid being banned. Carefully handle request timing and retry logic.</Warning>
+
+### Schema Design in Drizzle ORM
+
+Another challenge was designing schemas in **Drizzle ORM** effectively. It’s pivotal to consider future scalability while implementing database schemas. This could prevent costly refactors when the system demands increased complexity or new features.
+
+<CodeFilename filename="src/server/db.ts">
+```typescript
+import { defineSchema } from 'drizzle-orm';
+
+const schema = defineSchema({
+  points: {
+    type: 'integer',
+    primary: true,
+  },
+  rewards: {
+    type: 'text',
+    unique: true,
+  },
+});
+```
+</CodeFilename>
+
+## Embracing Community Feedback
+
+In open source, community feedback is invaluable. It provides diverse perspectives that can reveal unconsidered edge cases or highlight features that drive significant value. Engaging with the community not only helps projects evolve but also strengthens one's technical acumen and problem-solving skills.
+
+<InlineBadge>community-driven</InlineBadge> open source development accelerates innovation by incorporating diverse input and iteratively improving the codebase.
+
+## Conclusion
+
+Each personal project is a learning journey. The successful ones integrate **community feedback**, adopt efficient technologies, and anticipate future complexities. Open source development is as much about collaboration as it is about coding. Engaging with this community yields insights and experiences that no book or tutorial can provide. Embrace the challenges and thrive in the open source world.
+
