@@ -161,12 +161,12 @@
     "viewAll": "Ver todos os posts →"
   },
   "seo": {
-    "homeTitle": "Principal Software Engineer",
-    "siteDescription": "Luiz Pansarini — Principal Software Engineer (Brasil/EUA). Portfólio bilíngue: estudos de caso, blog e contato.",
+    "homeTitle": "Engenheiro de Software Principal",
+    "siteDescription": "Luiz Pansarini — Engenheiro de Software Principal e desenvolvedor em Jundiaí, SP. Portfólio com estudos de caso, blog e contato.",
     "siteSuffix": "Luiz Pansarini",
     "descriptions": {
-      "home": "Luiz Pansarini — Principal Software Engineer (Brasil/EUA). Portfólio bilíngue: estudos de caso, blog e contato.",
-      "projects": "Quatro estudos de caso: e-commerce de máquinas pesadas, migração no-code → Next.js, React Native em escala e um design system construído do zero.",
+      "home": "Luiz Pansarini — Engenheiro de Software Principal e desenvolvedor em Jundiaí, SP. Portfólio com estudos de caso, blog e contato.",
+      "projects": "Cinco estudos de caso: e-commerce de máquinas, no-code → Next.js, React Native em escala, design system e app mobile-first.",
       "blog": "Posts ocasionais sobre engenharia. Quase sempre sobre coisas que precisei consultar duas vezes.",
       "now": "O que estou trabalhando, lendo e aprendendo no momento."
     }

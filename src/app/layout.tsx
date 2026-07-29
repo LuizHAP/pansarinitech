@@ -14,7 +14,11 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Luiz Pansarini',
+  applicationName: 'Luiz Pansarini',
+  title: {
+    default: 'Luiz Pansarini',
+    template: '%s — Luiz Pansarini',
+  },
   verification: {
     google: 'GZNxF2q4D9DHuIF5_7pksepwESxAyKggi0bRYQ-uqfs',
   },

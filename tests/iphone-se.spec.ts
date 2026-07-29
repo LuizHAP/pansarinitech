@@ -7,29 +7,38 @@
 // against the same `pnpm next start` web server that test:a11y / test:sith use
 // (configured in playwright.config.ts).
 //
-// localePrefix:'never' — URLs are locale-free. The 4 Playwright projects (en/pt ×
-// light/dark) each set locale: 'en-US' or locale: 'pt-BR' via Accept-Language so
-// middleware serves the correct locale for every scenario. 6 scenarios × 4 projects
-// = 24 active tests total, 0 skips.
+// localePrefix:'always' — every route is served under /en or /pt. The 4
+// Playwright projects (en/pt × light/dark) each set locale: 'en-US' or
+// locale: 'pt-BR'; the locale segment used in goto() is derived from the
+// project name so en-* projects hit /en/... and pt-* projects hit /pt/....
+// 8 scenarios × 4 projects = 32 active tests total, 0 skips.
 import { expect, test } from '@playwright/test';
 
 const iPhoneSEViewport = { width: 375, height: 667 } as const;
 
-type Scenario = { url: string };
+const localeFor = (projectName: string) => (projectName.startsWith('pt') ? 'pt' : 'en');
 
+type Scenario = { path: string };
+
+// `path` is the locale-free suffix ('' for home) — prefixed with /en or /pt
+// at goto() time below, based on the running Playwright project's locale.
 const scenarios: Scenario[] = [
-  { url: '/' },
-  { url: '/now' },
-  { url: '/projects' },
-  { url: '/projects/machinery-partner-ecommerce' },
-  { url: '/blog' },
-  { url: '/blog/building-this-portfolio' },
-  { url: '/projects/uaubox-design-system' },
-  { url: '/projects/machinery-mobile-first' },
+  { path: '' },
+  { path: '/now' },
+  { path: '/projects' },
+  { path: '/projects/machinery-partner-ecommerce' },
+  { path: '/blog' },
+  { path: '/blog/building-this-portfolio' },
+  { path: '/projects/uaubox-design-system' },
+  { path: '/projects/machinery-mobile-first' },
 ];
 
-for (const { url } of scenarios) {
-  test(`iPhone SE 375px no horizontal overflow on ${url}`, async ({ browser }) => {
+for (const { path } of scenarios) {
+  test(`iPhone SE 375px no horizontal overflow on ${path || '/'}`, async ({
+    browser,
+  }, testInfo) => {
+    const locale = localeFor(testInfo.project.name);
+    const url = `/${locale}${path}`;
     const context = await browser.newContext({ viewport: iPhoneSEViewport });
     try {
       const page = await context.newPage();

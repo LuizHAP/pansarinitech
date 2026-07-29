@@ -13,9 +13,17 @@ export { SITE_URL };
 
 /** Single-author Person object reused in both author and publisher fields. */
 export const AUTHOR_PERSON = {
+  '@id': `${SITE_URL}/#person`,
   '@type': 'Person',
   name: 'Luiz Pansarini',
   url: SITE_URL,
+  jobTitle: 'Principal Software Engineer',
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: 'Jundiaí',
+    addressRegion: 'SP',
+    addressCountry: 'BR',
+  },
   sameAs: ['https://github.com/LuizHAP', 'https://linkedin.com/in/luizpansarini'],
 } as const;
 

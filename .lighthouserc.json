@@ -2,13 +2,13 @@
   "ci": {
     "collect": {
       "url": [
-        "http://localhost:3000/",
-        "http://localhost:3000/now",
-        "http://localhost:3000/projects",
-        "http://localhost:3000/blog",
-        "http://localhost:3000/blog/building-this-portfolio",
-        "http://localhost:3000/projects/uaubox-design-system",
-        "http://localhost:3000/projects/machinery-mobile-first"
+        "http://localhost:3000/en",
+        "http://localhost:3000/en/now",
+        "http://localhost:3000/en/projects",
+        "http://localhost:3000/en/blog",
+        "http://localhost:3000/en/blog/building-this-portfolio",
+        "http://localhost:3000/en/projects/uaubox-design-system",
+        "http://localhost:3000/en/projects/machinery-mobile-first"
       ],
       "settings": {
         "skipAudits": [

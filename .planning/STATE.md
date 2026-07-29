@@ -151,6 +151,7 @@ Last activity: 2026-06-11
 | 260506-mll | Fix Lighthouse CI failures — home page performance (fetchPriority + relax perf gate to 0.85) | 2026-05-06 | eb38b8c | [260506-mll-fix-lighthouse-ci-failures-home-page-per](./quick/260506-mll-fix-lighthouse-ci-failures-home-page-per/) |
 | 260506-n5u | Fix Lighthouse CI warnings — suppress render-blocking-resources and legacy-javascript false positives | 2026-05-06 | b313816 | [260506-n5u-fix-lighthouse-ci-warnings-render-blocki](./quick/260506-n5u-fix-lighthouse-ci-warnings-render-blocki/) |
 | 260506-nlw | Fix DOM size warning on home page — collapse ~74 wrapper nodes in Skills and CareerTimeline | 2026-05-06 | 17e2c88 | [260506-nlw-fix-dom-size-warning-on-home-page](./quick/260506-nlw-fix-dom-size-warning-on-home-page/) |
+| 20260729-seo | SEO: localePrefix always + site name/favicon + Jundiaí local keywords/JSON-LD | 2026-07-29 | pending commit | [20260729-seo-locale-prefix-always](./quick/20260729-seo-locale-prefix-always/) |
 
 ### Risks Carried Forward
 

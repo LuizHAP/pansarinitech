@@ -25,8 +25,9 @@ export async function switchLocale(target: Locale) {
   });
 
   // Compute equivalent path in target locale (D-03 path-preserving).
-  // Strategy: read referer to find the current pathname. With localePrefix:'never',
-  // paths have no locale prefix, so no stripping is needed — redirect to same pathname.
+  // Strategy: read referer to find the current pathname. With localePrefix:'always',
+  // every path is prefixed with the current locale segment, so it must be stripped
+  // before handing it to redirect() — the navigation helper re-adds the target locale.
   // T-02-02 mitigation: validate referer against same-origin to prevent open-redirect via crafted referer.
   const referer = h.get('referer');
   let pathname = '/';
@@ -41,7 +42,9 @@ export async function switchLocale(target: Locale) {
       pathname = '/';
     }
   }
-  const stripped = pathname || '/';
+  // Strip the leading /en or /pt locale segment (if present) so redirect() doesn't
+  // double-prefix the destination href with the target locale.
+  const stripped = pathname.replace(/^\/(en|pt)(?=\/|$)/, '') || '/';
 
   redirect({ href: stripped, locale: target });
 }

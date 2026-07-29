@@ -117,21 +117,21 @@ describe('buildMetadata() — type / openGraph article branches', () => {
   });
 });
 
-describe('buildMetadata() — locale + canonical URLs (localePrefix:never)', () => {
-  it("locale='en' -> openGraph.locale 'en_US' and locale-free canonical URL", () => {
+describe('buildMetadata() — locale + canonical URLs (localePrefix:always)', () => {
+  it("locale='en' -> openGraph.locale 'en_US' and locale-prefixed canonical URL", () => {
     vi.stubEnv('VERCEL_ENV', 'production');
     const meta = buildMetadata({ locale: 'en', path: '/blog/foo', title: 'T', description: 'D' });
     expect(meta.openGraph?.locale).toBe('en_US');
-    expect(meta.alternates?.canonical).toContain('/blog/foo');
-    expect(meta.alternates?.canonical).not.toContain('/en/');
+    expect(meta.alternates?.canonical).toBe(`${SITE_URL}/en/blog/foo`);
+    expect(meta.openGraph?.url).toBe(`${SITE_URL}/en/blog/foo`);
   });
 
-  it("locale='pt' -> openGraph.locale 'pt_BR' and locale-free canonical", () => {
+  it("locale='pt' -> openGraph.locale 'pt_BR' and locale-prefixed canonical for home", () => {
     vi.stubEnv('VERCEL_ENV', 'production');
     const meta = buildMetadata({ locale: 'pt', path: '', title: 'T', description: 'D' });
     expect(meta.openGraph?.locale).toBe('pt_BR');
-    // home path '' normalises to '/'
-    expect(meta.alternates?.canonical).toMatch(/\/$/);
+    // home path '' -> no trailing slash, matches sitemap.ts style
+    expect(meta.alternates?.canonical).toBe(`${SITE_URL}/pt`);
   });
 });
 
@@ -146,13 +146,13 @@ describe('buildMetadata() — hreflang alternates (D-01)', () => {
     });
   });
 
-  it('normalizes empty path to "/" in all three hreflang entries', () => {
+  it('normalizes empty home path to the bare locale segment in all three hreflang entries', () => {
     vi.stubEnv('VERCEL_ENV', 'production');
     const meta = buildMetadata({ locale: 'pt', path: '', title: 'T', description: 'D' });
     expect(meta.alternates?.languages).toEqual({
-      en: `${SITE_URL}/en/`,
-      'pt-BR': `${SITE_URL}/pt/`,
-      'x-default': `${SITE_URL}/en/`,
+      en: `${SITE_URL}/en`,
+      'pt-BR': `${SITE_URL}/pt`,
+      'x-default': `${SITE_URL}/en`,
     });
   });
 });

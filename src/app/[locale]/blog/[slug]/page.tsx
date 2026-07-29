@@ -77,7 +77,7 @@ export default async function BlogPostPage({
             author: AUTHOR_PERSON,
             publisher: AUTHOR_PERSON,
             datePublished: post.date,
-            url: `${SITE_URL}/blog/${post.slug}`,
+            url: `${SITE_URL}/${locale}/blog/${post.slug}`,
             inLanguage: locale === 'pt' ? 'pt-BR' : 'en',
             keywords: post.tags.join(', '),
             image: `${SITE_URL}/${locale}/blog/${post.slug}/opengraph-image`,

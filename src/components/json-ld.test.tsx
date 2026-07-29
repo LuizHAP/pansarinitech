@@ -39,6 +39,17 @@ describe('AUTHOR_PERSON export', () => {
     expect(AUTHOR_PERSON.sameAs).toContain('https://github.com/LuizHAP');
     expect(AUTHOR_PERSON.sameAs).toContain('https://linkedin.com/in/luizpansarini');
   });
+
+  it('has @id pointing at the person fragment, jobTitle, and a PostalAddress for Jundiaí, SP, BR', () => {
+    expect(AUTHOR_PERSON['@id']).toBe(`${SITE_URL}/#person`);
+    expect(AUTHOR_PERSON.jobTitle).toBe('Principal Software Engineer');
+    expect(AUTHOR_PERSON.address).toEqual({
+      '@type': 'PostalAddress',
+      addressLocality: 'Jundiaí',
+      addressRegion: 'SP',
+      addressCountry: 'BR',
+    });
+  });
 });
 
 describe('SITE_URL export', () => {

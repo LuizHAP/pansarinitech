@@ -24,6 +24,12 @@ const nextConfig: NextConfig = {
   // local static imports through next/image), no experimental flags.
   async redirects() {
     return [
+      // Unprefixed routes (pre localePrefix:'always') redirect to the default locale.
+      { source: '/blog', destination: '/en/blog', permanent: true },
+      { source: '/blog/:slug', destination: '/en/blog/:slug', permanent: true },
+      { source: '/projects', destination: '/en/projects', permanent: true },
+      { source: '/projects/:slug', destination: '/en/projects/:slug', permanent: true },
+      { source: '/now', destination: '/en/now', permanent: true },
       // Remove dates from blog post slugs (date-suffixed slugs are legacy)
       {
         source: '/:locale(en|pt)/blog/ai-in-development-20260612',

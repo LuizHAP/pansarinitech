@@ -43,7 +43,10 @@ export function buildMetadata(input: BuildMetadataInput): Metadata {
   } = input;
 
   const fullTitle = `${title} — ${SITE_NAME}`;
-  const canonicalUrl = `${SITE_URL}${path || '/'}`;
+  // Canonical must include the locale prefix (localePrefix:'always') and match
+  // the sitemap's URL style: `${SITE_URL}/${locale}${path}`, where path === ''
+  // for home (e.g. `https://x/en`, no trailing slash).
+  const canonicalUrl = `${SITE_URL}/${locale}${path || ''}`;
 
   // robots layer: per-page meta-tag noindex on Vercel preview deploys
   // (VERCEL_ENV defined but != 'production'). On local dev (VERCEL_ENV
@@ -74,9 +77,9 @@ export function buildMetadata(input: BuildMetadataInput): Metadata {
     alternates: {
       canonical: canonicalUrl,
       languages: {
-        en: `${SITE_URL}/en${path || '/'}`,
-        'pt-BR': `${SITE_URL}/pt${path || '/'}`,
-        'x-default': `${SITE_URL}/en${path || '/'}`,
+        en: `${SITE_URL}/en${path || ''}`,
+        'pt-BR': `${SITE_URL}/pt${path || ''}`,
+        'x-default': `${SITE_URL}/en${path || ''}`,
       },
     },
     openGraph,

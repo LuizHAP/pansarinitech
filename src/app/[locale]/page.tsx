@@ -1,3 +1,4 @@
+import JsonLd, { AUTHOR_PERSON, SITE_URL } from '@/components/json-ld';
 import {
   About,
   BlogPreview,
@@ -41,6 +42,23 @@ export default async function HomePage({
 
   return (
     <>
+      <JsonLd
+        schema={{
+          '@context': 'https://schema.org',
+          '@type': 'WebSite',
+          name: 'Luiz Pansarini',
+          url: `${SITE_URL}/${locale}`,
+          inLanguage: ['en', 'pt-BR'],
+          publisher: AUTHOR_PERSON,
+        }}
+      />
+      <JsonLd
+        schema={{
+          '@context': 'https://schema.org',
+          ...AUTHOR_PERSON,
+          url: `${SITE_URL}/${locale}`,
+        }}
+      />
       <Hero />
       <About />
       <FeaturedProjectsTeaser locale={locale} />

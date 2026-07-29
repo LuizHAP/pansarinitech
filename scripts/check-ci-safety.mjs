@@ -16,41 +16,26 @@ import { join } from 'node:path';
 // ---------------------------------------------------------------------------
 
 const RULES = [
-  // localePrefix:'never' — URLs in tests must not contain /en/ or /pt/ prefix.
-  // These routes no longer exist with the current routing config and cause
-  // immediate 404s or toHaveURL assertion failures in CI.
+  // localePrefix:'always' — every route is served under /en or /pt. A bare
+  // goto('/') or toHaveURL(/^\/blog/) targets a URL that middleware 307s away
+  // from, so tests must use the explicit locale-prefixed path.
   {
-    id: 'NO_LOCALE_PREFIX_IN_TEST_URLS',
-    description: 'locale-prefixed URL in test goto() or toHaveURL()',
-    files: ['tests/**/*.ts'],
-    // Match goto('/en'), goto('/pt'), goto('/en/'), goto('/pt/') etc.
-    // Also catches toHaveURL patterns like /\/en\// or /\/pt\//
-    pattern: /goto\(['"`]\/(?:en|pt)(?:\/|['"`])|\btoHaveURL\b[^;]*\/(?:en|pt)[/()/]/,
+    id: 'LOCALE_PREFIX_REQUIRED_IN_TEST_GOTO',
+    description: "page.goto() with a locale-free path (localePrefix is 'always')",
+    // NOTE: the glob resolver below only expands '**' when it precedes at
+    // least one more path segment held by a directory — it does not match
+    // files sitting directly inside the '**' directory. All spec files live
+    // flat under tests/, so 'tests/*.spec.ts' is used instead of 'tests/**/*.ts'
+    // (which would silently resolve to zero files and make this rule a no-op).
+    files: ['tests/*.spec.ts'],
+    // Flags goto('/'), goto('/blog'), goto('/does-not-exist'), etc. Allows
+    // goto('/en'), goto('/pt/...'), and template literals whose first segment
+    // is a dynamic locale (e.g. goto(`/${locale}${path}`)) — those derive the
+    // prefix from the Playwright project name at runtime.
+    pattern: /goto\(\s*['"`]\/(?!en\b|pt\b|\$\{)[^'"`]*['"`]/,
     message:
-      'Use locale-free URLs in tests (localePrefix is "never"). ' +
-      'Set NEXT_LOCALE cookie for PT: context.addCookies([{name:"NEXT_LOCALE",value:"pt",...}])',
-  },
-  // verify-metadata.mjs must not assert hreflang tags (removed with localePrefix:'never').
-  // Only flag actual code patterns — skip lines that are pure comments (// ...).
-  {
-    id: 'NO_HREFLANG_IN_VERIFY_METADATA',
-    description: 'hreflang assertion in verify-metadata.mjs (code, not comments)',
-    files: ['scripts/verify-metadata.mjs'],
-    // Match hreflang inside a string/regex literal (quotes or regex slashes), not in // comments
-    pattern: /(?:['"`/]).*href[Ll]ang/,
-    message:
-      'hreflang assertions are incompatible with localePrefix:"never". ' +
-      'Remove hrefLang / hreflang patterns from REQUIRED_PATTERNS.',
-  },
-  // verify-metadata.mjs routes must not use locale-prefixed paths.
-  {
-    id: 'NO_LOCALE_PREFIX_IN_VERIFY_ROUTES',
-    description: 'locale-prefixed route in verify-metadata.mjs ROUTES array',
-    files: ['scripts/verify-metadata.mjs'],
-    pattern: /['"`]\/(?:en|pt)(?:\/|['"`])/,
-    message:
-      'verify-metadata.mjs must use locale-free routes (localePrefix is "never"). ' +
-      'Replace "/en/..." and "/pt/..." with "/" and "/...".',
+      "Prefix test URLs with the target locale, e.g. goto('/en/blog') or " +
+      "goto('/pt/blog'), to match localePrefix:'always'.",
   },
   // gh pr edit has no --add-body flag. This breaks post-generation workflows
   // after the PR is created and the Vercel preview is deployed.

@@ -10,21 +10,23 @@
 // Both run in CI; this spec is the broader gate, sith-contrast.spec.ts is the
 // regression smoke that locks in THEME-06.
 //
-// localePrefix:'never' — URLs are locale-free. The 4 Playwright projects each set
-// locale: 'en-US' or locale: 'pt-BR' via Accept-Language so middleware serves the
-// correct locale without a URL prefix. No URL prefix assertions here.
+// localePrefix:'always' — every route is served under /en or /pt. The 4
+// Playwright projects each set locale: 'en-US' or locale: 'pt-BR'; the locale
+// segment used in goto() is derived from the project name so en-* projects
+// hit /en/... and pt-* projects hit /pt/....
 import { AxeBuilder } from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 
 const isDark = (name: string) => name.endsWith('-dark');
+const localeFor = (projectName: string) => (projectName.startsWith('pt') ? 'pt' : 'en');
 
-// Pages exercised in every locale × theme combo.
-//   /                              → home
+// Pages exercised in every locale × theme combo. `path` is the locale-free
+// suffix ('' for home) — prefixed with /en or /pt at goto() time below.
+//   ''                             → home
 //   /non-existent-route-for-404   → routes through [...rest] → notFound()
 //                                    → renders not-found.tsx (locale-aware 404)
-// Locale is served by middleware via Accept-Language (localePrefix:'never').
 const PAGES = [
-  { path: () => '/', desc: 'home' },
+  { path: () => '', desc: 'home' },
   { path: () => '/non-existent-route-for-404', desc: '404' },
   // Phase 3 additions (PROJ-01..05):
   { path: () => '/projects', desc: 'projects-listing' },
@@ -42,8 +44,9 @@ test.describe('a11y matrix — WCAG 2.1 AA across en/pt × light/dark × home/40
   for (const { path, desc } of PAGES) {
     test(`${desc}`, async ({ page }, testInfo) => {
       const dark = isDark(testInfo.project.name);
+      const locale = localeFor(testInfo.project.name);
 
-      await page.goto(path());
+      await page.goto(`/${locale}${path()}`);
 
       if (dark) {
         // Inject .dark on <html> manually so the saber-red Sith palette is the

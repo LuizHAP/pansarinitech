@@ -1,6 +1,7 @@
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import type { Locale } from '@/i18n/routing';
+import { SITE_URL } from '@/lib/seo';
 // src/lib/og.tsx — Phase 4 D-20..D-25 (single shared rendering factory)
 //
 // Used by 6 per-route opengraph-image.tsx files (added in Plan 04-02 + 04-03).
@@ -26,8 +27,9 @@ const ROLE_LINE: Record<Locale, string> = {
   pt: 'Principal Software Engineer · Brasil',
 };
 
-// D-25 TODO: swap to pansarini.tech in Phase 5 (custom domain handover).
-const SITE_URL_FOOTER = 'pansarinitech.vercel.app';
+// Derived from SITE_URL (src/lib/seo.ts) so the footer host always matches
+// the live domain (no more hardcoded value to swap on custom-domain handover).
+const SITE_URL_FOOTER = new URL(SITE_URL).host;
 
 // OKLCH palette → hex equivalents. Satori does NOT resolve CSS variables at
 // runtime, so per-token hex is required. Values mirror :root.dark in

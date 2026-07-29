@@ -58,7 +58,7 @@ export default async function CaseStudyPage({
           author: AUTHOR_PERSON,
           publisher: AUTHOR_PERSON,
           datePublished: `${project.year}-01-01`,
-          url: `${SITE_URL}/projects/${slug}`,
+          url: `${SITE_URL}/${locale}/projects/${slug}`,
           inLanguage: locale === 'pt' ? 'pt-BR' : 'en',
           keywords: project.stack.join(', '),
           image: /^https?:\/\//.test(project.heroImage)
