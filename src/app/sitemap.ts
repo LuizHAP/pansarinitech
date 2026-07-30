@@ -7,7 +7,7 @@ const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ??
   (process.env.VERCEL_ENV === 'production' && process.env.VERCEL_PROJECT_PRODUCTION_URL
     ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-    : 'https://pansarinitech.vercel.app');
+    : 'https://pansarini.dev');
 
 const HREFLANG: Record<Locale, string> = { en: 'en', pt: 'pt-BR' };
 

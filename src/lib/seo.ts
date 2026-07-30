@@ -13,7 +13,7 @@ import type { Locale } from '@/i18n/routing';
 // Plan 04-03). Setting openGraph.images explicitly would shadow those.
 import type { Metadata } from 'next';
 
-export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://pansarinitech.vercel.app';
+export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://pansarini.dev';
 const SITE_NAME = 'Luiz Pansarini';
 
 const OG_LOCALE: Record<Locale, string> = { en: 'en_US', pt: 'pt_BR' };

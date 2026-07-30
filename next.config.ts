@@ -24,6 +24,14 @@ const nextConfig: NextConfig = {
   // local static imports through next/image), no experimental flags.
   async redirects() {
     return [
+      // Canonical host: production *.vercel.app → custom domain (GSC Change of Address).
+      // Preview deployments (*.vercel.app with hash suffix) are intentionally NOT redirected.
+      {
+        source: '/:path*',
+        has: [{ type: 'host', value: 'pansarinitech.vercel.app' }],
+        destination: 'https://pansarini.dev/:path*',
+        permanent: true,
+      },
       // Unprefixed routes (pre localePrefix:'always') redirect to the default locale.
       { source: '/blog', destination: '/en/blog', permanent: true },
       { source: '/blog/:slug', destination: '/en/blog/:slug', permanent: true },

@@ -6,7 +6,7 @@
 // next.config.ts headers() and src/lib/seo.ts robots-meta).
 import type { MetadataRoute } from 'next';
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://pansarinitech.vercel.app';
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://pansarini.dev';
 
 export default function robots(): MetadataRoute.Robots {
   const isProduction = process.env.VERCEL_ENV === 'production';
