@@ -1,3 +1,4 @@
+export { BrandLogo } from './brand-logo';
 export { CommandPalette, CommandPaletteRoot, CommandPaletteTrigger } from './command-palette';
 export { EasterEgg } from './easter-egg';
 export { Footer } from './footer';

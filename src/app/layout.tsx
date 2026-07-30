@@ -19,6 +19,17 @@ export const metadata: Metadata = {
     default: 'Luiz Pansarini',
     template: '%s — Luiz Pansarini',
   },
+  // File conventions (app/favicon.ico, icon.png, apple-icon.png) cover the default
+  // tags; explicit public/ sizes keep browsers and Lighthouse aligned with the
+  // committed brand pack (16/32 + apple-touch).
+  icons: {
+    icon: [
+      { url: '/favicon.ico', sizes: 'any' },
+      { url: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
+      { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
+    ],
+    apple: [{ url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' }],
+  },
   verification: {
     google: 'GZNxF2q4D9DHuIF5_7pksepwESxAyKggi0bRYQ-uqfs',
   },

@@ -35,7 +35,7 @@ vi.mock('./deferred-command-palette', async () => {
 import { Header } from './header';
 
 describe('<Header />', () => {
-  it('renders the brand link pointing to home', () => {
+  it('renders the brand mark image next to the wordmark', () => {
     render(<Header />, { locale: 'en' });
 
     // Brand link has aria-label "Luiz Pansarini — home"
@@ -43,6 +43,11 @@ describe('<Header />', () => {
     expect(brandLink).toBeInTheDocument();
     // The Link from next-intl prepends the locale; href will be /en
     expect(brandLink.getAttribute('href')).toMatch(/^\/(en|pt)?/);
+    expect(brandLink).toHaveTextContent('Luiz Pansarini');
+    expect(brandLink.querySelector('img')).toHaveAttribute(
+      'src',
+      expect.stringContaining('pansarini-mark'),
+    );
   });
 
   it('renders the locale toggle buttons (PT and EN)', () => {

@@ -5,6 +5,7 @@ import { Link } from '@/lib/i18n/navigation';
 // to defer its large JS bundle (10 lucide icons + shadcn/ui) until first Cmd+K press —
 // reduces initial main-thread blocking, directly improving LCP.
 import { useTranslations } from 'next-intl';
+import { BrandLogo } from './brand-logo';
 import { CommandPaletteRoot } from './deferred-command-palette';
 import { LocaleToggle } from './locale-toggle';
 import { ThemeToggle } from './theme-toggle';
@@ -15,12 +16,8 @@ export function Header() {
   return (
     <header className="sticky top-0 z-50 h-14 border-b border-border bg-muted px-4 md:px-6">
       <div className="mx-auto flex h-full max-w-6xl items-center gap-4">
-        <Link
-          href="/"
-          aria-label={t('brandAriaLabel')}
-          className="text-base font-semibold text-foreground"
-        >
-          Luiz Pansarini
+        <Link href="/" aria-label={t('brandAriaLabel')} className="min-w-0">
+          <BrandLogo />
         </Link>
         <div className="flex-1" />
         <LocaleToggle />
