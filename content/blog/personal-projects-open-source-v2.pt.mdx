@@ -1,0 +1,61 @@
+---
+title: "Lições de Projetos Pessoais de Código Aberto"
+date: "2026-07-31"
+excerpt: "Explorando decisões técnicas e desafios enfrentados no desenvolvimento de projetos pessoais de código aberto, das escolhas de stack aos aprendizados práticos."
+tags:
+  - código-aberto
+  - projetos-pessoais
+  - engenharia-de-software
+draft: false
+---
+
+## Transição de Projetos Pessoais para Código Aberto
+
+Desenvolver projetos pessoais com a intenção de lançá-los como código aberto acrescenta uma nova dimensão à engenharia de software. Esta jornada exige decisões que atendam não apenas às necessidades imediatas, mas também à sustentabilidade e ao uso em comunidade. Aqui, compartilho minhas experiências e aprendizados de vários projetos, destacando desafios, decisões técnicas e resultados.
+
+## Escolhendo a Stack Adequada
+
+Uma das minhas principais realizações foi a importância de escolher a stack certa, adaptada a requisitos do projeto e contribuições comunitárias antecipadas. No desenvolvimento do **DoAção**, uma plataforma projetada para conectar voluntários a empresas em Jundiaí, a escolha do **Next.js**, **Supabase** e **Drizzle ORM** foi guiada pela necessidade de capacidades robustas em tempo real e integração de API sem falhas. O **Next.js** facilitou uma experiência poderosa de renderização no lado do servidor, enquanto o **Supabase** ofereceu uma solução de backend facilmente escalável.
+
+<Callout type="info">Considere sempre as necessidades atuais do projeto e a escala potencial ao selecionar uma stack.</Callout>
+
+## Gerenciamento de Dados em Tempo Real
+
+Implementar funcionalidades em tempo real, como contagem de pontos e verificação de ações no **DoAção**, apresentou alguns obstáculos técnicos. Projetar o schema com **Drizzle ORM** para facilitar o acompanhamento dinâmico de pontos e recompensas exigiu iteração constante. Garantir a consistência dos dados e o feedback do usuário em tempo real demandou um manejo meticuloso das integrações de webhook e das políticas de RLS do **Supabase**.
+
+## Aprendendo com a Integração do Bot do Discord
+
+O projeto **MTG Price Monitor** ilustrou as complexidades de trabalhar com APIs e integração de dados ao vivo. Aproveitando o **Discord.js**, conseguimos entregar alertas de monitoramento de preços diretamente em uma plataforma de comunicação familiar. No entanto, o desafio residia em gerenciar limites de taxa e garantir uma raspagem eficiente dos dados do mercado. Foi necessário implementar lógica para deduplicação e manipulação de atrasos para evitar chamadas de API desnecessárias.
+
+<Warning>Gerenciar limites de taxa e evitar solicitações repetitivas de API são cruciais para manter uma integração estável.</Warning>
+
+## Construindo para Escalabilidade
+
+Projetos de código aberto expostos a um público global exigem um foco em escalabilidade. Antecipar o uso além das projeções iniciais e construir para acomodar o crescimento foi uma lição claramente ilustrada durante esses empreendimentos. A decisão de construir o **pansarini.tech** no **Next.js 16** e otimizar operações com **Shadcn/UI** foram decisões diretas visando o futuro dos projetos.
+
+<CodeFilename filename="config/next.config.js">
+```js
+module.exports = {
+  reactStrictMode: true,
+  swcMinify: true,
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+};
+```
+</CodeFilename>
+
+## Navegando a Internacionalização
+
+Ao criar um portfólio bilíngue, enfrentei desafios de internacionalização que vão além da simples tradução. Implementar **next-intl** para gerenciar rotas e conteúdo localizados dinamicamente foi fundamental, permitindo uma navegação fluída entre os idiomas inglês e português brasileiro.
+
+## O Impacto da Comunidade
+
+Abraçar o feedback da comunidade tem sido, talvez, um dos aspectos mais recompensadores do trabalho de código aberto. O envolvimento ativo da comunidade não só traz novas ideias, mas também identifica problemas potenciais cedo. Além disso, à medida que meus projetos ganharam tração, colaboradores melhoraram a qualidade do código e introduziram novas funcionalidades, acelerando a inovação.
+
+<InlineBadge>desenvolvimento comunitário</InlineBadge> resulta frequentemente em software mais rico e resiliente.
+
+## Conclusão
+
+A transição de projetos pessoais para código aberto tem sido um capítulo rico em desafios e oportunidades de aprendizado. Ao navegar pelas complexidades técnicas, otimizar para escalabilidade e abraçar contribuições comunitárias, criei soluções prontas para adoção mais ampla — uma jornada gratificante que continua a evoluir.
+

@@ -1,0 +1,61 @@
+---
+title: "Lessons from Open Source Personal Projects"
+date: "2026-07-31"
+excerpt: "Exploring the technical decisions and challenges faced while developing open source personal projects, from stack choices to live learnings."
+tags:
+  - open-source
+  - personal-projects
+  - software-engineering
+draft: false
+---
+
+## Transitioning Personal Projects to Open Source
+
+Developing personal projects with the intent to release them as open-source adds a unique dimension to software engineering. This journey often entails making decisions that cater not just to immediate needs but to broader community use and sustainability. Here, I share my experiences and learnings from various projects, highlighting challenges, technical decisions, and outcomes.
+
+## Choosing the Right Stack
+
+One of my key realizations has been the importance of selecting the right stack tailored both to project requirements and anticipated community contributions. For instance, in developing **DoAção**, a platform designed to connect volunteers with businesses in Jundiaí, the choice of **Next.js**, **Supabase**, and **Drizzle ORM** was driven by a need for robust real-time capabilities and seamless API integration. **Next.js** facilitated a powerful server-side rendering experience, while **Supabase** offered an easily scalable backend solution.
+
+<Callout type="info">Always consider both current project needs and potential scale when selecting a stack.</Callout>
+
+## Managing Real-time Data
+
+Implementing real-time functionalities, such as point tallying and action verification in **DoAção**, presented some technical hurdles. Designing the schema with **Drizzle ORM** to facilitate dynamic points and rewards tracking required constant iteration. Ensuring data consistency and user feedback in real-time demanded meticulous handling of webhook integrations and **Supabase**'s Row Level Security policies.
+
+## Learning from Discord Bot Integration
+
+The **MTG Price Monitor** project illustrated the complexities of working with APIs and live data integration. By leveraging **Discord.js**, we were able to deliver price tracking alerts directly into a familiar communication platform. However, the challenge lay in managing rate limits and ensuring efficient scraping of marketplace data. It required implementing logic for deduplication and delay handling to avoid unnecessary API calls.
+
+<Warning>Handling rate limits and avoiding repetitive API requests are crucial to maintaining a stable integration.</Warning>
+
+## Building for Scalability
+
+Open-source projects exposed to a global audience necessitate a focus on scalability. Anticipating usage beyond initial projections and building to accommodate growth was a lesson clearly illustrated during these endeavors. The decision to build **pansarini.tech** on **Next.js 16** and streamline operations with **Shadcn/UI** were direct decisions aimed at future-proofing projects.
+
+<CodeFilename filename="config/next.config.js">
+```js
+module.exports = {
+  reactStrictMode: true,
+  swcMinify: true,
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+};
+```
+</CodeFilename>
+
+## Navigating Internationalization
+
+In creating a bilingual portfolio, I encountered challenges around internationalization that go beyond simple translation. Implementing **next-intl** to manage localized routes and content dynamically proved instrumental, allowing seamless navigation between English and Brazilian Portuguese locales.
+
+## The Impact of a Community
+
+Embracing community feedback has been perhaps one of the most rewarding aspects of open source work. Active community involvement not only brings new ideas but also surfaces potential issues early. Additionally, as my projects gained traction, contributors improved code quality and introduced new features, accelerating innovation.
+
+<InlineBadge>community-driven</InlineBadge> development often results in richer, more resilient software.
+
+## Conclusion
+
+Transitioning personal projects to open-source has been a chapter rich with both challenges and learning opportunities. By navigating technical intricacies, optimizing for scalability, and embracing community contributions, I have crafted solutions poised for broader adoption — a fulfilling journey that continues to evolve.
+
