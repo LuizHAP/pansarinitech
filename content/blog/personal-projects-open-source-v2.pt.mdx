@@ -1,0 +1,67 @@
+---
+title: "Navegando o Open Source com Projetos Pessoais"
+date: "2026-08-01"
+excerpt: "Explore a jornada de transformar projetos de engenharia pessoais em contribuições open-source impactantes. Lições técnicas, surpresas e decisões estratégicas ao longo do caminho."
+tags:
+  - open-source
+  - engenharia-de-software
+  - projetos-pessoais
+draft: false
+---
+
+## Introdução à Transição para Open Source
+
+Desenvolver projetos pessoais é uma jornada comum para engenheiros de software, frequentemente começando como hobbies ou projetos paralelos. Entretanto, transformar esses projetos em contribuições open-source pode ter impactos profundos. O modelo open-source favorece inovação, colaboração e crescimento além das capacidades ou imaginação de um único desenvolvedor. Este post explora como meus projetos pessoais amadureceram em empreendimentos open-source, revelando desafios enfrentados, lições aprendidas e decisões técnicas que guiaram esse caminho.
+
+## A Origem do DoAção
+
+Um dos meus projetos, **DoAção**, originou-se como uma plataforma comunitária localizada para incentivar o trabalho voluntário. Desenvolvido com **Next.js**, **Supabase** e **Drizzle ORM**, visa conectar voluntários com negócios em Jundiaí, permitindo que voluntários ganhem e resgatem pontos por suas contribuições. A transição de um projeto privado para uma iniciativa open-source foi impulsionada pelo interesse da comunidade e pelo potencial de impacto mais amplo.
+
+<Note>Criar um sistema robusto de contagem de pontos em tempo real foi um desafio que exigiu um equilíbrio cuidadoso entre precisão e desempenho.</Note>
+
+A conversão para open-source significou revisitar decisões arquitetônicas, como fluxos de verificação de ações e políticas **Supabase RLS**, para garantir que o sistema fosse escalável e seguro para um público aberto.
+
+## Inovação em Preços com o MTG Price Monitor
+
+**MTG Price Monitor** utiliza **Next.js**, **Drizzle ORM** e **Discord.js** para rastrear preços de cartas Magic: The Gathering, alertando usuários via Discord. Transformar isso em um projeto open-source destacou vários problemas. Extração de dados de APIs sem ultrapassar limites de taxa foi um desafio e exigiu uma lógica adaptável de deduplicação de alertas.
+
+### Enfrentando Desafios de Limite de Taxa
+
+Compreender e navegar pelos vários limites de taxas de API de mercado foi crucial. O uso de **Discord.js** exigia conformidade com os próprios limites de taxa do Discord, necessitando planejamento preciso e estratégias de cache de dados. Isso foi vital para evitar interrupções de serviço enquanto mantinha uma experiência suave para o usuário.
+
+<CodeFilename filename="config/discordApi.ts">
+```typescript
+// Exemplo de configuração de interface de API para gerenciar limites de taxa e tentativas
+const fetchWithRateLimit = async (url) => {
+  try {
+    // Lógica para verificar e respeitar limites de taxa de API
+    const response = await fetch(url);
+    return await response.json();
+  } catch (error) {
+    console.warn("Limite de taxa atingido, tentando novamente...");
+    setTimeout(() => fetchWithRateLimit(url), 1000); // Lógica de retry
+  }
+};
+```
+</CodeFilename>
+
+## Navegando Trade-offs Técnicos
+
+Cada decisão na transição para open-source foi fundamentada em trade-offs. No **NotificaMe**, um sistema de gerenciamento de filas inteligentes, escolher entre filas **Redis** e persistência **PostgreSQL** foi crucial. Enquanto Redis oferece velocidade, a durabilidade do PostgreSQL foi uma prioridade para a persistência de dados, especialmente dado o escopo de filas e notificações.
+
+<Warning>Uma escolha não otimizada entre Redis e PostgreSQL pode levar a gargalos de desempenho ou riscos de perda de dados, dependendo do caso de uso.</Warning>
+
+A arquitetura de microsserviços suportou escalabilidade mas introduziu complexidade na orquestração e implantação.
+
+## Engajamentos Estratégicos em Open Source
+
+O engajamento com a comunidade mais ampla desempenhou um papel crítico na formação desses projetos. Ciclos de feedback abertos foram imensamente valiosos, levando a melhorias de funcionalidade e desempenho que eu não teria alcançado sozinho. Além disso, a consideração cuidadosa de licenças garantiu que, enquanto o uso era aberto e encorajado, direitos e contribuições fossem respeitados.
+
+<InlineBadge variant="primary">Estável</InlineBadge> os lançamentos melhoraram a adotabilidade, enquanto a documentação consistente manteve a acessibilidade para novos colaboradores e experientes.
+
+## Conclusão
+
+A transição de projetos pessoais para open-source raramente é uma jornada direta, mas sim uma série de decisões estratégicas compostas por desafios técnicos. Através do DoAção, MTG Price Monitor e NotificaMe, experimentei em primeira mão as recompensas desse processo transformador. Projetos open-source não só enriquecem o crescimento pessoal como também contribuem para a inovação coletiva e a diversidade da comunidade de desenvolvimento de software.
+
+Para aqueles que consideram este caminho, comece pequeno, mantenha-se aberto a feedbacks e continue iterando—open-source é tanto sobre comunidade quanto sobre código.
+

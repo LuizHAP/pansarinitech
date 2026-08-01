@@ -1,0 +1,67 @@
+---
+title: "Navigating Open Source with Personal Projects"
+date: "2026-08-01"
+excerpt: "Delve into the journey of transforming personal engineering projects into impactful open-source contributions. Technical lessons, surprises, and strategic decisions along the way."
+tags:
+  - open-source
+  - software-engineering
+  - personal-projects
+draft: false
+---
+
+## Introduction to Open Source Transition
+
+Building personal projects is a common journey for software engineers, often starting as hobbies or side projects. However, transitioning these projects into open-source contributions can have profound impacts. The open-source model fosters innovation, collaboration, and growth beyond the constraints of a single developer's capabilities or imagination. This post explores how my personal projects matured into open-source endeavors, revealing challenges faced, lessons learned, and technical decisions that guided this path.
+
+## The Genesis of DoAção
+
+One of my projects, **DoAção**, originated as a localized community platform to encourage volunteer work. Developed with **Next.js**, **Supabase**, and **Drizzle ORM**, it aims to connect volunteers with businesses in Jundiaí, allowing volunteers to earn and redeem points for their contributions. The shift from a private project to an open-source initiative was driven by community interest and the potential for broader impact.
+
+<Note>Creating a robust real-time point tallying system was a challenge that required careful balance between accuracy and performance.</Note>
+
+Conversion into open source meant revisiting architectural decisions, such as action verification flows and **Supabase RLS policies**, to ensure the system was both scalable and secure for an open audience.
+
+## Pricing Innovation with MTG Price Monitor
+
+**MTG Price Monitor** leverages **Next.js**, **Drizzle ORM**, and **Discord.js** to track Magic: The Gathering card prices, alerting users via Discord. Transitioning this into an open-source project highlighted several issues. Scraping API data reliably without breaching rate limits was non-trivial and demanded an adaptable alert deduplication logic.
+
+### Addressing Rate Limit Challenges
+
+Understanding and navigating various marketplace API rate limits was crucial. The use of **Discord.js** required compliance with Discord's own rate limiting, necessitating precise scheduling and data caching strategies. This was pivotal to prevent service interruptions while maintaining a smooth user experience.
+
+<CodeFilename filename="config/discordApi.ts">
+```typescript
+// Example API wrapper setup to manage rate limits and retries
+const fetchWithRateLimit = async (url) => {
+  try {
+    // Logic to check and respect API rate limits
+    const response = await fetch(url);
+    return await response.json();
+  } catch (error) {
+    console.warn("Rate limit reached, retrying...");
+    setTimeout(() => fetchWithRateLimit(url), 1000); // Retry logic
+  }
+};
+```
+</CodeFilename>
+
+## Navigating Technical Trade-offs
+
+Each decision in transitioning to open source was underpinned by trade-offs. In **NotificaMe**, a smart queue management system, choosing between **Redis** queues and **PostgreSQL** persistence was crucial. While Redis offered speed, PostgreSQL's durability was a priority for data persistence, especially given the queuing and notification scope.
+
+<Warning>An unoptimized choice between Redis and PostgreSQL can lead to either performance bottlenecks or data loss risks, depending on the use case.</Warning>
+
+The microservices architecture supported scalability but introduced complexity in orchestration and deployment.
+
+## Strategic Open Source Engagements
+
+Engaging with the broader community played a critical role in shaping these projects. Open feedback cycles were immensely valuable, leading to enhancements in functionality and performance that I wouldn't have achieved alone. Furthermore, careful consideration of licensing ensured that while usage was open and encouraged, rights and contributions were respected.
+
+<InlineBadge variant="primary">Stable</InlineBadge> releases improved adoptability, while consistent documentation maintained accessibility for new and experienced contributors alike.
+
+## Conclusion
+
+Transitioning personal projects to open source is rarely a straightforward journey but rather a series of strategic decisions compounded by technical challenges. Through DoAção, MTG Price Monitor, and NotificaMe, I've experienced firsthand the rewards of this transformative process. Open-source projects not only enhance personal growth but also contribute to the collective innovation and diversity of the software development community.
+
+For those considering this path, start small, stay open to feedback, and continuously iterate—open source is as much about community as it is about code.
+
