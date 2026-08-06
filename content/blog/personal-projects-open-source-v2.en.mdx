@@ -1,0 +1,58 @@
+---
+title: "Evolving Personal Projects into Open Source"
+date: "2026-08-06"
+excerpt: "How personal projects evolved into valuable open source contributions, focusing on technical challenges and community impact."
+tags:
+  - open-source
+  - software-development
+  - community
+draft: false
+---
+
+## Introduction
+
+Open source has always been a crucial part of the software ecosystem, offering developers an opportunity to collaborate and innovate beyond the boundaries of proprietary software. Over the years, I've transitioned several personal projects into open-source initiatives. This journey not only involved overcoming various technical challenges but also highlighted the importance of community engagement.
+
+## From Personal to Public
+
+One of my first projects to go open source was **DoAção**, a platform connecting volunteers with local businesses. Initially, the project was a small-scale personal endeavor. However, I realized the potential benefit it could offer to a broader audience. By open sourcing it, we enabled other developers to tailor and expand its functionalities to suit their regional needs.
+
+The key challenge in this transition was designing a flexible architecture that would allow for easy customization. **Next.js** and **Supabase** provided the necessary scaffolding with minimal cost, while **Drizzle ORM** facilitated a modular database design. The real complexity lay in establishing an efficient real-time point tallying system, which required meticulous schema design and transaction handling.
+
+<Warning>Watch out for breaking changes when updating Supabase schemas for real-time functionalities.</Warning>
+
+## Technical Lessons and Strategic Decisions
+
+Building the **MTG Price Monitor** demanded integrating multiple marketplace APIs reliably. The challenge was handling rate limits and data consistency across varied sources. **TypeScript**'s static typing was indispensable for error reduction, especially when processing API responses. One valuable lesson was incorporating retries and deduplication logic to ensure alert accuracy without overwhelming endpoints.
+
+Another technical principle we applied is the adoption of **Shadcn/UI** over prebuilt libraries. Although it required more upfront work for component styling, owning the source code allowed us to avoid dependency conflicts and facilitated a more personalized UI experience.
+
+<CodeFilename filename="src/components/Alert.tsx">
+```tsx
+export default function Alert({ message }: { message: string }) {
+  return <div className="alert">{message}</div>;
+}
+```
+</CodeFilename>
+
+## Engaging with the Community
+
+The transition from personal projects to open source is not only about code but also about building relationships. I quickly learned the value of thorough documentation and communication. **Next-intl** played a significant role here by allowing seamless internationalization, making projects accessible to a wider user base.
+
+Engagement with the community also involves active participation in discussions and being receptive to contributions. This openness often leads to unexpected improvements and novel features suggested by the community.
+
+<Note>Never underestimate the power of good documentation to help other contributors onboard effectively.</Note>
+
+## Conclusion
+
+Turning personal projects into open-source contributions is both challenging and rewarding. Navigating the technical hurdles and fostering community collaboration has not only improved the projects themselves but also enriched my development skills. As these projects grow, they continue to foster innovation and provide opportunities for developers worldwide to contribute and learn.
+
+Embracing open source transforms simple projects into dynamic tools for learning and growth, creating a larger impact than any single developer can achieve alone.
+
+<MyStat>50+</MyStat>
+
+<Stat number="50+" label="developers contributed in the last year" />
+
+---
+
+As the journey continues, I'm excited to see how these projects will evolve with the community's help and what new challenges will arise on the path of open-source development.
