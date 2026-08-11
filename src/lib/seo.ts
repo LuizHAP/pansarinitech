@@ -72,7 +72,10 @@ export function buildMetadata(input: BuildMetadataInput): Metadata {
 
   return {
     metadataBase: new URL(SITE_URL),
-    title: fullTitle,
+    // Keep the document title unbranded: the root layout's title template owns
+    // the single visible suffix. Social metadata is not template-merged, so it
+    // continues to use fullTitle explicitly below.
+    title,
     description,
     alternates: {
       canonical: canonicalUrl,

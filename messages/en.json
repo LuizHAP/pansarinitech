@@ -94,6 +94,7 @@
   },
   "blog": {
     "pageTitle": "Blog",
+    "seoTitle": "Software Engineering Blog",
     "listingIntro": "Occasional engineering posts. Mostly about what I had to look up twice.",
     "readingTime": "{minutes} min read",
     "draftBadge": "Draft",

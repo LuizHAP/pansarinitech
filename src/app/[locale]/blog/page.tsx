@@ -22,7 +22,7 @@ export async function generateMetadata({
   return buildMetadata({
     locale,
     path: '/blog',
-    title: t('pageTitle'),
+    title: t('seoTitle'),
     description: t('listingIntro'),
   });
 }

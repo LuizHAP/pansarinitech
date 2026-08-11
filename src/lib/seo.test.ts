@@ -117,6 +117,33 @@ describe('buildMetadata() — type / openGraph article branches', () => {
   });
 });
 
+describe('buildMetadata() — title branding', () => {
+  it('leaves the document title unbranded for the root layout template', () => {
+    vi.stubEnv('VERCEL_ENV', 'production');
+    const meta = buildMetadata({
+      locale: 'en',
+      path: '/blog',
+      title: 'Blog',
+      description: 'D',
+    });
+
+    expect(meta.title).toBe('Blog');
+  });
+
+  it('brands Open Graph and Twitter titles exactly once', () => {
+    vi.stubEnv('VERCEL_ENV', 'production');
+    const meta = buildMetadata({
+      locale: 'pt',
+      path: '/blog',
+      title: 'Blog',
+      description: 'D',
+    });
+
+    expect(meta.openGraph?.title).toBe('Blog — Luiz Pansarini');
+    expect(meta.twitter?.title).toBe('Blog — Luiz Pansarini');
+  });
+});
+
 describe('buildMetadata() — locale + canonical URLs (localePrefix:always)', () => {
   it("locale='en' -> openGraph.locale 'en_US' and locale-prefixed canonical URL", () => {
     vi.stubEnv('VERCEL_ENV', 'production');

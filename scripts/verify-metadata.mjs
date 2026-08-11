@@ -4,7 +4,7 @@
 // Spawns `next start` against the existing .next build, fetches every route
 // under both the /en and /pt locale prefixes, and asserts the rendered
 // <head> contains:
-//   - <title> non-empty
+//   - <title> non-empty with exactly one `— Luiz Pansarini` suffix
 //   - <meta name="description"> non-empty
 //   - <meta property="og:locale"> matches en_US (EN pass) or pt_BR (PT pass)
 //   - hreflang alternate links for en, pt-BR, and x-default
@@ -28,10 +28,37 @@ const ROUTES = [
   '/now',
 ];
 
+const BRAND_SUFFIX = ' — Luiz Pansarini';
+const EXPECTED_TITLES = new Map([
+  ['/en/blog', `Software Engineering Blog${BRAND_SUFFIX}`],
+  ['/pt/blog', `Blog de Engenharia de Software${BRAND_SUFFIX}`],
+]);
+
 const REQUIRED_PATTERNS_COMMON = [
   { name: '<title>', regex: /<title>[^<]+<\/title>/ },
   { name: '<meta name="description">', regex: /<meta name="description" content="[^"]+"/ },
 ];
+
+function checkTitle(html, locale, url) {
+  const title = html.match(/<title>([^<]+)<\/title>/)?.[1];
+  if (!title) return 0;
+
+  const expectedTitle = EXPECTED_TITLES.get(url);
+  if (expectedTitle && title !== expectedTitle) {
+    console.error(
+      `[verify-metadata] ${locale} ${url}: expected <title> "${expectedTitle}", received "${title}"`,
+    );
+    return 1;
+  }
+
+  const suffixCount = title.split(BRAND_SUFFIX).length - 1;
+  if (suffixCount === 1 && title.endsWith(BRAND_SUFFIX)) return 0;
+
+  console.error(
+    `[verify-metadata] ${locale} ${url}: expected one trailing "${BRAND_SUFFIX}" in <title>, received "${title}"`,
+  );
+  return 1;
+}
 
 const REQUIRED_PATTERNS_EN = [
   ...REQUIRED_PATTERNS_COMMON,
@@ -80,7 +107,7 @@ process.on('SIGINT', () => {
 });
 
 let failed = 0;
-const checksPerRoute = REQUIRED_PATTERNS_EN.length + REQUIRED_PATTERNS_HREFLANG.length;
+const checksPerRoute = REQUIRED_PATTERNS_EN.length + REQUIRED_PATTERNS_HREFLANG.length + 1;
 const totalChecks = ROUTES.length * 2 * checksPerRoute;
 
 try {
@@ -110,6 +137,7 @@ try {
       continue;
     }
     const html = await res.text();
+    failed += checkTitle(html, 'EN', url);
     for (const p of [...REQUIRED_PATTERNS_EN, ...REQUIRED_PATTERNS_HREFLANG]) {
       if (!p.regex.test(html)) {
         console.error(`[verify-metadata] EN ${url}: missing ${p.name}`);
@@ -128,6 +156,7 @@ try {
       continue;
     }
     const html = await res.text();
+    failed += checkTitle(html, 'PT', url);
     for (const p of [...REQUIRED_PATTERNS_PT, ...REQUIRED_PATTERNS_HREFLANG]) {
       if (!p.regex.test(html)) {
         console.error(`[verify-metadata] PT ${url}: missing ${p.name}`);

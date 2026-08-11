@@ -94,6 +94,7 @@
   },
   "blog": {
     "pageTitle": "Blog",
+    "seoTitle": "Blog de Engenharia de Software",
     "listingIntro": "Posts ocasionais sobre engenharia. Quase sempre sobre coisas que precisei consultar duas vezes.",
     "readingTime": "{minutes} min de leitura",
     "draftBadge": "Rascunho",
