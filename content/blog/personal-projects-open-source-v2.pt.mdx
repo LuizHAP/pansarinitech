@@ -1,0 +1,60 @@
+---
+title: "A Jornada de Criar Projetos Open Source"
+date: "2026-08-11"
+excerpt: "Explorando lições aprendidas no desenvolvimento de projetos open source, destacando desafios reais e soluções."
+tags:
+  - open-source
+  - desenvolvimento
+  - tecnologia
+draft: false
+---
+
+## Introdução aos Projetos Open Source
+
+Desenvolver projetos open source tem sido uma experiência recompensadora e desafiadora. Minhas experiências abrangem várias aplicações, cada uma utilizando um stack tecnológico moderno para abordar problemas reais. Aqui, exploro o processo de decisão, os obstáculos técnicos e as estratégias que levaram a resultados bem-sucedidos.
+
+## Escolhendo o Stack Tecnológico Correto
+
+Ao iniciar projetos open source, selecionar o **stack tecnológico** correto é fundamental. Cada projeto exige uma combinação única de ferramentas e frameworks para alcançar seus objetivos de forma eficaz.
+
+Por exemplo, o projeto **DoAção** teve como objetivo conectar voluntários com empresas em Jundiaí. Utilizamos **Next.js, Supabase e Drizzle ORM** para construir uma plataforma escalável. Este stack ofereceu um equilíbrio entre desempenho e desenvolvimento rápido, essencial para um projeto em andamento.
+
+<CodeFilename filename="src/config/database.ts">
+```ts
+import { createClient } from '@supabase/supabase-js';
+import { drizzle } from 'drizzle-orm';
+
+const supabase = createClient('URL', 'KEY');
+const db = drizzle(supabase);
+
+export { db };
+```
+</CodeFilename>
+
+## Superando os Desafios Técnicos
+
+Um dos principais desafios no **MTG Price Monitor**—um rastreador de preços de cartas Magic: The Gathering—foi lidar com múltiplas integrações de **APIs**. Este projeto utilizou **Next.js, Drizzle ORM e Discord.js** para buscar e monitorar mudanças de preços de forma eficiente.
+
+Gerenciar limites de taxa e deduplicar alertas foram desafios significativos. A solução envolveu implementar filas de atraso e criar um esquema especializado no **Drizzle ORM** para lidar com os dados eficientemente.
+
+<Note>Lidar com limites de taxa de API pode prevenir interrupções no serviço e garantir a confiabilidade na busca de dados.</Note>
+
+## Projeto para Desempenho e Escalabilidade
+
+Outra lição veio do desenvolvimento do meu portfólio pessoal, **pansarini.tech**, que enfatizou desempenho e acessibilidade. Aqui, o **Next.js 16** foi combinado com **Tailwind CSS v4** por sua velocidade e simplicidade. Este setup permitiu-me empregar a troca de tema Jedi/Sith de forma eficiente, utilizando espaços de cor OKLCH para padrões de contraste sustentáveis.
+
+O foco estava em oferecer uma experiência de usuário suave e uniformemente perceptível. Isso exigiu iterar sobre design e funcionalidade para garantir que os objetivos de desempenho fossem alcançados sem comprometer a estética.
+
+## Soluções e Melhores Práticas
+
+Ao longo desses projetos, algumas **melhores práticas** emergiram. A **arquitetura modular** foi essencial na manutenção de bases de código limpas e gerenciáveis, especialmente ao lidar com integrações complexas. O uso de **Zod** para validação de esquemas em projetos TypeScript melhorou a robustez e confiabilidade no manuseio de dados.
+
+Além disso, a incorporação de **pipelines CI/CD** minimizou problemas de integração ao automatizar testes e implantação. Esse passo foi crucial na manutenção da consistência e detecção precoce de erros no ciclo de desenvolvimento.
+
+<InlineBadge>Soluções Futuras</InlineBadge> envolvem antecipar potencial crescimento e projetar sistemas que possam evoluir sem grandes reformas.
+
+## Conclusão
+
+Cada projeto open source apresenta seu próprio conjunto de desafios e oportunidades de aprendizado. Ao construir esses projetos, aprimorei a capacidade de navegar em complexidades técnicas e tomar decisões informadas sobre stacks e arquitetura. No futuro, essas experiências influenciarão como abordo novos projetos, garantindo que cada decisão seja guiada pelas necessidades atuais e aspirações futuras.
+
+<Callout type="info">Contribuições open source não se resumem apenas a código, mas também ao aprendizado, compartilhamento e crescimento com uma comunidade.</Callout>
