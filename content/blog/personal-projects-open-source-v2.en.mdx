@@ -1,0 +1,60 @@
+---
+title: "The Journey of Building Open Source Projects"
+date: "2026-08-11"
+excerpt: "Exploring lessons learned from developing open-source projects using modern tech stacks, highlighting real challenges and solutions."
+tags:
+  - open-source
+  - tech-stack
+  - software-development
+draft: false
+---
+
+## Introduction to Open Source Projects
+
+Developing open-source projects has been a rewarding yet challenging endeavor. My experiences span various applications, each leveraging a modern tech stack to tackle real-world problems. Here, I dive into the decision-making process, technical hurdles, and the strategies that led to successful outcomes.
+
+## Choosing the Right Tech Stack
+
+When starting with open-source projects, selecting the right **tech stack** is crucial. Each project demands a unique combination of tools and frameworks to meet its goals effectively.
+
+For example, the **DoAção** project aimed to connect volunteers with businesses in Jundiaí. We used **Next.js, Supabase, and Drizzle ORM** to build a scalable platform. This stack offered a balance between performance and rapid development, essential for an in-development status.
+
+<CodeFilename filename="src/config/database.ts">
+```ts
+import { createClient } from '@supabase/supabase-js';
+import { drizzle } from 'drizzle-orm';
+
+const supabase = createClient('URL', 'KEY');
+const db = drizzle(supabase);
+
+export { db };
+```
+</CodeFilename>
+
+## Overcoming Technical Challenges
+
+One of the major challenges in **MTG Price Monitor**— a Magic: The Gathering card price tracker—was handling multiple **API** integrations. This project used **Next.js, Drizzle ORM, and Discord.js** to fetch and track price changes efficiently.
+
+Managing rate limits and deduplicating alerts were significant hurdles. The solution involved implementing delay queues and crafting a specialized schema in **Drizzle ORM** to handle the data efficiently.
+
+<Note>Handling API rate limits can prevent service disruption and ensure reliable data fetching.</Note>
+
+## Designing for Performance and Scalability
+
+Another insight came from developing my personal portfolio, **pansarini.tech**, which emphasized performance and accessibility. Here, **Next.js 16** was paired with **Tailwind CSS v4** for its speed and simplicity. This setup allowed me to employ the Jedi/Sith theme toggling efficiently, leveraging OKLCH color spaces for maintainable contrast standards.
+
+The focus was on delivering a smooth, perceptually uniform user experience. This required iterating over design and functionality to ensure that performance goals were met without compromising the aesthetic.
+
+## Solutions and Best Practices
+
+Throughout these projects, a few best practices emerged. **Modular architecture** was pivotal in maintaining clean and manageable codebases, particularly when dealing with complex integrations. The use of **Zod** for schema validation in TypeScript projects enhanced the robustness and reliability of data handling.
+
+Furthermore, incorporating **CI/CD pipelines** minimized integration issues by automating tests and deployment. This step was crucial in maintaining consistency and detecting errors early in the development cycle.
+
+<InlineBadge>Future-Proof</InlineBadge> solutions involve anticipating potential growth and designing systems that can evolve without significant overhauls.
+
+## Conclusion
+
+Every open-source project presents its own set of challenges and learning opportunities. By building these projects, I've honed the ability to navigate technical complexities and make informed decisions on tech stacks and architecture. Moving forward, these experiences will influence how I approach new projects, ensuring that each decision is driven by both current needs and future aspirations.
+
+<Callout type="info">Open-source contributions are not just about code but about learning, sharing, and growing with a community.</Callout>
