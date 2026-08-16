@@ -1,0 +1,43 @@
+---
+title: "Open Source Personal Projects: Challenges and Learnings"
+date: "2026-08-16"
+excerpt: "Insights into the technical decisions and challenges behind transforming personal projects into open source contributions, focusing on modern tech stacks and real-world problem-solving."
+tags:
+  - open-source
+  - personal-projects
+  - development
+draft: false
+---
+
+## The Journey to Open Source
+
+Transforming personal projects into open-source initiatives involves more than simply sharing your code on GitHub. It requires a deliberate approach to designing, developing, and maintaining software that others can understand and contribute to. This journey has taught me countless lessons, especially from the roles played by modern tools like **Next.js**, **Supabase**, and **Discord.js**.
+
+### Real-Time Processing with DoAção
+
+The DoAção project, aimed at connecting volunteers with local businesses in Jundiaí, brought forth challenges in **real-time processing** and verification flows. Leveraging **Supabase** for real-time databases and relying on RLS policies to ensure data integrity was key. One major takeaway was the importance of adequate testing environments. I implemented **Supabase RLS policies** only to find they had unintended side effects because the staging environment didn't perfectly mirror production. **Drizzle ORM** proved invaluable for designing a schema that could handle complex point systems efficiently.<Note>Ensure that your staging environment mirrors production to catch environment-specific errors.</Note>
+
+### Monitoring Magic: The Gathering with MTG Price Monitor
+
+**MTG Price Monitor** faced the challenge of efficiently scraping data from multiple APIs. Rate limits posed a substantial hurdle when the Discord bot sent frequent updates, making **Discord.js** rate management a crucial skill. Developing a solution through **Drizzle ORM** allowed for efficient management of price snapshots and alerts. <CodeFilename filename="src/monitor/PriceMonitor.ts">
+```typescript
+function manageRateLimits() {
+  // Logic for managing Discord bot rate limits
+}
+```
+</CodeFilename>This experience reinforced the need for robust logging mechanisms to trace issues back to their source conveniently.
+
+### Managing Queues with NotificaMe
+
+The project required real-time geolocation and queue management, challenging my understanding of data persistence and architecture decisions. **Redis** offered a performance advantage with rapid queue processing, but persisted data through **PostgreSQL** was necessary for ensuring consistencies such as backup and recovery, drawing a clear line between transient and persistent data utilities. The decision was to use **NestJS** for microservices architecture, which allowed flexible scaling depending on varying queue demands.<Warning>Twilio's webhook reliability can unexpectedly affect notifications, requiring adaptive error handling mechanisms.</Warning>
+
+### Balancing New Technologies in Pansarini.tech
+
+Building my portfolio, **Pansarini.tech**, tested my adaptability to new technologies like **Tailwind CSS** v4 and **Shadcn/UI**. Switching to a CSS-first configuration with Tailwind and taking advantage of OKLCH color spaces highlighted the value of perceptually uniform color spaces for accessibility. The Jedi/Sith theme toggle was a creative yet practical challenge: ensuring AA compliance for contrast while maintaining a distinct aesthetic. <InlineBadge variant="secondary">CSS-first</InlineBadge> configuration facilitated this with minimal overhead.
+
+Utilizing **next-intl** for a seamless bilingual experience provided insights into internationalization that were both a professional and personal triumph, knowing my work could reach a broader audience efficiently and effectively. The nuances of the **localePrefix** configuration and redirect rules create a simple yet effective SEO strategy, emphasizing the importance of efficient global navigation systems.
+
+---
+
+Open source projects paved a path of continued learning and community engagement. Each project demonstrated unique challenges with strategic focus required at various development stages, showcasing the flexibility and bravery needed to tackle domain-specific issues. The principles of architecting solutions for open-source visibility not only made the code robust but also humane, understanding that at the end, it’s about the people willing to contribute that define the software's success.
+
