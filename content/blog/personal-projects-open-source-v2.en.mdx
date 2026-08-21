@@ -1,0 +1,81 @@
+---
+title: "From Concept to GitHub: Building Personal Projects in the Open"
+date: "2026-08-21"
+excerpt: "Exploring the transition from personal projects to open source, uncovering the complexities of this path — from initial concept to community engagement."
+tags:
+  - open-source
+  - personal-projects
+  - software-development
+draft: false
+---
+
+## Introduction to Open Sourcing Personal Projects
+
+As a Principal Software Engineer, I've come to appreciate the unique insights that open source offers. Taking a personal project and positioning it for open source exposure can be immensely rewarding, yet it carries a distinct set of challenges. This post delves into the practical aspects of that journey.
+
+## Choosing the Right Project for Open Source
+
+In selecting a project to open source, consider the relevance and uniqueness it offers to the community. One question I often ask myself is, **"Does this solve a problem others face?"** With the **DoAção** platform, the aim was to connect volunteers with opportunities, utilizing tech stacks like **Next.js** and **Supabase** for real-time data handling.
+
+<Note>It's key to ensure your project is robust and well-documented before considering an open source release.</Note>
+
+## Overcoming Initial Challenges
+
+The early stages of open-sourcing a project pose significant questions. For **MTG Price Monitor**, integrating marketplace APIs while managing Discord bot limitations was critical. We needed to design a **schema** with **Drizzle ORM** that captured price snapshots reliably.
+
+**Key Decision Point:** Balancing simplicity with functionality is essential. Too complex, and it may deter contributors; too simple, and it may not be useful.
+
+## Building a Community Around Your Code
+
+Open source thrives on community. Encouraging contributions can be as straightforward as maintaining a welcoming repository. For example, documenting contribution guidelines clearly can make a significant difference.
+
+<Warning>Ensure clear issue templates and PR instructions to facilitate seamless collaboration.</Warning>
+
+## Technical Hurdles and Learnings
+
+In **NotificaMe**, the integration of **NestJS** and **Twilio** required careful consideration of webhook reliability and geolocation precision. Overcoming these challenges involved:
+
+- **Refining backend architecture** to handle location-based entry,
+- Utilizing **Redis** for efficient queue management over PostgreSQL,
+- Balancing real-time updates without overloading resources.
+
+<CodeFilename filename="config/database.ts">
+```ts
+const databaseSchema = {
+  tables: {
+    users: {
+      columns: [
+        { name: 'id', type: 'UUID', primary: true },
+        { name: 'location', type: 'Geography', notNull: true },
+      ],
+    },
+    actions: {
+      columns: [
+        { name: 'timestamp', type: 'DateTime', notNull: true },
+        { name: 'actionType', type: 'String', notNull: true },
+      ],
+    },
+  }
+};
+```
+</CodeFilename>
+
+## Scaling and Maintenance
+
+As projects grow, think about scalability and sustainability:
+
+- Implement code reviews to maintain high standards.
+- Automate testing processes to catch issues early.
+- Facilitate documentation updates through **continuous integration** tools.
+
+**Takeaway:** Open source is more than sharing code; it's about fostering an ecosystem where ideas can flourish.
+
+## Conclusion
+
+Embracing open source for personal projects turns solitary endeavors into collaborative efforts. By aligning your vision with community needs, refining technical solutions, and fostering inclusive interactions, you not only enhance your projects but also contribute to the broader developer landscape.
+
+Remember, the journey from personal project to open source is not just about the code — it's about the connections and innovations you build along the way.
+
+**Learn more:** If you're embarking on your own open source journey, consider the examples and strategies shared here as part of your toolkit. Happy coding!
+
+<InlineBadge variant="secondary">v1.0</InlineBadge> released on GitHub.
