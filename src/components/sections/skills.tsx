@@ -24,7 +24,7 @@ export function Skills() {
       <RevealGroup className="space-y-10" stagger={0.04}>
         {skills.map((category) => (
           <RevealItem key={category.id}>
-            <div className="flex flex-col gap-3">
+            <dl className="flex flex-col gap-3">
               <dt className="font-mono text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
                 {category.label[locale]}
               </dt>
@@ -52,7 +52,7 @@ export function Skills() {
                   </span>
                 ))}
               </dd>
-            </div>
+            </dl>
           </RevealItem>
         ))}
       </RevealGroup>
