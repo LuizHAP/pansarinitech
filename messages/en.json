@@ -81,7 +81,8 @@
       "readMore": "Read more →",
       "backToProjects": "← Back to projects",
       "viewAll": "View all projects →",
-      "readBlog": "Read the blog →"
+      "readBlog": "Read the blog →",
+      "selectedWork": "Selected Work"
     },
     "error": {
       "failedToLoad": "This case study failed to load — please refresh."

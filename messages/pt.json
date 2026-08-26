@@ -81,7 +81,8 @@
       "readMore": "Ver mais →",
       "backToProjects": "← Voltar aos projetos",
       "viewAll": "Ver todos os projetos →",
-      "readBlog": "Ler o blog →"
+      "readBlog": "Ler o blog →",
+      "selectedWork": "Trabalhos Selecionados"
     },
     "error": {
       "failedToLoad": "Falha ao carregar este estudo de caso — atualize a página."

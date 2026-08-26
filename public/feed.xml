@@ -6,7 +6,56 @@
     <description>Principal Software Engineer — technical writing</description>
     <language>en</language>
     <atom:link href="https://pansarini.tech/feed.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Tue, 19 May 2026 00:00:00 GMT</lastBuildDate>
+    <lastBuildDate>Tue, 21 Jul 2026 00:00:00 GMT</lastBuildDate>
+    <item>
+      <title>AI in Software Development: Risks and Strategies</title>
+      <link>https://pansarini.tech/blog/ai-in-development-v2</link>
+      <pubDate>Tue, 21 Jul 2026 00:00:00 GMT</pubDate>
+      <description>Exploring the nuances of integrating AI into development workflows, addressing both its potential and the challenges of incorporating it within a modern tech stack.</description>
+      <guid>https://pansarini.tech/blog/ai-in-development-v2</guid>
+    </item>
+    <item>
+      <title>Navigating the Principal Software Engineering Path</title>
+      <link>https://pansarini.tech/blog/software-engineering-career-v2</link>
+      <pubDate>Mon, 06 Jul 2026 00:00:00 GMT</pubDate>
+      <description>A look into the intricacies of advancing in your software engineering career, with insights into decision-making, tradeoffs, and lessons learned.</description>
+      <guid>https://pansarini.tech/blog/software-engineering-career-v2</guid>
+    </item>
+    <item>
+      <title>Scaling Next.js for High-Performance Frontends</title>
+      <link>https://pansarini.tech/blog/nextjs-react-frontend-v2</link>
+      <pubDate>Fri, 26 Jun 2026 00:00:00 GMT</pubDate>
+      <description>Exploring technical strategies for building high-performance frontends using Next.js, leveraging React Server Components, and integrating Tailwind CSS with a semantic approach.</description>
+      <guid>https://pansarini.tech/blog/nextjs-react-frontend-v2</guid>
+    </item>
+    <item>
+      <title>Giving AI Agents a Safe Workspace with Jean + OpenCode</title>
+      <link>https://pansarini.tech/blog/ai-workspace-jean-opencode</link>
+      <pubDate>Thu, 25 Jun 2026 00:00:00 GMT</pubDate>
+      <description>How Jean acts as a dedicated orchestrator for AI agents, using isolated Git worktrees and context aggregation to let open-source LLMs work safely on your codebase.</description>
+      <guid>https://pansarini.tech/blog/ai-workspace-jean-opencode</guid>
+    </item>
+    <item>
+      <title>Personal Projects Transitioning to Open Source</title>
+      <link>https://pansarini.tech/blog/personal-projects-open-source</link>
+      <pubDate>Sun, 21 Jun 2026 00:00:00 GMT</pubDate>
+      <description>Exploring the transformation of personal projects into open source initiatives, focusing on architectural decisions and technical hurdles faced during this journey.</description>
+      <guid>https://pansarini.tech/blog/personal-projects-open-source</guid>
+    </item>
+    <item>
+      <title>Navigating Personal Open Source Projects</title>
+      <link>https://pansarini.tech/blog/navigating-personal-open-source</link>
+      <pubDate>Tue, 16 Jun 2026 00:00:00 GMT</pubDate>
+      <description>An exploration of challenges and key learnings from personal open source projects, blending modern tech stacks to solve real-world problems.</description>
+      <guid>https://pansarini.tech/blog/navigating-personal-open-source</guid>
+    </item>
+    <item>
+      <title>Integrating AI into Modern Development Workflows</title>
+      <link>https://pansarini.tech/blog/ai-in-development</link>
+      <pubDate>Fri, 12 Jun 2026 00:00:00 GMT</pubDate>
+      <description>A detailed exploration of AI in development, unraveling the complexities of integration, challenges, and leveraging AI-driven efficiencies.</description>
+      <guid>https://pansarini.tech/blog/ai-in-development</guid>
+    </item>
     <item>
       <title>View Transitions API on the Theme Toggle</title>
       <link>https://pansarini.tech/blog/view-transitions-theme-toggle</link>
@@ -16,17 +65,17 @@
     </item>
     <item>
       <title>Navigating the Software Engineering Career Ladder</title>
-      <link>https://pansarini.tech/blog/software-engineering-career-20260516</link>
+      <link>https://pansarini.tech/blog/software-engineering-career</link>
       <pubDate>Sat, 16 May 2026 00:00:00 GMT</pubDate>
       <description>Insights from my journey through the dynamic world of software engineering, emphasizing the importance of strategic technical decisions and continuous learning in a rapidly evolving field.</description>
-      <guid>https://pansarini.tech/blog/software-engineering-career-20260516</guid>
+      <guid>https://pansarini.tech/blog/software-engineering-career</guid>
     </item>
     <item>
       <title>Building a Next.js and React Frontend for Scalability and Performance</title>
-      <link>https://pansarini.tech/blog/nextjs-react-frontend-20260515</link>
+      <link>https://pansarini.tech/blog/nextjs-react-frontend</link>
       <pubDate>Fri, 15 May 2026 00:00:00 GMT</pubDate>
       <description>A detailed exploration of designing a Next.js and React frontend that prioritizes scalability and performance, drawing from real-world project experiences.</description>
-      <guid>https://pansarini.tech/blog/nextjs-react-frontend-20260515</guid>
+      <guid>https://pansarini.tech/blog/nextjs-react-frontend</guid>
     </item>
     <item>
       <title>Building this portfolio</title>

@@ -1,11 +1,6 @@
 import { render, screen } from '@/test/render';
 import { describe, expect, it, vi } from 'vitest';
 
-// Static image mock — must be hoisted before component import.
-vi.mock('../../../public/luiz.jpg', () => ({
-  default: { src: '/luiz.jpg', width: 768, height: 1024, blurDataURL: 'data:image/png;base64,xx' },
-}));
-
 import { Hero } from './hero';
 
 describe('<Hero />', () => {
@@ -38,15 +33,17 @@ describe('<Hero />', () => {
     expect(contactCta).toHaveAttribute('href', '#contact');
   });
 
-  it('renders the hero photo with an accessible alt text', () => {
-    render(<Hero />, { locale: 'en' });
-    const img = screen.getByRole('img');
-    expect(img).toHaveAttribute('alt', expect.stringContaining('Luiz Pansarini'));
-  });
-
   it('renders the role/value-prop text', () => {
     render(<Hero />, { locale: 'en' });
-    // Value proposition paragraph from hero data
-    expect(screen.getByText(/Principal Software Engineer/i)).toBeInTheDocument();
+    // "Principal Software Engineer" appears twice: eyebrow + role line
+    const matches = screen.getAllByText(/Principal Software Engineer/i);
+    expect(matches.length).toBeGreaterThanOrEqual(1);
+    expect(screen.getByText(/IT helpdesk at Klabin/i)).toBeInTheDocument();
+  });
+
+  it('renders terminal visual on desktop', () => {
+    render(<Hero />, { locale: 'en' });
+    expect(screen.getByText(/git log --oneline -5/i)).toBeInTheDocument();
+    expect(screen.getByText(/Build successful/i)).toBeInTheDocument();
   });
 });

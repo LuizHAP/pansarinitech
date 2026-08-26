@@ -27,59 +27,46 @@
   --font-aurebesh: var(--font-aurebesh);
 }
 
-/* Jedi (Light) — UI-SPEC §"Color" */
+/* Jedi (Light) — Linear-Clean Palette */
 :root {
-  --background: oklch(98% 0.005 250);
-  --foreground: oklch(12% 0.01 250);
-  --card: oklch(94% 0.008 250);
-  --card-foreground: oklch(12% 0.01 250);
-  --muted: oklch(90% 0.012 250);
-  /* darkened from oklch(45%) → oklch(38%) to guarantee ≥4.5:1 against bg-card (oklch 94%) at small text sizes */
-  --muted-foreground: oklch(38% 0.01 250);
-  --border: oklch(82% 0.018 250);
-  --primary: oklch(55% 0.18 250);
-  --primary-foreground: oklch(98% 0.005 250);
-  /* badge-primary-text: color for text-as-primary on light bg (same as primary at 55%) */
-  --badge-primary-text: oklch(55% 0.18 250);
-  --accent: oklch(55% 0.18 250);
-  --accent-foreground: oklch(98% 0.005 250);
+  --background: oklch(98.5% 0 0);
+  --foreground: oklch(15% 0 0);
+  --card: oklch(100% 0 0);
+  --card-foreground: oklch(15% 0 0);
+  --muted: oklch(96% 0 0);
+  --muted-foreground: oklch(45% 0 0);
+  --border: oklch(90% 0 0);
+  --primary: oklch(45% 0.15 250);
+  --primary-foreground: oklch(98.5% 0 0);
+  --badge-primary-text: oklch(45% 0.15 250);
+  --accent: oklch(45% 0.15 250);
+  --accent-foreground: oklch(98.5% 0 0);
   --destructive: oklch(50% 0.22 27);
-  --ring: oklch(55% 0.18 250);
-  --input: oklch(90% 0.012 250);
-  --popover: oklch(98% 0.005 250);
-  --popover-foreground: oklch(12% 0.01 250);
+  --ring: oklch(45% 0.15 250);
+  --input: oklch(96% 0 0);
+  --popover: oklch(98.5% 0 0);
+  --popover-foreground: oklch(15% 0 0);
 }
 
-/* Sith (Dark) — UI-SPEC §"Color" */
+/* Sith (Dark) — Linear-Clean Palette */
 .dark {
-  --background: oklch(10% 0.01 250);
-  --foreground: oklch(94% 0.008 250);
-  --card: oklch(15% 0.012 250);
-  --card-foreground: oklch(94% 0.008 250);
-  --muted: oklch(18% 0.015 250);
-  /* lightened from oklch(62%) → oklch(70%) to guarantee ≥4.5:1 against bg-card (oklch 15%) at small text sizes */
-  --muted-foreground: oklch(70% 0.015 250);
-  --border: oklch(25% 0.02 250);
-  /* Sith primary: saber red, slightly DARKENED from oklch(58% 0.21 28) → 54% to
-     guarantee ≥4.5:1 contrast with white text on bg-primary. The original 58%
-     gave 4.33:1 with near-black text and 4.49:1 with off-white — both below
-     WCAG 1.4.3 AA. 54% gives ~5.0:1 with pure white. Visually still saber red.
-     Verified by axe in tests/a11y-matrix.spec.ts (404 page CTA button). [Rule 1] */
-  --primary: oklch(54% 0.21 28);
-  /* badge-primary-text: lighter saber red for text-as-primary in dark-bg contexts
-     (InlineBadge primary variant, small text). The main --primary (54%) gives only
-     3.67:1 against bg (oklch 10%), failing WCAG 1.4.3 AA for small text (need 4.5:1).
-     oklch(70% 0.21 28) achieves ≥5.0:1 against the dark bg and is still saber red.
-     [Rule 1 - A11y] */
-  --badge-primary-text: oklch(70% 0.21 28);
-  --primary-foreground: oklch(100% 0 0);
-  --accent: oklch(54% 0.21 28);
-  --accent-foreground: oklch(100% 0 0);
+  --background: oklch(10% 0 0);
+  --foreground: oklch(95% 0 0);
+  --card: oklch(13% 0 0);
+  --card-foreground: oklch(95% 0 0);
+  --muted: oklch(16% 0 0);
+  --muted-foreground: oklch(65% 0 0);
+  --border: oklch(22% 0 0);
+  --primary: oklch(60% 0.15 250);
+  --primary-foreground: oklch(10% 0 0);
+  --badge-primary-text: oklch(75% 0.15 250);
+  --accent: oklch(60% 0.15 250);
+  --accent-foreground: oklch(10% 0 0);
   --destructive: oklch(65% 0.22 28);
-  --ring: oklch(58% 0.21 28);
-  --input: oklch(18% 0.015 250);
-  --popover: oklch(15% 0.012 250);
-  --popover-foreground: oklch(94% 0.008 250);
+  --ring: oklch(60% 0.15 250);
+  --input: oklch(16% 0 0);
+  --popover: oklch(13% 0 0);
+  --popover-foreground: oklch(95% 0 0);
 }
 
 /* A11Y-04 Layer 1 — UI-SPEC §"Reduced-Motion Contract" */

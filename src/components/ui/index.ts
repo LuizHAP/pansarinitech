@@ -51,6 +51,9 @@ export {
   DropdownMenuTrigger,
 } from './dropdown-menu';
 export { childVariant, RevealGroup, RevealItem, RevealSection } from './reveal-group';
+export { Section, SectionHeader } from './section';
+export { KeyValue, KeyValueGroup } from './key-value';
+export { MonoBadge, SkillBadge } from './mono-badge';
 export { Separator } from './separator';
 export {
   Sheet,
@@ -64,5 +67,6 @@ export {
 } from './sheet';
 export { Skeleton } from './skeleton';
 export { Toaster } from './sonner';
+export { Terminal } from './terminal';
 export { Toggle } from './toggle';
 export { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './tooltip';

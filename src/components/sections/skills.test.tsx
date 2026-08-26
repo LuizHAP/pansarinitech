@@ -1,40 +1,73 @@
 import { render, screen } from '@/test/render';
-import userEvent from '@testing-library/user-event';
 import { describe, expect, it } from 'vitest';
 import { Skills } from './skills';
 
 describe('<Skills />', () => {
-  it('renders the section heading and filter chip "All" in en locale', () => {
+  it('renders the section heading in en locale', () => {
     render(<Skills />, { locale: 'en' });
 
     expect(screen.getByRole('heading', { level: 2 })).toHaveTextContent('Stack & Skills');
-
-    // "All" chip is the default active filter
-    const allBtn = screen.getByRole('button', { name: /^All$/ });
-    expect(allBtn).toHaveAttribute('aria-pressed', 'true');
+    expect(screen.getByText(/Underlined = daily use/i)).toBeInTheDocument();
   });
 
-  it('renders "Todos" filter chip in pt locale', () => {
+  it('renders all 7 categories', () => {
+    render(<Skills />, { locale: 'en' });
+
+    const categories = [
+      'Frontend',
+      'Mobile',
+      'Backend',
+      'Testing',
+      'Cloud / DevOps',
+      'Databases',
+      'Tools',
+    ];
+    for (const cat of categories) {
+      expect(screen.getByText(cat)).toBeInTheDocument();
+    }
+  });
+
+  it('renders daily-use skills with underline', () => {
+    render(<Skills />, { locale: 'en' });
+
+    // These are the 6 daily-use skills (textBadge skills render their mono abbreviation)
+    const dailySkills = [
+      'Next.js',
+      'TypeScript',
+      'Tailwind CSS',
+      'ui', // Shadcn/UI renders as mono abbreviation
+      'React Native',
+      'Vercel',
+    ];
+    for (const skill of dailySkills) {
+      const el = screen.getByText(skill);
+      expect(el).toHaveClass('underline');
+    }
+  });
+
+  it('renders Portuguese categories', () => {
     render(<Skills />, { locale: 'pt' });
 
-    const todosBtn = screen.getByRole('button', { name: /^Todos$/ });
-    expect(todosBtn).toHaveAttribute('aria-pressed', 'true');
+    const categories = [
+      'Frontend',
+      'Mobile',
+      'Backend',
+      'Testes',
+      'Cloud / DevOps',
+      'Bancos de Dados',
+      'Ferramentas',
+    ];
+    for (const cat of categories) {
+      expect(screen.getByText(cat)).toBeInTheDocument();
+    }
   });
 
-  it('clicking a category chip updates aria-pressed to true', async () => {
+  it('renders mono abbreviations for textBadge skills', () => {
     render(<Skills />, { locale: 'en' });
-    const user = userEvent.setup();
 
-    const frontendBtn = screen.getByRole('button', { name: /^Frontend$/ });
-    expect(frontendBtn).toHaveAttribute('aria-pressed', 'false');
-
-    await user.click(frontendBtn);
-
-    expect(screen.getByRole('button', { name: /^Frontend$/ })).toHaveAttribute(
-      'aria-pressed',
-      'true',
-    );
-    // All chip should no longer be active
-    expect(screen.getByRole('button', { name: /^All$/ })).toHaveAttribute('aria-pressed', 'false');
+    const abbreviations = ['ui', 'rdx', '{ }', 'RSC', 'axe', 'bio'];
+    for (const abbr of abbreviations) {
+      expect(screen.getByText(abbr)).toBeInTheDocument();
+    }
   });
 });

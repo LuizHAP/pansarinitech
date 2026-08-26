@@ -1,20 +1,16 @@
 'use client';
-
-// src/components/sections/personal-projects.tsx
-// Grid of personal side-project cards with screenshot previews, tech stack badges,
-// and links to live deployments and GitHub repos.
 import {
-  Badge,
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
+  MonoBadge,
   RevealGroup,
   RevealItem,
+  Section,
+  SectionHeader,
+  SkillBadge,
 } from '@/components/ui';
 import type { PersonalProject } from '@/data/personal-projects';
 import { personalProjects } from '@/data/personal-projects';
 import type { Locale } from '@/i18n/routing';
+import { cn } from '@/lib/utils';
 import { Icon } from '@iconify/react';
 import { ExternalLink } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
@@ -25,12 +21,9 @@ function StatusBadge({
   labels,
 }: { status: PersonalProject['status']; labels: { live: string; inDev: string } }) {
   return (
-    <Badge
-      variant={status === 'live' ? 'default' : 'secondary'}
-      className="text-[10px] font-medium uppercase tracking-wide"
-    >
+    <MonoBadge variant="primary" className="text-[10px] uppercase tracking-wider">
       {status === 'live' ? labels.live : labels.inDev}
-    </Badge>
+    </MonoBadge>
   );
 }
 
@@ -71,57 +64,48 @@ export function PersonalProjects() {
   const t = useTranslations('personalProjects');
 
   return (
-    <section
-      id="personal-projects"
-      aria-labelledby="personal-projects-heading"
-      className="mx-auto max-w-5xl px-4 py-12"
-    >
-      <div className="flex flex-wrap items-baseline justify-between gap-4">
-        <div>
-          <h2 id="personal-projects-heading" className="text-2xl font-semibold tracking-tight">
-            {t('title')}
-          </h2>
-          <p className="mt-1 text-sm text-muted-foreground">{t('subtitle')}</p>
-        </div>
-      </div>
+    <Section id="personal-projects" aria-labelledby="personal-projects-heading" width="wide">
+      <SectionHeader id="personal-projects-heading">{t('title')}</SectionHeader>
+      <p className="text-sm text-muted-foreground mb-6">{t('subtitle')}</p>
 
-      <RevealGroup className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3" stagger={0.07}>
+      <RevealGroup className="grid gap-4 grid-cols-1 lg:grid-cols-2" stagger={0.06}>
         {personalProjects.map((project, index) => (
           <RevealItem key={project.id}>
-            <Card className="group h-full overflow-hidden transition hover:-translate-y-0.5 hover:shadow-md">
+            <article
+              className={cn(
+                'group relative overflow-hidden rounded-lg border border-border bg-card transition-colors hover:border-primary/50',
+                project.screenshotDraft && 'ring-1 ring-amber-500/30',
+              )}
+            >
               <ProjectScreenshot project={project} priority={index === 0} />
 
-              <CardHeader className="pb-2">
+              <div className="p-5">
                 <div className="flex items-start justify-between gap-2">
-                  <CardTitle className="text-base leading-snug">{project.name}</CardTitle>
+                  <h3 className="text-base font-medium leading-snug">{project.name}</h3>
                   <StatusBadge
                     status={project.status}
                     labels={{ live: t('statusLive'), inDev: t('statusInDev') }}
                   />
                 </div>
-              </CardHeader>
 
-              <CardContent className="flex flex-col gap-3">
-                <p className="line-clamp-3 text-sm text-muted-foreground">
+                <p className="mt-3 line-clamp-3 text-sm text-muted-foreground">
                   {project.description[locale]}
                 </p>
 
-                <div className="flex flex-wrap gap-1">
+                <div className="mt-4 flex flex-wrap gap-1.5">
                   {project.stack.map((tech) => (
-                    <Badge key={tech} variant="outline" className="text-[10px]">
-                      {tech}
-                    </Badge>
+                    <SkillBadge key={tech} name={tech} />
                   ))}
                 </div>
 
-                <div className="flex items-center gap-3 pt-1">
+                <div className="mt-4 flex items-center gap-3 pt-3 border-t border-border">
                   {project.liveUrl && (
                     <a
                       href={project.liveUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label={`${t('visitSite')} ${project.name} (${t('newTab')})`}
-                      className="flex items-center gap-1 text-xs font-medium text-primary underline-offset-4 hover:underline"
+                      className="flex items-center gap-1 text-xs font-medium text-primary underline-offset-2 hover:underline"
                     >
                       <ExternalLink className="h-3 w-3" aria-hidden="true" />
                       {t('visitSite')}
@@ -133,18 +117,18 @@ export function PersonalProjects() {
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label={`${t('viewCode')} ${project.name} (${t('newTab')})`}
-                      className="flex items-center gap-1 text-xs font-medium text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+                      className="flex items-center gap-1 text-xs font-medium text-muted-foreground underline-offset-2 hover:text-foreground hover:underline"
                     >
                       <Icon icon="mdi:github" className="h-3 w-3" aria-hidden="true" />
                       {t('viewCode')}
                     </a>
                   )}
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </article>
           </RevealItem>
         ))}
       </RevealGroup>
-    </section>
+    </Section>
   );
 }

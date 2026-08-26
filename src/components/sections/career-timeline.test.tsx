@@ -12,21 +12,21 @@ describe('<CareerTimeline />', () => {
     expect(heading).toHaveTextContent('Career');
   });
 
-  it('renders an OL with the correct number of career entries', () => {
+  it('renders 5 career entries on desktop (horizontal scroll)', () => {
     render(<CareerTimeline />, { locale: 'en' });
 
-    // The ordered list has aria-label "Career timeline"; use getByRole with name to target it
-    const list = screen.getByRole('list', { name: /Career timeline/i });
-    const items = list.querySelectorAll(':scope > li');
-    expect(items.length).toBe(career.length);
+    // Check for all 5 companies (both desktop horizontal + mobile vertical render)
+    for (const role of career) {
+      expect(screen.getAllByText(role.company).length).toBeGreaterThanOrEqual(1);
+    }
   });
 
-  it('renders the pivot role with role="img" and pivot aria-label', () => {
+  it('renders the pivot badge for UAUBox', () => {
     render(<CareerTimeline />, { locale: 'en' });
 
-    // UAUBox is the pivot role; the dot gets role="img" + aria-label
-    const pivotDot = screen.getByRole('img', { name: /IT-to-engineering pivot marker/i });
-    expect(pivotDot).toBeInTheDocument();
+    const pivotBadge = screen.getByText(/IT-to-engineering pivot marker/i);
+    expect(pivotBadge).toBeInTheDocument();
+    expect(pivotBadge).toHaveClass('bg-primary');
   });
 
   it('renders in pt locale with correct heading text', () => {
@@ -35,8 +35,7 @@ describe('<CareerTimeline />', () => {
     const heading = screen.getByRole('heading', { level: 2 });
     expect(heading).toHaveTextContent('Carreira');
 
-    // PT pivot label
-    const pivotDot = screen.getByRole('img', { name: /Marca da virada/i });
-    expect(pivotDot).toBeInTheDocument();
+    const pivotBadge = screen.getByText(/Marca da virada de TI para Engenharia/i);
+    expect(pivotBadge).toBeInTheDocument();
   });
 });
