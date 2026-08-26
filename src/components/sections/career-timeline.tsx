@@ -16,7 +16,12 @@ export function CareerTimeline() {
 
       <RevealGroup className="space-y-0" stagger={0.06}>
         {/* Desktop: Horizontal scroll-snap */}
-        <div className="hidden lg:flex gap-6 overflow-x-auto snap-x snap-mandatory pb-4 -mx-4 px-4 scrollbar-hide">
+        <section
+          className="hidden lg:flex gap-6 overflow-x-auto snap-x snap-mandatory pb-4 -mx-4 px-4 scrollbar-hide"
+          // biome-ignore lint/a11y/noNoninteractiveTabindex: scrollable region must be keyboard accessible per WCAG
+          tabIndex={0}
+          aria-label={t('sectionLabel')}
+        >
           {career.map((role) => {
             const period = formatPeriod(role.period, locale);
             const bullets = pickLocale(role.bullets, locale);
@@ -50,7 +55,7 @@ export function CareerTimeline() {
               </RevealItem>
             );
           })}
-        </div>
+        </section>
 
         {/* Mobile: Vertical timeline with left rail */}
         <div className="lg:hidden">

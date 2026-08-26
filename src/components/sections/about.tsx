@@ -31,19 +31,19 @@ export function About() {
         </RevealItem>
 
         <RevealItem>
-          <dl className="flex flex-col gap-4">
+          <ul className="flex flex-col gap-4">
             {aboutBullets.map((bullet) => (
-              <div
+              <li
                 key={bullet.text[locale]}
                 className="flex items-start gap-3 text-sm leading-relaxed"
               >
-                <MonoBadge variant="outline" className="shrink-0 mt-0.5">
+                <MonoBadge variant="outline" className="shrink-0 mt-0.5" aria-hidden="true">
                   {bullet.icon}
                 </MonoBadge>
-                <dd className="text-foreground">{bullet.text[locale]}</dd>
-              </div>
+                <span className="text-foreground">{bullet.text[locale]}</span>
+              </li>
             ))}
-          </dl>
+          </ul>
         </RevealItem>
 
         <RevealItem>
