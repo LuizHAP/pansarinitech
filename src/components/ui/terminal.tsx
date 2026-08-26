@@ -39,17 +39,19 @@ export function Terminal({ lines, className }: TerminalProps) {
                 <span key={key} className="block">
                   {line.prompt && (
                     <>
-                      <span className="text-green-400">{line.prompt}</span>
+                      <span className="text-green-600 dark:text-green-400">{line.prompt}</span>
                       <span className="text-muted-foreground"> $ </span>
                     </>
                   )}
-                  {line.command && <span className="text-cyan-300">{line.command}</span>}
+                  {line.command && (
+                    <span className="text-cyan-600 dark:text-cyan-400">{line.command}</span>
+                  )}
                   {line.output && (
                     <>
                       {line.prompt || line.command ? (
                         <span className="text-muted-foreground"> → </span>
                       ) : null}
-                      <span className="text-gray-300 dark:text-gray-400">{line.output}</span>
+                      <span className="text-gray-700 dark:text-gray-300">{line.output}</span>
                     </>
                   )}
                   <br />
