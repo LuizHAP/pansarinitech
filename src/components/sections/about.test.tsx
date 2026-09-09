@@ -1,4 +1,3 @@
-import { aboutBullets, aboutStats } from '@/data/about-stats';
 import { render, screen } from '@/test/render';
 import { describe, expect, it } from 'vitest';
 import { About } from './about';
@@ -14,21 +13,11 @@ describe('<About />', () => {
     expect(screen.getByText(/I update \/now when something changes/i)).toBeInTheDocument();
   });
 
-  it('renders all stat key/value pairs matching aboutStats length', () => {
+  it('renders bio paragraphs in en', () => {
     render(<About />, { locale: 'en' });
 
-    for (const stat of aboutStats) {
-      expect(screen.getByText(stat.num)).toBeInTheDocument();
-      expect(screen.getByText(stat.label.en)).toBeInTheDocument();
-    }
-  });
-
-  it('renders all bullet highlights', () => {
-    render(<About />, { locale: 'en' });
-
-    for (const bullet of aboutBullets) {
-      expect(screen.getByText(bullet.text.en)).toBeInTheDocument();
-    }
+    expect(screen.getByText(/I started in IT support at Klabin/i)).toBeInTheDocument();
+    expect(screen.getByText(/At Machinery Partner I led/i)).toBeInTheDocument();
   });
 
   it('renders Portuguese content when locale=pt', () => {
@@ -38,9 +27,6 @@ describe('<About />', () => {
     expect(heading).toHaveTextContent('Sobre');
 
     expect(screen.getByText(/Atualizo \/now quando algo muda/i)).toBeInTheDocument();
-
-    for (const stat of aboutStats) {
-      expect(screen.getByText(stat.label.pt)).toBeInTheDocument();
-    }
+    expect(screen.getByText(/Comecei em suporte de TI na Klabin/i)).toBeInTheDocument();
   });
 });

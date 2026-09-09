@@ -35,15 +35,7 @@ describe('<Hero />', () => {
 
   it('renders the role/value-prop text', () => {
     render(<Hero />, { locale: 'en' });
-    // "Principal Software Engineer" appears twice: eyebrow + role line
-    const matches = screen.getAllByText(/Principal Software Engineer/i);
-    expect(matches.length).toBeGreaterThanOrEqual(1);
+    expect(screen.getByText(/Principal Software Engineer/i)).toBeInTheDocument();
     expect(screen.getByText(/IT helpdesk at Klabin/i)).toBeInTheDocument();
-  });
-
-  it('renders terminal visual on desktop', () => {
-    render(<Hero />, { locale: 'en' });
-    expect(screen.getByText(/git log --oneline -5/i)).toBeInTheDocument();
-    expect(screen.getByText(/Build successful/i)).toBeInTheDocument();
   });
 });
