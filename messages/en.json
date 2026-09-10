@@ -24,7 +24,8 @@
   },
   "hero": {
     "contactCta": "Contact",
-    "resumeCta": "Resume"
+    "resumeCta": "Resume",
+    "photoAlt": "Luiz Pansarini at Galaxy's Edge"
   },
   "sections": {
     "about": "About",
