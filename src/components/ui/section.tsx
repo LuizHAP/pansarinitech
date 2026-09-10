@@ -2,7 +2,7 @@ import { cn } from '@/lib/utils';
 import { type VariantProps, cva } from 'class-variance-authority';
 import type { ReactNode } from 'react';
 
-const sectionVariants = cva('mx-auto px-4 py-12 sm:py-16 lg:py-20', {
+const sectionVariants = cva('mx-auto px-4 py-8 sm:py-10 lg:py-14', {
   variants: {
     width: {
       narrow: 'max-w-3xl',
@@ -60,7 +60,7 @@ export function SectionHeader({
   id?: string;
 }) {
   return (
-    <header className="flex flex-col gap-1 mb-8">
+    <header className="flex flex-col gap-1 mb-6">
       {eyebrow && (
         <span className="text-[11px] font-mono uppercase tracking-[0.2em] text-muted-foreground">
           {eyebrow}

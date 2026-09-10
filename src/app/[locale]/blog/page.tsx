@@ -3,6 +3,7 @@
 // loader.getPosts(locale). Cards link via @/lib/i18n/navigation Link to preserve
 // the locale prefix on the slug route.
 import { PostCard } from '@/components/blog';
+import JsonLd, { buildBreadcrumbList } from '@/components/json-ld';
 import { RevealGroup, RevealItem } from '@/components/ui';
 import { type Locale, routing } from '@/i18n/routing';
 import { getPosts } from '@/lib/mdx/blog';
@@ -41,6 +42,12 @@ export default async function BlogListingPage({
 
   return (
     <>
+      <JsonLd
+        schema={buildBreadcrumbList(locale, [
+          { name: 'Home', path: '' },
+          { name: t('pageTitle'), path: '/blog' },
+        ])}
+      />
       <link rel="alternate" type="application/rss+xml" title="Blog (EN)" href="/feed.xml" />
       <link rel="alternate" type="application/rss+xml" title="Blog (PT)" href="/feed.pt.xml" />
       <section aria-labelledby="blog-heading" className="mx-auto max-w-3xl px-4 py-12">

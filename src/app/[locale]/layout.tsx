@@ -13,12 +13,25 @@ import { routing } from '@/i18n/routing';
 import { aurebesh } from '@/lib/fonts';
 import { Analytics } from '@vercel/analytics/next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
-import { GeistMono } from 'geist/font/mono';
-import { GeistSans } from 'geist/font/sans';
 import { MotionConfig } from 'motion/react';
 import { NextIntlClientProvider, hasLocale } from 'next-intl';
 import { getMessages, setRequestLocale } from 'next-intl/server';
+import { IBM_Plex_Mono, IBM_Plex_Sans } from 'next/font/google';
 import { notFound } from 'next/navigation';
+
+const ibmPlexSans = IBM_Plex_Sans({
+  subsets: ['latin', 'latin-ext'],
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-ibm-plex-sans',
+  display: 'swap',
+});
+
+const ibmPlexMono = IBM_Plex_Mono({
+  subsets: ['latin', 'latin-ext'],
+  weight: ['400', '500', '600'],
+  variable: '--font-ibm-plex-mono',
+  display: 'swap',
+});
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -42,7 +55,7 @@ export default async function LocaleLayout({
     <html
       lang={htmlLang}
       suppressHydrationWarning
-      className={`${GeistSans.variable} ${GeistMono.variable} ${aurebesh.variable}`}
+      className={`${ibmPlexSans.variable} ${ibmPlexMono.variable} ${aurebesh.variable}`}
     >
       <body>
         <ThemeProvider

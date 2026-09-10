@@ -24,7 +24,8 @@
   },
   "hero": {
     "contactCta": "Contact",
-    "resumeCta": "Resume"
+    "resumeCta": "Resume",
+    "photoAlt": "Luiz Pansarini at Galaxy's Edge"
   },
   "sections": {
     "about": "About",
@@ -163,14 +164,14 @@
     "viewAll": "View all posts →"
   },
   "seo": {
-    "homeTitle": "Principal Software Engineer",
-    "siteDescription": "Luiz Pansarini — Principal Software Engineer and web developer based in Jundiaí, SP (Brazil). Case studies, blog, and contact.",
+    "homeTitle": "Principal Software Engineer — Next.js, React Native, E-commerce",
+    "siteDescription": "Luiz Pansarini — Principal Software Engineer in Jundiaí, Brazil. 14 years in tech: React Native at Magalu, Next.js e-commerce at Machinery Partner, VTEX at Corebiz. Open to new opportunities.",
     "siteSuffix": "Luiz Pansarini",
     "descriptions": {
-      "home": "Luiz Pansarini — Principal Software Engineer and web developer based in Jundiaí, SP (Brazil). Case studies, blog, and contact.",
-      "projects": "Five case studies: heavy machinery e-commerce, no-code → Next.js, React Native at scale, DS from scratch, and a mobile-first native app.",
-      "blog": "Occasional engineering posts. Mostly about what I had to look up twice.",
-      "now": "What I'm working on, reading, and learning right now."
+      "home": "Luiz Pansarini — Principal Software Engineer in Jundiaí, Brazil. 14 years in tech: React Native at Magalu, Next.js e-commerce at Machinery Partner, VTEX at Corebiz. Open to new opportunities.",
+      "projects": "Technical case studies: US heavy-machinery e-commerce (Next.js), Magazine Luiza Superapp (React Native), no-code to headless CMS migration, and design system from scratch.",
+      "blog": "Engineering notes on Next.js, React Native, TypeScript, and building products that ship. Written by a Principal Engineer in Brazil.",
+      "now": "What I'm currently working on, reading, and learning — updated whenever something changes."
     }
   }
 }
