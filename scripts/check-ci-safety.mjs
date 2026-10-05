@@ -31,8 +31,9 @@ const RULES = [
     // Flags goto('/'), goto('/blog'), goto('/does-not-exist'), etc. Allows
     // goto('/en'), goto('/pt/...'), and template literals whose first segment
     // is a dynamic locale (e.g. goto(`/${locale}${path}`)) — those derive the
-    // prefix from the Playwright project name at runtime.
-    pattern: /goto\(\s*['"`]\/(?!en\b|pt\b|\$\{)[^'"`]*['"`]/,
+    // prefix from the Playwright project name at runtime. Also allows
+    // goto('/preview/...'), which the proxy excludes from locale routing.
+    pattern: /goto\(\s*['"`]\/(?!en\b|pt\b|preview\b|\$\{)[^'"`]*['"`]/,
     message:
       "Prefix test URLs with the target locale, e.g. goto('/en/blog') or " +
       "goto('/pt/blog'), to match localePrefix:'always'.",

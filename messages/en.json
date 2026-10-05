@@ -174,5 +174,15 @@
       "blog": "Engineering notes on Next.js, React Native, TypeScript, and building products that ship. Written by a Principal Engineer in Brazil.",
       "now": "What I'm currently working on, reading, and learning — updated whenever something changes."
     }
+  },
+  "preview": {
+    "metaTitle": "Preview: {client}",
+    "metaDescription": "Website preview for {client}, built by Luiz Pansarini.",
+    "label": "Website preview",
+    "brandAriaLabel": "Luiz Pansarini, open portfolio in a new tab",
+    "viewport": "Screen size",
+    "desktop": "Desktop",
+    "mobile": "Mobile",
+    "frameTitle": "{client} website"
   }
 }

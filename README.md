@@ -121,6 +121,21 @@ pnpm verify:metadata   # OG + SEO metadata completeness
 
 Every PR runs all gates via `.github/workflows/ci.yml`. Lighthouse runs on `main` only via `.github/workflows/lighthouse.yml` (target: Performance ≥ 95 on mobile).
 
+### Client previews
+
+Share a client's site on a link you control, under a bar with your brand and a Desktop/Mobile toggle.
+
+1. Copy the client's files into `public/client-previews/<slug>/` with `index.html` at the root. Keep every asset path relative (`style.css`, `img/logo.png`), never starting with `/`.
+2. Add `{ slug, client, locale }` to `src/data/client-previews.ts`. `locale` is `pt` or `en` and picks the bar language.
+3. Run `pnpm test:unit`, which checks the slug format, uniqueness and that `index.html` exists.
+4. Share `https://pansarini.dev/preview/<slug>`.
+
+Notes:
+
+- Slugs use only `[a-z0-9-]`.
+- Previews are sent with `X-Robots-Tag: noindex` and a robots meta tag so search engines skip them, but anyone with the link can open them. Use a hard-to-guess slug (e.g. `acme-7f3k2q`) for anything not public yet.
+- Pasted code runs on the portfolio's origin, so only paste code you trust.
+
 ### Accessibility
 
 - WCAG 2.1 AA — non-negotiable
@@ -252,6 +267,21 @@ pnpm verify:metadata   # Completude de metadados OG + SEO
 ```
 
 Todos os gates rodam em cada PR via `.github/workflows/ci.yml`. O Lighthouse roda apenas na `main` via `.github/workflows/lighthouse.yml` (meta: Performance ≥ 95 no mobile).
+
+### Prévias de clientes
+
+Compartilhe o site de um cliente em um link que você controla, sob uma barra com a sua marca e um seletor Desktop/Celular.
+
+1. Copie os arquivos do cliente para `public/client-previews/<slug>/`, com o `index.html` na raiz. Mantenha todos os caminhos de assets relativos (`style.css`, `img/logo.png`), nunca começando com `/`.
+2. Adicione `{ slug, client, locale }` em `src/data/client-previews.ts`. `locale` é `pt` ou `en` e define o idioma da barra.
+3. Rode `pnpm test:unit`, que verifica o formato do slug, se ele é único e se o `index.html` existe.
+4. Compartilhe `https://pansarini.dev/preview/<slug>`.
+
+Observações:
+
+- Slugs usam apenas `[a-z0-9-]`.
+- As prévias são enviadas com `X-Robots-Tag: noindex` e uma meta tag robots para que os buscadores as ignorem, mas qualquer pessoa com o link consegue abri-las. Use um slug difícil de adivinhar (ex.: `acme-7f3k2q`) para o que ainda não for público.
+- O código colado roda na mesma origem do portfólio, então só cole código em que você confia.
 
 ### Acessibilidade
 
