@@ -26,7 +26,6 @@ export async function FeaturedProjectsTeaser({ locale }: { locale: Locale }) {
     <Section
       id="projects"
       aria-labelledby="featured-projects-heading"
-      width="wide"
       eyebrow={tProj('cta.selectedWork')}
     >
       <SectionHeader id="featured-projects-heading">{tSec('featuredProjects')}</SectionHeader>
@@ -49,48 +48,39 @@ export async function FeaturedProjectsTeaser({ locale }: { locale: Locale }) {
         </Link>
       </div>
 
-      <RevealGroup className="grid gap-4 grid-cols-1 lg:grid-cols-3" stagger={0.06}>
-        {featured.map((p, index) => {
-          const isFeatured = index === 0;
-          const inner = (
+      <RevealGroup
+        className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-5"
+        stagger={0.06}
+      >
+        {featured.map((p, index) => (
+          <RevealItem key={p.slug}>
             <Link
-              key={p.slug}
               href={`/projects/${p.slug}`}
-              className="group block relative overflow-hidden transition-colors"
+              className="group flex h-full flex-col overflow-hidden rounded-xl border border-border bg-card transition-colors hover:border-foreground/30 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
             >
-              <article className="relative aspect-[16/10] overflow-hidden bg-muted">
+              <div className="relative aspect-[16/10] overflow-hidden bg-muted">
                 <Image
                   src={HERO_IMAGES[p.slug as keyof typeof HERO_IMAGES]}
-                  alt={p.title}
-                  sizes={
-                    isFeatured ? '(max-width: 768px) 100vw, 66vw' : '(max-width: 768px) 100vw, 33vw'
-                  }
-                  priority={isFeatured}
-                  fetchPriority={isFeatured ? 'high' : 'auto'}
+                  alt=""
+                  fill
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  priority={index === 0}
                   placeholder="blur"
-                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-transparent to-transparent" />
-                <div className="absolute bottom-0 left-0 right-0 p-6">
-                  <h3 className="text-lg font-medium tracking-tight">{p.title}</h3>
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    {p.role} · {p.year}
-                  </p>
-                  <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">{p.blurb}</p>
-                </div>
+              </div>
+              <article className="flex flex-1 flex-col gap-1.5 p-5">
+                <h3 className="text-lg font-medium tracking-tight text-foreground">{p.title}</h3>
+                <p className="font-mono text-xs text-muted-foreground">
+                  {p.role} · {p.year}
+                </p>
+                <p className="mt-1 line-clamp-3 text-sm leading-relaxed text-muted-foreground">
+                  {p.blurb}
+                </p>
               </article>
             </Link>
-          );
-
-          if (isFeatured) {
-            return (
-              <RevealItem key={p.slug} className="lg:col-span-2">
-                {inner}
-              </RevealItem>
-            );
-          }
-          return <RevealItem key={p.slug}>{inner}</RevealItem>;
-        })}
+          </RevealItem>
+        ))}
       </RevealGroup>
     </Section>
   );

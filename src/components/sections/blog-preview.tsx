@@ -1,5 +1,5 @@
 import { PostCard } from '@/components/blog';
-import { RevealGroup, RevealItem } from '@/components/ui';
+import { RevealGroup, RevealItem, Section } from '@/components/ui';
 import type { Locale } from '@/i18n/routing';
 import { Link } from '@/lib/i18n/navigation';
 import { getPosts } from '@/lib/mdx/blog';
@@ -18,16 +18,12 @@ export async function BlogPreview({ locale }: { locale: Locale }) {
   if (recent.length === 0) return null;
 
   return (
-    <section
-      id="blog"
-      aria-labelledby="blog-preview-heading"
-      className="mx-auto max-w-3xl px-4 py-12"
-    >
+    <Section id="blog" ariaLabelledBy="blog-preview-heading">
       <h2 id="blog-preview-heading" className="text-2xl font-semibold tracking-tight">
         {t('title')}
       </h2>
       <RevealGroup stagger={0.06}>
-        <ul className="mt-6 space-y-4">
+        <ul className="mt-6 max-w-3xl space-y-4">
           {recent.map((post) => (
             <li key={post.slug}>
               <RevealItem>
@@ -45,6 +41,6 @@ export async function BlogPreview({ locale }: { locale: Locale }) {
           {t('viewAll')}
         </Link>
       </p>
-    </section>
+    </Section>
   );
 }

@@ -164,6 +164,18 @@ describe('<Hero />', () => {
     expect(items[4]).toHaveTextContent('Klabin S/A');
   });
 
+  it('links each experience entry to the company site in a new tab', async () => {
+    const ui = await Hero();
+    render(ui, { locale: 'en' });
+
+    const list = screen.getByRole('list', { name: 'Experience' });
+    const link = within(list).getByRole('link', { name: 'Luizalabs (Magazine Luiza)' });
+    expect(link).toHaveAttribute('href', 'https://luizalabs.com');
+    expect(link).toHaveAttribute('target', '_blank');
+    expect(link).toHaveAttribute('rel', 'noopener noreferrer');
+    expect(within(list).getAllByRole('link')).toHaveLength(5);
+  });
+
   it('renders View all projects link', async () => {
     const ui = await Hero();
     render(ui, { locale: 'en' });

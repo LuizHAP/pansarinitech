@@ -129,6 +129,7 @@ describe('RoleSchema', () => {
   const validRole = {
     id: 'machinery-partner',
     company: 'Machinery Partner',
+    url: 'https://www.machinerypartner.com',
     role: { en: 'Principal Software Engineer', pt: 'Engenheiro de Software Principal' },
     period: { start: '2023-01', end: '2023-12' },
     bullets: { en: ['Led architecture'], pt: ['Liderou arquitetura'] },
@@ -152,6 +153,10 @@ describe('RoleSchema', () => {
 
   it('accepts without pivot field (optional)', () => {
     expect(RoleSchema.safeParse(validRole).success).toBe(true);
+  });
+
+  it('rejects a company url that is not an absolute URL', () => {
+    expect(RoleSchema.safeParse({ ...validRole, url: 'machinerypartner.com' }).success).toBe(false);
   });
 
   it("rejects period.start = '2019-4' (regex fail — not zero-padded)", () => {

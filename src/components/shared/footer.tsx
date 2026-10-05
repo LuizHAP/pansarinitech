@@ -1,4 +1,6 @@
+import { sectionContainer } from '@/components/ui';
 import { contact } from '@/data/contact';
+import { cn } from '@/lib/utils';
 // src/components/shared/footer.tsx — UX-05
 // Footer renders below <main>. Copyright (locale-neutral), GitHub + LinkedIn icon
 // links, "Built with Next.js · Source on GitHub" credit linking to the public repo.
@@ -45,7 +47,12 @@ export function Footer() {
 
   return (
     <footer className="mt-12 border-t border-border bg-muted/40">
-      <div className="mx-auto flex max-w-5xl flex-col items-center gap-4 px-4 py-6 text-sm text-muted-foreground sm:flex-row sm:justify-between">
+      <div
+        className={cn(
+          sectionContainer,
+          'flex flex-col items-center gap-4 py-6 text-sm text-muted-foreground sm:flex-row sm:justify-between',
+        )}
+      >
         <p>{t('copyright')}</p>
 
         <p className="text-xs">

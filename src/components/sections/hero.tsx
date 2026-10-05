@@ -1,4 +1,4 @@
-import { Badge } from '@/components/ui';
+import { Badge, sectionContainer } from '@/components/ui';
 import { career } from '@/data/career';
 import { contact } from '@/data/contact';
 import { hero } from '@/data/hero';
@@ -8,6 +8,7 @@ import { Link } from '@/lib/i18n/navigation';
 import { getProjects } from '@/lib/mdx/projects';
 import type { Project } from '@/lib/mdx/schema';
 import { cn } from '@/lib/utils';
+import { ArrowUpRightIcon } from 'lucide-react';
 import { getLocale, getTranslations } from 'next-intl/server';
 import Image from 'next/image';
 
@@ -111,7 +112,7 @@ export async function Hero() {
     <section
       id="hero"
       aria-labelledby="hero-heading"
-      className="mx-auto max-w-7xl px-4 pt-8 pb-12 sm:pt-12 sm:pb-16 lg:pt-16 lg:pb-20"
+      className={cn(sectionContainer, 'pt-8 pb-12 sm:pt-12 sm:pb-16 lg:pt-16 lg:pb-20')}
     >
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-5">
         <div className="lg:col-span-5 flex flex-col bg-card border border-border rounded-xl p-6 sm:p-8">
@@ -155,7 +156,18 @@ export async function Hero() {
             <ul aria-labelledby="hero-experience" className="mt-3 flex flex-col gap-2.5">
               {career.map((role) => (
                 <li key={role.id} className="flex items-baseline justify-between gap-4 text-sm">
-                  <span className="font-medium text-foreground">{role.company}</span>
+                  <a
+                    href={role.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group/company inline-flex items-center gap-1 font-medium text-foreground underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50 rounded-sm"
+                  >
+                    {role.company}
+                    <ArrowUpRightIcon
+                      aria-hidden="true"
+                      className="size-3.5 text-muted-foreground transition-transform group-hover/company:-translate-y-0.5 group-hover/company:translate-x-0.5"
+                    />
+                  </a>
                   <span className="shrink-0 font-mono text-xs text-muted-foreground">
                     {formatPeriod(role.period, locale)}
                   </span>

@@ -17,7 +17,7 @@ export function Skills() {
   }, []);
 
   return (
-    <Section id="skills" aria-labelledby="skills-heading" width="standard">
+    <Section id="skills" aria-labelledby="skills-heading">
       <SectionHeader id="skills-heading">{t('title')}</SectionHeader>
       <p className="text-sm text-muted-foreground mb-8">{t('dailyUseLegend')}</p>
 

@@ -1,3 +1,4 @@
+import { Section } from '@/components/ui';
 import { now } from '@/data/now';
 import type { Locale } from '@/i18n/routing';
 import { formatLongDate, pickLocale } from '@/lib/i18n/helpers';
@@ -12,11 +13,7 @@ export function NowPreview() {
   const t = useTranslations('now');
 
   return (
-    <section
-      id="now"
-      aria-labelledby="now-preview-heading"
-      className="mx-auto max-w-3xl px-4 py-12"
-    >
+    <Section id="now" ariaLabelledBy="now-preview-heading">
       <h2 id="now-preview-heading" className="text-2xl font-semibold tracking-tight">
         {t('title')}
       </h2>
@@ -25,7 +22,7 @@ export function NowPreview() {
           {t('lastUpdated')}: {formatLongDate(now.lastUpdated, locale)}
         </time>
       </p>
-      <p className="mt-4 leading-relaxed">{pickLocale(now.workingOn, locale)}</p>
+      <p className="mt-4 max-w-3xl leading-relaxed">{pickLocale(now.workingOn, locale)}</p>
       <p className="mt-4">
         <Link
           href="/now"
@@ -34,6 +31,6 @@ export function NowPreview() {
           {t('previewLink')} →
         </Link>
       </p>
-    </section>
+    </Section>
   );
 }

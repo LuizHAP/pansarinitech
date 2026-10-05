@@ -12,10 +12,10 @@ export function About() {
   const cadence = pickLocale(about.cadence, locale);
 
   return (
-    <Section id="about" aria-labelledby="about-heading" width="standard">
+    <Section id="about" aria-labelledby="about-heading">
       <SectionHeader id="about-heading">{tSec('about')}</SectionHeader>
 
-      <div className="flex flex-col gap-5">
+      <div className="flex max-w-3xl flex-col gap-5">
         {paragraphs.map((paragraph) => (
           <p key={paragraph.slice(0, 50)} className="text-base leading-relaxed text-foreground">
             {paragraph}

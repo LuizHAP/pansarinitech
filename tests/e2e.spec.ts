@@ -52,8 +52,10 @@ test.describe('Locale switch + NEXT_LOCALE cookie persistence', () => {
     const localeCookie = cookies.find((c) => c.name === 'NEXT_LOCALE');
     expect(localeCookie?.value).toBe('pt');
 
-    const ogLocale = await page.locator('meta[property="og:locale"]').getAttribute('content');
-    expect(ogLocale).toBe('pt_BR');
+    // The client-side navigation briefly keeps the old <meta> next to the new one.
+    const ogLocale = page.locator('meta[property="og:locale"]');
+    await expect(ogLocale).toHaveCount(1);
+    await expect(ogLocale).toHaveAttribute('content', 'pt_BR');
   });
 });
 
