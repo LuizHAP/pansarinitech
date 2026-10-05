@@ -1,0 +1,18 @@
+body {
+  margin: 0;
+  background: #ffffff;
+  color: #1f2937;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  line-height: 1.6;
+}
+
+main {
+  max-width: 40rem;
+  margin: 0 auto;
+  padding: 3rem 1.5rem;
+}
+
+[data-css-proof] {
+  color: rgb(22, 101, 52);
+  font-weight: 600;
+}

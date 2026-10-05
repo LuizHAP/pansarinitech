@@ -72,12 +72,21 @@ const nextConfig: NextConfig = {
     ];
   },
   async headers() {
-    if (isProduction) return [];
+    // A header instead of a robots.txt Disallow: Google has to fetch the URL to see the noindex.
+    const previewHeaders = [{ key: 'X-Robots-Tag', value: 'noindex, nofollow, noarchive' }];
     return [
-      {
-        source: '/:path*',
-        headers: [{ key: 'X-Robots-Tag', value: 'noindex, nofollow' }],
-      },
+      ...(isProduction
+        ? []
+        : [
+            {
+              source: '/:path*',
+              headers: [{ key: 'X-Robots-Tag', value: 'noindex, nofollow' }],
+            },
+          ]),
+      // Last on purpose: for the same header key the last matching rule wins, so
+      // previews keep noarchive outside production too.
+      { source: '/preview/:path*', headers: previewHeaders },
+      { source: '/client-previews/:path*', headers: previewHeaders },
     ];
   },
 };

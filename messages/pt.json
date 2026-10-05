@@ -174,5 +174,15 @@
       "blog": "Notas de engenharia sobre Next.js, React Native, TypeScript e como construir produtos que entregam valor. Escrito por um Principal Engineer no Brasil.",
       "now": "O que estou trabalhando, lendo e aprendendo agora — atualizado quando algo muda."
     }
+  },
+  "preview": {
+    "metaTitle": "Prévia: {client}",
+    "metaDescription": "Prévia do site de {client}, desenvolvido por Luiz Pansarini.",
+    "label": "Prévia do site",
+    "brandAriaLabel": "Luiz Pansarini, abrir portfólio em nova aba",
+    "viewport": "Tamanho da tela",
+    "desktop": "Desktop",
+    "mobile": "Celular",
+    "frameTitle": "Site de {client}"
   }
 }
