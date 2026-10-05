@@ -144,7 +144,7 @@ Per preview:
 1. In the store's file browser, create a folder `<slug>` and upload `index.html` plus its assets with the same relative paths (`<slug>/style.css`, `<slug>/img/logo.png`).
 2. Share `https://pansarini.dev/preview/<slug>`.
 
-The bar takes the client name from `<title>` (the text before the first `|`, `–`, `—` or `-` with a space on each side) and the language from `<html lang>` (`pt…` gives Portuguese, any other value gives English, and a missing lang gives Portuguese). New uploads and changes can take up to about 60 seconds to show. A slug in `src/data/client-previews.ts` wins over a Blob folder with the same name.
+The bar takes the client name from `<title>` (the text before the first `|`, `–`, `—` or `-` with a space on each side) and the language from `<html lang>` (`pt…` gives Portuguese, any other value gives English, and a missing lang gives Portuguese). New uploads and changes can take about 5 minutes to show, or show right away after "Atualizar índice" in the admin. A slug in `src/data/client-previews.ts` wins over a Blob folder with the same name.
 
 Notes:
 
@@ -152,6 +152,31 @@ Notes:
 - Previews from both sources are sent with `X-Robots-Tag: noindex` and a robots meta tag so search engines skip them, but anyone with the link can open them. Use a hard-to-guess slug (e.g. `acme-7f3k2q`) for anything not public yet.
 - The frame is sandboxed without same-origin access: client scripts run but cannot read the portfolio's cookies or storage, so client code that needs localStorage or cookies will not work in the frame.
 - Opening the raw `/client-previews/<slug>/index.html` URL bypasses the sandbox, so only paste or upload code you trust.
+
+### Admin
+
+A hidden page to list every preview, check its files and warnings, and copy the public URLs. It is not linked anywhere, it is sent with `noindex`, and it returns 404 unless both environment variables below exist.
+
+Setup:
+
+1. In Vercel, go to Project Settings, Environment Variables, and add `ADMIN_USER` and `ADMIN_PASSWORD` for Production, both marked Sensitive (or run `vercel env add ADMIN_USER production` and `vercel env add ADMIN_PASSWORD production`). Use a long random password, e.g. `openssl rand -base64 24`.
+2. Redeploy so the new values take effect.
+3. Locally, put both in `.env.local`.
+
+Sessions last 8 hours. Changing the password logs out every session.
+
+URLs:
+
+- `https://pansarini.dev/admin` lists every preview (login at `/admin/login`).
+- `https://pansarini.dev/admin/<slug>` shows one preview: its files, warnings and a sandboxed frame.
+
+Cache:
+
+- The Blob listing is cached for 5 minutes and shared by the admin and the public pages, so a new upload shows up within about 5 minutes, or right away after "Atualizar índice".
+- Blob files are cached on Vercel's CDN for 5 minutes. "Limpar cache deste site" marks them stale, so the next load may still serve the old version once while it refreshes.
+- To take a preview down, delete its folder in the store, then open its admin page (it stays listed until the index refreshes) and click "Limpar cache deste site".
+
+Warnings flag a folder name outside `[a-z0-9-]`, a missing `index.html`, a missing `<title>`, asset paths starting with `/`, and a repo preview with the same slug.
 
 ### Accessibility
 
@@ -308,7 +333,7 @@ A cada prévia:
 1. No navegador de arquivos do store, crie uma pasta `<slug>` e envie o `index.html` com os assets, mantendo os mesmos caminhos relativos (`<slug>/style.css`, `<slug>/img/logo.png`).
 2. Compartilhe `https://pansarini.dev/preview/<slug>`.
 
-A barra pega o nome do cliente do `<title>` (o texto antes do primeiro `|`, `–`, `—` ou `-` com espaço dos dois lados) e o idioma do `<html lang>` (`pt…` vira português, qualquer outro valor vira inglês, e sem lang fica português). Envios novos e alterações podem levar cerca de 60 segundos para aparecer. Um slug em `src/data/client-previews.ts` tem prioridade sobre uma pasta do Blob com o mesmo nome.
+A barra pega o nome do cliente do `<title>` (o texto antes do primeiro `|`, `–`, `—` ou `-` com espaço dos dois lados) e o idioma do `<html lang>` (`pt…` vira português, qualquer outro valor vira inglês, e sem lang fica português). Envios novos e alterações podem levar cerca de 5 minutos para aparecer, ou aparecem na hora com "Atualizar índice" no admin. Um slug em `src/data/client-previews.ts` tem prioridade sobre uma pasta do Blob com o mesmo nome.
 
 Observações:
 
@@ -316,6 +341,31 @@ Observações:
 - As prévias das duas origens são enviadas com `X-Robots-Tag: noindex` e uma meta tag robots para que os buscadores as ignorem, mas qualquer pessoa com o link consegue abri-las. Use um slug difícil de adivinhar (ex.: `acme-7f3k2q`) para o que ainda não for público.
 - O frame roda em sandbox sem acesso à mesma origem: os scripts do cliente rodam, mas não conseguem ler os cookies nem o armazenamento do portfólio, então código do cliente que dependa de localStorage ou cookies não funciona dentro do frame.
 - Abrir a URL direta `/client-previews/<slug>/index.html` ignora o sandbox, então só cole ou envie código em que você confia.
+
+### Admin
+
+Uma página escondida para listar todas as prévias, analisar os arquivos e avisos de cada uma e copiar as URLs públicas. Ela não tem link em lugar nenhum, é enviada com `noindex` e responde 404 a menos que as duas variáveis de ambiente abaixo existam.
+
+Configuração:
+
+1. Na Vercel, vá em Project Settings, Environment Variables e adicione `ADMIN_USER` e `ADMIN_PASSWORD` para Production, as duas marcadas como Sensitive (ou rode `vercel env add ADMIN_USER production` e `vercel env add ADMIN_PASSWORD production`). Use uma senha longa e aleatória, ex.: `openssl rand -base64 24`.
+2. Faça um redeploy para os valores novos valerem.
+3. No ambiente local, coloque as duas no `.env.local`.
+
+A sessão dura 8 horas. Trocar a senha desloga todas as sessões.
+
+URLs:
+
+- `https://pansarini.dev/admin` lista todas as prévias (login em `/admin/login`).
+- `https://pansarini.dev/admin/<slug>` mostra uma prévia: arquivos, avisos e um frame em sandbox.
+
+Cache:
+
+- A listagem do Blob fica em cache por 5 minutos e é compartilhada pelo admin e pelas páginas públicas, então um envio novo aparece em cerca de 5 minutos, ou na hora com "Atualizar índice".
+- Os arquivos do Blob ficam em cache na CDN da Vercel por 5 minutos. "Limpar cache deste site" marca esse cache como desatualizado, então o próximo acesso ainda pode mostrar a versão antiga uma vez enquanto ele atualiza.
+- Para tirar uma prévia do ar, apague a pasta dela no store, depois abra a página dela no admin (ela continua listada até o índice atualizar) e clique em "Limpar cache deste site".
+
+Os avisos apontam nome de pasta fora de `[a-z0-9-]`, falta de `index.html`, falta de `<title>`, caminhos de assets começando com `/` e uma prévia do repositório com o mesmo slug.
 
 ### Acessibilidade
 

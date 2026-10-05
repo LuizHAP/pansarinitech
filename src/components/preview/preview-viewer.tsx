@@ -1,5 +1,6 @@
 'use client';
 
+import { PREVIEW_FRAME_SANDBOX } from '@/components/preview/frame-sandbox';
 import { BrandLogo } from '@/components/shared/brand-logo';
 import { cn } from '@/lib/utils';
 import { Monitor, Smartphone } from 'lucide-react';
@@ -84,7 +85,7 @@ export function PreviewViewer({
         <iframe
           src={src}
           title={labels.frame}
-          sandbox="allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox"
+          sandbox={PREVIEW_FRAME_SANDBOX}
           className={
             isMobile
               ? 'block h-full max-w-full rounded-md border border-border bg-white'
