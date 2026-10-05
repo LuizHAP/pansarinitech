@@ -16,8 +16,8 @@ describe('<About />', () => {
   it('renders bio paragraphs in en', () => {
     render(<About />, { locale: 'en' });
 
-    expect(screen.getByText(/I started in IT support at Klabin/i)).toBeInTheDocument();
-    expect(screen.getByText(/At Machinery Partner I led/i)).toBeInTheDocument();
+    expect(screen.getByText(/Started in IT support at Klabin/i)).toBeInTheDocument();
+    expect(screen.getByText(/Web, mobile, and the backend/i)).toBeInTheDocument();
   });
 
   it('renders Portuguese content when locale=pt', () => {
