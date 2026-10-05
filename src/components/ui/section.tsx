@@ -1,21 +1,18 @@
 import { cn } from '@/lib/utils';
-import { type VariantProps, cva } from 'class-variance-authority';
+import { cva } from 'class-variance-authority';
 import type { ReactNode } from 'react';
 
-const sectionVariants = cva('mx-auto px-4 py-12 sm:py-16 lg:py-20', {
+// box-content keeps the 6xl measure on the content box so section edges line up with the header.
+export const sectionContainer = 'mx-auto box-content max-w-6xl px-4 md:px-6';
+
+const sectionVariants = cva(`${sectionContainer} py-8 sm:py-10 lg:py-14`, {
   variants: {
-    width: {
-      narrow: 'max-w-3xl',
-      standard: 'max-w-5xl',
-      wide: 'max-w-7xl',
-    },
     eyebrow: {
       true: '',
       false: '',
     },
   },
   defaultVariants: {
-    width: 'standard',
     eyebrow: false,
   },
 });
@@ -25,23 +22,15 @@ export interface SectionProps {
   id?: string;
   ariaLabelledBy?: string;
   className?: string;
-  width?: VariantProps<typeof sectionVariants>['width'];
   eyebrow?: ReactNode;
 }
 
-export function Section({
-  children,
-  id,
-  ariaLabelledBy,
-  className,
-  width = 'standard',
-  eyebrow,
-}: SectionProps) {
+export function Section({ children, id, ariaLabelledBy, className, eyebrow }: SectionProps) {
   return (
     <section
       id={id}
       aria-labelledby={ariaLabelledBy}
-      className={cn(sectionVariants({ width, eyebrow: !!eyebrow }), className)}
+      className={cn(sectionVariants({ eyebrow: !!eyebrow }), className)}
     >
       {children}
     </section>
@@ -60,7 +49,7 @@ export function SectionHeader({
   id?: string;
 }) {
   return (
-    <header className="flex flex-col gap-1 mb-8">
+    <header className="flex flex-col gap-1 mb-6">
       {eyebrow && (
         <span className="text-[11px] font-mono uppercase tracking-[0.2em] text-muted-foreground">
           {eyebrow}

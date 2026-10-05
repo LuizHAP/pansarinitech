@@ -1,3 +1,4 @@
+import JsonLd, { buildBreadcrumbList } from '@/components/json-ld';
 import { Badge, Card, CardContent, CardHeader, CardTitle } from '@/components/ui';
 import type { Locale } from '@/i18n/routing';
 import { Link } from '@/lib/i18n/navigation';
@@ -50,52 +51,60 @@ export default async function ProjectsListingPage({
   const projects = await getProjects(locale);
 
   return (
-    <section className="mx-auto max-w-6xl px-4 py-12">
-      <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">{t('title')}</h1>
-      <p className="mt-3 max-w-2xl text-base text-muted-foreground">{t('listingIntro')}</p>
-      <ul className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {projects.map((p, index) => (
-          <li key={p.slug}>
-            <Link
-              href={`/projects/${p.slug}`}
-              className="block transition hover:-translate-y-0.5 hover:shadow-md"
-            >
-              <Card className="h-full overflow-hidden">
-                <div className="aspect-[16/10] w-full bg-muted">
-                  <Image
-                    src={HERO_IMAGES[p.slug as keyof typeof HERO_IMAGES]}
-                    alt={p.title}
-                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                    priority={index === 0}
-                    fetchPriority={index === 0 ? 'high' : 'auto'}
-                    placeholder="blur"
-                    className="h-full w-full object-cover"
-                  />
-                </div>
-                <CardHeader>
-                  <CardTitle className="text-lg">{p.title}</CardTitle>
-                  <p className="text-sm text-muted-foreground">
-                    {p.role} · {p.year}
-                  </p>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex flex-wrap gap-1.5">
-                    {p.stack.slice(0, 5).map((tech) => (
-                      <Badge key={tech} variant="secondary" className="text-xs">
-                        {tech}
-                      </Badge>
-                    ))}
+    <>
+      <JsonLd
+        schema={buildBreadcrumbList(locale, [
+          { name: 'Home', path: '' },
+          { name: t('title'), path: '/projects' },
+        ])}
+      />
+      <section className="mx-auto max-w-6xl px-4 py-12">
+        <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">{t('title')}</h1>
+        <p className="mt-3 max-w-2xl text-base text-muted-foreground">{t('listingIntro')}</p>
+        <ul className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {projects.map((p, index) => (
+            <li key={p.slug}>
+              <Link
+                href={`/projects/${p.slug}`}
+                className="block transition hover:-translate-y-0.5 hover:shadow-md"
+              >
+                <Card className="h-full overflow-hidden">
+                  <div className="aspect-[16/10] w-full bg-muted">
+                    <Image
+                      src={HERO_IMAGES[p.slug as keyof typeof HERO_IMAGES]}
+                      alt={p.title}
+                      sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      priority={index === 0}
+                      fetchPriority={index === 0 ? 'high' : 'auto'}
+                      placeholder="blur"
+                      className="h-full w-full object-cover"
+                    />
                   </div>
-                  <p className="mt-3 text-sm text-muted-foreground">{p.blurb}</p>
-                  <p className="mt-4 text-sm font-semibold text-foreground underline-offset-4 group-hover/card:underline">
-                    {t('cta.readMore')}
-                  </p>
-                </CardContent>
-              </Card>
-            </Link>
-          </li>
-        ))}
-      </ul>
-    </section>
+                  <CardHeader>
+                    <CardTitle className="text-lg">{p.title}</CardTitle>
+                    <p className="text-sm text-muted-foreground">
+                      {p.role} · {p.year}
+                    </p>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex flex-wrap gap-1.5">
+                      {p.stack.slice(0, 5).map((tech) => (
+                        <Badge key={tech} variant="secondary" className="text-xs">
+                          {tech}
+                        </Badge>
+                      ))}
+                    </div>
+                    <p className="mt-3 text-sm text-muted-foreground">{p.blurb}</p>
+                    <p className="mt-4 text-sm font-semibold text-foreground underline-offset-4 group-hover/card:underline">
+                      {t('cta.readMore')}
+                    </p>
+                  </CardContent>
+                </Card>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </section>
+    </>
   );
 }

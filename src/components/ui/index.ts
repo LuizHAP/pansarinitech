@@ -51,7 +51,7 @@ export {
   DropdownMenuTrigger,
 } from './dropdown-menu';
 export { childVariant, RevealGroup, RevealItem, RevealSection } from './reveal-group';
-export { Section, SectionHeader } from './section';
+export { Section, SectionHeader, sectionContainer } from './section';
 export { KeyValue, KeyValueGroup } from './key-value';
 export { MonoBadge, SkillBadge } from './mono-badge';
 export { Separator } from './separator';

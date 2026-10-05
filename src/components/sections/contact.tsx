@@ -11,7 +11,7 @@
 //
 // Brand icons (GitHub / LinkedIn) are inline SVG paths because lucide-react v1.14
 // does not ship brand marks. Inline SVG is tree-shake-free and zero-dependency.
-import { RevealGroup, RevealItem } from '@/components/ui';
+import { RevealGroup, RevealItem, Section } from '@/components/ui';
 import { contact } from '@/data/contact';
 import type { Locale } from '@/i18n/routing';
 import { pickLocale } from '@/lib/i18n/helpers';
@@ -56,11 +56,7 @@ export function Contact() {
   const resumeFile = resumeHref.split('/').pop() ?? 'resume.pdf';
 
   return (
-    <section
-      id="contact"
-      aria-labelledby="contact-heading"
-      className="mx-auto max-w-3xl scroll-mt-16 px-4 py-12"
-    >
+    <Section id="contact" ariaLabelledBy="contact-heading" className="scroll-mt-16">
       <h2 id="contact-heading" className="text-2xl font-semibold tracking-tight">
         {t('title')}
       </h2>
@@ -118,6 +114,6 @@ export function Contact() {
           </a>
         </RevealItem>
       </RevealGroup>
-    </section>
+    </Section>
   );
 }

@@ -8,6 +8,7 @@
 //   import JsonLd, { AUTHOR_PERSON, SITE_URL } from '@/components/json-ld'
 //   <JsonLd schema={{ "@context": "https://schema.org", "@type": "Article", ... }} />
 
+import type { Locale } from '@/i18n/routing';
 import { SITE_URL } from '@/lib/seo';
 export { SITE_URL };
 
@@ -26,6 +27,24 @@ export const AUTHOR_PERSON = {
   },
   sameAs: ['https://github.com/LuizHAP', 'https://linkedin.com/in/luizpansarini'],
 } as const;
+
+interface BreadcrumbItem {
+  name: string;
+  path: string;
+}
+
+export function buildBreadcrumbList(locale: Locale, items: BreadcrumbItem[]) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: items.map((item, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      name: item.name,
+      item: `${SITE_URL}/${locale}${item.path}`,
+    })),
+  };
+}
 
 interface JsonLdProps {
   schema: Record<string, unknown>;

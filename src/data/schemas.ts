@@ -28,6 +28,7 @@ export type About = z.infer<typeof AboutSchema>;
 export const RoleSchema = z.object({
   id: z.string().min(1),
   company: z.string().min(1), // proper noun, not translated
+  url: z.string().url(),
   role: LocaleStringSchema,
   period: z.object({
     start: z.string().regex(/^\d{4}-\d{2}$/, 'Use YYYY-MM'),

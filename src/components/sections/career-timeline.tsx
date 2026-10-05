@@ -11,7 +11,7 @@ export function CareerTimeline() {
   const t = useTranslations('career');
 
   return (
-    <Section id="career" aria-labelledby="career-heading" width="standard">
+    <Section id="career" aria-labelledby="career-heading">
       <SectionHeader id="career-heading">{t('title')}</SectionHeader>
 
       <RevealGroup className="space-y-0" stagger={0.06}>

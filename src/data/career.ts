@@ -10,6 +10,7 @@ export const career: Role[] = [
   {
     id: 'machinery-partner',
     company: 'Machinery Partner',
+    url: 'https://www.machinerypartner.com',
     role: {
       en: 'Principal Software Engineer',
       pt: 'Principal Software Engineer',
@@ -31,6 +32,7 @@ export const career: Role[] = [
   {
     id: 'luizalabs',
     company: 'Luizalabs (Magazine Luiza)',
+    url: 'https://luizalabs.com',
     role: {
       en: 'Senior Software Engineer',
       pt: 'Senior Software Engineer',
@@ -52,6 +54,7 @@ export const career: Role[] = [
   {
     id: 'corebiz',
     company: 'Corebiz (VTEX)',
+    url: 'https://www.corebiz.ag',
     role: {
       en: 'Software Engineer',
       pt: 'Software Engineer',
@@ -73,6 +76,7 @@ export const career: Role[] = [
   {
     id: 'uaubox',
     company: 'UAUBox',
+    url: 'https://uaubox.com.br',
     role: {
       en: 'Full Stack Developer',
       pt: 'Full Stack Developer',
@@ -95,6 +99,7 @@ export const career: Role[] = [
   {
     id: 'klabin',
     company: 'Klabin S/A',
+    url: 'https://www.klabin.com.br',
     role: {
       en: 'IT Support Analyst',
       pt: 'Analista de Suporte de TI',

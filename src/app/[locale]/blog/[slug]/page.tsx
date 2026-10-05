@@ -10,7 +10,7 @@
 // TOC components render only when extractToc returns ≥1 entry (default
 // threshold 1000 words; CONTEXT D-07).
 import { TocMobile, TocSidebar } from '@/components/blog';
-import JsonLd, { AUTHOR_PERSON, SITE_URL } from '@/components/json-ld';
+import JsonLd, { AUTHOR_PERSON, SITE_URL, buildBreadcrumbList } from '@/components/json-ld';
 import { type Locale, routing } from '@/i18n/routing';
 import { formatDate } from '@/lib/i18n/helpers';
 import { Link } from '@/lib/i18n/navigation';
@@ -65,6 +65,13 @@ export default async function BlogPostPage({
 
   return (
     <>
+      <JsonLd
+        schema={buildBreadcrumbList(locale, [
+          { name: 'Home', path: '' },
+          { name: t('pageTitle'), path: '/blog' },
+          { name: post.title, path: `/blog/${post.slug}` },
+        ])}
+      />
       <link rel="alternate" type="application/rss+xml" title="Blog (EN)" href="/feed.xml" />
       <link rel="alternate" type="application/rss+xml" title="Blog (PT)" href="/feed.pt.xml" />
       <article className="mx-auto max-w-5xl px-4 py-12 lg:grid lg:grid-cols-[1fr_240px] lg:gap-10">

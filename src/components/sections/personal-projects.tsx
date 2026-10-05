@@ -64,7 +64,7 @@ export function PersonalProjects() {
   const t = useTranslations('personalProjects');
 
   return (
-    <Section id="personal-projects" aria-labelledby="personal-projects-heading" width="wide">
+    <Section id="personal-projects" aria-labelledby="personal-projects-heading">
       <SectionHeader id="personal-projects-heading">{t('title')}</SectionHeader>
       <p className="text-sm text-muted-foreground mb-6">{t('subtitle')}</p>
 
