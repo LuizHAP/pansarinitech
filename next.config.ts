@@ -92,6 +92,13 @@ const nextConfig: NextConfig = {
         // are cross-origin requests even though they come from this host.
         headers: [...previewHeaders, { key: 'Access-Control-Allow-Origin', value: '*' }],
       },
+      {
+        source: '/admin/:path*',
+        headers: [
+          { key: 'X-Robots-Tag', value: 'noindex, nofollow, noarchive' },
+          { key: 'Cache-Control', value: 'private, no-store' },
+        ],
+      },
     ];
   },
 };

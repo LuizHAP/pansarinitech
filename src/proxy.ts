@@ -10,9 +10,9 @@ export const config = {
   // file extensions — `icon`, `apple-icon` (Next 16 emits them at extension-less
   // paths but serves PNG content). Without this exemption next-intl's middleware
   // 307-redirects them to /en/icon, /en/apple-icon → 404. T-04-32.
-  // preview and client-previews live outside [locale], so next-intl would redirect them to
-  // /en/...; directory-style /client-previews/x/ URLs have no dot for the extension rule.
+  // preview, client-previews and admin live outside [locale], so next-intl would redirect them
+  // to /en/...; directory-style /client-previews/x/ URLs have no dot for the extension rule.
   matcher: [
-    '/((?!api|_next/static|_next/image|icon|apple-icon|preview|client-previews|.*\\..*).*)',
+    '/((?!api|_next/static|_next/image|icon|apple-icon|preview|client-previews|admin|.*\\..*).*)',
   ],
 };
