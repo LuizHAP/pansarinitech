@@ -52,3 +52,9 @@ test-results/
 
 # GSD planning artifacts (kept local)
 .planning/
+
+# claude-flow / ruflo local state
+.claude-flow/neural/
+.swarm/
+agentdb.rvf*
+ruvector.db
