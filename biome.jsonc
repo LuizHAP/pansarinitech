@@ -12,6 +12,7 @@
       ".next",
       "node_modules",
       "public/fonts",
+      "public/client-previews",
       "*.min.js",
       "pnpm-lock.yaml",
       ".planning/**"
