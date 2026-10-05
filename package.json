@@ -42,6 +42,7 @@
     "@tailwindcss/typography": "^0.5.19",
     "@vercel/analytics": "^2.0.1",
     "@vercel/blob": "^2.8.0",
+    "@vercel/functions": "^3.9.11",
     "@vercel/speed-insights": "^2.0.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",

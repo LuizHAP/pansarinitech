@@ -1,16 +1,22 @@
 import { PreviewViewer } from '@/components/preview/preview-viewer';
 import { clientPreviews } from '@/data/client-previews';
-import { findClientPreview } from '@/lib/client-preview-source';
+import { findClientPreview, getPreviewIndex, isPreviewSlug } from '@/lib/client-preview-source';
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 
-// Unknown slugs render on demand from Blob, so a 404 cached before an upload, or a changed
-// title, expires within a minute.
+// The page re-reads the cached Blob index (5 min, tag client-previews) at most once a minute.
 export const revalidate = 60;
 
-export function generateStaticParams() {
-  return clientPreviews.map(({ slug }) => ({ slug }));
+export async function generateStaticParams() {
+  const { previews } = await getPreviewIndex();
+  const slugs = new Set([
+    ...clientPreviews.map(({ slug }) => slug),
+    ...previews
+      .filter((preview) => preview.hasIndex && isPreviewSlug(preview.slug))
+      .map(({ slug }) => slug),
+  ]);
+  return Array.from(slugs, (slug) => ({ slug }));
 }
 
 export async function generateMetadata({
