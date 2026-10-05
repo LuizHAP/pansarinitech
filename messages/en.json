@@ -165,11 +165,11 @@
   },
   "seo": {
     "homeTitle": "Principal Software Engineer — Next.js, React Native, E-commerce",
-    "siteDescription": "Luiz Pansarini — Principal Software Engineer in Jundiaí, Brazil. 14 years in tech: React Native at Magalu, Next.js e-commerce at Machinery Partner, VTEX at Corebiz. Open to new opportunities.",
+    "siteDescription": "Luiz Pansarini — Principal Software Engineer in Brazil. 14 years in tech: React Native at Magalu, Next.js e-commerce at Machinery Partner, VTEX at Corebiz.",
     "siteSuffix": "Luiz Pansarini",
     "descriptions": {
-      "home": "Luiz Pansarini — Principal Software Engineer in Jundiaí, Brazil. 14 years in tech: React Native at Magalu, Next.js e-commerce at Machinery Partner, VTEX at Corebiz. Open to new opportunities.",
-      "projects": "Technical case studies: US heavy-machinery e-commerce (Next.js), Magazine Luiza Superapp (React Native), no-code to headless CMS migration, and design system from scratch.",
+      "home": "Luiz Pansarini — Principal Software Engineer in Brazil. 14 years in tech: React Native at Magalu, Next.js e-commerce at Machinery Partner, VTEX at Corebiz.",
+      "projects": "Case studies: US heavy-machinery e-commerce (Next.js), Magazine Luiza Superapp (React Native), no-code to headless CMS, and a design system from scratch.",
       "blog": "Engineering notes on Next.js, React Native, TypeScript, and building products that ship. Written by a Principal Engineer in Brazil.",
       "now": "What I'm currently working on, reading, and learning — updated whenever something changes."
     }

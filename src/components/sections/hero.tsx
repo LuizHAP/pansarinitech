@@ -105,9 +105,9 @@ export async function Hero() {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent" />
               <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-5">
-                <h3 className="text-base sm:text-lg font-medium tracking-tight text-foreground">
+                <h2 className="text-base sm:text-lg font-medium tracking-tight text-foreground">
                   {featuredProjects[0].title}
-                </h3>
+                </h2>
                 <p className="text-xs sm:text-sm text-muted-foreground mt-1">
                   {featuredProjects[0].role} · {featuredProjects[0].year}
                 </p>
@@ -132,9 +132,9 @@ export async function Hero() {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent" />
               <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-4">
-                <h3 className="text-sm sm:text-base font-medium tracking-tight text-foreground line-clamp-1">
+                <h2 className="text-sm sm:text-base font-medium tracking-tight text-foreground line-clamp-1">
                   {project.title}
-                </h3>
+                </h2>
                 <p className="text-xs text-muted-foreground mt-0.5">{project.year}</p>
               </div>
             </Link>

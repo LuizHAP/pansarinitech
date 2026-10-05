@@ -6,7 +6,7 @@
 // Coverage target: PURE_100 (100/100/100/100).
 import { render } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-import JsonLd, { AUTHOR_PERSON, SITE_URL } from './json-ld';
+import JsonLd, { AUTHOR_PERSON, buildBreadcrumbList, SITE_URL } from './json-ld';
 
 describe('<JsonLd />', () => {
   it('renders a script tag with type application/ld+json and correct innerHTML', () => {
@@ -48,6 +48,24 @@ describe('AUTHOR_PERSON export', () => {
       addressLocality: 'Jundiaí',
       addressRegion: 'SP',
       addressCountry: 'BR',
+    });
+  });
+});
+
+describe('buildBreadcrumbList', () => {
+  it('builds a BreadcrumbList with 1-based positions and locale-prefixed absolute URLs', () => {
+    expect(
+      buildBreadcrumbList('pt', [
+        { name: 'Home', path: '' },
+        { name: 'Projetos', path: '/projects' },
+      ]),
+    ).toEqual({
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE_URL}/pt` },
+        { '@type': 'ListItem', position: 2, name: 'Projetos', item: `${SITE_URL}/pt/projects` },
+      ],
     });
   });
 });

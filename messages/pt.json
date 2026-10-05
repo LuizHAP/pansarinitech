@@ -165,11 +165,11 @@
   },
   "seo": {
     "homeTitle": "Principal Software Engineer — Next.js, React Native, E-commerce",
-    "siteDescription": "Luiz Pansarini — Principal Software Engineer em Jundiaí, SP. 14 anos em tech: React Native no Magalu, Next.js e-commerce na Machinery Partner, VTEX na Corebiz. Aberto a novas oportunidades.",
+    "siteDescription": "Luiz Pansarini — Principal Software Engineer em Jundiaí, SP. 14 anos em tech: React Native no Magalu, Next.js e-commerce na Machinery Partner, VTEX na Corebiz.",
     "siteSuffix": "Luiz Pansarini",
     "descriptions": {
-      "home": "Luiz Pansarini — Principal Software Engineer em Jundiaí, SP. 14 anos em tech: React Native no Magalu, Next.js e-commerce na Machinery Partner, VTEX na Corebiz. Aberto a novas oportunidades.",
-      "projects": "Estudos de caso técnicos: e-commerce de máquinas pesadas nos EUA (Next.js), Superapp Magazine Luiza (React Native), migração no-code para headless CMS, e design system do zero.",
+      "home": "Luiz Pansarini — Principal Software Engineer em Jundiaí, SP. 14 anos em tech: React Native no Magalu, Next.js e-commerce na Machinery Partner, VTEX na Corebiz.",
+      "projects": "Estudos de caso: e-commerce de máquinas pesadas nos EUA (Next.js), Superapp Magazine Luiza (React Native), de no-code para headless CMS e design system do zero.",
       "blog": "Notas de engenharia sobre Next.js, React Native, TypeScript e como construir produtos que entregam valor. Escrito por um Principal Engineer no Brasil.",
       "now": "O que estou trabalhando, lendo e aprendendo agora — atualizado quando algo muda."
     }
