@@ -31,6 +31,13 @@ describe('PreviewViewer', () => {
     );
   });
 
+  it('sandboxes the client frame without same-origin access', () => {
+    renderViewer();
+    const sandbox = screen.getByTitle('Cliente Exemplo website').getAttribute('sandbox');
+    expect(sandbox).toBe('allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox');
+    expect(sandbox).not.toContain('allow-same-origin');
+  });
+
   it('names the preview and the client in the level-1 heading', () => {
     renderViewer();
     const heading = screen.getByRole('heading', { level: 1 });

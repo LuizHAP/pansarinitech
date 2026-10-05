@@ -86,7 +86,12 @@ const nextConfig: NextConfig = {
       // Last on purpose: for the same header key the last matching rule wins, so
       // previews keep noarchive outside production too.
       { source: '/preview/:path*', headers: previewHeaders },
-      { source: '/client-previews/:path*', headers: previewHeaders },
+      {
+        source: '/client-previews/:path*',
+        // The sandboxed preview frame has an opaque origin, so its module scripts and fonts
+        // are cross-origin requests even though they come from this host.
+        headers: [...previewHeaders, { key: 'Access-Control-Allow-Origin', value: '*' }],
+      },
     ];
   },
 };

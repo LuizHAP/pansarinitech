@@ -11,6 +11,7 @@ const LIB_DATA_FILES = [
   'src/lib/mdx/schema.ts',
   'src/lib/mdx/toc.ts',
   'src/data/schemas.ts',
+  'src/lib/client-preview-source.ts',
 ];
 
 const COMPONENT_FILES = [

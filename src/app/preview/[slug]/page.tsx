@@ -1,10 +1,13 @@
 import { PreviewViewer } from '@/components/preview/preview-viewer';
-import { clientPreviews, getClientPreview } from '@/data/client-previews';
+import { clientPreviews } from '@/data/client-previews';
+import { findClientPreview } from '@/lib/client-preview-source';
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 
-export const dynamicParams = false;
+// Unknown slugs render on demand from Blob, so a 404 cached before an upload, or a changed
+// title, expires within a minute.
+export const revalidate = 60;
 
 export function generateStaticParams() {
   return clientPreviews.map(({ slug }) => ({ slug }));
@@ -16,7 +19,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const preview = getClientPreview(slug);
+  const preview = await findClientPreview(slug);
   if (!preview) notFound();
 
   const t = await getTranslations({ locale: preview.locale, namespace: 'preview' });
@@ -38,7 +41,7 @@ export async function generateMetadata({
 
 export default async function PreviewPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const preview = getClientPreview(slug);
+  const preview = await findClientPreview(slug);
   if (!preview) notFound();
 
   setRequestLocale(preview.locale);
