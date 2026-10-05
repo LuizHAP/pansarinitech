@@ -56,6 +56,8 @@ function ProjectCard({
           alt=""
           fill
           priority={featured}
+          // Next 16's priority only preloads; fetchpriority must be set explicitly for the LCP image.
+          fetchPriority={featured ? 'high' : undefined}
           placeholder="blur"
           className="object-cover transition-transform duration-500 group-hover:scale-105"
           sizes={featured ? '(max-width: 640px) 100vw, 30vw' : '(max-width: 640px) 112px, 30vw'}

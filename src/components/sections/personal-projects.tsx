@@ -27,13 +27,7 @@ function StatusBadge({
   );
 }
 
-function ProjectScreenshot({
-  project,
-  priority,
-}: {
-  project: PersonalProject;
-  priority?: boolean;
-}) {
+function ProjectScreenshot({ project }: { project: PersonalProject }) {
   if (project.screenshot) {
     return (
       <div className="aspect-[16/10] w-full overflow-hidden bg-muted">
@@ -43,7 +37,6 @@ function ProjectScreenshot({
           width={640}
           height={400}
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 400px"
-          priority={priority}
           className="h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
         />
       </div>
@@ -69,7 +62,7 @@ export function PersonalProjects() {
       <p className="text-sm text-muted-foreground mb-6">{t('subtitle')}</p>
 
       <RevealGroup className="grid gap-4 grid-cols-1 lg:grid-cols-2" stagger={0.06}>
-        {personalProjects.map((project, index) => (
+        {personalProjects.map((project) => (
           <RevealItem key={project.id}>
             <article
               className={cn(
@@ -77,7 +70,7 @@ export function PersonalProjects() {
                 project.screenshotDraft && 'ring-1 ring-amber-500/30',
               )}
             >
-              <ProjectScreenshot project={project} priority={index === 0} />
+              <ProjectScreenshot project={project} />
 
               <div className="p-5">
                 <div className="flex items-start justify-between gap-2">
