@@ -42,6 +42,7 @@ const COMPONENT_FILES = [
   'src/components/blog/post-card.tsx',
   'src/components/blog/toc-mobile.tsx',
   'src/components/blog/toc-sidebar.tsx',
+  'src/components/preview/preview-viewer.tsx',
 ];
 
 const PURE_100 = { statements: 100, branches: 100, functions: 100, lines: 100 };
