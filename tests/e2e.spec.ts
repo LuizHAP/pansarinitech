@@ -196,6 +196,16 @@ test.describe('Client preview viewer (proxy-excluded, always noindex)', () => {
     expect(response.status()).toBe(404);
   });
 
+  test('/client-previews/does-not-exist/index.html returns a noindexed 404, not a 500', async ({
+    request,
+  }) => {
+    const response = await request.get('/client-previews/does-not-exist/index.html', {
+      maxRedirects: 0,
+    });
+    expect(response.status()).toBe(404);
+    expect(response.headers()['x-robots-tag'] ?? '').toContain('noarchive');
+  });
+
   test('/preview/exemplo renders the client site under the PT brand bar', async ({ page }) => {
     await page.goto('/preview/exemplo');
     await expect(page.locator('html')).toHaveAttribute('lang', 'pt-BR');

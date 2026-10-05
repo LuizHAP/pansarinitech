@@ -1,5 +1,5 @@
 import { ThemeProvider } from '@/components/shared/theme-provider';
-import { getClientPreview } from '@/data/client-previews';
+import { findClientPreview } from '@/lib/client-preview-source';
 import { Analytics } from '@vercel/analytics/next';
 import { setRequestLocale } from 'next-intl/server';
 import { IBM_Plex_Sans } from 'next/font/google';
@@ -21,7 +21,7 @@ export default async function PreviewLayout({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const preview = getClientPreview(slug);
+  const preview = await findClientPreview(slug);
   if (!preview) notFound();
   setRequestLocale(preview.locale);
 
