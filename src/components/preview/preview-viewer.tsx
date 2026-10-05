@@ -80,9 +80,11 @@ export function PreviewViewer({
       </header>
       <main className={cn('min-h-0 flex-1', isMobile && 'flex justify-center bg-muted p-4')}>
         {/* Client pages expect the browser's default white canvas, not the portfolio theme. */}
+        {/* No allow-same-origin, so client scripts cannot reach the portfolio's cookies or storage. */}
         <iframe
           src={src}
           title={labels.frame}
+          sandbox="allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox"
           className={
             isMobile
               ? 'block h-full max-w-full rounded-md border border-border bg-white'

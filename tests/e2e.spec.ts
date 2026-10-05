@@ -206,6 +206,14 @@ test.describe('Client preview viewer (proxy-excluded, always noindex)', () => {
     expect(response.headers()['x-robots-tag'] ?? '').toContain('noarchive');
   });
 
+  test('/client-previews assets allow cross-origin loads from the sandboxed frame', async ({
+    request,
+  }) => {
+    const response = await request.get('/client-previews/exemplo/style.css', { maxRedirects: 0 });
+    expect(response.status()).toBe(200);
+    expect(response.headers()['access-control-allow-origin']).toBe('*');
+  });
+
   test('/preview/exemplo renders the client site under the PT brand bar', async ({ page }) => {
     await page.goto('/preview/exemplo');
     await expect(page.locator('html')).toHaveAttribute('lang', 'pt-BR');
@@ -228,6 +236,27 @@ test.describe('Client preview viewer (proxy-excluded, always noindex)', () => {
 
     await page.getByRole('button', { name: 'Celular' }).click();
     await expect.poll(async () => (await iframe.boundingBox())?.width).toBe(390);
+  });
+
+  test('/preview/exemplo runs client scripts in a sandbox without portfolio storage access', async ({
+    page,
+  }) => {
+    await page.goto('/preview/exemplo');
+    await expect(
+      page.frameLocator('main iframe').getByText('JavaScript carregado pelo caminho relativo.'),
+    ).toBeVisible();
+
+    const clientFrame = page.frame({ url: /\/client-previews\/exemplo\/index\.html$/ });
+    expect(clientFrame).not.toBeNull();
+    const storage = await clientFrame?.evaluate(() => {
+      try {
+        window.localStorage.getItem('theme');
+        return 'readable';
+      } catch {
+        return 'blocked';
+      }
+    });
+    expect(storage).toBe('blocked');
   });
 
   for (const colorScheme of ['light', 'dark'] as const) {

@@ -125,16 +125,33 @@ Every PR runs all gates via `.github/workflows/ci.yml`. Lighthouse runs on `main
 
 Share a client's site on a link you control, under a bar with your brand and a Desktop/Mobile toggle.
 
+#### From the repo
+
 1. Copy the client's files into `public/client-previews/<slug>/` with `index.html` at the root. Keep every asset path relative (`style.css`, `img/logo.png`), never starting with `/`.
 2. Add `{ slug, client, locale }` to `src/data/client-previews.ts`. `locale` is `pt` or `en` and picks the bar language.
 3. Run `pnpm test:unit`, which checks the slug format, uniqueness and that `index.html` exists.
 4. Share `https://pansarini.dev/preview/<slug>`.
 
+#### From Vercel Blob (no commit or deploy)
+
+One-time setup:
+
+1. In the Vercel dashboard, go to Storage, Create, Blob and pick Private access. Use this store only for previews, because every file in it can be reached under `/client-previews/`.
+2. Connect the store to the project. To use it in local dev, run `vercel env pull .env.local`.
+
+Per preview:
+
+1. In the store's file browser, create a folder `<slug>` and upload `index.html` plus its assets with the same relative paths (`<slug>/style.css`, `<slug>/img/logo.png`).
+2. Share `https://pansarini.dev/preview/<slug>`.
+
+The bar takes the client name from `<title>` (the text before the first `|`, `–`, `—` or `-` with a space on each side) and the language from `<html lang>` (`pt…` gives Portuguese, any other value gives English, and a missing lang gives Portuguese). New uploads and changes can take up to about 60 seconds to show. A slug in `src/data/client-previews.ts` wins over a Blob folder with the same name.
+
 Notes:
 
-- Slugs use only `[a-z0-9-]`.
-- Previews are sent with `X-Robots-Tag: noindex` and a robots meta tag so search engines skip them, but anyone with the link can open them. Use a hard-to-guess slug (e.g. `acme-7f3k2q`) for anything not public yet.
-- Pasted code runs on the portfolio's origin, so only paste code you trust.
+- Slugs use only `[a-z0-9-]`, in the repo and for Blob folders alike.
+- Previews from both sources are sent with `X-Robots-Tag: noindex` and a robots meta tag so search engines skip them, but anyone with the link can open them. Use a hard-to-guess slug (e.g. `acme-7f3k2q`) for anything not public yet.
+- The frame is sandboxed without same-origin access: client scripts run but cannot read the portfolio's cookies or storage, so client code that needs localStorage or cookies will not work in the frame.
+- Opening the raw `/client-previews/<slug>/index.html` URL bypasses the sandbox, so only paste or upload code you trust.
 
 ### Accessibility
 
@@ -272,16 +289,33 @@ Todos os gates rodam em cada PR via `.github/workflows/ci.yml`. O Lighthouse rod
 
 Compartilhe o site de um cliente em um link que você controla, sob uma barra com a sua marca e um seletor Desktop/Celular.
 
+#### Pelo repositório
+
 1. Copie os arquivos do cliente para `public/client-previews/<slug>/`, com o `index.html` na raiz. Mantenha todos os caminhos de assets relativos (`style.css`, `img/logo.png`), nunca começando com `/`.
 2. Adicione `{ slug, client, locale }` em `src/data/client-previews.ts`. `locale` é `pt` ou `en` e define o idioma da barra.
 3. Rode `pnpm test:unit`, que verifica o formato do slug, se ele é único e se o `index.html` existe.
 4. Compartilhe `https://pansarini.dev/preview/<slug>`.
 
+#### Pelo Vercel Blob (sem commit nem deploy)
+
+Configuração única:
+
+1. No painel da Vercel, vá em Storage, Create, Blob e escolha o acesso Private. Use esse store só para prévias, porque qualquer arquivo nele pode ser acessado em `/client-previews/`.
+2. Conecte o store ao projeto. Para usá-lo no desenvolvimento local, rode `vercel env pull .env.local`.
+
+A cada prévia:
+
+1. No navegador de arquivos do store, crie uma pasta `<slug>` e envie o `index.html` com os assets, mantendo os mesmos caminhos relativos (`<slug>/style.css`, `<slug>/img/logo.png`).
+2. Compartilhe `https://pansarini.dev/preview/<slug>`.
+
+A barra pega o nome do cliente do `<title>` (o texto antes do primeiro `|`, `–`, `—` ou `-` com espaço dos dois lados) e o idioma do `<html lang>` (`pt…` vira português, qualquer outro valor vira inglês, e sem lang fica português). Envios novos e alterações podem levar cerca de 60 segundos para aparecer. Um slug em `src/data/client-previews.ts` tem prioridade sobre uma pasta do Blob com o mesmo nome.
+
 Observações:
 
-- Slugs usam apenas `[a-z0-9-]`.
-- As prévias são enviadas com `X-Robots-Tag: noindex` e uma meta tag robots para que os buscadores as ignorem, mas qualquer pessoa com o link consegue abri-las. Use um slug difícil de adivinhar (ex.: `acme-7f3k2q`) para o que ainda não for público.
-- O código colado roda na mesma origem do portfólio, então só cole código em que você confia.
+- Slugs usam apenas `[a-z0-9-]`, tanto no repositório quanto nas pastas do Blob.
+- As prévias das duas origens são enviadas com `X-Robots-Tag: noindex` e uma meta tag robots para que os buscadores as ignorem, mas qualquer pessoa com o link consegue abri-las. Use um slug difícil de adivinhar (ex.: `acme-7f3k2q`) para o que ainda não for público.
+- O frame roda em sandbox sem acesso à mesma origem: os scripts do cliente rodam, mas não conseguem ler os cookies nem o armazenamento do portfólio, então código do cliente que dependa de localStorage ou cookies não funciona dentro do frame.
+- Abrir a URL direta `/client-previews/<slug>/index.html` ignora o sandbox, então só cole ou envie código em que você confia.
 
 ### Acessibilidade
 
