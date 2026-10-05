@@ -1,24 +1,18 @@
 name: Lighthouse
 
 on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
+  deployment_status:
 
 jobs:
   lighthouse:
     name: Lighthouse Performance / A11y / SEO / BP (production)
+    # Vercel reports each deploy to GitHub; a fixed sleep after push could measure the
+    # previous build, and PR runs only ever measured production.
+    if: github.event.deployment_status.state == 'success' && github.event.deployment.environment == 'Production'
     runs-on: ubuntu-latest
     timeout-minutes: 12
-    # Lighthouse failures block the deploy so regressions are caught early.
     steps:
       - uses: actions/checkout@v4
-
-      # Wait for Vercel production deploy to complete before measuring.
-      # Tune sleep based on observed deploy latency.
-      - name: Wait for Vercel production
-        run: sleep 60
 
       # localePrefix:'always' — every route is served under /en or /pt. Hitting
       # a locale-free URL 307-redirects to /en/..., which would add an extra
