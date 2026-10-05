@@ -73,36 +73,35 @@ export function CareerTimeline() {
               const roleLabel = pickLocale(role.role, locale);
 
               return (
-                <RevealItem key={role.id}>
-                  <motion.li
-                    className="relative mb-10 pl-6 last:mb-0"
-                    variants={{ hidden: { opacity: 0, x: -20 }, show: { opacity: 1, x: 0 } }}
-                  >
-                    {role.pivot ? (
-                      <span
-                        role="img"
-                        aria-label={t('pivotLabel')}
-                        className="absolute -left-[7px] top-1.5 inline-flex"
-                      >
-                        <span className="block size-3 rounded-full bg-primary ring-2 ring-background" />
-                      </span>
-                    ) : (
-                      <span aria-hidden="true" className="absolute -left-[7px] top-1.5 inline-flex">
-                        <span className="block size-3 rounded-full bg-muted-foreground/60 ring-2 ring-background" />
-                      </span>
-                    )}
+                <motion.li
+                  key={role.id}
+                  className="relative mb-10 pl-6 last:mb-0"
+                  variants={{ hidden: { opacity: 0, x: -20 }, show: { opacity: 1, x: 0 } }}
+                >
+                  {role.pivot ? (
+                    <span
+                      role="img"
+                      aria-label={t('pivotLabel')}
+                      className="absolute -left-[7px] top-1.5 inline-flex"
+                    >
+                      <span className="block size-3 rounded-full bg-primary ring-2 ring-background" />
+                    </span>
+                  ) : (
+                    <span aria-hidden="true" className="absolute -left-[7px] top-1.5 inline-flex">
+                      <span className="block size-3 rounded-full bg-muted-foreground/60 ring-2 ring-background" />
+                    </span>
+                  )}
 
-                    <h3 className="text-lg font-semibold tracking-tight">{role.company}</h3>
-                    <p className="text-sm text-muted-foreground">
-                      {roleLabel} · <time>{period}</time>
-                    </p>
-                    <ul className="mt-3 list-disc space-y-1 pl-5 text-sm leading-relaxed text-muted-foreground marker:text-muted-foreground/60">
-                      {bullets.map((b) => (
-                        <li key={b.slice(0, 32)}>{b}</li>
-                      ))}
-                    </ul>
-                  </motion.li>
-                </RevealItem>
+                  <h3 className="text-lg font-semibold tracking-tight">{role.company}</h3>
+                  <p className="text-sm text-muted-foreground">
+                    {roleLabel} · <time>{period}</time>
+                  </p>
+                  <ul className="mt-3 list-disc space-y-1 pl-5 text-sm leading-relaxed text-muted-foreground marker:text-muted-foreground/60">
+                    {bullets.map((b) => (
+                      <li key={b.slice(0, 32)}>{b}</li>
+                    ))}
+                  </ul>
+                </motion.li>
               );
             })}
           </motion.ol>

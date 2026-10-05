@@ -52,7 +52,7 @@ export async function FeaturedProjectsTeaser({ locale }: { locale: Locale }) {
         className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-5"
         stagger={0.06}
       >
-        {featured.map((p, index) => (
+        {featured.map((p) => (
           <RevealItem key={p.slug}>
             <Link
               href={`/projects/${p.slug}`}
@@ -64,7 +64,6 @@ export async function FeaturedProjectsTeaser({ locale }: { locale: Locale }) {
                   alt=""
                   fill
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                  priority={index === 0}
                   placeholder="blur"
                   className="object-cover transition-transform duration-500 group-hover:scale-105"
                 />
