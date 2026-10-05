@@ -1,4 +1,4 @@
-import { render, screen } from '@/test/render';
+import { render, screen, within } from '@/test/render';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock static image imports BEFORE component import.
@@ -25,9 +25,11 @@ vi.mock('next-intl/server', () => ({
         contactCta: 'Contact',
         resumeCta: 'Resume',
         photoAlt: "Luiz Pansarini at Galaxy's Edge",
+        experienceLabel: 'Experience',
       },
       projects: {
         'cta.viewAll': 'View all projects →',
+        'cta.readMore': 'Read more →',
       },
     };
     const ptCatalog: Record<string, Record<string, string>> = {
@@ -53,6 +55,7 @@ vi.mock('@/lib/mdx/projects', () => ({
       role: 'Principal Software Engineer',
       year: 2024,
       blurb: 'First transactional storefront for US heavy machinery.',
+      stack: ['Next.js', 'React', 'TypeScript', 'Tailwind', 'Odoo'],
       featured: true,
       order: 1,
     },
@@ -62,6 +65,7 @@ vi.mock('@/lib/mdx/projects', () => ({
       role: 'Lead Engineer',
       year: 2023,
       blurb: 'No-code to Next.js migration.',
+      stack: ['Next.js', 'App Router', 'Vercel', 'hreflang'],
       featured: true,
       order: 2,
     },
@@ -71,6 +75,7 @@ vi.mock('@/lib/mdx/projects', () => ({
       role: 'Software Engineer',
       year: 2021,
       blurb: 'React Native superapp.',
+      stack: ['React Native', 'Jest', 'MSW', 'Native Modules'],
       featured: true,
       order: 3,
     },
@@ -126,6 +131,37 @@ describe('<Hero />', () => {
     expect(screen.getByText('Heavy Machinery e-commerce')).toBeInTheDocument();
     expect(screen.getByText('No-Code to Next.js Migration')).toBeInTheDocument();
     expect(screen.getByText('Magazine Luiza Superapp')).toBeInTheDocument();
+  });
+
+  it('renders each project card with year, blurb and a capped stack list', async () => {
+    const ui = await Hero();
+    render(ui, { locale: 'en' });
+
+    const featured = screen.getByRole('link', { name: /Heavy Machinery e-commerce/ });
+    expect(featured).toHaveAttribute('href', '/en/projects/machinery-partner-ecommerce');
+    expect(featured).toHaveTextContent('2024 · Principal Software Engineer');
+    expect(featured).toHaveTextContent('First transactional storefront for US heavy machinery.');
+    expect(featured).toHaveTextContent('Tailwind');
+    expect(featured).not.toHaveTextContent('Odoo');
+    expect(featured).toHaveTextContent('Read more →');
+
+    const secondary = screen.getByRole('link', { name: /Magazine Luiza Superapp/ });
+    expect(secondary).toHaveTextContent('React Native superapp.');
+    expect(secondary).toHaveTextContent('MSW');
+    expect(secondary).not.toHaveTextContent('Native Modules');
+    expect(secondary).not.toHaveTextContent('Read more');
+  });
+
+  it('renders the experience list from career data in locale order', async () => {
+    const ui = await Hero();
+    render(ui, { locale: 'en' });
+
+    const list = screen.getByRole('list', { name: 'Experience' });
+    const items = within(list).getAllByRole('listitem');
+    expect(items).toHaveLength(5);
+    expect(items[0]).toHaveTextContent('Machinery Partner');
+    expect(items[0]).toHaveTextContent('Jan 2023 — Apr 2026');
+    expect(items[4]).toHaveTextContent('Klabin S/A');
   });
 
   it('renders View all projects link', async () => {

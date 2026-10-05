@@ -1,9 +1,13 @@
+import { Badge } from '@/components/ui';
+import { career } from '@/data/career';
 import { contact } from '@/data/contact';
 import { hero } from '@/data/hero';
 import type { Locale } from '@/i18n/routing';
-import { pickLocale } from '@/lib/i18n/helpers';
+import { formatPeriod, pickLocale } from '@/lib/i18n/helpers';
 import { Link } from '@/lib/i18n/navigation';
 import { getProjects } from '@/lib/mdx/projects';
+import type { Project } from '@/lib/mdx/schema';
+import { cn } from '@/lib/utils';
 import { getLocale, getTranslations } from 'next-intl/server';
 import Image from 'next/image';
 
@@ -18,6 +22,80 @@ const HERO_IMAGES = {
   'magazine-luiza-superapp': magaluSuperapp,
   'machinery-mobile-first': machineryMobileFirst,
 } as const;
+
+function ProjectCard({
+  project,
+  featured,
+  readMore,
+}: {
+  project: Project;
+  featured: boolean;
+  readMore: string;
+}) {
+  return (
+    <Link
+      href={`/projects/${project.slug}`}
+      className={cn(
+        'group flex overflow-hidden rounded-xl border border-border bg-card transition-colors hover:border-foreground/30 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50',
+        featured
+          ? 'col-span-2 flex-col sm:flex-row'
+          : 'col-span-2 flex-row sm:col-span-1 sm:flex-col',
+      )}
+    >
+      <div
+        className={cn(
+          'relative shrink-0 overflow-hidden bg-muted',
+          featured
+            ? 'aspect-[16/9] w-full sm:aspect-auto sm:min-h-56 sm:w-1/2'
+            : 'w-28 sm:aspect-[16/9] sm:w-full',
+        )}
+      >
+        <Image
+          src={HERO_IMAGES[project.slug as keyof typeof HERO_IMAGES]}
+          alt=""
+          fill
+          priority={featured}
+          placeholder="blur"
+          className="object-cover transition-transform duration-500 group-hover:scale-105"
+          sizes={featured ? '(max-width: 640px) 100vw, 30vw' : '(max-width: 640px) 112px, 30vw'}
+        />
+      </div>
+      <div className="flex min-w-0 flex-1 flex-col gap-2 p-4 sm:p-5">
+        <p className="font-mono text-xs text-muted-foreground">
+          {featured ? `${project.year} · ${project.role}` : project.year}
+        </p>
+        <h2
+          className={cn(
+            'font-medium tracking-tight text-foreground',
+            featured ? 'text-lg sm:text-xl' : 'text-base',
+          )}
+        >
+          {project.title}
+        </h2>
+        <p
+          className={cn(
+            'text-sm leading-relaxed text-muted-foreground',
+            featured ? 'line-clamp-3' : 'line-clamp-2',
+          )}
+        >
+          {project.blurb}
+        </p>
+        <div className={cn('mt-auto flex-wrap gap-1.5 pt-1', featured ? 'flex' : 'hidden sm:flex')}>
+          {project.stack.slice(0, featured ? 4 : 3).map((tech) => (
+            <Badge key={tech} variant="outline" className="text-xs text-muted-foreground">
+              {tech}
+            </Badge>
+          ))}
+        </div>
+        {featured && (
+          <p className="pt-1 text-sm font-medium text-foreground underline-offset-4 group-hover:underline">
+            {readMore}
+          </p>
+        )}
+      </div>
+    </Link>
+  );
+}
 
 export async function Hero() {
   const locale = (await getLocale()) as Locale;
@@ -35,10 +113,8 @@ export async function Hero() {
       aria-labelledby="hero-heading"
       className="mx-auto max-w-7xl px-4 pt-8 pb-12 sm:pt-12 sm:pb-16 lg:pt-16 lg:pb-20"
     >
-      {/* Bento Grid: Identity + Work */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-5">
-        {/* Identity Card - spans 5 cols on desktop */}
-        <div className="lg:col-span-5 flex flex-col justify-between bg-card border border-border rounded-xl p-6 sm:p-8">
+        <div className="lg:col-span-5 flex flex-col bg-card border border-border rounded-xl p-6 sm:p-8">
           <div className="space-y-4">
             <div className="flex items-start gap-4">
               <div className="relative w-16 h-16 sm:w-20 sm:h-20 shrink-0">
@@ -69,7 +145,26 @@ export async function Hero() {
             </p>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-3 mt-6">
+          <div className="hidden lg:block mt-8 border-t border-border pt-6">
+            <p
+              id="hero-experience"
+              className="font-mono text-xs uppercase tracking-wider text-muted-foreground"
+            >
+              {t('experienceLabel')}
+            </p>
+            <ul aria-labelledby="hero-experience" className="mt-3 flex flex-col gap-2.5">
+              {career.map((role) => (
+                <li key={role.id} className="flex items-baseline justify-between gap-4 text-sm">
+                  <span className="font-medium text-foreground">{role.company}</span>
+                  <span className="shrink-0 font-mono text-xs text-muted-foreground">
+                    {formatPeriod(role.period, locale)}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="flex flex-col sm:flex-row gap-3 mt-6 lg:mt-auto lg:pt-8">
             <a
               href="#contact"
               className="inline-flex h-10 items-center justify-center rounded-md bg-primary px-5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
@@ -86,63 +181,18 @@ export async function Hero() {
           </div>
         </div>
 
-        {/* Featured Projects Grid - spans 7 cols on desktop */}
         <div className="lg:col-span-7 grid grid-cols-2 gap-4 lg:gap-5">
-          {/* First project - takes full width on first row */}
-          {featuredProjects[0] && (
-            <Link
-              href={`/projects/${featuredProjects[0].slug}`}
-              className="col-span-2 group relative overflow-hidden rounded-xl bg-muted aspect-[16/9]"
-            >
-              <Image
-                src={HERO_IMAGES[featuredProjects[0].slug as keyof typeof HERO_IMAGES]}
-                alt={featuredProjects[0].title}
-                fill
-                priority
-                placeholder="blur"
-                className="object-cover transition-transform duration-500 group-hover:scale-105"
-                sizes="(max-width: 1024px) 100vw, 58vw"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent" />
-              <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-5">
-                <h2 className="text-base sm:text-lg font-medium tracking-tight text-foreground">
-                  {featuredProjects[0].title}
-                </h2>
-                <p className="text-xs sm:text-sm text-muted-foreground mt-1">
-                  {featuredProjects[0].role} · {featuredProjects[0].year}
-                </p>
-              </div>
-            </Link>
-          )}
-
-          {/* Second and third projects - side by side */}
-          {featuredProjects.slice(1, 3).map((project) => (
-            <Link
+          {featuredProjects.map((project, index) => (
+            <ProjectCard
               key={project.slug}
-              href={`/projects/${project.slug}`}
-              className="group relative overflow-hidden rounded-xl bg-muted aspect-[4/3]"
-            >
-              <Image
-                src={HERO_IMAGES[project.slug as keyof typeof HERO_IMAGES]}
-                alt={project.title}
-                fill
-                placeholder="blur"
-                className="object-cover transition-transform duration-500 group-hover:scale-105"
-                sizes="(max-width: 1024px) 50vw, 29vw"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent" />
-              <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-4">
-                <h2 className="text-sm sm:text-base font-medium tracking-tight text-foreground line-clamp-1">
-                  {project.title}
-                </h2>
-                <p className="text-xs text-muted-foreground mt-0.5">{project.year}</p>
-              </div>
-            </Link>
+              project={project}
+              featured={index === 0}
+              readMore={tProj('cta.readMore')}
+            />
           ))}
         </div>
       </div>
 
-      {/* View all projects link */}
       <div className="flex justify-end mt-4">
         <Link
           href="/projects"

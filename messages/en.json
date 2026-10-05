@@ -25,7 +25,8 @@
   "hero": {
     "contactCta": "Contact",
     "resumeCta": "Resume",
-    "photoAlt": "Luiz Pansarini at Galaxy's Edge"
+    "photoAlt": "Luiz Pansarini at Galaxy's Edge",
+    "experienceLabel": "Experience"
   },
   "sections": {
     "about": "About",

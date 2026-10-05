@@ -25,7 +25,8 @@
   "hero": {
     "contactCta": "Contato",
     "resumeCta": "Currículo",
-    "photoAlt": "Luiz Pansarini no Galaxy's Edge"
+    "photoAlt": "Luiz Pansarini no Galaxy's Edge",
+    "experienceLabel": "Experiência"
   },
   "sections": {
     "about": "Sobre",
