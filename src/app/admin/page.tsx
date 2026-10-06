@@ -41,6 +41,7 @@ function PreviewCard({ preview }: { preview: AdminPreview }) {
           </a>
         </h2>
         <Badge variant="secondary">{preview.source === 'blob' ? 'Blob' : 'Repositório'}</Badge>
+        {preview.disabled && <Badge variant="outline">Desativada</Badge>}
         {preview.warnings.length > 0 && (
           <Badge variant="destructive">{warningLabel(preview.warnings.length)}</Badge>
         )}

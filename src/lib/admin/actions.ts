@@ -8,8 +8,14 @@ import {
   requireAdmin,
   signSession,
 } from '@/lib/admin/auth';
-import { PREVIEW_CACHE_TAG, isPreviewSlug, previewCacheTag } from '@/lib/client-preview-source';
-import { invalidateByTag } from '@vercel/functions';
+import {
+  PREVIEW_CACHE_TAG,
+  PREVIEW_DISABLED_MARKER,
+  isPreviewSlug,
+  previewCacheTag,
+} from '@/lib/client-preview-source';
+import { del, put } from '@vercel/blob';
+import { dangerouslyDeleteByTag, invalidateByTag } from '@vercel/functions';
 import { updateTag } from 'next/cache';
 import { cookies } from 'next/headers';
 import { notFound, redirect } from 'next/navigation';
@@ -64,5 +70,26 @@ export async function purgePreview(slug: string): Promise<void> {
   await requireAdmin();
   if (!isPreviewSlug(slug)) return;
   await invalidateByTag(previewCacheTag(slug));
+  updateTag(PREVIEW_CACHE_TAG);
+}
+
+export async function disablePreview(slug: string): Promise<void> {
+  await requireAdmin();
+  if (!isPreviewSlug(slug)) return;
+  // put() rejects an empty body, and only the pathname matters to the index.
+  await put(`${slug}/${PREVIEW_DISABLED_MARKER}`, 'disabled', {
+    access: 'private',
+    addRandomSuffix: false,
+    allowOverwrite: true,
+  });
+  updateTag(PREVIEW_CACHE_TAG);
+  // invalidateByTag would still serve each cached file once more.
+  await dangerouslyDeleteByTag(previewCacheTag(slug));
+}
+
+export async function enablePreview(slug: string): Promise<void> {
+  await requireAdmin();
+  if (!isPreviewSlug(slug)) return;
+  await del(`${slug}/${PREVIEW_DISABLED_MARKER}`);
   updateTag(PREVIEW_CACHE_TAG);
 }

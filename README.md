@@ -174,7 +174,14 @@ Cache:
 
 - The Blob listing is cached for 5 minutes and shared by the admin and the public pages, so a new upload shows up within about 5 minutes, or right away after "Atualizar índice".
 - Blob files are cached on Vercel's CDN for 5 minutes. "Limpar cache deste site" marks them stale, so the next load may still serve the old version once while it refreshes.
-- To take a preview down, delete its folder in the store, then open its admin page (it stays listed until the index refreshes) and click "Limpar cache deste site".
+
+Taking a preview offline:
+
+- On a Blob preview's admin page, "Desativar prévia" takes it offline without deleting its files. It writes a marker blob `<slug>/.disabled` to the store, refreshes the index and deletes the site's files from Vercel's CDN, so `/preview/<slug>` and everything under `/client-previews/<slug>/` return 404 right away. The admin keeps listing it with a "Desativada" badge, and "Copiar todas as URLs" leaves it out.
+- "Reativar prévia" deletes the marker and brings the preview back.
+- The marker also works when created by hand. Upload a small file with any content (it cannot be empty) as `<slug>/.disabled` in the store's file browser, or run `vercel blob put <file> --access private --pathname <slug>/.disabled`. Then click "Atualizar índice" (otherwise it takes up to 5 minutes) and run `vercel cache dangerously-delete --tag client-preview:<slug>` so copies of its files already in the CDN stop being served. To bring it back, delete the marker by hand and click "Atualizar índice".
+- To remove a preview for good, click "Desativar prévia" first (that clears the CDN), then delete its folder in the store and click "Atualizar índice".
+- None of this applies to previews from the repo. Take those down by removing the entry from `src/data/client-previews.ts` and the folder from `public/client-previews/` in a commit.
 
 Warnings flag a folder name outside `[a-z0-9-]`, a missing `index.html`, a missing `<title>`, asset paths starting with `/`, and a repo preview with the same slug.
 
@@ -363,7 +370,14 @@ Cache:
 
 - A listagem do Blob fica em cache por 5 minutos e é compartilhada pelo admin e pelas páginas públicas, então um envio novo aparece em cerca de 5 minutos, ou na hora com "Atualizar índice".
 - Os arquivos do Blob ficam em cache na CDN da Vercel por 5 minutos. "Limpar cache deste site" marca esse cache como desatualizado, então o próximo acesso ainda pode mostrar a versão antiga uma vez enquanto ele atualiza.
-- Para tirar uma prévia do ar, apague a pasta dela no store, depois abra a página dela no admin (ela continua listada até o índice atualizar) e clique em "Limpar cache deste site".
+
+Tirar uma prévia do ar:
+
+- Na página de uma prévia do Blob no admin, "Desativar prévia" tira a prévia do ar sem apagar os arquivos. Ela grava um blob marcador `<slug>/.disabled` no store, atualiza o índice e apaga os arquivos do site da CDN da Vercel, então `/preview/<slug>` e tudo em `/client-previews/<slug>/` passam a responder 404 na hora. O admin continua listando a prévia com o selo "Desativada", e ela fica de fora de "Copiar todas as URLs".
+- "Reativar prévia" apaga o marcador e traz a prévia de volta.
+- O marcador também funciona quando criado à mão. Envie um arquivo pequeno com qualquer conteúdo (ele não pode estar vazio) como `<slug>/.disabled` no navegador de arquivos do store, ou rode `vercel blob put <arquivo> --access private --pathname <slug>/.disabled`. Depois clique em "Atualizar índice" (senão leva até 5 minutos) e rode `vercel cache dangerously-delete --tag client-preview:<slug>` para que as cópias dos arquivos que já estão na CDN deixem de ser servidas. Para trazer a prévia de volta, apague o marcador à mão e clique em "Atualizar índice".
+- Para remover uma prévia de vez, clique primeiro em "Desativar prévia" (isso limpa a CDN), depois apague a pasta dela no store e clique em "Atualizar índice".
+- Nada disso vale para as prévias do repositório. Para tirá-las do ar, remova a entrada de `src/data/client-previews.ts` e a pasta de `public/client-previews/` em um commit.
 
 Os avisos apontam nome de pasta fora de `[a-z0-9-]`, falta de `index.html`, falta de `<title>`, caminhos de assets começando com `/` e uma prévia do repositório com o mesmo slug.
 
