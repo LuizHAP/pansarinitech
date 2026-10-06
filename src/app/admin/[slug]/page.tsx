@@ -1,7 +1,8 @@
 import { CopyButton } from '@/components/admin/copy-button';
 import { PREVIEW_FRAME_SANDBOX } from '@/components/preview/frame-sandbox';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { purgePreview } from '@/lib/admin/actions';
+import { disablePreview, enablePreview, purgePreview } from '@/lib/admin/actions';
 import { requireAdmin } from '@/lib/admin/auth';
 import {
   WARNING_MESSAGES,
@@ -41,7 +42,10 @@ export default async function AdminPreviewPage({
         >
           Voltar
         </a>
-        <h1 className="text-2xl font-semibold break-words">{preview.client}</h1>
+        <div className="flex flex-wrap items-center gap-2">
+          <h1 className="text-2xl font-semibold break-words">{preview.client}</h1>
+          {preview.disabled && <Badge variant="outline">Desativada</Badge>}
+        </div>
       </div>
 
       <dl className="grid grid-cols-2 gap-3 text-sm sm:grid-cols-3">
@@ -62,6 +66,11 @@ export default async function AdminPreviewPage({
       <section className="flex flex-col gap-2">
         <h2 className="text-lg font-semibold">URL pública</h2>
         <p className="font-mono text-xs break-all">{preview.url}</p>
+        {preview.disabled && (
+          <p className="text-sm text-muted-foreground">
+            Prévia desativada: esta URL e os arquivos respondem 404 até você reativar.
+          </p>
+        )}
         <div className="flex flex-wrap gap-2">
           <CopyButton value={preview.url} label="Copiar URL" />
           <Button asChild variant="outline" size="sm">
@@ -105,14 +114,18 @@ export default async function AdminPreviewPage({
           <ul className="flex flex-col gap-2">
             {preview.files.map((file) => (
               <li key={file.path} className="flex flex-col">
-                <a
-                  href={previewAssetHref(preview.slug, file.path)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="font-mono text-xs break-all underline-offset-4 hover:underline"
-                >
-                  {file.path}
-                </a>
+                {preview.disabled ? (
+                  <span className="font-mono text-xs break-all">{file.path}</span>
+                ) : (
+                  <a
+                    href={previewAssetHref(preview.slug, file.path)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-mono text-xs break-all underline-offset-4 hover:underline"
+                  >
+                    {file.path}
+                  </a>
+                )}
                 <span className="text-xs text-muted-foreground">
                   {formatBytes(file.size)} · {formatDateTime(file.uploadedAt)}
                 </span>
@@ -122,7 +135,7 @@ export default async function AdminPreviewPage({
         )}
       </section>
 
-      {preview.hasIndex && (
+      {preview.hasIndex && !preview.disabled && (
         <section className="flex flex-col gap-2">
           <h2 className="text-lg font-semibold">Prévia</h2>
           <iframe
@@ -135,11 +148,28 @@ export default async function AdminPreviewPage({
       )}
 
       {preview.source === 'blob' && (
-        <form action={purgePreview.bind(null, preview.slug)}>
-          <Button type="submit" variant="destructive" size="sm">
-            Limpar cache deste site
-          </Button>
-        </form>
+        <div className="flex flex-wrap gap-2">
+          {preview.disabled ? (
+            <form action={enablePreview.bind(null, preview.slug)}>
+              <Button type="submit" size="sm">
+                Reativar prévia
+              </Button>
+            </form>
+          ) : (
+            <>
+              <form action={disablePreview.bind(null, preview.slug)}>
+                <Button type="submit" variant="destructive" size="sm">
+                  Desativar prévia
+                </Button>
+              </form>
+              <form action={purgePreview.bind(null, preview.slug)}>
+                <Button type="submit" variant="destructive" size="sm">
+                  Limpar cache deste site
+                </Button>
+              </form>
+            </>
+          )}
+        </div>
       )}
     </main>
   );
