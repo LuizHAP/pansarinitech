@@ -209,6 +209,7 @@ describe('buildPreviewIndex', () => {
         client: 'Acme',
         locale: 'en',
         hasIndex: true,
+        disabled: false,
         files: [
           { path: 'css/style.css', size: 50, uploadedAt: '2026-10-03T00:00:00.000Z' },
           { path: 'index.html', size: 100, uploadedAt: '2026-10-01T00:00:00.000Z' },
@@ -252,6 +253,7 @@ describe('buildPreviewIndex', () => {
         client: 'empty',
         locale: 'pt',
         hasIndex: false,
+        disabled: false,
         files: [],
         fileCount: 0,
         totalSize: 0,
@@ -270,6 +272,59 @@ describe('buildPreviewIndex', () => {
 
     expect(preview.files.map((file) => file.path)).toEqual(['index.html']);
     expect(preview.fileCount).toBe(1);
+  });
+
+  it('flags a folder with the .disabled marker without counting it as a file', async () => {
+    listing(
+      listed('off/index.html', 100, '2026-10-01T00:00:00.000Z'),
+      listed('off/app.js', 50, '2026-10-02T00:00:00.000Z'),
+      listed('off/.disabled', 8, '2026-10-05T00:00:00.000Z'),
+    );
+    serving({ 'off/index.html': '<title>Off | Home</title>' });
+
+    const [preview] = (await buildPreviewIndex()).previews;
+
+    expect(preview.disabled).toBe(true);
+    expect(preview.files.map((file) => file.path)).toEqual(['app.js', 'index.html']);
+    expect(preview.fileCount).toBe(2);
+    expect(preview.totalSize).toBe(150);
+    expect(preview.updatedAt).toBe('2026-10-02T00:00:00.000Z');
+    expect(preview.hasIndex).toBe(true);
+    expect(preview.client).toBe('Off');
+    expect(preview.warnings).toEqual([]);
+  });
+
+  it('only treats .disabled at the folder root as the marker', async () => {
+    listing(listed('nested-off/index.html', 10), listed('nested-off/img/.disabled', 3));
+    serving({ 'nested-off/index.html': '<title>Nested Off</title>' });
+
+    const [preview] = (await buildPreviewIndex()).previews;
+
+    expect(preview.disabled).toBe(false);
+    expect(preview.files.map((file) => file.path)).toEqual(['img/.disabled', 'index.html']);
+    expect(preview.fileCount).toBe(2);
+  });
+
+  it('lists a folder holding only the marker as disabled, dated by the marker', async () => {
+    listing(listed('only-marker/.disabled', 8, '2026-10-04T00:00:00.000Z'));
+
+    const index = await buildPreviewIndex();
+
+    expect(index.previews).toEqual([
+      {
+        slug: 'only-marker',
+        client: 'only-marker',
+        locale: 'pt',
+        hasIndex: false,
+        disabled: true,
+        files: [],
+        fileCount: 0,
+        totalSize: 0,
+        updatedAt: '2026-10-04T00:00:00.000Z',
+        warnings: [{ code: 'missing-index' }],
+      },
+    ]);
+    expect(get).not.toHaveBeenCalled();
   });
 
   it('warns about a folder name outside [a-z0-9-]', async () => {
@@ -428,6 +483,12 @@ describe('findClientPreview', () => {
     await expect(findClientPreview('unknown-site')).resolves.toBeUndefined();
   });
 
+  it('returns undefined for a disabled preview', async () => {
+    listing(listed('off-site/index.html', 10), listed('off-site/.disabled', 8));
+    serving({ 'off-site/index.html': '<title>Off Site | Home</title>' });
+    await expect(findClientPreview('off-site')).resolves.toBeUndefined();
+  });
+
   it('returns undefined instead of throwing when Blob has no credentials', async () => {
     vi.mocked(list).mockRejectedValue(new Error('Vercel Blob: No blob credentials found.'));
     await expect(findClientPreview('no-credentials')).resolves.toBeUndefined();
@@ -446,6 +507,29 @@ describe('servePreviewAsset', () => {
     const response = await servePreviewAsset('acme', ['..', 'secret.txt'], null);
     expectUncachedNotFound(response);
     expect(get).not.toHaveBeenCalled();
+    expect(list).not.toHaveBeenCalled();
+  });
+
+  it('returns an uncached 404 for a disabled preview without reading the blob', async () => {
+    listing(listed('off-asset/index.html', 10), listed('off-asset/.disabled', 8));
+    vi.mocked(get).mockResolvedValue(found('<p>x</p>'));
+    const cachedIndex = vi.mocked(unstable_cache).mock.results[0].value as Mock;
+    const callsBefore = cachedIndex.mock.calls.length;
+
+    expectUncachedNotFound(await servePreviewAsset('off-asset', ['index.html'], null));
+    // The only Blob read is the index build's own index.html read.
+    expect(get).toHaveBeenCalledTimes(1);
+    expect(get).toHaveBeenCalledWith('off-asset/index.html', { access: 'private' });
+    expect(cachedIndex.mock.calls.length).toBe(callsBefore + 1);
+  });
+
+  it('still serves a preview when another folder is disabled', async () => {
+    listing(listed('other-off/.disabled', 8));
+    vi.mocked(get).mockResolvedValue(found('ok', 'text/plain'));
+    const response = await servePreviewAsset('still-on', ['index.html'], null);
+
+    expect(response.status).toBe(200);
+    expect(await response.text()).toBe('ok');
   });
 
   it('returns an uncached 404 when the blob does not exist', async () => {

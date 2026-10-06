@@ -13,7 +13,7 @@ export async function generateStaticParams() {
   const slugs = new Set([
     ...clientPreviews.map(({ slug }) => slug),
     ...previews
-      .filter((preview) => preview.hasIndex && isPreviewSlug(preview.slug))
+      .filter((preview) => preview.hasIndex && !preview.disabled && isPreviewSlug(preview.slug))
       .map(({ slug }) => slug),
   ]);
   return Array.from(slugs, (slug) => ({ slug }));

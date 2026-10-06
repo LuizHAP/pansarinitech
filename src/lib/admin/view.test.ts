@@ -17,6 +17,7 @@ function indexed(slug: string, overrides: Partial<IndexedPreview> = {}): Indexed
     client: slug,
     locale: 'pt',
     hasIndex: true,
+    disabled: false,
     files: [{ path: 'index.html', size: 10, uploadedAt: '2026-10-01T00:00:00.000Z' }],
     fileCount: 1,
     totalSize: 10,

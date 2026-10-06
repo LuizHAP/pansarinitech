@@ -5,6 +5,7 @@ import { unstable_cache } from 'next/cache';
 import { cache } from 'react';
 
 export const PREVIEW_CACHE_TAG = 'client-previews';
+export const PREVIEW_DISABLED_MARKER = '.disabled';
 
 export type PreviewWarningCode =
   | 'invalid-slug'
@@ -16,6 +17,7 @@ export type PreviewWarning = { code: PreviewWarningCode; detail?: string };
 export type PreviewFile = { path: string; size: number; uploadedAt: string };
 export type IndexedPreview = ClientPreview & {
   hasIndex: boolean;
+  disabled: boolean;
   files: PreviewFile[];
   fileCount: number;
   totalSize: number;
@@ -122,23 +124,38 @@ async function listAllBlobs(): Promise<ListBlobResultBlob[]> {
 
 export async function buildPreviewIndex(): Promise<PreviewIndex> {
   try {
-    const groups = new Map<string, { files: PreviewFile[]; updatedAt: string }>();
+    const groups = new Map<
+      string,
+      { files: PreviewFile[]; updatedAt: string; disabled: boolean; disabledAt: string }
+    >();
     for (const blob of await listAllBlobs()) {
       const separator = blob.pathname.indexOf('/');
       if (separator === -1) continue;
       const slug = blob.pathname.slice(0, separator);
       const path = blob.pathname.slice(separator + 1);
       const uploadedAt = blob.uploadedAt.toISOString();
-      const group = groups.get(slug) ?? { files: [], updatedAt: uploadedAt };
+      const group = groups.get(slug) ?? {
+        files: [],
+        updatedAt: '',
+        disabled: false,
+        disabledAt: '',
+      };
+      groups.set(slug, group);
+      if (path === PREVIEW_DISABLED_MARKER) {
+        // Disabling must not reorder the list or change "Atualizado em".
+        group.disabled = true;
+        group.disabledAt = uploadedAt;
+        continue;
+      }
       if (uploadedAt > group.updatedAt) group.updatedAt = uploadedAt;
       // The Blob dashboard's "create folder" stores a zero-byte blob ending in "/".
       if (path !== '' && !path.endsWith('/'))
         group.files.push({ path, size: blob.size, uploadedAt });
-      groups.set(slug, group);
     }
 
     const previews = await Promise.all(
-      Array.from(groups, async ([slug, { files, updatedAt }]): Promise<IndexedPreview> => {
+      Array.from(groups, async ([slug, group]): Promise<IndexedPreview> => {
+        const { files, disabled } = group;
         files.sort((a, b) => a.path.localeCompare(b.path));
         const hasIndex = files.some((file) => file.path === 'index.html');
         const html = hasIndex ? await readIndexHtml(slug) : '';
@@ -148,10 +165,11 @@ export async function buildPreviewIndex(): Promise<PreviewIndex> {
           client,
           locale,
           hasIndex,
+          disabled,
           files,
           fileCount: files.length,
           totalSize: files.reduce((total, file) => total + file.size, 0),
-          updatedAt,
+          updatedAt: group.updatedAt || group.disabledAt,
           warnings: collectWarnings(slug, hasIndex, client, html),
         };
       }),
@@ -175,7 +193,7 @@ export const findClientPreview = cache(async (slug: string): Promise<ClientPrevi
   if (!isSafePreviewPath(slug, ['index.html'])) return undefined;
 
   const indexed = (await getPreviewIndex()).previews.find(
-    (preview) => preview.slug === slug && preview.hasIndex,
+    (preview) => preview.slug === slug && preview.hasIndex && !preview.disabled,
   );
   return indexed && { slug: indexed.slug, client: indexed.client, locale: indexed.locale };
 });
@@ -195,6 +213,10 @@ export async function servePreviewAsset(
   ifNoneMatch: string | null,
 ): Promise<Response> {
   if (!isSafePreviewPath(slug, segments)) return notFoundResponse();
+  const { previews } = await getPreviewIndex();
+  if (previews.some((preview) => preview.slug === slug && preview.disabled)) {
+    return notFoundResponse();
+  }
 
   let result: GetBlobResult | null;
   try {
