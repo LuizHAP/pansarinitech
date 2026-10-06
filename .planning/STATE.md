@@ -36,7 +36,7 @@ progress:
 Phase: 11 (Lighthouse Performance Fix + Quality Verification) — COMPLETE
 Plan: 2 of 2 (both plans executed)
 Status: Milestone 50% — Phase 10 complete, Phase 11 complete (CASE-13 deferred: 608KB JS bundle blocks LCP)
-Last activity: 2026-10-05 - Completed quick task 261005-qnn: hidden admin for client previews
+Last activity: 2026-10-06 - Completed quick task 261006-fc8: disable Blob client previews from the admin
 
 ---
 
@@ -156,6 +156,7 @@ Last activity: 2026-10-05 - Completed quick task 261005-qnn: hidden admin for cl
 | fast | Serve the Héris client preview from Vercel Blob (drop the repo copy and registry entry) | 2026-10-05 | 2968ffa | — |
 | 261005-qnn | Hidden admin for client previews with a cached Blob index and CDN-cached assets | 2026-10-05 | eee9a92 | [261005-qnn-hidden-admin-for-client-previews-with-ca](./quick/261005-qnn-hidden-admin-for-client-previews-with-ca/) |
 | fast | Stop tracking .claude-flow local state so Biome and git ignore it | 2026-10-06 | — | — |
+| 261006-fc8 | Disable Blob client previews from the admin (`<slug>/.disabled` marker) to take Héris offline | 2026-10-06 | 6789bf6 | [261006-fc8-disable-blob-client-previews-from-the-ad](./quick/261006-fc8-disable-blob-client-previews-from-the-ad/) |
 
 ### Risks Carried Forward
 
