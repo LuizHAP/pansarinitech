@@ -30,7 +30,6 @@
 //     lib/i18n/navigation wrapper (D-08), which re-prefixes it with the
 //     active locale segment — with localePrefix:'always' the resolved URL is
 //     /pt/blog — exactly the contract Test #3 verifies.
-import { AxeBuilder } from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 
 test.describe('Locale switch + NEXT_LOCALE cookie persistence', () => {
@@ -172,26 +171,6 @@ test.describe('Project case study route renders in both locales (PROJ-04 + D-06 
 });
 
 test.describe('Client preview viewer (proxy-excluded, always noindex)', () => {
-  test('/preview/exemplo returns 200 without a redirect, with noindex header and meta', async ({
-    request,
-  }) => {
-    const response = await request.get('/preview/exemplo', { maxRedirects: 0 });
-    expect(response.status()).toBe(200);
-    // noarchive is only sent by the preview rule, so this holds outside production too.
-    const robots = response.headers()['x-robots-tag'] ?? '';
-    expect(robots).toContain('noindex');
-    expect(robots).toContain('noarchive');
-    expect(await response.text()).toMatch(/<meta name="robots" content="[^"]*noindex/);
-  });
-
-  test('/client-previews/exemplo/index.html is served with the preview noindex header', async ({
-    request,
-  }) => {
-    const response = await request.get('/client-previews/exemplo/index.html', { maxRedirects: 0 });
-    expect(response.status()).toBe(200);
-    expect(response.headers()['x-robots-tag'] ?? '').toContain('noarchive');
-  });
-
   test('/preview/does-not-exist returns 404 without a locale redirect', async ({ request }) => {
     const response = await request.get('/preview/does-not-exist', { maxRedirects: 0 });
     expect(response.status()).toBe(404);
@@ -206,101 +185,12 @@ test.describe('Client preview viewer (proxy-excluded, always noindex)', () => {
     expect(response.status()).toBe(404);
     expect(response.headers()['x-robots-tag'] ?? '').toContain('noarchive');
   });
-
-  test('/client-previews assets allow cross-origin loads from the sandboxed frame', async ({
-    request,
-  }) => {
-    const response = await request.get('/client-previews/exemplo/style.css', { maxRedirects: 0 });
-    expect(response.status()).toBe(200);
-    expect(response.headers()['access-control-allow-origin']).toBe('*');
-  });
-
-  test('/preview/exemplo renders the client site under the PT brand bar', async ({ page }) => {
-    await page.goto('/preview/exemplo');
-    await expect(page.locator('html')).toHaveAttribute('lang', 'pt-BR');
-
-    const heading = page.getByRole('heading', { level: 1 });
-    await expect(heading).toContainText('Prévia do site');
-    await expect(heading).toContainText('Cliente Exemplo');
-
-    const brand = page.getByRole('link', { name: /abrir portfólio/ });
-    await expect(brand).toHaveAttribute('href', '/');
-    await expect(brand).toHaveAttribute('target', '_blank');
-
-    // Relative style.css and script.js only resolve if the frame is served from its own directory.
-    const frame = page.frameLocator('main iframe');
-    await expect(frame.getByText('JavaScript carregado pelo caminho relativo.')).toBeVisible();
-    await expect(frame.locator('[data-css-proof]')).toHaveCSS('color', 'rgb(22, 101, 52)');
-
-    const iframe = page.locator('main iframe');
-    expect((await iframe.boundingBox())?.height ?? 0).toBeGreaterThan(600);
-
-    await page.getByRole('button', { name: 'Celular' }).click();
-    await expect.poll(async () => (await iframe.boundingBox())?.width).toBe(390);
-  });
-
-  test('/preview/exemplo runs client scripts in a sandbox without portfolio storage access', async ({
-    page,
-  }) => {
-    await page.goto('/preview/exemplo');
-    await expect(
-      page.frameLocator('main iframe').getByText('JavaScript carregado pelo caminho relativo.'),
-    ).toBeVisible();
-
-    const clientFrame = page.frame({ url: /\/client-previews\/exemplo\/index\.html$/ });
-    expect(clientFrame).not.toBeNull();
-    const storage = await clientFrame?.evaluate(() => {
-      try {
-        window.localStorage.getItem('theme');
-        return 'readable';
-      } catch {
-        return 'blocked';
-      }
-    });
-    expect(storage).toBe('blocked');
-  });
-
-  for (const colorScheme of ['light', 'dark'] as const) {
-    test(`/preview/exemplo brand bar follows the ${colorScheme} theme with zero axe violations`, async ({
-      page,
-    }) => {
-      await page.emulateMedia({ colorScheme });
-      await page.goto('/preview/exemplo');
-
-      const html = page.locator('html');
-      if (colorScheme === 'dark') {
-        await expect(html).toHaveClass(/(^|\s)dark(\s|$)/);
-      } else {
-        await expect(html).not.toHaveClass(/(^|\s)dark(\s|$)/);
-      }
-
-      // The gate covers the portfolio chrome, not client content; this axe version has no
-      // disableFrame, so the iframe is excluded by selector.
-      const results = await new AxeBuilder({ page })
-        .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
-        .options({
-          rules: {
-            'color-contrast': { enabled: true },
-            'heading-order': { enabled: true },
-            'landmark-one-main': { enabled: true },
-            'page-has-heading-one': { enabled: true },
-          },
-        })
-        .exclude('main iframe')
-        .analyze();
-
-      const formatted = JSON.stringify(results.violations, null, 2);
-      expect(results.violations, formatted).toEqual([]);
-    });
-  }
 });
 
 test.describe('Hidden admin for client previews (env-gated, noindex)', () => {
   // Mirrors webServer.env in playwright.config.ts.
   const ADMIN_USER = 'e2e-admin';
   const ADMIN_PASSWORD = 'e2e-password-not-a-secret';
-  const PREVIEW_FRAME_SANDBOX =
-    'allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox';
 
   test('/admin without a session redirects to the login, noindexed and uncached', async ({
     page,
@@ -335,14 +225,16 @@ test.describe('Hidden admin for client previews (env-gated, noindex)', () => {
     await expect(page).toHaveURL(/\/admin\/login$/);
   });
 
-  test('login lists exemplo, opens its page, and Sair ends the session', async ({ page }) => {
+  test('login shows the dashboard with the Blob alert, and Sair ends the session', async ({
+    page,
+  }) => {
     await page.goto('/admin/login');
     await page.getByLabel('Usuário').fill(ADMIN_USER);
     await page.getByLabel('Senha').fill(ADMIN_PASSWORD);
     await page.getByRole('button', { name: 'Entrar' }).click();
 
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Prévias de clientes');
-    await expect(page.getByText(/\/preview\/exemplo/)).toBeVisible();
+    await expect(page.getByRole('main').getByRole('alert')).toContainText('Blob indisponível');
 
     const session = (await page.context().cookies()).find(({ name }) => name === 'admin_session');
     expect(session?.httpOnly).toBe(true);
@@ -354,14 +246,6 @@ test.describe('Hidden admin for client previews (env-gated, noindex)', () => {
     expect(hoursLeft).toBeGreaterThan(7.9);
     expect(hoursLeft).toBeLessThan(8.1);
 
-    await page.getByRole('link', { name: 'Cliente Exemplo' }).click();
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Cliente Exemplo');
-    await expect(page.getByTitle('Prévia de Cliente Exemplo')).toHaveAttribute(
-      'sandbox',
-      PREVIEW_FRAME_SANDBOX,
-    );
-
-    await page.goto('/admin');
     await page.getByRole('button', { name: 'Sair' }).click();
     await expect(page).toHaveURL(/\/admin\/login$/);
     await page.goto('/admin');

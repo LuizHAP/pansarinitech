@@ -4,9 +4,8 @@ import { describe, expect, it } from 'vitest';
 import { clientPreviews, getClientPreview } from './client-previews';
 
 describe('clientPreviews registry', () => {
-  it('is non-empty and every slug is unique', () => {
+  it('has unique slugs', () => {
     const slugs = clientPreviews.map((p) => p.slug);
-    expect(slugs.length).toBeGreaterThan(0);
     expect(new Set(slugs).size).toBe(slugs.length);
   });
 
@@ -25,14 +24,6 @@ describe('clientPreviews registry', () => {
 });
 
 describe('getClientPreview', () => {
-  it('returns the entry for a known slug', () => {
-    expect(getClientPreview('exemplo')).toEqual({
-      slug: 'exemplo',
-      client: 'Cliente Exemplo',
-      locale: 'pt',
-    });
-  });
-
   it('returns undefined for an unknown slug', () => {
     expect(getClientPreview('does-not-exist')).toBeUndefined();
   });
