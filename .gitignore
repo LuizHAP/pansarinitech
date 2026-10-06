@@ -54,7 +54,7 @@ test-results/
 .planning/
 
 # claude-flow / ruflo local state
-.claude-flow/neural/
+.claude-flow/
 .swarm/
 agentdb.rvf*
 ruvector.db

@@ -155,6 +155,7 @@ Last activity: 2026-10-05 - Completed quick task 261005-qnn: hidden admin for cl
 | 261005-jih | Client previews from a private Vercel Blob store, no deploy (minimal version) | 2026-10-05 | a67a9df | [261005-jih-client-previews-from-vercel-blob-without](./quick/261005-jih-client-previews-from-vercel-blob-without/) |
 | fast | Serve the Héris client preview from Vercel Blob (drop the repo copy and registry entry) | 2026-10-05 | 2968ffa | — |
 | 261005-qnn | Hidden admin for client previews with a cached Blob index and CDN-cached assets | 2026-10-05 | eee9a92 | [261005-qnn-hidden-admin-for-client-previews-with-ca](./quick/261005-qnn-hidden-admin-for-client-previews-with-ca/) |
+| fast | Stop tracking .claude-flow local state so Biome and git ignore it | 2026-10-06 | — | — |
 
 ### Risks Carried Forward
 
