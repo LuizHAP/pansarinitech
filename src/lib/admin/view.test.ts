@@ -11,6 +11,14 @@ import {
   publicUrls,
 } from './view';
 
+vi.mock('@/data/client-previews', () => {
+  const clientPreviews = [{ slug: 'repo-site', client: 'Repo Site', locale: 'pt' }];
+  return {
+    clientPreviews,
+    getClientPreview: (slug: string) => clientPreviews.find((preview) => preview.slug === slug),
+  };
+});
+
 function indexed(slug: string, overrides: Partial<IndexedPreview> = {}): IndexedPreview {
   return {
     slug,
@@ -76,20 +84,20 @@ describe('listAdminPreviews', () => {
   it('lists the repo registry first, then every Blob preview, each with its public URL', () => {
     vi.stubEnv('NEXT_PUBLIC_SITE_URL', undefined);
     const rows = listAdminPreviews(
-      index(indexed('acme', { client: 'Acme' }), indexed('exemplo', { client: 'Outro' })),
+      index(indexed('acme', { client: 'Acme' }), indexed('repo-site', { client: 'Outro' })),
     );
 
     expect(rows.map(({ slug, source }) => [slug, source])).toEqual([
-      ['exemplo', 'repo'],
+      ['repo-site', 'repo'],
       ['acme', 'blob'],
-      ['exemplo', 'blob'],
+      ['repo-site', 'blob'],
     ]);
     expect(rows[0]).toEqual({
-      slug: 'exemplo',
-      client: 'Cliente Exemplo',
+      slug: 'repo-site',
+      client: 'Repo Site',
       locale: 'pt',
       source: 'repo',
-      url: 'https://pansarini.dev/preview/exemplo',
+      url: 'https://pansarini.dev/preview/repo-site',
       hasIndex: true,
       disabled: false,
       files: [],
@@ -105,19 +113,19 @@ describe('listAdminPreviews', () => {
       totalSize: 10,
       updatedAt: '2026-10-01T00:00:00.000Z',
     });
-    expect(rows[2].url).toBe('https://pansarini.dev/preview/exemplo');
+    expect(rows[2].url).toBe('https://pansarini.dev/preview/repo-site');
   });
 });
 
 describe('findAdminPreview', () => {
   it('prefers the Blob row when the slug is also in the repo', () => {
-    const row = findAdminPreview(index(indexed('exemplo', { client: 'Outro' })), 'exemplo');
+    const row = findAdminPreview(index(indexed('repo-site', { client: 'Outro' })), 'repo-site');
     expect(row?.source).toBe('blob');
     expect(row?.client).toBe('Outro');
   });
 
   it('falls back to the repo row', () => {
-    expect(findAdminPreview(index(), 'exemplo')?.source).toBe('repo');
+    expect(findAdminPreview(index(), 'repo-site')?.source).toBe('repo');
   });
 
   it('is undefined for an unknown slug', () => {
@@ -131,7 +139,7 @@ describe('publicUrls', () => {
     const rows = listAdminPreviews(
       index(
         indexed('acme'),
-        indexed('exemplo'),
+        indexed('repo-site'),
         indexed('no-index', { hasIndex: false }),
         indexed('Bad_Slug'),
         indexed('paused', { disabled: true }),
@@ -139,7 +147,7 @@ describe('publicUrls', () => {
     );
 
     expect(publicUrls(rows)).toEqual([
-      'https://pansarini.dev/preview/exemplo',
+      'https://pansarini.dev/preview/repo-site',
       'https://pansarini.dev/preview/acme',
     ]);
   });
@@ -148,13 +156,13 @@ describe('publicUrls', () => {
 describe('disabled previews', () => {
   it('keeps a disabled Blob row disabled and its repo twin public', () => {
     vi.stubEnv('NEXT_PUBLIC_SITE_URL', undefined);
-    const rows = listAdminPreviews(index(indexed('exemplo', { disabled: true })));
+    const rows = listAdminPreviews(index(indexed('repo-site', { disabled: true })));
 
     expect(rows.map(({ source, disabled }) => [source, disabled])).toEqual([
       ['repo', false],
       ['blob', true],
     ]);
-    expect(publicUrls(rows)).toEqual(['https://pansarini.dev/preview/exemplo']);
+    expect(publicUrls(rows)).toEqual(['https://pansarini.dev/preview/repo-site']);
   });
 });
 
