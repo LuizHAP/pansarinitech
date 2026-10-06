@@ -9,7 +9,7 @@
 // cookie / Accept-Language to pick a locale for a locale-free URL.
 // The `e2e` project sets locale: 'en-US' as the default Accept-Language.
 //
-// 7 test.describe blocks:
+// 8 test.describe blocks:
 //   1. Locale switch + NEXT_LOCALE cookie                    (D-06 #1)
 //   2. Theme toggle persistence across reload                (D-06 #2)
 //   3. Navigation preserves locale (home -> blog)            (D-06 #3)
@@ -17,6 +17,7 @@
 //   5. Localized 404 response status + SW copy               (D-06 #5)
 //   6. Project case study route renders both locales         (D-06 #6)
 //   7. Client preview viewer (proxy-excluded, always noindex)
+//   8. Hidden admin for client previews (env-gated, noindex)
 //
 // Selector notes:
 //   - Locale toggle is <button type="submit"> inside a <form>, NOT <a>. Use
@@ -292,4 +293,78 @@ test.describe('Client preview viewer (proxy-excluded, always noindex)', () => {
       expect(results.violations, formatted).toEqual([]);
     });
   }
+});
+
+test.describe('Hidden admin for client previews (env-gated, noindex)', () => {
+  // Mirrors webServer.env in playwright.config.ts.
+  const ADMIN_USER = 'e2e-admin';
+  const ADMIN_PASSWORD = 'e2e-password-not-a-secret';
+  const PREVIEW_FRAME_SANDBOX =
+    'allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox';
+
+  test('/admin without a session redirects to the login, noindexed and uncached', async ({
+    page,
+    request,
+  }) => {
+    const admin = await request.get('/admin', { maxRedirects: 0 });
+    expect(admin.status()).toBe(307);
+    expect(admin.headers().location).toMatch(/^(https?:\/\/[^/]+)?\/admin\/login$/);
+    expect(admin.headers()['x-robots-tag'] ?? '').toContain('noarchive');
+
+    const login = await request.get('/admin/login', { maxRedirects: 0 });
+    expect(login.status()).toBe(200);
+    const robots = login.headers()['x-robots-tag'] ?? '';
+    expect(robots).toContain('noindex');
+    expect(robots).toContain('noarchive');
+    expect(login.headers()['cache-control'] ?? '').toContain('no-store');
+    expect(await login.text()).toMatch(/<meta name="robots" content="[^"]*noindex/);
+
+    await page.goto('/admin');
+    await expect(page).toHaveURL(/\/admin\/login$/);
+    await expect(page.getByLabel('Usuário')).toBeVisible();
+    await expect(page.getByLabel('Senha')).toBeVisible();
+  });
+
+  test('wrong password shows the generic error', async ({ page }) => {
+    await page.goto('/admin/login');
+    await page.getByLabel('Usuário').fill(ADMIN_USER);
+    await page.getByLabel('Senha').fill('not-the-password');
+    await page.getByRole('button', { name: 'Entrar' }).click();
+
+    await expect(page.locator('form').getByRole('alert')).toHaveText('Usuário ou senha inválidos.');
+    await expect(page).toHaveURL(/\/admin\/login$/);
+  });
+
+  test('login lists exemplo, opens its page, and Sair ends the session', async ({ page }) => {
+    await page.goto('/admin/login');
+    await page.getByLabel('Usuário').fill(ADMIN_USER);
+    await page.getByLabel('Senha').fill(ADMIN_PASSWORD);
+    await page.getByRole('button', { name: 'Entrar' }).click();
+
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Prévias de clientes');
+    await expect(page.getByText(/\/preview\/exemplo/)).toBeVisible();
+
+    const session = (await page.context().cookies()).find(({ name }) => name === 'admin_session');
+    expect(session?.httpOnly).toBe(true);
+    expect(session?.sameSite).toBe('Strict');
+    expect(session?.path).toBe('/admin');
+    // next start runs with NODE_ENV=production, and Chromium keeps Secure cookies on localhost.
+    expect(session?.secure).toBe(true);
+    const hoursLeft = ((session?.expires ?? 0) * 1000 - Date.now()) / 3_600_000;
+    expect(hoursLeft).toBeGreaterThan(7.9);
+    expect(hoursLeft).toBeLessThan(8.1);
+
+    await page.getByRole('link', { name: 'Cliente Exemplo' }).click();
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Cliente Exemplo');
+    await expect(page.getByTitle('Prévia de Cliente Exemplo')).toHaveAttribute(
+      'sandbox',
+      PREVIEW_FRAME_SANDBOX,
+    );
+
+    await page.goto('/admin');
+    await page.getByRole('button', { name: 'Sair' }).click();
+    await expect(page).toHaveURL(/\/admin\/login$/);
+    await page.goto('/admin');
+    await expect(page).toHaveURL(/\/admin\/login$/);
+  });
 });

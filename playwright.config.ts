@@ -6,6 +6,8 @@
 // for no behavioral coverage gain).
 import { defineConfig } from '@playwright/test';
 
+const PORT = process.env.PLAYWRIGHT_PORT ?? '3000';
+
 export default defineConfig({
   testDir: './tests',
   fullyParallel: true,
@@ -16,16 +18,19 @@ export default defineConfig({
   timeout: 30_000,
 
   webServer: {
-    command: 'pnpm next start',
-    url: 'http://localhost:3000',
+    command: `pnpm next start -p ${PORT}`,
+    url: `http://localhost:${PORT}`,
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
     stdout: 'ignore',
     stderr: 'pipe',
+    // Test-only values so the admin exists under `next start`. The build runs without them,
+    // which is what proves the admin routes are never prerendered.
+    env: { ADMIN_USER: 'e2e-admin', ADMIN_PASSWORD: 'e2e-password-not-a-secret' },
   },
 
   use: {
-    baseURL: 'http://localhost:3000',
+    baseURL: `http://localhost:${PORT}`,
   },
 
   // 4 axe matrix projects — Pitfall 10 Method B: colorScheme triggers

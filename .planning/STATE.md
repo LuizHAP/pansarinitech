@@ -36,7 +36,7 @@ progress:
 Phase: 11 (Lighthouse Performance Fix + Quality Verification) — COMPLETE
 Plan: 2 of 2 (both plans executed)
 Status: Milestone 50% — Phase 10 complete, Phase 11 complete (CASE-13 deferred: 608KB JS bundle blocks LCP)
-Last activity: 2026-10-05 - Completed quick task 261005-jih: client previews from Vercel Blob
+Last activity: 2026-10-05 - Completed quick task 261005-qnn: hidden admin for client previews
 
 ---
 
@@ -153,6 +153,8 @@ Last activity: 2026-10-05 - Completed quick task 261005-jih: client previews fro
 | 260506-nlw | Fix DOM size warning on home page — collapse ~74 wrapper nodes in Skills and CareerTimeline | 2026-05-06 | 17e2c88 | [260506-nlw-fix-dom-size-warning-on-home-page](./quick/260506-nlw-fix-dom-size-warning-on-home-page/) |
 | 20260729-seo | SEO: localePrefix always + site name/favicon + Jundiaí local keywords/JSON-LD | 2026-07-29 | pending commit | [20260729-seo-locale-prefix-always](./quick/20260729-seo-locale-prefix-always/) |
 | 261005-jih | Client previews from a private Vercel Blob store, no deploy (minimal version) | 2026-10-05 | a67a9df | [261005-jih-client-previews-from-vercel-blob-without](./quick/261005-jih-client-previews-from-vercel-blob-without/) |
+| fast | Serve the Héris client preview from Vercel Blob (drop the repo copy and registry entry) | 2026-10-05 | 2968ffa | — |
+| 261005-qnn | Hidden admin for client previews with a cached Blob index and CDN-cached assets | 2026-10-05 | eee9a92 | [261005-qnn-hidden-admin-for-client-previews-with-ca](./quick/261005-qnn-hidden-admin-for-client-previews-with-ca/) |
 
 ### Risks Carried Forward
 

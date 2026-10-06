@@ -12,6 +12,9 @@ const LIB_DATA_FILES = [
   'src/lib/mdx/toc.ts',
   'src/data/schemas.ts',
   'src/lib/client-preview-source.ts',
+  'src/lib/admin/auth.ts',
+  'src/lib/admin/actions.ts',
+  'src/lib/admin/view.ts',
 ];
 
 const COMPONENT_FILES = [

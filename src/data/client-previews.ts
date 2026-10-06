@@ -6,7 +6,6 @@ export type ClientPreview = {
 
 export const clientPreviews: readonly ClientPreview[] = [
   { slug: 'exemplo', client: 'Cliente Exemplo', locale: 'pt' },
-  { slug: 'heris-clinica-medica', client: 'Héris Clínica Médica', locale: 'pt' },
 ];
 
 export function getClientPreview(slug: string): ClientPreview | undefined {
