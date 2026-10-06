@@ -91,6 +91,7 @@ describe('listAdminPreviews', () => {
       source: 'repo',
       url: 'https://pansarini.dev/preview/exemplo',
       hasIndex: true,
+      disabled: false,
       files: [],
       fileCount: null,
       totalSize: null,
@@ -133,6 +134,7 @@ describe('publicUrls', () => {
         indexed('exemplo'),
         indexed('no-index', { hasIndex: false }),
         indexed('Bad_Slug'),
+        indexed('paused', { disabled: true }),
       ),
     );
 
@@ -140,6 +142,19 @@ describe('publicUrls', () => {
       'https://pansarini.dev/preview/exemplo',
       'https://pansarini.dev/preview/acme',
     ]);
+  });
+});
+
+describe('disabled previews', () => {
+  it('keeps a disabled Blob row disabled and its repo twin public', () => {
+    vi.stubEnv('NEXT_PUBLIC_SITE_URL', undefined);
+    const rows = listAdminPreviews(index(indexed('exemplo', { disabled: true })));
+
+    expect(rows.map(({ source, disabled }) => [source, disabled])).toEqual([
+      ['repo', false],
+      ['blob', true],
+    ]);
+    expect(publicUrls(rows)).toEqual(['https://pansarini.dev/preview/exemplo']);
   });
 });
 

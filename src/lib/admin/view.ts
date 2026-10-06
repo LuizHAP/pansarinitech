@@ -11,6 +11,7 @@ export type AdminPreview = ClientPreview & {
   source: 'repo' | 'blob';
   url: string;
   hasIndex: boolean;
+  disabled: boolean;
   files: PreviewFile[];
   fileCount: number | null;
   totalSize: number | null;
@@ -61,6 +62,7 @@ export function listAdminPreviews(index: PreviewIndex): AdminPreview[] {
       source: 'repo',
       url: previewUrl(preview.slug),
       hasIndex: true,
+      disabled: false,
       files: [],
       fileCount: null,
       totalSize: null,
@@ -80,6 +82,8 @@ export function findAdminPreview(index: PreviewIndex, slug: string): AdminPrevie
 }
 
 export function publicUrls(previews: readonly AdminPreview[]): string[] {
-  const resolving = previews.filter((preview) => preview.hasIndex && isPreviewSlug(preview.slug));
+  const resolving = previews.filter(
+    (preview) => preview.hasIndex && !preview.disabled && isPreviewSlug(preview.slug),
+  );
   return [...new Set(resolving.map((preview) => preview.url))];
 }

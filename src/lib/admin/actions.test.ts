@@ -1,7 +1,15 @@
-import { invalidateByTag } from '@vercel/functions';
+import { del, put } from '@vercel/blob';
+import { dangerouslyDeleteByTag, invalidateByTag } from '@vercel/functions';
 import { updateTag } from 'next/cache';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { login, logout, purgePreview, refreshIndex } from './actions';
+import {
+  disablePreview,
+  enablePreview,
+  login,
+  logout,
+  purgePreview,
+  refreshIndex,
+} from './actions';
 import { ADMIN_SESSION_COOKIE, SESSION_TTL_MS, signSession, verifySession } from './auth';
 
 const { jar, cookieStore } = vi.hoisted(() => {
@@ -24,9 +32,13 @@ vi.mock('next/navigation', () => ({
   }),
 }));
 vi.mock('next/server', () => ({ connection: vi.fn(async () => {}) }));
-vi.mock('@vercel/blob', () => ({ get: vi.fn(), list: vi.fn() }));
+vi.mock('@vercel/blob', () => ({ get: vi.fn(), list: vi.fn(), put: vi.fn(), del: vi.fn() }));
 vi.mock('next/cache', () => ({ unstable_cache: (fn: unknown) => fn, updateTag: vi.fn() }));
-vi.mock('@vercel/functions', () => ({ addCacheTag: vi.fn(), invalidateByTag: vi.fn() }));
+vi.mock('@vercel/functions', () => ({
+  addCacheTag: vi.fn(),
+  invalidateByTag: vi.fn(),
+  dangerouslyDeleteByTag: vi.fn(),
+}));
 
 const CREDENTIALS = { user: 'luiz', password: 'correct horse battery staple' };
 
@@ -47,6 +59,9 @@ beforeEach(() => {
   cookieStore.delete.mockClear();
   vi.mocked(updateTag).mockClear();
   vi.mocked(invalidateByTag).mockClear();
+  vi.mocked(put).mockReset();
+  vi.mocked(del).mockReset();
+  vi.mocked(dangerouslyDeleteByTag).mockClear();
   vi.stubEnv('ADMIN_USER', CREDENTIALS.user);
   vi.stubEnv('ADMIN_PASSWORD', CREDENTIALS.password);
 });
@@ -165,6 +180,74 @@ describe('purgePreview', () => {
     signIn();
     await expect(purgePreview('../x')).resolves.toBeUndefined();
     expect(invalidateByTag).not.toHaveBeenCalled();
+    expect(updateTag).not.toHaveBeenCalled();
+  });
+});
+
+describe('disablePreview', () => {
+  it('changes nothing without a session', async () => {
+    await expect(disablePreview('acme')).rejects.toThrow(/^NEXT_REDIRECT \/admin\/login$/);
+    expect(put).not.toHaveBeenCalled();
+    expect(updateTag).not.toHaveBeenCalled();
+    expect(dangerouslyDeleteByTag).not.toHaveBeenCalled();
+    expect(invalidateByTag).not.toHaveBeenCalled();
+  });
+
+  it('writes the marker, expires the index and deletes the site from the CDN', async () => {
+    signIn();
+    await expect(disablePreview('acme')).resolves.toBeUndefined();
+    expect(put).toHaveBeenCalledTimes(1);
+    expect(put).toHaveBeenCalledWith('acme/.disabled', expect.stringMatching(/\S/), {
+      access: 'private',
+      addRandomSuffix: false,
+      allowOverwrite: true,
+    });
+    expect(updateTag).toHaveBeenCalledWith('client-previews');
+    expect(dangerouslyDeleteByTag).toHaveBeenCalledTimes(1);
+    expect(dangerouslyDeleteByTag).toHaveBeenCalledWith('client-preview:acme');
+    expect(invalidateByTag).not.toHaveBeenCalled();
+  });
+
+  it('touches no cache when writing the marker fails', async () => {
+    signIn();
+    const failure = new Error('Vercel Blob: store unavailable');
+    vi.mocked(put).mockRejectedValue(failure);
+    await expect(disablePreview('acme')).rejects.toBe(failure);
+    expect(updateTag).not.toHaveBeenCalled();
+    expect(dangerouslyDeleteByTag).not.toHaveBeenCalled();
+  });
+
+  it('ignores a slug outside [a-z0-9-]', async () => {
+    signIn();
+    await expect(disablePreview('../x')).resolves.toBeUndefined();
+    expect(put).not.toHaveBeenCalled();
+    expect(updateTag).not.toHaveBeenCalled();
+    expect(dangerouslyDeleteByTag).not.toHaveBeenCalled();
+  });
+});
+
+describe('enablePreview', () => {
+  it('changes nothing without a session', async () => {
+    await expect(enablePreview('acme')).rejects.toThrow(/^NEXT_REDIRECT \/admin\/login$/);
+    expect(del).not.toHaveBeenCalled();
+    expect(updateTag).not.toHaveBeenCalled();
+  });
+
+  it('deletes the marker and expires the index', async () => {
+    signIn();
+    await expect(enablePreview('acme')).resolves.toBeUndefined();
+    expect(del).toHaveBeenCalledTimes(1);
+    expect(del).toHaveBeenCalledWith('acme/.disabled');
+    expect(updateTag).toHaveBeenCalledWith('client-previews');
+    expect(dangerouslyDeleteByTag).not.toHaveBeenCalled();
+    expect(invalidateByTag).not.toHaveBeenCalled();
+    expect(put).not.toHaveBeenCalled();
+  });
+
+  it('ignores a slug outside [a-z0-9-]', async () => {
+    signIn();
+    await expect(enablePreview('Bad_Slug')).resolves.toBeUndefined();
+    expect(del).not.toHaveBeenCalled();
     expect(updateTag).not.toHaveBeenCalled();
   });
 });
