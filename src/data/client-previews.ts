@@ -4,9 +4,7 @@ export type ClientPreview = {
   locale: 'pt' | 'en';
 };
 
-export const clientPreviews: readonly ClientPreview[] = [
-  { slug: 'exemplo', client: 'Cliente Exemplo', locale: 'pt' },
-];
+export const clientPreviews: readonly ClientPreview[] = [];
 
 export function getClientPreview(slug: string): ClientPreview | undefined {
   return clientPreviews.find((preview) => preview.slug === slug);

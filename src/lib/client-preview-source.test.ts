@@ -17,6 +17,13 @@ import {
 vi.mock('@vercel/blob', () => ({ get: vi.fn(), list: vi.fn() }));
 vi.mock('next/cache', () => ({ unstable_cache: vi.fn((fn) => vi.fn(fn)) }));
 vi.mock('@vercel/functions', () => ({ addCacheTag: vi.fn() }));
+vi.mock('@/data/client-previews', () => {
+  const clientPreviews = [{ slug: 'repo-site', client: 'Repo Site', locale: 'pt' }];
+  return {
+    clientPreviews,
+    getClientPreview: (slug: string) => clientPreviews.find((preview) => preview.slug === slug),
+  };
+});
 
 const blobBase = {
   url: 'https://store.private.blob.vercel-storage.com/x',
@@ -390,8 +397,8 @@ describe('buildPreviewIndex', () => {
   });
 
   it('warns when a repo preview with the same slug wins', async () => {
-    listing(listed('exemplo/index.html', 10));
-    serving({ 'exemplo/index.html': '<title>Outro</title>' });
+    listing(listed('repo-site/index.html', 10));
+    serving({ 'repo-site/index.html': '<title>Outro</title>' });
 
     const [preview] = (await buildPreviewIndex()).previews;
 
@@ -443,9 +450,9 @@ describe('buildPreviewIndex', () => {
 
 describe('findClientPreview', () => {
   it('returns a registry preview without reading Blob', async () => {
-    await expect(findClientPreview('exemplo')).resolves.toEqual({
-      slug: 'exemplo',
-      client: 'Cliente Exemplo',
+    await expect(findClientPreview('repo-site')).resolves.toEqual({
+      slug: 'repo-site',
+      client: 'Repo Site',
       locale: 'pt',
     });
     expect(list).not.toHaveBeenCalled();
