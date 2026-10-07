@@ -169,6 +169,7 @@ URLs:
 
 - `https://pansarini.dev/admin` lists every preview (login at `/admin/login`).
 - `https://pansarini.dev/admin/<slug>` shows one preview: its files, warnings and a sandboxed frame.
+- `https://pansarini.dev/admin/leads` is the leads board, linked from the admin header.
 
 Cache:
 
@@ -183,7 +184,14 @@ Taking a preview offline:
 - To remove a preview for good, click "Desativar prévia" first (that clears the CDN), then delete its folder in the store and click "Atualizar índice".
 - None of this applies to previews from the repo. Take those down by removing the entry from `src/data/client-previews.ts` and the folder from `public/client-previews/` in a commit.
 
-Warnings flag a folder name outside `[a-z0-9-]`, a missing `index.html`, a missing `<title>`, asset paths starting with `/`, and a repo preview with the same slug.
+Leads:
+
+- Each lead is one JSON record in Upstash Redis (Vercel Marketplace) at `leads:lead:<id>`, listed by the sorted set `leads:index`. The board reads `KV_REST_API_URL` and `KV_REST_API_TOKEN`, which the integration adds to every environment, and locally `.env.local`. Without them the board shows "Redis indisponível".
+- The stages are Prospectado, Prévia pronta, Contatado, Em conversa, Proposta and Fechado, in that order, with Perdido collapsed at the end. The stage menu and "Mover" on a card change the stage, and every change is recorded with its time in the lead's history.
+- A lead can link a Blob preview, and the card shows whether it is active or disabled. A next step whose date has passed (São Paulo time) marks the card "Atrasado".
+- "Excluir lead", then "Confirmar exclusão", deletes the record and its history for good.
+
+Warnings flag a folder name outside `[a-z0-9-]`, a missing `index.html`, a missing `<title>`, asset paths starting with `/`, a repo preview with the same slug, and a slug that matches an admin page (`leads`, `login`), whose admin link opens that page instead.
 
 ### Accessibility
 
@@ -365,6 +373,7 @@ URLs:
 
 - `https://pansarini.dev/admin` lista todas as prévias (login em `/admin/login`).
 - `https://pansarini.dev/admin/<slug>` mostra uma prévia: arquivos, avisos e um frame em sandbox.
+- `https://pansarini.dev/admin/leads` é o quadro de leads, com link no cabeçalho do admin.
 
 Cache:
 
@@ -379,7 +388,14 @@ Tirar uma prévia do ar:
 - Para remover uma prévia de vez, clique primeiro em "Desativar prévia" (isso limpa a CDN), depois apague a pasta dela no store e clique em "Atualizar índice".
 - Nada disso vale para as prévias do repositório. Para tirá-las do ar, remova a entrada de `src/data/client-previews.ts` e a pasta de `public/client-previews/` em um commit.
 
-Os avisos apontam nome de pasta fora de `[a-z0-9-]`, falta de `index.html`, falta de `<title>`, caminhos de assets começando com `/` e uma prévia do repositório com o mesmo slug.
+Leads:
+
+- Cada lead é um registro JSON no Upstash Redis (Vercel Marketplace) em `leads:lead:<id>`, listado pelo sorted set `leads:index`. O quadro lê `KV_REST_API_URL` e `KV_REST_API_TOKEN`, que a integração adiciona em todos os ambientes, e no ambiente local o `.env.local`. Sem elas, o quadro mostra "Redis indisponível".
+- As etapas são Prospectado, Prévia pronta, Contatado, Em conversa, Proposta e Fechado, nessa ordem, com Perdido recolhido no fim. O menu de etapa e o "Mover" de cada card mudam a etapa, e cada mudança fica registrada com o horário no histórico do lead.
+- Um lead pode ter uma prévia do Blob vinculada, e o card mostra se ela está ativa ou desativada. Um próximo passo com a data vencida (horário de São Paulo) marca o card como "Atrasado".
+- "Excluir lead" e depois "Confirmar exclusão" apagam o registro e o histórico de vez.
+
+Os avisos apontam nome de pasta fora de `[a-z0-9-]`, falta de `index.html`, falta de `<title>`, caminhos de assets começando com `/`, uma prévia do repositório com o mesmo slug e um slug igual ao de uma página do admin (`leads`, `login`), cujo link no admin abre essa página no lugar da prévia.
 
 ### Acessibilidade
 

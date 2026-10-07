@@ -91,6 +91,9 @@ export default async function AdminPage() {
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
+          <Button asChild variant="outline" size="sm">
+            <a href="/admin/leads">Leads</a>
+          </Button>
           <form action={refreshIndex}>
             <Button type="submit" size="sm">
               Atualizar índice

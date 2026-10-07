@@ -251,4 +251,30 @@ test.describe('Hidden admin for client previews (env-gated, noindex)', () => {
     await page.goto('/admin');
     await expect(page).toHaveURL(/\/admin\/login$/);
   });
+
+  test('leads board needs a session, opens from the dashboard and fits 375 px without Redis', async ({
+    page,
+    request,
+  }) => {
+    const leads = await request.get('/admin/leads', { maxRedirects: 0 });
+    expect(leads.status()).toBe(307);
+    expect(leads.headers().location).toMatch(/^(https?:\/\/[^/]+)?\/admin\/login$/);
+
+    await page.setViewportSize({ width: 375, height: 812 });
+    await page.goto('/admin/login');
+    await page.getByLabel('Usuário').fill(ADMIN_USER);
+    await page.getByLabel('Senha').fill(ADMIN_PASSWORD);
+    await page.getByRole('button', { name: 'Entrar' }).click();
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Prévias de clientes');
+
+    await page.getByRole('link', { name: 'Leads', exact: true }).click();
+    await expect(page).toHaveURL(/\/admin\/leads$/);
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Leads');
+    await expect(page.getByRole('main').getByRole('alert')).toContainText('Redis indisponível');
+
+    const overflow = await page.evaluate(
+      () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+    );
+    expect(overflow).toBe(0);
+  });
 });
