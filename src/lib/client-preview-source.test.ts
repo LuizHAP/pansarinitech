@@ -343,6 +343,30 @@ describe('buildPreviewIndex', () => {
     expect(preview.warnings).toEqual([{ code: 'invalid-slug' }]);
   });
 
+  it('warns about a folder named after an admin page', async () => {
+    listing(
+      listed('leads/index.html', 10),
+      listed('login/index.html', 10),
+      listed('acme-leads/index.html', 10),
+    );
+    serving({
+      'leads/index.html': '<title>Leads</title>',
+      'login/index.html': '<title>Login</title>',
+      'acme-leads/index.html': '<title>Acme Leads</title>',
+    });
+
+    const previews = (await buildPreviewIndex()).previews;
+    const warnings = Object.fromEntries(
+      previews.map((preview) => [preview.slug, preview.warnings]),
+    );
+
+    expect(warnings).toEqual({
+      leads: [{ code: 'reserved-slug' }],
+      login: [{ code: 'reserved-slug' }],
+      'acme-leads': [],
+    });
+  });
+
   it('warns when index.html has no title and the client fell back to the slug', async () => {
     listing(listed('untitled/index.html', 10));
     serving({ 'untitled/index.html': '<html lang="pt-BR"><head></head></html>' });

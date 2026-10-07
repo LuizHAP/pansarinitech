@@ -12,7 +12,8 @@ export type PreviewWarningCode =
   | 'missing-index'
   | 'missing-title'
   | 'absolute-asset-refs'
-  | 'shadowed-by-repo';
+  | 'shadowed-by-repo'
+  | 'reserved-slug';
 export type PreviewWarning = { code: PreviewWarningCode; detail?: string };
 export type PreviewFile = { path: string; size: number; uploadedAt: string };
 export type IndexedPreview = ClientPreview & {
@@ -27,6 +28,8 @@ export type IndexedPreview = ClientPreview & {
 export type PreviewIndex = { generatedAt: string; available: boolean; previews: IndexedPreview[] };
 
 const SLUG = /^[a-z0-9-]+$/;
+// These static /admin routes win over /admin/[slug], so a preview slugged like one has no detail page.
+const ADMIN_ROUTE_SLUGS = new Set(['leads', 'login']);
 const ABSOLUTE_REF = /\b(?:src|href)\s*=\s*["']?(\/(?!\/)[^"'\s>]*)/gi;
 const TITLE = /<title[^>]*>([\s\S]*?)<\/title>/i;
 const HTML_LANG = /<html\b[^>]*?\slang\s*=\s*["']?([^"'\s>]*)/i;
@@ -99,6 +102,7 @@ function collectWarnings(
 ): PreviewWarning[] {
   const warnings: PreviewWarning[] = [];
   if (!isPreviewSlug(slug)) warnings.push({ code: 'invalid-slug' });
+  if (ADMIN_ROUTE_SLUGS.has(slug)) warnings.push({ code: 'reserved-slug' });
   if (!hasIndex) warnings.push({ code: 'missing-index' });
   if (hasIndex && client === slug) warnings.push({ code: 'missing-title' });
   const absoluteRefs = [...new Set(Array.from(html.matchAll(ABSOLUTE_REF), (match) => match[1]))];

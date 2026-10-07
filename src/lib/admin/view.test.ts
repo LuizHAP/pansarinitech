@@ -173,6 +173,7 @@ describe('WARNING_MESSAGES', () => {
     'missing-title',
     'absolute-asset-refs',
     'shadowed-by-repo',
+    'reserved-slug',
   ] as const)('has a Portuguese message for %s', (code) => {
     expect(WARNING_MESSAGES[code].length).toBeGreaterThan(10);
   });

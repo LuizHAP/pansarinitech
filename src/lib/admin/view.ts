@@ -31,6 +31,8 @@ export const WARNING_MESSAGES: Record<PreviewWarningCode, string> = {
     'O index.html tem caminhos começando com "/", que não carregam dentro da prévia.',
   'shadowed-by-repo':
     'Existe uma prévia no repositório com o mesmo slug, e a URL pública mostra a versão do repositório.',
+  'reserved-slug':
+    'O slug é o mesmo de uma página do admin, então o link desta prévia abre essa página e não o detalhe. A URL pública funciona normalmente.',
 };
 
 export function previewUrl(slug: string): string {
