@@ -554,8 +554,17 @@ describe('servePreviewAsset', () => {
     expect(cachedIndex.mock.calls.length).toBe(callsBefore + 1);
   });
 
+  it('returns an uncached 404 for a slug missing from the index without reading the blob', async () => {
+    listing(listed('other-site/index.html', 10));
+    vi.mocked(get).mockResolvedValue(found('<p>x</p>'));
+
+    expectUncachedNotFound(await servePreviewAsset('gone-site', ['index.html'], null));
+    expect(get).toHaveBeenCalledTimes(1);
+    expect(get).toHaveBeenCalledWith('other-site/index.html', { access: 'private' });
+  });
+
   it('still serves a preview when another folder is disabled', async () => {
-    listing(listed('other-off/.disabled', 8));
+    listing(listed('other-off/.disabled', 8), listed('still-on/style.css', 2));
     vi.mocked(get).mockResolvedValue(found('ok', 'text/plain'));
     const response = await servePreviewAsset('still-on', ['index.html'], null);
 
@@ -564,16 +573,19 @@ describe('servePreviewAsset', () => {
   });
 
   it('returns an uncached 404 when the blob does not exist', async () => {
+    listing(listed('asset-missing/style.css', 10));
     vi.mocked(get).mockResolvedValue(null);
     expectUncachedNotFound(await servePreviewAsset('asset-missing', ['index.html'], null));
   });
 
   it('returns an uncached 404 when Blob throws', async () => {
+    listing(listed('asset-throws/style.css', 10));
     vi.mocked(get).mockRejectedValue(new Error('Vercel Blob: No blob credentials found.'));
-    expectUncachedNotFound(await servePreviewAsset('asset-throws', ['index.html'], null));
+    expectUncachedNotFound(await servePreviewAsset('asset-throws', ['style.css'], null));
   });
 
   it('streams the blob with its content type, nosniff, ETag, CDN cache headers and tags', async () => {
+    listing(listed('asset-css/css/style.css', 20));
     vi.mocked(get).mockResolvedValue(found('body { color: red; }', 'text/css', '"css-1"'));
     const response = await servePreviewAsset('asset-css', ['css', 'style.css'], null);
 
@@ -595,6 +607,7 @@ describe('servePreviewAsset', () => {
   });
 
   it('forwards If-None-Match and answers a tagged 304 when the blob is unchanged', async () => {
+    listing(listed('asset-cached/style.css', 20));
     vi.mocked(get).mockResolvedValue(notModified('"abc"'));
     const response = await servePreviewAsset('asset-cached', ['style.css'], '"abc"');
 

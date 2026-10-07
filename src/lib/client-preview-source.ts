@@ -218,7 +218,8 @@ export async function servePreviewAsset(
 ): Promise<Response> {
   if (!isSafePreviewPath(slug, segments)) return notFoundResponse();
   const { previews } = await getPreviewIndex();
-  if (previews.some((preview) => preview.slug === slug && preview.disabled)) {
+  // Right after del() Blob can still return the file, and the CDN would cache it again.
+  if (!previews.some((preview) => preview.slug === slug && !preview.disabled)) {
     return notFoundResponse();
   }
 
