@@ -92,8 +92,22 @@ jobs:
       - name: Unit tests + coverage gate (Phase 1)
         run: pnpm test:unit:coverage
 
+      - name: Resolve Playwright version
+        id: playwright
+        run: echo "version=$(pnpm exec playwright --version | awk '{print $2}')" >> "$GITHUB_OUTPUT"
+
+      - name: Cache Playwright browsers
+        id: playwright-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ steps.playwright.outputs.version }}-chromium
+
+      # No --with-deps: the runner image already ships Chrome's system libraries, and the
+      # extra apt fonts once took 5m37s on a slow Ubuntu mirror, past the job timeout.
       - name: Install Playwright browsers
-        run: pnpm exec playwright install --with-deps chromium
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: pnpm exec playwright install chromium
 
       # D-14: full 4-combo × 2-page axe-core matrix; D-18: 0 violations required
       - name: a11y matrix (en/pt × light/dark × home/404)
