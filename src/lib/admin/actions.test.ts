@@ -1,8 +1,9 @@
-import { del, put } from '@vercel/blob';
+import { del, list, put } from '@vercel/blob';
 import { dangerouslyDeleteByTag, invalidateByTag } from '@vercel/functions';
 import { updateTag } from 'next/cache';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
+  deletePreview,
   disablePreview,
   enablePreview,
   login,
@@ -61,6 +62,7 @@ beforeEach(() => {
   vi.mocked(invalidateByTag).mockClear();
   vi.mocked(put).mockReset();
   vi.mocked(del).mockReset();
+  vi.mocked(list).mockReset();
   vi.mocked(dangerouslyDeleteByTag).mockClear();
   vi.stubEnv('ADMIN_USER', CREDENTIALS.user);
   vi.stubEnv('ADMIN_PASSWORD', CREDENTIALS.password);
@@ -249,5 +251,149 @@ describe('enablePreview', () => {
     await expect(enablePreview('Bad_Slug')).resolves.toBeUndefined();
     expect(del).not.toHaveBeenCalled();
     expect(updateTag).not.toHaveBeenCalled();
+  });
+});
+
+function blob(pathname: string) {
+  const url = `https://store.private.blob.vercel-storage.com/${pathname}`;
+  return {
+    url,
+    downloadUrl: `${url}?download=1`,
+    pathname,
+    size: 1,
+    uploadedAt: new Date('2026-10-01T00:00:00.000Z'),
+    etag: `"etag-${pathname}"`,
+  };
+}
+
+function page(pathnames: string[], cursor?: string) {
+  return { blobs: pathnames.map(blob), hasMore: cursor !== undefined, cursor };
+}
+
+function photos(count: number): string[] {
+  return Array.from(
+    { length: count },
+    (_, i) => `heris/img/photo-${String(i).padStart(3, '0')}.webp`,
+  );
+}
+
+function deletedBatches(): string[][] {
+  return vi.mocked(del).mock.calls.map(([batch]) => batch as string[]);
+}
+
+function expectCachesExpired() {
+  expect(updateTag).toHaveBeenCalledTimes(1);
+  expect(updateTag).toHaveBeenCalledWith('client-previews');
+  expect(dangerouslyDeleteByTag).toHaveBeenCalledTimes(1);
+  expect(dangerouslyDeleteByTag).toHaveBeenCalledWith('client-preview:heris');
+}
+
+describe('deletePreview', () => {
+  it('deletes nothing without a session', async () => {
+    await expect(deletePreview('heris', form({ confirmation: 'heris' }))).rejects.toThrow(
+      /^NEXT_REDIRECT \/admin\/login$/,
+    );
+    expect(list).not.toHaveBeenCalled();
+    expect(del).not.toHaveBeenCalled();
+    expect(updateTag).not.toHaveBeenCalled();
+    expect(dangerouslyDeleteByTag).not.toHaveBeenCalled();
+  });
+
+  it.each(['', 'heri', 'Heris', 'heris ', ' heris', 'heris/', 'heris-x'])(
+    'deletes nothing when the confirmation is %j',
+    async (value) => {
+      signIn();
+      await expect(deletePreview('heris', form({ confirmation: value }))).resolves.toBeUndefined();
+      expect(list).not.toHaveBeenCalled();
+      expect(del).not.toHaveBeenCalled();
+      expect(updateTag).not.toHaveBeenCalled();
+      expect(dangerouslyDeleteByTag).not.toHaveBeenCalled();
+    },
+  );
+
+  it('deletes nothing without a confirmation field', async () => {
+    signIn();
+    await expect(deletePreview('heris', new FormData())).resolves.toBeUndefined();
+    expect(list).not.toHaveBeenCalled();
+    expect(del).not.toHaveBeenCalled();
+  });
+
+  it('ignores a slug outside [a-z0-9-] even when the confirmation matches', async () => {
+    signIn();
+    await expect(deletePreview('../x', form({ confirmation: '../x' }))).resolves.toBeUndefined();
+    expect(list).not.toHaveBeenCalled();
+    expect(del).not.toHaveBeenCalled();
+    expect(updateTag).not.toHaveBeenCalled();
+  });
+
+  it('deletes every blob under <slug>/ across pages in batches, then expires the index and the CDN and goes back to the dashboard', async () => {
+    signIn();
+    const first = ['heris/index.html', ...photos(119)];
+    const second = ['heris/', 'heris/.disabled', 'heris/css/style.css'];
+    vi.mocked(list)
+      .mockResolvedValueOnce(page(first, 'page-2'))
+      .mockResolvedValueOnce(page(second));
+
+    await expect(deletePreview('heris', form({ confirmation: 'heris' }))).rejects.toThrow(
+      /^NEXT_REDIRECT \/admin$/,
+    );
+
+    expect(list).toHaveBeenCalledTimes(2);
+    expect(list).toHaveBeenNthCalledWith(1, {
+      mode: 'expanded',
+      prefix: 'heris/',
+      cursor: undefined,
+    });
+    expect(list).toHaveBeenNthCalledWith(2, {
+      mode: 'expanded',
+      prefix: 'heris/',
+      cursor: 'page-2',
+    });
+    expect(deletedBatches().map((batch) => batch.length)).toEqual([100, 23]);
+    expect(deletedBatches().flat()).toEqual([...first, ...second]);
+    expectCachesExpired();
+    expect(invalidateByTag).not.toHaveBeenCalled();
+    expect(put).not.toHaveBeenCalled();
+    const lastDelete = Math.max(...vi.mocked(del).mock.invocationCallOrder);
+    expect(vi.mocked(updateTag).mock.invocationCallOrder[0]).toBeGreaterThan(lastDelete);
+    expect(vi.mocked(dangerouslyDeleteByTag).mock.invocationCallOrder[0]).toBeGreaterThan(
+      lastDelete,
+    );
+  });
+
+  it('sends no delete when nothing is left under the prefix', async () => {
+    signIn();
+    vi.mocked(list).mockResolvedValueOnce(page([]));
+    await expect(deletePreview('heris', form({ confirmation: 'heris' }))).rejects.toThrow(
+      /^NEXT_REDIRECT \/admin$/,
+    );
+    expect(del).not.toHaveBeenCalled();
+    expectCachesExpired();
+  });
+
+  it('deletes nothing when listing fails midway, still expires the caches and sends the admin to the retry page', async () => {
+    signIn();
+    vi.mocked(list)
+      .mockResolvedValueOnce(page(['heris/index.html', 'heris/css/style.css'], 'page-2'))
+      .mockRejectedValueOnce(new Error('Vercel Blob: store unavailable'));
+    await expect(deletePreview('heris', form({ confirmation: 'heris' }))).rejects.toThrow(
+      /^NEXT_REDIRECT \/admin\/heris\?delete=failed$/,
+    );
+    expect(del).not.toHaveBeenCalled();
+    expectCachesExpired();
+  });
+
+  it('stops at the first failed batch, still expires the caches and sends the admin to the retry page', async () => {
+    signIn();
+    const pathnames = photos(250);
+    vi.mocked(list).mockResolvedValueOnce(page(pathnames));
+    vi.mocked(del)
+      .mockResolvedValueOnce(undefined)
+      .mockRejectedValueOnce(new Error('Vercel Blob: store unavailable'));
+    await expect(deletePreview('heris', form({ confirmation: 'heris' }))).rejects.toThrow(
+      /^NEXT_REDIRECT \/admin\/heris\?delete=failed$/,
+    );
+    expect(deletedBatches()).toEqual([pathnames.slice(0, 100), pathnames.slice(100, 200)]);
+    expectCachesExpired();
   });
 });

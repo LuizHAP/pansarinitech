@@ -1,8 +1,10 @@
 import { CopyButton } from '@/components/admin/copy-button';
 import { PREVIEW_FRAME_SANDBOX } from '@/components/preview/frame-sandbox';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { disablePreview, enablePreview, purgePreview } from '@/lib/admin/actions';
+import { Input } from '@/components/ui/input';
+import { deletePreview, disablePreview, enablePreview, purgePreview } from '@/lib/admin/actions';
 import { requireAdmin } from '@/lib/admin/auth';
 import {
   WARNING_MESSAGES,
@@ -11,7 +13,8 @@ import {
   formatDateTime,
   previewAssetHref,
 } from '@/lib/admin/view';
-import { getPreviewIndex } from '@/lib/client-preview-source';
+import { getPreviewIndex, isPreviewSlug } from '@/lib/client-preview-source';
+import { TriangleAlert } from 'lucide-react';
 import { notFound } from 'next/navigation';
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
@@ -25,13 +28,16 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 
 export default async function AdminPreviewPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   await requireAdmin();
   const { slug } = await params;
   const preview = findAdminPreview(await getPreviewIndex(), slug);
   if (!preview) notFound();
+  const deleteFailed = (await searchParams).delete === 'failed';
 
   return (
     <main className="mx-auto flex max-w-5xl flex-col gap-6 px-4 py-6">
@@ -47,6 +53,17 @@ export default async function AdminPreviewPage({
           {preview.disabled && <Badge variant="outline">Desativada</Badge>}
         </div>
       </div>
+
+      {deleteFailed && (
+        <Alert variant="destructive">
+          <TriangleAlert aria-hidden="true" />
+          <AlertTitle>A exclusão não terminou</AlertTitle>
+          <AlertDescription>
+            Algo falhou ao listar ou apagar os arquivos no Blob. A lista abaixo mostra o que ainda
+            está no store. Digite o slug de novo em "Excluir prévia" para tentar outra vez.
+          </AlertDescription>
+        </Alert>
+      )}
 
       <dl className="grid grid-cols-2 gap-3 text-sm sm:grid-cols-3">
         <Field label="Slug">
@@ -170,6 +187,44 @@ export default async function AdminPreviewPage({
             </>
           )}
         </div>
+      )}
+
+      {preview.source === 'blob' && isPreviewSlug(preview.slug) && (
+        <section className="flex flex-col gap-2">
+          <h2 className="text-lg font-semibold">Excluir</h2>
+          <details open={deleteFailed}>
+            <summary className="cursor-pointer text-sm font-medium text-destructive">
+              Excluir prévia
+            </summary>
+            <form
+              action={deletePreview.bind(null, preview.slug)}
+              className="mt-2 flex flex-col items-start gap-2"
+            >
+              <p className="text-sm">
+                Isso apaga do Blob todos os arquivos desta prévia, inclusive o marcador de
+                desativada. Não dá para desfazer.
+              </p>
+              <label htmlFor="delete-confirmation" className="text-sm font-medium">
+                Digite <span className="font-mono text-xs">{preview.slug}</span> para confirmar
+              </label>
+              <Input
+                id="delete-confirmation"
+                name="confirmation"
+                required
+                pattern={preview.slug}
+                title="Digite o slug exatamente como aparece acima."
+                autoComplete="off"
+                autoCapitalize="none"
+                autoCorrect="off"
+                spellCheck={false}
+                className="max-w-xs font-mono"
+              />
+              <Button type="submit" variant="destructive" size="sm">
+                Confirmar exclusão
+              </Button>
+            </form>
+          </details>
+        </section>
       )}
     </main>
   );

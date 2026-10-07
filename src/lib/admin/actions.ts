@@ -14,7 +14,7 @@ import {
   isPreviewSlug,
   previewCacheTag,
 } from '@/lib/client-preview-source';
-import { del, put } from '@vercel/blob';
+import { del, list, put } from '@vercel/blob';
 import { dangerouslyDeleteByTag, invalidateByTag } from '@vercel/functions';
 import { updateTag } from 'next/cache';
 import { cookies } from 'next/headers';
@@ -23,10 +23,25 @@ import { notFound, redirect } from 'next/navigation';
 export type LoginState = { error: string | null };
 
 const FAILED_LOGIN_DELAY_MS = 400;
+const DELETE_BATCH_SIZE = 100;
 
 function field(formData: FormData, name: string): string {
   const value = formData.get(name);
   return typeof value === 'string' ? value : '';
+}
+
+async function listPreviewPathnames(slug: string): Promise<string[]> {
+  const pathnames: string[] = [];
+  let cursor: string | undefined;
+  let hasMore = true;
+  while (hasMore) {
+    // The trailing slash keeps `heris` from matching `heris-x`.
+    const page = await list({ mode: 'expanded', prefix: `${slug}/`, cursor });
+    for (const blob of page.blobs) pathnames.push(blob.pathname);
+    cursor = page.cursor;
+    hasMore = page.hasMore;
+  }
+  return pathnames;
 }
 
 export async function login(_previous: LoginState, formData: FormData): Promise<LoginState> {
@@ -92,4 +107,23 @@ export async function enablePreview(slug: string): Promise<void> {
   if (!isPreviewSlug(slug)) return;
   await del(`${slug}/${PREVIEW_DISABLED_MARKER}`);
   updateTag(PREVIEW_CACHE_TAG);
+}
+
+export async function deletePreview(slug: string, formData: FormData): Promise<void> {
+  await requireAdmin();
+  if (!isPreviewSlug(slug) || field(formData, 'confirmation') !== slug) return;
+
+  let failed = false;
+  try {
+    const pathnames = await listPreviewPathnames(slug);
+    for (let start = 0; start < pathnames.length; start += DELETE_BATCH_SIZE) {
+      await del(pathnames.slice(start, start + DELETE_BATCH_SIZE));
+    }
+  } catch {
+    failed = true;
+  }
+
+  updateTag(PREVIEW_CACHE_TAG);
+  await dangerouslyDeleteByTag(previewCacheTag(slug));
+  redirect(failed ? `/admin/${slug}?delete=failed` : '/admin');
 }
