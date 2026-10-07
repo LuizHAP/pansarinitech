@@ -15,6 +15,9 @@ const LIB_DATA_FILES = [
   'src/lib/admin/auth.ts',
   'src/lib/admin/actions.ts',
   'src/lib/admin/view.ts',
+  'src/lib/admin/leads.ts',
+  'src/lib/admin/lead-store.ts',
+  'src/lib/admin/lead-actions.ts',
 ];
 
 const COMPONENT_FILES = [
