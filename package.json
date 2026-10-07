@@ -40,6 +40,7 @@
     "@formatjs/intl-localematcher": "^0.8.5",
     "@iconify/react": "^6.0.2",
     "@tailwindcss/typography": "^0.5.19",
+    "@upstash/redis": "^1.39.0",
     "@vercel/analytics": "^2.0.1",
     "@vercel/blob": "^2.8.0",
     "@vercel/functions": "^3.9.11",
