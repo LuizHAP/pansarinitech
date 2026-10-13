@@ -36,7 +36,7 @@ progress:
 Phase: 11 (Lighthouse Performance Fix + Quality Verification) — COMPLETE
 Plan: 2 of 2 (both plans executed)
 Status: Milestone 50% — Phase 10 complete, Phase 11 complete (CASE-13 deferred: 608KB JS bundle blocks LCP)
-Last activity: 2026-10-13 - Fast fix: leads board scrolls inside on desktop, admin session lasts 90 days
+Last activity: 2026-10-13 - Fast fix: leads board scrolls inside on desktop, admin session lasts 90 days, two new lead stages
 
 ---
 
@@ -164,6 +164,7 @@ Last activity: 2026-10-13 - Fast fix: leads board scrolls inside on desktop, adm
 | fast | CI caches Playwright browsers by version and skips --with-deps, so a slow Ubuntu apt mirror no longer pushes the job past its 8-minute timeout | 2026-10-07 | d84ab3f | — |
 | fast | Leads board capped to the viewport from lg up (scrolls both ways, stage headings pinned) so the horizontal scrollbar stays on screen | 2026-10-13 | 9e7834a | — |
 | fast | Admin session cookie lasts 90 days instead of 8 hours | 2026-10-13 | 1fc85d7 | — |
+| fast | Lead stages Prévia enviada (after Prévia pronta) and Contraproposta (after Proposta) on the board and in the stage menu | 2026-10-13 | bdb447c | — |
 
 ### Risks Carried Forward
 
