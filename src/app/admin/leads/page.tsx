@@ -87,7 +87,7 @@ export default async function LeadsPage() {
             aria-label="Quadro de leads"
             // biome-ignore lint/a11y/noNoninteractiveTabindex: the scrollable board must be reachable by keyboard.
             tabIndex={0}
-            className="flex min-w-0 gap-4 overflow-x-auto px-1 pt-1 pb-2"
+            className="flex min-w-0 gap-4 overflow-x-auto px-1 pt-1 pb-2 lg:max-h-[calc(100dvh-14rem)] lg:overflow-y-auto lg:pt-0"
           >
             {BOARD_STAGES.map((stage) => (
               <section
@@ -97,7 +97,7 @@ export default async function LeadsPage() {
               >
                 <h2
                   id={`stage-heading-${stage}`}
-                  className="flex items-center gap-2 text-sm font-semibold"
+                  className="flex items-center gap-2 text-sm font-semibold lg:sticky lg:top-0 lg:z-10 lg:bg-background lg:py-1"
                 >
                   {STAGE_LABELS[stage]}
                   <Badge variant="secondary">{grouped[stage].length}</Badge>
