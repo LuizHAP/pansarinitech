@@ -36,7 +36,7 @@ progress:
 Phase: 11 (Lighthouse Performance Fix + Quality Verification) — COMPLETE
 Plan: 2 of 2 (both plans executed)
 Status: Milestone 50% — Phase 10 complete, Phase 11 complete (CASE-13 deferred: 608KB JS bundle blocks LCP)
-Last activity: 2026-10-13 - Fast fix: leads board scrolls inside on desktop, admin session lasts 90 days, two new lead stages
+Last activity: 2026-10-13 - Fast fix: leads board scrolls inside on desktop, admin session lasts 90 days, two new lead stages, session renews on every action
 
 ---
 
@@ -165,6 +165,7 @@ Last activity: 2026-10-13 - Fast fix: leads board scrolls inside on desktop, adm
 | fast | Leads board capped to the viewport from lg up (scrolls both ways, stage headings pinned) so the horizontal scrollbar stays on screen | 2026-10-13 | 9e7834a | — |
 | fast | Admin session cookie lasts 90 days instead of 8 hours | 2026-10-13 | 1fc85d7 | — |
 | fast | Lead stages Prévia enviada (after Prévia pronta) and Contraproposta (after Proposta) on the board and in the stage menu | 2026-10-13 | bdb447c | — |
+| fast | Admin Server Actions renew the session cookie to 90 days from now, so an open tab in use never logs out | 2026-10-13 | 2c5b1d0 | — |
 
 ### Risks Carried Forward
 
