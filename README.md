@@ -187,7 +187,7 @@ Taking a preview offline:
 Leads:
 
 - Each lead is one JSON record in Upstash Redis (Vercel Marketplace) at `leads:lead:<id>`, listed by the sorted set `leads:index`. The board reads `KV_REST_API_URL` and `KV_REST_API_TOKEN`, which the integration adds to every environment, and locally `.env.local`. Without them the board shows "Redis indisponível".
-- The stages are Prospectado, Prévia pronta, Contatado, Em conversa, Proposta and Fechado, in that order, with Perdido collapsed at the end. The stage menu and "Mover" on a card change the stage, and every change is recorded with its time in the lead's history.
+- The stages are Prospectado, Prévia pronta, Prévia enviada, Contatado, Em conversa, Proposta, Contraproposta and Fechado, in that order, with Perdido collapsed at the end. The stage menu and "Mover" on a card change the stage, and every change is recorded with its time in the lead's history.
 - A lead can link a Blob preview, and the card shows whether it is active or disabled. A next step whose date has passed (São Paulo time) marks the card "Atrasado".
 - "Excluir lead", then "Confirmar exclusão", deletes the record and its history for good.
 
@@ -391,7 +391,7 @@ Tirar uma prévia do ar:
 Leads:
 
 - Cada lead é um registro JSON no Upstash Redis (Vercel Marketplace) em `leads:lead:<id>`, listado pelo sorted set `leads:index`. O quadro lê `KV_REST_API_URL` e `KV_REST_API_TOKEN`, que a integração adiciona em todos os ambientes, e no ambiente local o `.env.local`. Sem elas, o quadro mostra "Redis indisponível".
-- As etapas são Prospectado, Prévia pronta, Contatado, Em conversa, Proposta e Fechado, nessa ordem, com Perdido recolhido no fim. O menu de etapa e o "Mover" de cada card mudam a etapa, e cada mudança fica registrada com o horário no histórico do lead.
+- As etapas são Prospectado, Prévia pronta, Prévia enviada, Contatado, Em conversa, Proposta, Contraproposta e Fechado, nessa ordem, com Perdido recolhido no fim. O menu de etapa e o "Mover" de cada card mudam a etapa, e cada mudança fica registrada com o horário no histórico do lead.
 - Um lead pode ter uma prévia do Blob vinculada, e o card mostra se ela está ativa ou desativada. Um próximo passo com a data vencida (horário de São Paulo) marca o card como "Atrasado".
 - "Excluir lead" e depois "Confirmar exclusão" apagam o registro e o histórico de vez.
 

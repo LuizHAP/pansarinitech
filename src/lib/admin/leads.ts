@@ -4,22 +4,26 @@ import { z } from 'zod';
 export const LEAD_STAGES = [
   'prospectado',
   'previa-pronta',
+  'previa-enviada',
   'contatado',
   'em-conversa',
   'proposta',
+  'contraproposta',
   'fechado',
   'perdido',
 ] as const;
 export type LeadStage = (typeof LEAD_STAGES)[number];
 
-export const BOARD_STAGES: readonly LeadStage[] = LEAD_STAGES.slice(0, 6);
+export const BOARD_STAGES: readonly LeadStage[] = LEAD_STAGES.slice(0, -1);
 
 export const STAGE_LABELS: Record<LeadStage, string> = {
   prospectado: 'Prospectado',
   'previa-pronta': 'Prévia pronta',
+  'previa-enviada': 'Prévia enviada',
   contatado: 'Contatado',
   'em-conversa': 'Em conversa',
   proposta: 'Proposta',
+  contraproposta: 'Contraproposta',
   fechado: 'Fechado',
   perdido: 'Perdido',
 };

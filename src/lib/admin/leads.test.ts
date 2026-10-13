@@ -114,22 +114,26 @@ describe('constants', () => {
     expect(LEAD_STAGES).toEqual([
       'prospectado',
       'previa-pronta',
+      'previa-enviada',
       'contatado',
       'em-conversa',
       'proposta',
+      'contraproposta',
       'fechado',
       'perdido',
     ]);
-    expect(BOARD_STAGES).toEqual(LEAD_STAGES.slice(0, 6));
+    expect(BOARD_STAGES).toEqual(LEAD_STAGES.slice(0, 8));
   });
 
   it('labels stages and sources in pt-BR, in order', () => {
     expect(STAGE_LABELS).toEqual({
       prospectado: 'Prospectado',
       'previa-pronta': 'Prévia pronta',
+      'previa-enviada': 'Prévia enviada',
       contatado: 'Contatado',
       'em-conversa': 'Em conversa',
       proposta: 'Proposta',
+      contraproposta: 'Contraproposta',
       fechado: 'Fechado',
       perdido: 'Perdido',
     });
