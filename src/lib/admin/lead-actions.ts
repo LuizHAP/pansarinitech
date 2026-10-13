@@ -1,7 +1,7 @@
 'use server';
 
 import { randomUUID } from 'node:crypto';
-import { requireAdmin } from '@/lib/admin/auth';
+import { requireAdminAction } from '@/lib/admin/auth';
 import { findLead, insertLead, removeLead, saveLead } from '@/lib/admin/lead-store';
 import {
   type LeadFormErrors,
@@ -38,7 +38,7 @@ export async function createLead(
   previous: LeadFormState,
   formData: FormData,
 ): Promise<LeadFormState> {
-  await requireAdmin();
+  await requireAdminAction();
   const values = readLeadForm(formData);
   const parsed = parseLeadInput(values);
   const stage = parseInitialStage(values.stage);
@@ -67,7 +67,7 @@ export async function updateLead(
   previous: LeadFormState,
   formData: FormData,
 ): Promise<LeadFormState> {
-  await requireAdmin();
+  await requireAdminAction();
   const values = readLeadForm(formData);
   if (!isLeadId(id)) return rejected(previous, values, {}, MISSING_MESSAGE);
   const parsed = parseLeadInput(values);
@@ -85,7 +85,7 @@ export async function updateLead(
 }
 
 export async function moveLead(id: string, formData: FormData): Promise<void> {
-  await requireAdmin();
+  await requireAdminAction();
   const stage = formData.get('stage');
   if (!isLeadId(id) || !isLeadStage(stage)) return;
   const { lead } = await findLead(id);
@@ -102,7 +102,7 @@ export async function moveLead(id: string, formData: FormData): Promise<void> {
 }
 
 export async function deleteLead(id: string): Promise<void> {
-  await requireAdmin();
+  await requireAdminAction();
   if (!isLeadId(id)) return;
   await removeLead(id);
   redirect('/admin/leads');

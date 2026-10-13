@@ -7,6 +7,7 @@ import {
   credentialsMatch,
   getAdminCredentials,
   requireAdmin,
+  requireAdminAction,
   signSession,
   verifySession,
 } from './auth';
@@ -42,19 +43,21 @@ function enableAdmin() {
 
 beforeEach(() => {
   jar.clear();
+  cookieStore.set.mockClear();
   vi.mocked(connection).mockClear();
   vi.stubEnv('ADMIN_USER', undefined);
   vi.stubEnv('ADMIN_PASSWORD', undefined);
 });
 
 afterEach(() => {
+  vi.useRealTimers();
   vi.unstubAllEnvs();
 });
 
 describe('constants', () => {
-  it('names the cookie and lasts 8 hours', () => {
+  it('names the cookie and lasts 90 days', () => {
     expect(ADMIN_SESSION_COOKIE).toBe('admin_session');
-    expect(SESSION_TTL_MS).toBe(8 * 60 * 60 * 1000);
+    expect(SESSION_TTL_MS).toBe(90 * 24 * 60 * 60 * 1000);
   });
 });
 
@@ -192,6 +195,30 @@ describe('requireAdmin', () => {
   it('resolves with a valid cookie', async () => {
     enableAdmin();
     jar.set(ADMIN_SESSION_COOKIE, signSession(CREDENTIALS, Date.now() + 60_000));
-    await expect(requireAdmin()).resolves.toBeUndefined();
+    await expect(requireAdmin()).resolves.toEqual(CREDENTIALS);
+  });
+});
+
+describe('requireAdminAction', () => {
+  it('redirects to the login without renewing an expired cookie', async () => {
+    enableAdmin();
+    jar.set(ADMIN_SESSION_COOKIE, signSession(CREDENTIALS, Date.now() - 1000));
+    await expect(requireAdminAction()).rejects.toThrow(/^NEXT_REDIRECT \/admin\/login$/);
+    expect(cookieStore.set).not.toHaveBeenCalled();
+  });
+
+  it('moves a valid session to expire 90 days from now', async () => {
+    enableAdmin();
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(NOW);
+    jar.set(ADMIN_SESSION_COOKIE, signSession(CREDENTIALS, NOW + 60_000));
+
+    await expect(requireAdminAction()).resolves.toBeUndefined();
+
+    expect(cookieStore.set).toHaveBeenCalledWith(
+      ADMIN_SESSION_COOKIE,
+      signSession(CREDENTIALS, NOW + SESSION_TTL_MS),
+      { httpOnly: true, secure: false, sameSite: 'strict', path: '/admin', maxAge: 7776000 },
+    );
   });
 });

@@ -242,9 +242,9 @@ test.describe('Hidden admin for client previews (env-gated, noindex)', () => {
     expect(session?.path).toBe('/admin');
     // next start runs with NODE_ENV=production, and Chromium keeps Secure cookies on localhost.
     expect(session?.secure).toBe(true);
-    const hoursLeft = ((session?.expires ?? 0) * 1000 - Date.now()) / 3_600_000;
-    expect(hoursLeft).toBeGreaterThan(7.9);
-    expect(hoursLeft).toBeLessThan(8.1);
+    const daysLeft = ((session?.expires ?? 0) * 1000 - Date.now()) / 86_400_000;
+    expect(daysLeft).toBeGreaterThan(89.9);
+    expect(daysLeft).toBeLessThan(90.1);
 
     await page.getByRole('button', { name: 'Sair' }).click();
     await expect(page).toHaveURL(/\/admin\/login$/);

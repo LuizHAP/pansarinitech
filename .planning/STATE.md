@@ -36,7 +36,7 @@ progress:
 Phase: 11 (Lighthouse Performance Fix + Quality Verification) — COMPLETE
 Plan: 2 of 2 (both plans executed)
 Status: Milestone 50% — Phase 10 complete, Phase 11 complete (CASE-13 deferred: 608KB JS bundle blocks LCP)
-Last activity: 2026-10-07 - Fast fix: CI Playwright browser cache without apt deps
+Last activity: 2026-10-13 - Fast fix: leads board scrolls inside on desktop, admin session lasts 90 days, two new lead stages, session renews on every action
 
 ---
 
@@ -162,6 +162,10 @@ Last activity: 2026-10-07 - Fast fix: CI Playwright browser cache without apt de
 | 261007-k1u | "Excluir prévia" on Blob preview pages: deletePreview lists every blob under <slug>/ and deletes them in batches after the admin types the slug; failures land on ?delete=failed with a retry; README EN/PT | 2026-10-07 | 83e06b7 | [261007-k1u-delete-a-blob-preview-permanently-from-t](./quick/261007-k1u-delete-a-blob-preview-permanently-from-t/) |
 | fast | servePreviewAsset answers 404 for a slug missing from the index, so a deleted preview is not re-cached from a stale Blob read | 2026-10-07 | f5f6ebd | — |
 | fast | CI caches Playwright browsers by version and skips --with-deps, so a slow Ubuntu apt mirror no longer pushes the job past its 8-minute timeout | 2026-10-07 | d84ab3f | — |
+| fast | Leads board capped to the viewport from lg up (scrolls both ways, stage headings pinned) so the horizontal scrollbar stays on screen | 2026-10-13 | 9e7834a | — |
+| fast | Admin session cookie lasts 90 days instead of 8 hours | 2026-10-13 | 1fc85d7 | — |
+| fast | Lead stages Prévia enviada (after Prévia pronta) and Contraproposta (after Proposta) on the board and in the stage menu | 2026-10-13 | bdb447c | — |
+| fast | Admin Server Actions renew the session cookie to 90 days from now, so an open tab in use never logs out | 2026-10-13 | 2c5b1d0 | — |
 
 ### Risks Carried Forward
 
