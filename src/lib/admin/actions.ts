@@ -2,11 +2,11 @@
 
 import {
   ADMIN_SESSION_COOKIE,
-  SESSION_TTL_MS,
   credentialsMatch,
   getAdminCredentials,
   requireAdmin,
-  signSession,
+  requireAdminAction,
+  startSession,
 } from '@/lib/admin/auth';
 import {
   PREVIEW_CACHE_TAG,
@@ -55,17 +55,7 @@ export async function login(_previous: LoginState, formData: FormData): Promise<
     return { error: 'Usuário ou senha inválidos.' };
   }
 
-  (await cookies()).set(
-    ADMIN_SESSION_COOKIE,
-    signSession(credentials, Date.now() + SESSION_TTL_MS),
-    {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      path: '/admin',
-      maxAge: SESSION_TTL_MS / 1000,
-    },
-  );
+  await startSession(credentials);
   redirect('/admin');
 }
 
@@ -76,20 +66,20 @@ export async function logout(): Promise<void> {
 }
 
 export async function refreshIndex(): Promise<void> {
-  await requireAdmin();
+  await requireAdminAction();
   updateTag(PREVIEW_CACHE_TAG);
   await invalidateByTag(PREVIEW_CACHE_TAG);
 }
 
 export async function purgePreview(slug: string): Promise<void> {
-  await requireAdmin();
+  await requireAdminAction();
   if (!isPreviewSlug(slug)) return;
   await invalidateByTag(previewCacheTag(slug));
   updateTag(PREVIEW_CACHE_TAG);
 }
 
 export async function disablePreview(slug: string): Promise<void> {
-  await requireAdmin();
+  await requireAdminAction();
   if (!isPreviewSlug(slug)) return;
   // put() rejects an empty body, and only the pathname matters to the index.
   await put(`${slug}/${PREVIEW_DISABLED_MARKER}`, 'disabled', {
@@ -103,14 +93,14 @@ export async function disablePreview(slug: string): Promise<void> {
 }
 
 export async function enablePreview(slug: string): Promise<void> {
-  await requireAdmin();
+  await requireAdminAction();
   if (!isPreviewSlug(slug)) return;
   await del(`${slug}/${PREVIEW_DISABLED_MARKER}`);
   updateTag(PREVIEW_CACHE_TAG);
 }
 
 export async function deletePreview(slug: string, formData: FormData): Promise<void> {
-  await requireAdmin();
+  await requireAdminAction();
   if (!isPreviewSlug(slug) || field(formData, 'confirmation') !== slug) return;
 
   let failed = false;

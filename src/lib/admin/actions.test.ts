@@ -162,6 +162,14 @@ describe('refreshIndex', () => {
     expect(updateTag).toHaveBeenCalledWith('client-previews');
     expect(invalidateByTag).toHaveBeenCalledWith('client-previews');
   });
+
+  it('renews the session', async () => {
+    signIn();
+    const before = Date.now();
+    await expect(refreshIndex()).resolves.toBeUndefined();
+    const value = cookieStore.set.mock.calls[0][1] as string;
+    expect(Number(value.split('.')[0])).toBeGreaterThanOrEqual(before + SESSION_TTL_MS);
+  });
 });
 
 describe('purgePreview', () => {

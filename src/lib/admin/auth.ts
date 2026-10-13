@@ -49,8 +49,28 @@ export async function assertAdminEnabled(): Promise<AdminCredentials> {
   return credentials;
 }
 
-export async function requireAdmin(): Promise<void> {
+export async function startSession(credentials: AdminCredentials): Promise<void> {
+  (await cookies()).set(
+    ADMIN_SESSION_COOKIE,
+    signSession(credentials, Date.now() + SESSION_TTL_MS),
+    {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      path: '/admin',
+      maxAge: SESSION_TTL_MS / 1000,
+    },
+  );
+}
+
+export async function requireAdmin(): Promise<AdminCredentials> {
   const credentials = await assertAdminEnabled();
   const token = (await cookies()).get(ADMIN_SESSION_COOKIE)?.value;
   if (!verifySession(token, credentials)) redirect('/admin/login');
+  return credentials;
+}
+
+// Pages can't write cookies, so only Server Actions push the expiry forward.
+export async function requireAdminAction(): Promise<void> {
+  await startSession(await requireAdmin());
 }

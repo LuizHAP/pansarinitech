@@ -3,7 +3,7 @@ import { FakeRedis } from '@/test/mocks/upstash-redis';
 import { Redis } from '@upstash/redis';
 import { refresh } from 'next/cache';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { ADMIN_SESSION_COOKIE, signSession } from './auth';
+import { ADMIN_SESSION_COOKIE, SESSION_TTL_MS, signSession } from './auth';
 import { type LeadFormState, createLead, deleteLead, moveLead, updateLead } from './lead-actions';
 import { type Lead, isLeadId } from './leads';
 
@@ -121,6 +121,7 @@ async function seed(...leads: Lead[]) {
 
 beforeEach(() => {
   jar.clear();
+  cookieStore.set.mockClear();
   fake.reset();
   vi.mocked(Redis).mockReset();
   // biome-ignore lint/complexity/useArrowFunction: the store calls new Redis(), and an arrow function cannot be constructed.
@@ -332,6 +333,21 @@ describe('moveLead', () => {
     );
     expect(fake.record(`leads:lead:${stored.id}`)).toEqual(stored);
     expect(refresh).not.toHaveBeenCalled();
+    expect(cookieStore.set).not.toHaveBeenCalled();
+  });
+
+  it('renews the session', async () => {
+    signIn();
+    const stored = lead();
+    await seed(stored);
+
+    await expect(moveLead(stored.id, form({ stage: 'em-conversa' }))).resolves.toBeUndefined();
+
+    expect(cookieStore.set).toHaveBeenCalledWith(
+      ADMIN_SESSION_COOKIE,
+      signSession(CREDENTIALS, Date.parse(NOW) + SESSION_TTL_MS),
+      expect.objectContaining({ maxAge: SESSION_TTL_MS / 1000 }),
+    );
   });
 
   it('moves the lead, appends the stage change and refreshes the board', async () => {
