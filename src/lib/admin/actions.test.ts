@@ -94,7 +94,7 @@ describe('login', () => {
     await expectSlowFailure(new FormData());
   });
 
-  it('sets an 8 h HttpOnly, SameSite=Strict, Path=/admin session and redirects to /admin', async () => {
+  it('sets a 90-day HttpOnly, SameSite=Strict, Path=/admin session and redirects to /admin', async () => {
     const before = Date.now();
     await expect(
       login({ error: null }, form({ user: 'luiz', password: CREDENTIALS.password })),
@@ -106,7 +106,7 @@ describe('login', () => {
       secure: false,
       sameSite: 'strict',
       path: '/admin',
-      maxAge: 28800,
+      maxAge: 7776000,
     });
     const value = cookieStore.set.mock.calls[0][1] as string;
     expect(verifySession(value, CREDENTIALS)).toBe(true);

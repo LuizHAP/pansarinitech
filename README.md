@@ -163,7 +163,7 @@ Setup:
 2. Redeploy so the new values take effect.
 3. Locally, put both in `.env.local`.
 
-Sessions last 8 hours. Changing the password logs out every session.
+Sessions last 90 days. Changing the password logs out every session.
 
 URLs:
 
@@ -367,7 +367,7 @@ Configuração:
 2. Faça um redeploy para os valores novos valerem.
 3. No ambiente local, coloque as duas no `.env.local`.
 
-A sessão dura 8 horas. Trocar a senha desloga todas as sessões.
+A sessão dura 90 dias. Trocar a senha desloga todas as sessões.
 
 URLs:
 

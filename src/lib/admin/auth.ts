@@ -4,7 +4,7 @@ import { notFound, redirect } from 'next/navigation';
 import { connection } from 'next/server';
 
 export const ADMIN_SESSION_COOKIE = 'admin_session';
-export const SESSION_TTL_MS = 8 * 60 * 60 * 1000;
+export const SESSION_TTL_MS = 90 * 24 * 60 * 60 * 1000;
 
 export type AdminCredentials = { user: string; password: string };
 

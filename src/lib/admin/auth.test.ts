@@ -52,9 +52,9 @@ afterEach(() => {
 });
 
 describe('constants', () => {
-  it('names the cookie and lasts 8 hours', () => {
+  it('names the cookie and lasts 90 days', () => {
     expect(ADMIN_SESSION_COOKIE).toBe('admin_session');
-    expect(SESSION_TTL_MS).toBe(8 * 60 * 60 * 1000);
+    expect(SESSION_TTL_MS).toBe(90 * 24 * 60 * 60 * 1000);
   });
 });
 
