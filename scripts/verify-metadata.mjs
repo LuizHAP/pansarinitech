@@ -91,6 +91,18 @@ const REQUIRED_PATTERNS_HREFLANG = [
   },
 ];
 
+const REQUIRED_SITEMAP_PATTERNS = [
+  {
+    name: '<urlset>',
+    regex: /<urlset xmlns="http:\/\/www\.sitemaps\.org\/schemas\/sitemap\/0\.9"/,
+  },
+  { name: 'English URL', regex: /<loc>https:\/\/pansarini\.dev\/en(?:<|\/)/ },
+  { name: 'Portuguese URL', regex: /<loc>https:\/\/pansarini\.dev\/pt(?:<|\/)/ },
+  { name: 'hreflang="en"', regex: /hreflang="en"/ },
+  { name: 'hreflang="pt-BR"', regex: /hreflang="pt-BR"/ },
+  { name: 'hreflang="x-default"', regex: /hreflang="x-default"/ },
+];
+
 const port = 3001;
 const proc = spawn('node', ['node_modules/next/dist/bin/next', 'start', '-p', String(port)], {
   stdio: ['ignore', 'pipe', 'pipe'],
@@ -160,6 +172,27 @@ try {
     for (const p of [...REQUIRED_PATTERNS_PT, ...REQUIRED_PATTERNS_HREFLANG]) {
       if (!p.regex.test(html)) {
         console.error(`[verify-metadata] PT ${url}: missing ${p.name}`);
+        failed++;
+      }
+    }
+  }
+
+  const sitemapResponse = await fetch(`http://localhost:${port}/sitemap.xml`);
+  if (!sitemapResponse.ok) {
+    console.error(`[verify-metadata] sitemap.xml: HTTP ${sitemapResponse.status}`);
+    failed++;
+  } else {
+    const contentType = sitemapResponse.headers.get('content-type') ?? '';
+    if (!contentType.includes('application/xml')) {
+      console.error(
+        `[verify-metadata] sitemap.xml: expected application/xml, received "${contentType}"`,
+      );
+      failed++;
+    }
+    const sitemapXml = await sitemapResponse.text();
+    for (const pattern of REQUIRED_SITEMAP_PATTERNS) {
+      if (!pattern.regex.test(sitemapXml)) {
+        console.error(`[verify-metadata] sitemap.xml: missing ${pattern.name}`);
         failed++;
       }
     }
