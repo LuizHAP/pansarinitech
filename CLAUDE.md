@@ -3,7 +3,7 @@
 
 **pansarinitech — Luiz Pansarini Portfolio**
 
-A bilingual (PT/EN) personal portfolio website for **Luiz Pansarini**, Principal Software Engineer, designed to attract recruiters (BR + international), freelance clients, and the developer community. The site uses a **subtle Star Wars aesthetic** — light mode follows a Jedi palette (saber blue), dark mode follows a Sith palette (saber red) — with the theme toggle itself acting as the central themed feature. Built with Next.js, React, TypeScript, Tailwind CSS, and Shadcn/UI on Vercel.
+A bilingual (PT/EN) personal portfolio website for **Luiz Pansarini**, Principal Software Engineer, designed to attract recruiters (BR + international), freelance clients, and the developer community. The public site uses a **terminal-brutalist identity**: one fixed palette of ink `#0E0F0C`, paper `#EEECE6` and signal blue `#2F3BFF` scoped to `html.site`, sections that alternate between ink, paper and signal surfaces, Bricolage Grotesque display type with IBM Plex Mono for UI and labels, a `>pansarini` prompt with a blinking block cursor, and a lazily loaded Three.js cube field behind the hero that a header control can pause. Admin and preview keep the shadcn light/dark tokens. Built with Next.js 16, React 19, TypeScript, Tailwind v4, and Shadcn/UI on Vercel.
 
 **Core Value:** **Land high-signal opportunities (jobs and freelance) by presenting Luiz's career narrative — IT support to Principal Engineer, BR scale to US market — through a portfolio that is fast, accessible, mobile-first, and memorable without being unprofessional.**
 
@@ -13,13 +13,14 @@ If everything else fails, the site must load fast on a recruiter's phone, commun
 
 - **Tech stack**: Next.js 16 + React + TypeScript + Tailwind CSS + Shadcn/UI + Vercel — locked because it mirrors Luiz's daily production stack
 - **Mobile**: Mobile-first, must work cleanly on iPhone SE (375px) up — recruiters often open links on phones
-- **Accessibility**: WCAG 2.1 AA — non-negotiable; respects `prefers-reduced-motion` and `prefers-color-scheme`
+- **Accessibility**: WCAG 2.1 AA — non-negotiable; respects `prefers-reduced-motion`, and a header control pauses every looping animation (WCAG 2.2.2)
 - **Performance**: Lighthouse Performance ≥ 95 on mobile — fast first paint, minimal JS payload, optimized images (next/image)
 - **Bilingual content**: Every user-facing copy must be authored in both PT and EN before shipping a locale
-- **Theme tokens**: All color usage flows through CSS variables — palette swaps cleanly between Jedi/Sith without per-component code changes
+- **Theme tokens**: All color usage flows through CSS variables — fixed ink/paper/signal `@theme` tokens plus `.surface-ink` / `.surface-paper` / `.surface-accent` classes that re-point the full shadcn variable set, scoped to `html.site` so admin and preview keep their light/dark tokens
 - **No external CMS for v1**: Blog uses MDX in the repo; one source of truth, no infra cost
-- **Hosting**: Vercel (matches existing workflow); custom domain TBD (likely `pansarini.tech` to match repo name)
-- **Theme intensity**: Star Wars references stay subtle — no element should make a conservative recruiter raise an eyebrow
+- **Hosting**: Vercel (matches existing workflow); custom domain TBD (`pansarini.tech` reserved for v1.1 cutover)
+- **Identity intensity**: The terminal motif stays playful but professional — no element should make a conservative recruiter raise an eyebrow
+- **CI gate discipline**: All Playwright suites (a11y matrix, iPhone SE, e2e) must pass; no `continue-on-error` on regression-blocking jobs
 <!-- GSD:project-end -->
 
 <!-- GSD:stack-start source:research/STACK.md -->
@@ -27,14 +28,14 @@ If everything else fails, the site must load fast on a recruiter's phone, commun
 
 ## Executive Recommendation
 - **i18n:** `next-intl@^4.9` (the only library with first-class App Router + RSC support)
-- **Theming:** `next-themes@^0.4` + Tailwind v4 `@custom-variant dark` (Shadcn's official approach)
+- **Theming:** public site: fixed ink/paper/signal `@theme` tokens plus full-variable `.surface-ink` / `.surface-paper` / `.surface-accent` classes scoped to `html.site`; admin and preview: `next-themes@^0.4` + Tailwind v4 `@custom-variant dark` (Shadcn's official approach)
 - **MDX:** `next-mdx-remote@^6` (use `/rsc` subpath) for RSC OR `@next/mdx` for route-based content — **avoid Velite if you keep Turbopack on** (webpack-plugin incompatibility)
 - **Animation:** `motion@^12` (formerly `framer-motion`, imported from `motion/react`) with `useReducedMotion`
 - **Forms:** `resend@^4` + React 19 `useActionState` + `zod@^4` (no react-hook-form needed for a single contact form)
 - **Analytics:** `@vercel/analytics@^1` + `@vercel/speed-insights@^1` (free on Hobby tier, zero-config, no consent banner)
 - **OG images:** Built-in `next/og` (`ImageResponse`) — no extra package
 - **Icons:** `lucide-react@^0.5x` (Shadcn default, confirmed)
-- **Fonts:** `geist@^1` (Sans + Mono) for body/UI; one open-licensed Aurebesh face (FT Aurebesh, OFL) loaded via `next/font/local` for decorative numerals only
+- **Fonts:** Bricolage Grotesque (display + body) and IBM Plex Mono (nav, buttons, labels, meta) via `next/font/google`, shared from `src/lib/fonts.ts`; admin and preview load their own IBM Plex Sans
 - **SEO:** Built-in Metadata API + `app/sitemap.ts` + `app/robots.ts` — **do NOT install `next-seo`**
 - **Type-safe content:** Zod schemas + a small custom MDX loader (or `next-mdx-remote/rsc` + Zod-validated frontmatter). Velite is excellent in concept but its Turbopack story is still rough.
 - **Toasts (if needed for form feedback):** `sonner@^1` (Shadcn default, replaces deprecated `toast`)
@@ -52,10 +53,10 @@ If everything else fails, the site must load fast on a recruiter's phone, commun
 | Library | Version | Purpose | When/Why to Use |
 |---------|---------|---------|-----------------|
 | `next-intl` | `^4.9.1` | i18n with App Router + RSC | **The** standard for App Router. Locale-segment routing, RSC-aware `useTranslations`/`getTranslations`, middleware for auto-detect, type-safe messages, hreflang helpers. Active maintenance for Next 16. |
-| `next-themes` | `^0.4.6` | Light/dark mode persistence | Two-line setup, no flash, `localStorage` + `prefers-color-scheme`. Official Shadcn recommendation. Pair with Tailwind v4 `@custom-variant dark (&:where(.dark, .dark *))`. |
+| `next-themes` | `^0.4.6` | Light/dark mode persistence (admin and preview only) | The public site has one fixed palette and no theme provider; admin and preview keep it for the shadcn light/dark tokens. Two-line setup, no flash, `localStorage` + `prefers-color-scheme`. Official Shadcn recommendation. Pair with Tailwind v4 `@custom-variant dark (&:where(.dark, .dark *))`. |
 | `motion` | `^12.38` | Animation | Renamed from `framer-motion` mid-2025. Import from `motion/react`. **Built-in `useReducedMotion` and `<MotionConfig reducedMotion="user">`** — exactly what the project needs for the a11y constraint. v12 has no breaking changes vs v11. |
 | `next-mdx-remote` | `^6` (use `/rsc` import) | MDX in App Router | Phase 3 ships next-mdx-remote@^6 (final stable 6.0.0 published 2026-02-12 before the GitHub repo was archived 2026-04-09). Breaking change in 6.0.0: `blockJS` AND `blockDangerousJS` default to `true` — Phase 3 keeps both defaults (MDX bodies are pure prose + JSX components from the typed `mdxComponents` map; static image imports stay in the page template, NOT inside MDX bodies). 12-month migration target unchanged: Fumadocs MDX. Alternative active fork: `next-mdx-remote-client`. |
-| `rehype-pretty-code` | `^0.14` | Syntax highlighting | Build-time (no runtime cost), powered by Shiki, supports dual light/dark themes — perfect for Jedi/Sith palette swap on code blocks. |
+| `rehype-pretty-code` | `^0.14` | Syntax highlighting | Build-time (no runtime cost), powered by Shiki, supports dual light/dark themes; article bodies sit on a paper surface, so the light theme applies on the public site. |
 | `shiki` | `^4` | Code tokenizer (peer of rehype-pretty-code) | VS Code accuracy. (Phase 3 pulled @^4; rehype-pretty-code 0.14 supports the v4 line.) |
 | `remark-gfm` | `^4` | GitHub-flavored Markdown | Tables, strikethrough, task lists. |
 | `zod` | `^4` | Frontmatter validation, form validation | Schema for blog post frontmatter, contact-form payload. Standard. |
@@ -96,12 +97,12 @@ If everything else fails, the site must load fast on a recruiter's phone, commun
 |-------------|-------------|-------------------------|
 | `next-intl` | `next-i18n-router` + `react-i18next` | If you need a translation backend (Locize, Phrase) with hot-reloading translations. For a 2-locale static portfolio, overkill. |
 | `next-intl` | Built-in Next.js i18n routing only | Pages Router only — does not exist for App Router in 16. Not an option here. |
-| `next-themes` | Tailwind v4 + manual `prefers-color-scheme` only | If you don't need a manual toggle. Project explicitly requires Jedi/Sith toggle UX → next-themes is required. |
+| `next-themes` | Tailwind v4 + manual `prefers-color-scheme` only | If you don't need a manual toggle. The public site dropped its toggle; admin and preview still use next-themes. |
 | `next-mdx-remote/rsc` | `@next/mdx` | Use `@next/mdx` if your blog posts ARE the routes (e.g. `app/blog/post-slug/page.mdx`). Use `next-mdx-remote/rsc` if you keep posts in `content/` and render them via a dynamic `[slug]` route (better for listing pages, frontmatter-driven indices, i18n folders). For this portfolio's bilingual blog → **`next-mdx-remote/rsc`**. |
 | `next-mdx-remote/rsc` | `Velite` | Velite (`zce/velite`) is conceptually superior — Zod schemas, build-time validation, type generation. **But:** its `VeliteWebpackPlugin` does NOT work with Turbopack (Next 16 default). Workaround exists (programmatic API), but adds complexity. Choose Velite only if you accept opting out of Turbopack OR running Velite as a separate `prebuild` step. |
 | `next-mdx-remote/rsc` | `Content Collections` | Drop-in Contentlayer replacement, App Router compatible. Fine for docs-heavy sites. For a 1-author portfolio blog, the bundle/setup overhead vs raw `next-mdx-remote` isn't justified. |
 | `next-mdx-remote/rsc` | `Fumadocs` (`fumadocs-mdx` standalone) | Fumadocs MDX standalone is the modern type-safe option in 2026 (3x download YoY growth) and works with Turbopack. **Reconsider this if you want type-safe MDX without Velite's Turbopack issues.** Tradeoff: pulls in Fumadocs conventions you may not need. |
-| `motion` | `GSAP` | If you need a complex SVG/timeline animation for one Star Wars touch (e.g. lightsaber ignition). For everything else, motion's React-first API + reduced-motion ergonomics win. |
+| `motion` | `GSAP` | If you need a complex SVG/timeline animation (e.g. a choreographed hero intro). For everything else, motion's React-first API + reduced-motion ergonomics win. |
 | `motion` | Tailwind v4 `transition-*` + `@starting-style` | For 90% of UI motion (hovers, fades, accordion), pure CSS via Tailwind is sufficient and zero-JS. **Use motion only for choreographed enter/exit/scroll animations.** Hybrid is the right answer. |
 | `motion` | CSS-only with `prefers-reduced-motion` media query | Same as above — fine for purely decorative effects. Project should default to CSS, escalate to motion only when needed. |
 | `@vercel/analytics` | `Plausible Cloud ($9/mo)` | If you ever leave Vercel hosting. Plausible is the privacy-purist pick — open-source script, EU-hosted, public dashboards possible. |
@@ -125,7 +126,6 @@ If everything else fails, the site must load fast on a recruiter's phone, commun
 | Self-hosted analytics on Vercel Hobby | You'll burn build minutes and add complexity for no privacy gain over Plausible Cloud or Vercel Analytics. | `@vercel/analytics` (free, zero-config). |
 | Inline `<head>` `<link rel="alternate" hreflang>` tags | Easy to drift across locales. | `generateMetadata` returning `alternates.languages` — Next 16 emits hreflang automatically. |
 | Custom OG-image PNGs in `public/` per page | Doesn't scale, easy to forget. | Dynamic `next/og` `opengraph-image.tsx` per route segment, with `searchParams` for variants. |
-| Aurebesh as primary nav labels | Already in project Out-of-Scope (illegible to non-fans). Don't reintroduce via library choice. | Use Aurebesh (FT Aurebesh, OFL) only for decorative numerals (e.g. section numbers, 404 page accent). |
 ## How the Recommended Stack Interacts (the tricky part)
 ### 1. Locale-segmented App Router structure
 ### 2. ThemeProvider must wrap NextIntlClientProvider, not the other way
@@ -198,7 +198,6 @@ If everything else fails, the site must load fast on a recruiter's phone, commun
 ### Confidence Notes
 - Versions for `next-intl` (4.9.1), `motion` (12.38), `next` (16.2), and `tailwindcss` (4.1) verified against multiple 2026 sources within the last 6 weeks.
 - `next-mdx-remote` archive status (2026-04-09) is from a single GitHub source — **flag as MEDIUM** and verify before phase that builds the blog. The library still works; this is a forward-looking risk only.
-- Aurebesh (FT Aurebesh, OFL) license verified via Fontesk; not on Google Fonts but freely redistributable.
 <!-- GSD:stack-end -->
 
 <!-- GSD:conventions-start source:CONVENTIONS.md -->
