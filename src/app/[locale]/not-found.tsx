@@ -1,40 +1,32 @@
-import { Button } from '@/components/ui';
-import { aurebesh } from '@/lib/fonts';
 import { Link } from '@/lib/i18n/navigation';
 // src/app/[locale]/not-found.tsx
-// Localized 404 — UX-04 + EASTER-01 + UI-SPEC §"404 Page Layout Specification".
-// Heading hierarchy: one heading only — Pitfall 13 (no h2 needed for this layout).
+// Localized 404 — UX-04. Heading hierarchy: one heading only — Pitfall 13.
 import { getLocale, getTranslations, setRequestLocale } from 'next-intl/server';
 
 export default async function LocaleNotFound() {
   const locale = await getLocale();
   setRequestLocale(locale as 'en' | 'pt'); // D-24
   const t = await getTranslations('notFound');
+  const tSite = await getTranslations('site.notFound');
 
   return (
-    <section className="mx-auto flex max-w-md flex-col items-center justify-center px-4 py-24 text-center">
-      {/* Layer 1: Numeric 404 — display heading, h1 (UI-SPEC §"Typography") */}
-      <h1 className="text-[clamp(72px,20vw,96px)] font-bold leading-none">{t('title')}</h1>
-
-      {/* Layer 2: Aurebesh decorative accent — aria-hidden + sr-only fallback (A11Y-07).
-          Inline style references var(--font-aurebesh); when the real OFL binary lands,
-          `aurebesh.className` will populate the var via next/font/local. */}
-      <span
-        aria-hidden="true"
-        className={`pb-2 pt-2 text-2xl text-muted-foreground ${aurebesh.className}`}
-        style={{ fontFamily: 'var(--font-aurebesh)' }}
-      >
+    <section className="mx-auto flex max-w-[1280px] flex-col items-start px-4 py-24 md:px-8 md:py-32">
+      <p className="font-mono text-sm leading-relaxed text-ink-muted md:text-base">
+        <span className="block text-paper">{tSite('command')}</span>
+        <span className="block">
+          <span className="text-signal-soft">cd:</span> {tSite('error')}
+        </span>
+      </p>
+      <h1 className="mt-8 font-display text-[clamp(96px,22vw,220px)] leading-[0.88] font-extrabold tracking-[-0.05em] text-paper">
         {t('title')}
-      </span>
-      <span className="sr-only">{t('aurebeshFallback')}</span>
-
-      {/* Layer 3: SW reference body line — paragraph, not heading (Pitfall 13) */}
-      <p className="mt-4 text-base">{t('swReference')}</p>
-
-      {/* Layer 4: CTA Button — Shadcn default variant, primary fill */}
-      <Button asChild className="mt-8">
-        <Link href="/">{t('cta')}</Link>
-      </Button>
+        <span aria-hidden="true" className="lp-cursor ml-2 h-[0.7em] w-[0.12em] bg-signal" />
+      </h1>
+      <Link
+        href="/"
+        className="mt-12 inline-flex rounded-[10px] bg-signal px-[26px] py-[18px] font-mono text-base font-semibold text-paper transition-[transform,background-color,color] hover:-translate-y-[3px] hover:bg-paper hover:text-ink"
+      >
+        {t('cta')}
+      </Link>
     </section>
   );
 }

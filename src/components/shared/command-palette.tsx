@@ -8,7 +8,6 @@
 //   - CommandPaletteRoot: thin wrapper holding useState for open; renders trigger
 //     alongside the palette. Header RSC renders this single client child (Option B).
 //
-// D-04: palette NEVER calls document.startViewTransition — theme swap is instant.
 // D-05: runCommand closes dialog THEN executes action (requestAnimationFrame).
 // T-01-P2-03: all window.open calls use 'noopener'.
 import {
@@ -20,7 +19,6 @@ import {
   CommandList,
   CommandSeparator,
 } from '@/components/ui';
-import { Button } from '@/components/ui';
 import { contact } from '@/data/contact';
 import { useRouter } from '@/lib/i18n/navigation';
 import {
@@ -33,13 +31,10 @@ import {
   Languages,
   Layers,
   Mail,
-  Moon,
   Search,
-  Sun,
   User,
 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { useTheme } from 'next-themes';
 import { useEffect, useState } from 'react';
 import { switchLocale } from './locale-toggle-action';
 
@@ -54,8 +49,6 @@ interface CommandPaletteProps {
 
 export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
   const t = useTranslations('commandPalette');
-  const { resolvedTheme, setTheme } = useTheme();
-  const isDark = resolvedTheme === 'dark';
   const router = useRouter();
 
   // Global Cmd+K / Ctrl+K keyboard shortcut
@@ -96,6 +89,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
       title={t('title')}
       description={t('description')}
       showCloseButton={true}
+      className="border border-ink-line font-mono"
     >
       <CommandInput placeholder={t('placeholder')} />
       <CommandList>
@@ -137,21 +131,6 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
 
         {/* Actions group */}
         <CommandGroup heading={t('groupActions')}>
-          <CommandItem
-            onSelect={() =>
-              runCommand(() => {
-                // D-04: direct setTheme call, no startViewTransition
-                setTheme(isDark ? 'light' : 'dark');
-              })
-            }
-          >
-            {isDark ? (
-              <Sun className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
-            ) : (
-              <Moon className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
-            )}
-            {t('actionToggleTheme')}
-          </CommandItem>
           <CommandItem
             onSelect={() =>
               runCommand(() => {
@@ -228,16 +207,17 @@ export function CommandPaletteTrigger({ onOpen }: CommandPaletteTriggerProps) {
   const t = useTranslations('commandPalette');
 
   return (
-    <Button
+    <button
       type="button"
-      variant="ghost"
       aria-label={t('triggerLabel')}
       onClick={onOpen}
-      className="h-11 min-w-[44px] gap-1 px-2"
+      className="inline-flex h-11 min-w-[44px] shrink-0 items-center justify-center gap-2 rounded-md px-2 font-mono text-ink-body transition-colors hover:bg-ink-card hover:text-paper"
     >
-      <Search className="h-5 w-5" aria-hidden="true" />
-      <span className="hidden md:inline text-xs text-muted-foreground">⌘K</span>
-    </Button>
+      <Search className="size-4" aria-hidden="true" />
+      <span className="hidden rounded border border-ink-line px-1.5 py-0.5 text-xs text-ink-muted md:inline">
+        ⌘K
+      </span>
+    </button>
   );
 }
 
@@ -248,6 +228,12 @@ export function CommandPaletteTrigger({ onOpen }: CommandPaletteTriggerProps) {
 
 export function CommandPaletteRoot() {
   const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    const openPalette = () => setOpen(true);
+    window.addEventListener('pansarini:palette', openPalette);
+    return () => window.removeEventListener('pansarini:palette', openPalette);
+  }, []);
 
   return (
     <>

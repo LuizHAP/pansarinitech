@@ -4,9 +4,6 @@
     "placeholder": "Em breve — Fase 2.",
     "shellNote": "Estrutura bilíngue e tematizada pronta. Conteúdo a seguir."
   },
-  "themeToggle": {
-    "label": "Alternar tema"
-  },
   "localeToggle": {
     "label": "Trocar idioma"
   },
@@ -18,8 +15,6 @@
   },
   "notFound": {
     "title": "404",
-    "aurebeshFallback": "404 em Aurebesh",
-    "swReference": "Estas não são as páginas que você procura.",
     "cta": "Voltar para o início"
   },
   "hero": {
@@ -125,7 +120,6 @@
     "navCareer": "Carreira",
     "navContact": "Contato",
     "navBlog": "Blog",
-    "actionToggleTheme": "Alternar tema — Jedi (claro) / Sith (escuro)",
     "actionSwitchPt": "Trocar para Português",
     "actionSwitchEn": "Trocar para Inglês",
     "linkResumePt": "Currículo — PT (PDF)",
@@ -184,5 +178,73 @@
     "desktop": "Desktop",
     "mobile": "Celular",
     "frameTitle": "Site de {client}"
+  },
+  "site": {
+    "nav": {
+      "label": "Principal",
+      "projects": "projetos",
+      "blog": "blog",
+      "now": "agora",
+      "contact": "contato"
+    },
+    "motion": {
+      "label": "Pausar animações"
+    },
+    "hero": {
+      "eyebrow": "// principal software engineer · brasil → mundo",
+      "typedPrefix": "> eu construo",
+      "typedWords": [
+        "plataformas web",
+        "apps mobile",
+        "design systems",
+        "APIs que escalam",
+        "e-commerces rápidos"
+      ],
+      "typedSr": "Eu construo plataformas web, apps mobile, design systems, APIs que escalam e e-commerces rápidos.",
+      "hintLabel": "abrir a paleta de comandos",
+      "hintAria": "Abrir a paleta de comandos (Ctrl ou Cmd + K)"
+    },
+    "marquee": {
+      "label": "Tecnologias com que trabalho",
+      "words": [
+        "TypeScript",
+        "React",
+        "Next.js",
+        "React Native",
+        "Node.js",
+        "Tailwind CSS",
+        "Design Systems",
+        "AWS",
+        "PostgreSQL",
+        "Acessibilidade"
+      ]
+    },
+    "about": {
+      "statsLabel": "Em números"
+    },
+    "sections": {
+      "aboutComment": "> whoami",
+      "projectsComment": "$ ls ~/projects",
+      "personalComment": "$ ls ~/side-projects",
+      "skillsComment": "// stack",
+      "careerComment": "$ git log --career",
+      "nowComment": "$ cat ~/now.md",
+      "blogComment": "$ ls ~/blog",
+      "contactPrompt": "vamos conversar"
+    },
+    "pages": {
+      "projectsCommand": "$ ls ~/projects",
+      "blogCommand": "$ ls ~/blog",
+      "nowCommand": "$ cat ~/now.md",
+      "backToProjects": "cd ../projects",
+      "backToBlog": "cd ../blog"
+    },
+    "notFound": {
+      "command": "$ cd ~/missing-page",
+      "error": "arquivo ou diretório não encontrado"
+    },
+    "easterEgg": {
+      "whoami": "luiz pansarini · principal software engineer · brasil → mundo"
+    }
   }
 }

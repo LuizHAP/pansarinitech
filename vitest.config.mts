@@ -32,7 +32,7 @@ const COMPONENT_FILES = [
   'src/components/sections/copy-email-button.tsx',
   'src/components/shared/header.tsx',
   'src/components/shared/footer.tsx',
-  'src/components/shared/theme-toggle.tsx',
+  'src/components/site/motion-toggle.tsx',
   'src/components/shared/locale-toggle.tsx',
   'src/components/shared/skip-to-content.tsx',
   'src/components/shared/easter-egg.tsx',

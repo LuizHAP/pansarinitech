@@ -31,6 +31,17 @@ describe('<Footer />', () => {
     expect(linkedinLink.getAttribute('rel')).toContain('noopener');
   });
 
+  it('renders the terminal logo with decorative separators hidden from assistive tech', () => {
+    const { container } = render(<Footer />, { locale: 'en' });
+
+    expect(screen.getByText('pansarini')).toBeInTheDocument();
+    const separators = [...container.querySelectorAll('span')].filter(
+      (el) => el.textContent?.trim() === '·',
+    );
+    expect(separators.length).toBeGreaterThanOrEqual(3);
+    for (const el of separators) expect(el).toHaveAttribute('aria-hidden', 'true');
+  });
+
   it('renders PT locale footer text', () => {
     render(<Footer />, { locale: 'pt' });
 
