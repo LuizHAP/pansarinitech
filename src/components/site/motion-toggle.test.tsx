@@ -12,9 +12,9 @@ function motionEvents() {
 
 describe('<MotionToggle />', () => {
   afterEach(() => {
+    vi.restoreAllMocks();
     window.localStorage.clear();
     delete document.documentElement.dataset.motion;
-    vi.restoreAllMocks();
   });
 
   it('starts running with a fixed English name', () => {
@@ -62,6 +62,28 @@ describe('<MotionToggle />', () => {
       'true',
     );
     expect(document.documentElement.dataset.motion).toBe('paused');
+  });
+
+  it('still pauses and resumes when site storage is blocked', async () => {
+    const blocked = () => {
+      throw new DOMException('The operation is insecure.', 'SecurityError');
+    };
+    vi.spyOn(window, 'localStorage', 'get').mockImplementation(blocked);
+    const events = motionEvents();
+    render(<MotionToggle />, { locale: 'en' });
+    const user = userEvent.setup();
+    const button = screen.getByRole('button', { name: 'Pause animations' });
+    expect(button).toHaveAttribute('aria-pressed', 'false');
+
+    await user.click(button);
+    expect(button).toHaveAttribute('aria-pressed', 'true');
+    expect(document.documentElement.dataset.motion).toBe('paused');
+
+    await user.click(button);
+    expect(button).toHaveAttribute('aria-pressed', 'false');
+    expect(document.documentElement.dataset.motion).toBeUndefined();
+    expect(events.details).toEqual([{ paused: true }, { paused: false }]);
+    events.stop();
   });
 
   it('treats any other stored value as running', () => {

@@ -12,12 +12,28 @@ function applyMotion(paused: boolean) {
   window.dispatchEvent(new CustomEvent('pansarini:motion', { detail: { paused } }));
 }
 
+// Blocked site storage makes every localStorage access throw SecurityError.
+function readPaused() {
+  try {
+    return window.localStorage.getItem(STORAGE_KEY) === 'paused';
+  } catch {
+    return false;
+  }
+}
+
+function writePaused(paused: boolean) {
+  try {
+    if (paused) window.localStorage.setItem(STORAGE_KEY, 'paused');
+    else window.localStorage.removeItem(STORAGE_KEY);
+  } catch {}
+}
+
 export function MotionToggle() {
   const t = useTranslations('site.motion');
   const [paused, setPaused] = useState(false);
 
   useEffect(() => {
-    if (window.localStorage.getItem(STORAGE_KEY) === 'paused') {
+    if (readPaused()) {
       setPaused(true);
       applyMotion(true);
     }
@@ -26,9 +42,8 @@ export function MotionToggle() {
   function toggle() {
     const next = !paused;
     setPaused(next);
-    if (next) window.localStorage.setItem(STORAGE_KEY, 'paused');
-    else window.localStorage.removeItem(STORAGE_KEY);
     applyMotion(next);
+    writePaused(next);
   }
 
   const Icon = paused ? Play : Pause;
