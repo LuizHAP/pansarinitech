@@ -36,6 +36,7 @@ import {
 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
+import { isPaletteShortcut } from '../site/palette-shortcut';
 import { switchLocale } from './locale-toggle-action';
 
 // ---------------------------------------------------------------------------
@@ -54,7 +55,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
   // Global Cmd+K / Ctrl+K keyboard shortcut
   useEffect(() => {
     function onKeydown(e: KeyboardEvent) {
-      if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
+      if (isPaletteShortcut(e)) {
         e.preventDefault();
         onOpenChange(!open);
       }

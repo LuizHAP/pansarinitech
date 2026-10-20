@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
+import { isPaletteShortcut } from './palette-shortcut';
 
 const PRESS_MS = 160;
 
@@ -15,7 +16,7 @@ export function PaletteHint({ label, ariaLabel }: { label: string; ariaLabel: st
 
     let timeout: number | undefined;
     const onKeyDown = (event: KeyboardEvent) => {
-      if (!(event.metaKey || event.ctrlKey) || event.key.toLowerCase() !== 'k') return;
+      if (!isPaletteShortcut(event)) return;
       setPressed(true);
       window.clearTimeout(timeout);
       timeout = window.setTimeout(() => setPressed(false), PRESS_MS);

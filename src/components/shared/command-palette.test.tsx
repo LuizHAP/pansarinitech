@@ -73,6 +73,14 @@ describe('<CommandPaletteRoot />', () => {
     expect(screen.getByRole('dialog')).toBeInTheDocument();
   });
 
+  it('opens palette when the key arrives uppercase (Caps Lock or Shift)', async () => {
+    render(<CommandPaletteRoot />, { locale: 'en' });
+    const user = userEvent.setup();
+
+    await user.keyboard('{Control>}K{/Control}');
+    expect(screen.getByRole('dialog')).toBeInTheDocument();
+  });
+
   it('toggles palette closed via Cmd+K when already open', async () => {
     render(<CommandPaletteRoot />, { locale: 'en' });
     const user = userEvent.setup();
