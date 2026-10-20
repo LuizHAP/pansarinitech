@@ -1,4 +1,4 @@
-import { render, waitFor } from '@testing-library/react';
+import { act, render, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const { mountHeroField, dispose } = vi.hoisted(() => {
@@ -12,14 +12,29 @@ import { HeroFieldGate } from './hero-field-gate';
 
 const GATE = '(min-width: 1024px) and (pointer: fine) and (prefers-reduced-motion: no-preference)';
 
-function mockGate(matches: boolean) {
+function mockGate(initial: boolean) {
   const original = window.matchMedia;
+  let matches = initial;
+  const listeners = new Set<() => void>();
   const spy = vi.fn(
-    (query: string) => ({ matches: matches && query === GATE, media: query }) as MediaQueryList,
+    (query: string) =>
+      ({
+        get matches() {
+          return matches && query === GATE;
+        },
+        media: query,
+        addEventListener: (_type: string, listener: () => void) => listeners.add(listener),
+        removeEventListener: (_type: string, listener: () => void) => listeners.delete(listener),
+      }) as unknown as MediaQueryList,
   );
   window.matchMedia = spy as unknown as typeof window.matchMedia;
   return {
     spy,
+    listeners,
+    change: (next: boolean) => {
+      matches = next;
+      for (const listener of [...listeners]) listener();
+    },
     restore: () => {
       window.matchMedia = original;
     },
@@ -121,6 +136,40 @@ describe('<HeroFieldGate />', () => {
     const { unmount } = render(<HeroFieldGate />);
 
     unmount();
+    idle.flush();
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    expect(mountHeroField).not.toHaveBeenCalled();
+  });
+
+  it('disposes the scene when the gate stops matching and mounts again when it matches', async () => {
+    gate = mockGate(true);
+    const idle = mockIdle();
+    const { unmount } = render(<HeroFieldGate />);
+
+    idle.flush();
+    await waitFor(() => expect(mountHeroField).toHaveBeenCalledTimes(1));
+
+    act(() => gate.change(false));
+    expect(dispose).toHaveBeenCalledTimes(1);
+    expect(idle.request).toHaveBeenCalledTimes(1);
+
+    act(() => gate.change(true));
+    expect(idle.request).toHaveBeenCalledTimes(2);
+    idle.flush();
+    await waitFor(() => expect(mountHeroField).toHaveBeenCalledTimes(2));
+
+    unmount();
+    expect(dispose).toHaveBeenCalledTimes(2);
+    expect(gate.listeners.size).toBe(0);
+  });
+
+  it('cancels a pending mount when the gate stops matching before idle fires', async () => {
+    gate = mockGate(true);
+    const idle = mockIdle();
+    render(<HeroFieldGate />);
+
+    act(() => gate.change(false));
+    expect(idle.cancel).toHaveBeenCalled();
     idle.flush();
     await new Promise((resolve) => setTimeout(resolve, 0));
     expect(mountHeroField).not.toHaveBeenCalled();
