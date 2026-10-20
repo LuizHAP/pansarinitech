@@ -33,6 +33,8 @@ type Ripple = { x: number; z: number; t: number };
 
 const isPaused = () => document.documentElement.dataset.motion === 'paused';
 
+const INTERACTIVE = 'a, button, [role="button"], input';
+
 export function mountHeroField(el: HTMLElement): () => void {
   let renderer: WebGLRenderer;
   try {
@@ -188,6 +190,7 @@ export function mountHeroField(el: HTMLElement): () => void {
       mouse.tz = p.z;
     };
     const onDown = (event: PointerEvent) => {
+      if (event.target instanceof Element && event.target.closest(INTERACTIVE)) return;
       const p = project(event);
       if (p) ripple(p.x, p.z);
     };

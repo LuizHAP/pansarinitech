@@ -12,12 +12,17 @@ const { renderers } = vi.hoisted(() => ({
 
 vi.mock('three', async (importOriginal) => {
   const three = await importOriginal<typeof import('three')>();
+  type Object3D = InstanceType<typeof three.Object3D>;
   class FakeRenderer {
     domElement = document.createElement('canvas');
     setPixelRatio = vi.fn();
     setClearColor = vi.fn();
     setSize = vi.fn();
-    render = vi.fn();
+    // The real renderer refreshes world matrices, which the pointer raycast reads.
+    render = vi.fn((scene: Object3D, camera: Object3D) => {
+      scene.updateMatrixWorld();
+      camera.updateMatrixWorld();
+    });
     dispose = vi.fn();
     forceContextLoss = vi.fn();
     constructor() {
@@ -152,4 +157,37 @@ describe('mountHeroField', () => {
     expect(Math.max(...lastPose())).toBeLessThan(1);
     dispose();
   });
+
+  it.each([
+    ['a', () => document.createElement('a')],
+    ['button', () => document.createElement('button')],
+    ['[role=button]', () => Object.assign(document.createElement('div'), { role: 'button' })],
+    ['input', () => document.createElement('input')],
+  ])('does not ripple when the press lands on %s inside the hero', (_name, create) => {
+    expect(rippleHeight(create())).toBeLessThan(1);
+  });
+
+  it('ripples when the press lands on the field itself', () => {
+    expect(rippleHeight(document.createElement('span'))).toBeGreaterThan(1);
+  });
+
+  function rippleHeight(target: HTMLElement) {
+    vi.spyOn(performance, 'now').mockReturnValue(1000);
+    vi.spyOn(el, 'getBoundingClientRect').mockReturnValue(
+      DOMRect.fromRect({ x: 0, y: 0, width: 1000, height: 600 }),
+    );
+    const viewport = stubViewport();
+    el.append(target);
+    const dispose = mountHeroField(el);
+    viewport.show(true);
+    viewport.nextFrame();
+
+    target.dispatchEvent(
+      new MouseEvent('pointerdown', { bubbles: true, clientX: 500, clientY: 300 }),
+    );
+    viewport.nextFrame();
+    const height = Math.max(...lastPose());
+    dispose();
+    return height;
+  }
 });
