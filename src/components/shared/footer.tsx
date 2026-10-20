@@ -18,7 +18,7 @@ export function Footer() {
 
   return (
     <footer className="border-t border-ink-rule bg-ink">
-      <div className="mx-auto flex max-w-[1280px] flex-col gap-5 px-4 py-10 font-mono text-[13px] text-ink-muted md:flex-row md:items-center md:justify-between md:px-8">
+      <div className="mx-auto box-content flex max-w-[1280px] flex-col gap-5 px-4 py-10 font-mono text-[13px] text-ink-muted md:flex-row md:items-center md:justify-between md:px-8">
         <TerminalLogo />
         <p>
           {t('copyright')}

@@ -20,7 +20,7 @@ export default function RootNotFound() {
   return (
     <html lang="en" className={`site ${bricolage.variable} ${plexMono.variable}`}>
       <body>
-        <main className="mx-auto flex min-h-screen max-w-[1280px] flex-col items-start justify-center px-4 py-24 md:px-8">
+        <main className="mx-auto box-content flex min-h-screen max-w-[1280px] flex-col items-start justify-center px-4 py-24 md:px-8">
           <p className="font-mono text-sm leading-relaxed text-ink-muted md:text-base">
             <span className="block text-paper">$ cd ~/missing-page</span>
             <span className="block">

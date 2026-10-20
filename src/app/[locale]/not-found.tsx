@@ -10,7 +10,7 @@ export default async function LocaleNotFound() {
   const tSite = await getTranslations('site.notFound');
 
   return (
-    <section className="mx-auto flex max-w-[1280px] flex-col items-start px-4 py-24 md:px-8 md:py-32">
+    <section className="mx-auto box-content flex max-w-[1280px] flex-col items-start px-4 py-24 md:px-8 md:py-32">
       <p className="font-mono text-sm leading-relaxed text-ink-muted md:text-base">
         <span className="block text-paper">{tSite('command')}</span>
         <span className="block">

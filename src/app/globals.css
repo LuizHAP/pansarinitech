@@ -282,6 +282,18 @@ html.dark pre[data-theme*=" "] span {
   background-color: var(--shiki-dark-bg);
 }
 
+/* Public pages never get .dark, so the block must take the light theme's own fill;
+   otherwise prose paints its dark pre background around the white line spans, and the
+   inline-code fill from prose-code lands on the block <code> too. */
+html.site pre[data-theme*=" "] {
+  color: var(--shiki-light);
+  background-color: var(--shiki-light-bg);
+}
+html.site pre[data-theme*=" "] > code {
+  background-color: transparent;
+  padding: 0;
+}
+
 /* Phase 3 — keep MDX <pre> blocks from blowing out the viewport on iPhone SE
    (UX-01 375px gate). Long code lines scroll horizontally inside the figure
    instead of stretching <body>. */

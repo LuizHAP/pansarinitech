@@ -126,7 +126,7 @@ export default async function BlogPostPage({
           <div
             className={`${sectionContainer} py-16 md:py-24 lg:grid lg:grid-cols-[minmax(0,1fr)_240px] lg:gap-16`}
           >
-            <div className="mx-auto w-full max-w-3xl min-w-0">
+            <div className="w-full max-w-3xl min-w-0">
               <TocMobile entries={toc} label={tToc('label')} />
 
               <div className="prose prose-neutral max-w-none prose-headings:scroll-mt-20 prose-headings:font-display prose-headings:text-foreground prose-h2:mt-12 prose-h2:pb-3 prose-h2:font-extrabold prose-h2:tracking-[-0.03em] prose-h2:border-b-2 prose-h2:border-foreground prose-h3:mt-8 prose-h3:font-bold prose-h3:tracking-[-0.02em] prose-p:text-pretty prose-a:text-primary prose-a:decoration-primary prose-a:font-normal prose-code:before:content-none prose-code:after:content-none prose-code:bg-muted prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded-sm prose-code:text-sm prose-code:font-mono prose-code:text-foreground">
