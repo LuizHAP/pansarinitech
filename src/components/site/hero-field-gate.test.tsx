@@ -28,7 +28,7 @@ function mockGate(matches: boolean) {
 
 function mockIdle() {
   const callbacks: (() => void)[] = [];
-  const request = vi.fn((cb: () => void) => {
+  const request = vi.fn((cb: () => void, _options?: IdleRequestOptions) => {
     callbacks.push(cb);
     return callbacks.length;
   });
