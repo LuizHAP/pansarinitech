@@ -1,6 +1,5 @@
 import { Link } from '@/lib/i18n/navigation';
 // src/app/[locale]/not-found.tsx
-// Localized 404 — UX-04. Heading hierarchy: one heading only — Pitfall 13.
 import { getLocale, getTranslations, setRequestLocale } from 'next-intl/server';
 
 export default async function LocaleNotFound() {

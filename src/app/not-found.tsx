@@ -5,15 +5,10 @@
 //   (Next 16 propagates dynamic context from root not-found.tsx to all sibling routes,
 //   making /[locale] go from ● SSG to ƒ Dynamic — which violates I18N-06).
 //
-// What this does:
-//   Renders a static, English-only 404. The /en/* and /pt/* unmatched routes are NOT
-//   served by this file — they fall through to `[locale]/not-found.tsx` which has full
-//   locale awareness. This file fires only for proxy-excluded paths
-//   (api/_next/static/files-with-extension), which are programmatic edge cases that
-//   don't benefit from PT translation.
+// English-only: unmatched /en/* and /pt/* routes go to [locale]/not-found.tsx, so this
+// only serves proxy-excluded paths (api, _next/static, files with an extension).
 //
-// Linking back to home: hardcoded `/en` (the defaultLocale, D-04), as a plain <a> to avoid
-// pulling in client-side locale-aware routing on this static fallback.
+// A plain <a> to /en keeps client-side locale routing out of this static fallback.
 import { bricolage, plexMono } from '@/lib/fonts';
 
 export default function RootNotFound() {

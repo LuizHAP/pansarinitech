@@ -1,8 +1,5 @@
-// src/app/manifest.ts — Phase 4 D-26, D-27, SEO-06
-//
-// MetadataRoute.Manifest — name, short_name, ink theme_color, icons
-// array. NO service worker (D-27); manifest exists for Lighthouse PWA-adjacent
-// score boosts and recognizable home-screen icons only.
+// No service worker on purpose: the manifest only exists for home-screen icons and
+// Lighthouse's PWA-adjacent checks.
 import type { MetadataRoute } from 'next';
 
 export default function manifest(): MetadataRoute.Manifest {

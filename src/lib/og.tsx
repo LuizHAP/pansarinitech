@@ -2,20 +2,14 @@ import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import type { Locale } from '@/i18n/routing';
 import { SITE_URL } from '@/lib/seo';
-// src/lib/og.tsx — Phase 4 D-20..D-25 (single shared rendering factory)
+// Node.js runtime, not Edge: the committed font subset is read from disk, so there is
+// no fetch and no SSRF surface.
 //
-// Used by 6 per-route opengraph-image.tsx files (added in Plan 04-02 + 04-03).
-// Runtime: Node.js (default; explicit per CRITICAL CORRECTION #2). NOT Edge —
-// readFile from node:fs/promises is the simplest path to bundle the committed
-// font subset (no fetch + no SSRF surface; T-04-07).
+// bricolage-800.ttf holds ASCII + Portuguese letters only (≤30KB budget). A glyph outside
+// that subset renders blank, so widen the subset before using new scripts.
 //
-// Font: src/app/fonts/bricolage-800.ttf (ASCII + Portuguese letters, ~27KB; ≤30KB budget).
-// A glyph outside that subset renders blank, so widen the subset before using new scripts.
-//
-// Satori pitfalls baked in:
-//   - Every wrapper sets display:'flex' (Pitfall §6 — Satori throws on
-//     flex children without explicit display).
-//   - CSS variables are NOT resolved at runtime; colours are hard-coded hex.
+// Satori throws on flex children without an explicit display, so every wrapper sets
+// display:'flex'. It does not resolve CSS variables, so colours are hard-coded hex.
 import { ImageResponse } from 'next/og';
 
 export const OG_SIZE = { width: 1200, height: 630 } as const;

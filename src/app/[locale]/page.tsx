@@ -13,12 +13,8 @@ import {
 import { Marquee } from '@/components/site';
 import type { Locale } from '@/i18n/routing';
 import { buildHomeMetadata } from '@/lib/seo';
-// src/app/[locale]/page.tsx — Phase 2 Wave 2 home composition.
-// D-24: setRequestLocale(locale) at the top so [locale] stays ● SSG.
-//
-// Anchor IDs the command palette scrolls to: #hero, #about, #projects, #skills, #career, #contact
-//
-// Phase 4 SEO-01: generateMetadata via buildHomeMetadata (centralized in src/lib/seo.ts).
+// setRequestLocale(locale) runs first so [locale] stays statically rendered.
+// The command palette scrolls to these ids: #hero, #about, #projects, #skills, #career, #contact
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 
