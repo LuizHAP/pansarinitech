@@ -24,7 +24,12 @@ export default function RootNotFound() {
           </p>
           <h1 className="mt-8 font-display text-[clamp(96px,22vw,220px)] leading-[0.88] font-extrabold tracking-[-0.05em] text-paper">
             404
-            <span aria-hidden="true" className="lp-cursor ml-2 h-[0.7em] w-[0.12em] bg-signal" />
+            {/* No pause control on this page, so the blink stops before WCAG 2.2.2's 5 seconds. */}
+            <span
+              aria-hidden="true"
+              className="lp-cursor ml-2 h-[0.7em] w-[0.12em] bg-signal"
+              style={{ animationIterationCount: 3 }}
+            />
           </h1>
           <a
             href="/en"
