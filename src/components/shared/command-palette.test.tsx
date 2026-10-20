@@ -30,7 +30,7 @@ vi.mock('@/lib/i18n/navigation', async () => {
   };
 });
 
-import { CommandPaletteRoot } from './command-palette';
+import { CommandPaletteRoot, CommandPaletteTrigger } from './command-palette';
 // Must import after mocks are declared
 import { switchLocale } from './locale-toggle-action';
 
@@ -362,5 +362,22 @@ describe('<CommandPaletteRoot />', () => {
         'noopener,noreferrer',
       );
     });
+  });
+});
+
+describe('<CommandPaletteTrigger />', () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it.each([
+    ['MacIntel', '⌘ K'],
+    ['Win32', 'Ctrl K'],
+    ['Linux x86_64', 'Ctrl K'],
+  ])('on %s shows %s, like the hero hint', (platform, shortcut) => {
+    vi.spyOn(navigator, 'platform', 'get').mockReturnValue(platform);
+    render(<CommandPaletteTrigger onOpen={() => {}} />, { locale: 'en' });
+
+    expect(screen.getByRole('button')).toHaveTextContent(shortcut);
   });
 });

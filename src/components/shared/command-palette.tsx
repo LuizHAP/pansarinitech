@@ -36,7 +36,7 @@ import {
 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
-import { isPaletteShortcut } from '../site/palette-shortcut';
+import { isPaletteShortcut, usePaletteModifier } from '../site/palette-shortcut';
 import { switchLocale } from './locale-toggle-action';
 
 // ---------------------------------------------------------------------------
@@ -206,6 +206,7 @@ interface CommandPaletteTriggerProps {
 
 export function CommandPaletteTrigger({ onOpen }: CommandPaletteTriggerProps) {
   const t = useTranslations('commandPalette');
+  const modifier = usePaletteModifier();
 
   return (
     <button
@@ -216,7 +217,7 @@ export function CommandPaletteTrigger({ onOpen }: CommandPaletteTriggerProps) {
     >
       <Search className="size-4" aria-hidden="true" />
       <span className="hidden rounded border border-ink-line px-1.5 py-0.5 text-xs text-ink-muted md:inline">
-        ⌘K
+        {modifier} K
       </span>
     </button>
   );

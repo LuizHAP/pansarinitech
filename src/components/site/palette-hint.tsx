@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { isPaletteShortcut } from './palette-shortcut';
+import { isPaletteShortcut, usePaletteModifier } from './palette-shortcut';
 
 const PRESS_MS = 160;
 
@@ -8,12 +8,10 @@ const keycap =
   'rounded-[7px] px-[11px] py-[7px] font-semibold text-paper shadow-[0_4px_0_#eeece6] transition-[transform,box-shadow] duration-75 group-data-[pressed=true]:translate-y-1 group-data-[pressed=true]:shadow-none';
 
 export function PaletteHint({ label, ariaLabel }: { label: string; ariaLabel: string }) {
-  const [modifier, setModifier] = useState('Ctrl');
+  const modifier = usePaletteModifier();
   const [pressed, setPressed] = useState(false);
 
   useEffect(() => {
-    if (/Mac|iPhone|iPad|iPod/.test(navigator.platform)) setModifier('⌘');
-
     let timeout: number | undefined;
     const onKeyDown = (event: KeyboardEvent) => {
       if (!isPaletteShortcut(event)) return;
