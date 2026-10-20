@@ -1,21 +1,14 @@
 import { cn } from '@/lib/utils';
-import { cva } from 'class-variance-authority';
 import type { ReactNode } from 'react';
 
-// box-content keeps the 6xl measure on the content box so section edges line up with the header.
-export const sectionContainer = 'mx-auto box-content max-w-6xl px-4 md:px-6';
+// box-content keeps the 1280px measure on the content box so section edges line up with the header.
+export const sectionContainer = 'mx-auto box-content max-w-[1280px] px-4 sm:px-5 md:px-8';
 
-const sectionVariants = cva(`${sectionContainer} py-8 sm:py-10 lg:py-14`, {
-  variants: {
-    eyebrow: {
-      true: '',
-      false: '',
-    },
-  },
-  defaultVariants: {
-    eyebrow: false,
-  },
-});
+const SURFACES = {
+  ink: 'surface-ink',
+  paper: 'surface-paper',
+  accent: 'surface-accent',
+} as const;
 
 export interface SectionProps {
   children: ReactNode;
@@ -23,16 +16,27 @@ export interface SectionProps {
   ariaLabelledBy?: string;
   className?: string;
   eyebrow?: ReactNode;
+  surface?: keyof typeof SURFACES;
 }
 
-export function Section({ children, id, ariaLabelledBy, className, eyebrow }: SectionProps) {
+export function Section({
+  children,
+  id,
+  ariaLabelledBy,
+  className,
+  eyebrow,
+  surface,
+}: SectionProps) {
   return (
     <section
       id={id}
       aria-labelledby={ariaLabelledBy}
-      className={cn(sectionVariants({ eyebrow: !!eyebrow }), className)}
+      className={cn('scroll-mt-16', surface && SURFACES[surface])}
     >
-      {children}
+      <div className={cn(sectionContainer, 'py-22 md:py-30', className)}>
+        {eyebrow && <p className="mb-4 font-mono text-sm text-muted-foreground">{eyebrow}</p>}
+        {children}
+      </div>
     </section>
   );
 }

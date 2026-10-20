@@ -1,2 +1,8 @@
+export { BrowserCard } from './browser-card';
+export { HeroFieldGate } from './hero-field-gate';
+export { Marquee } from './marquee';
 export { MotionToggle } from './motion-toggle';
+export { PaletteHint } from './palette-hint';
+export { SectionHead } from './section-head';
 export { TerminalLogo } from './terminal-logo';
+export { TypedLine } from './typed-line';
