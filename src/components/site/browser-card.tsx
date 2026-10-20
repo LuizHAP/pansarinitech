@@ -1,5 +1,6 @@
 import { Link } from '@/lib/i18n/navigation';
 import Image, { type StaticImageData } from 'next/image';
+import { BrowserFrame } from './browser-frame';
 
 export function BrowserCard({
   href,
@@ -25,16 +26,7 @@ export function BrowserCard({
       href={href}
       className="group flex flex-col gap-4 rounded-[14px] text-paper transition-transform duration-[250ms] hover:-translate-y-1.5 motion-reduce:transition-none motion-reduce:hover:translate-y-0"
     >
-      <div className="overflow-hidden rounded-[14px] border-[1.5px] border-ink-line bg-ink-card">
-        <div
-          aria-hidden="true"
-          className="flex items-center gap-[7px] border-b-[1.5px] border-ink-line px-3.5 py-[11px]"
-        >
-          <span className="size-[9px] shrink-0 rounded-full bg-ink-line" />
-          <span className="size-[9px] shrink-0 rounded-full bg-ink-line" />
-          <span className="size-[9px] shrink-0 rounded-full bg-ink-line" />
-          <span className="ml-2 truncate font-mono text-[11px] text-ink-muted">{url}</span>
-        </div>
+      <BrowserFrame url={url}>
         <div className="relative aspect-video">
           <Image
             src={image}
@@ -46,7 +38,7 @@ export function BrowserCard({
             className="object-cover object-top"
           />
         </div>
-      </div>
+      </BrowserFrame>
       <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
         <Heading className="text-2xl font-semibold tracking-[-0.02em] [overflow-wrap:anywhere]">
           {title}

@@ -91,7 +91,7 @@ export function PreWithCopyButton(props: React.HTMLAttributes<HTMLPreElement>) {
         type="button"
         onClick={handleCopy}
         aria-label={t('button')}
-        className="absolute right-2 top-2 inline-flex min-h-12 min-w-12 items-center justify-center rounded-md border border-border bg-background/80 opacity-0 backdrop-blur transition focus-visible:opacity-100 group-hover:opacity-100"
+        className="absolute right-2 top-2 inline-flex min-h-12 min-w-12 items-center justify-center rounded-md border border-border bg-background text-foreground opacity-0 transition focus-visible:opacity-100 group-hover:opacity-100"
       >
         {copied ? (
           <CheckIcon className="size-4" aria-hidden="true" />

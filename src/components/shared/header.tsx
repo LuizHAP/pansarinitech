@@ -19,7 +19,7 @@ export function Header() {
   const tNav = useTranslations('site.nav');
 
   return (
-    <header className="sticky top-0 z-50 h-16 border-b border-ink-rule bg-ink/82 px-4 backdrop-blur-md md:px-8">
+    <header className="sticky top-0 z-50 h-16 border-b border-ink-rule bg-ink/90 px-4 backdrop-blur-md md:px-8">
       <div className="mx-auto flex h-full max-w-[1280px] items-center gap-2 md:gap-6">
         <Link
           href="/"

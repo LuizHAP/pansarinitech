@@ -11,6 +11,7 @@
 // threshold 1000 words; CONTEXT D-07).
 import { TocMobile, TocSidebar } from '@/components/blog';
 import JsonLd, { AUTHOR_PERSON, SITE_URL, buildBreadcrumbList } from '@/components/json-ld';
+import { sectionContainer } from '@/components/ui';
 import { type Locale, routing } from '@/i18n/routing';
 import { formatDate } from '@/lib/i18n/helpers';
 import { Link } from '@/lib/i18n/navigation';
@@ -61,6 +62,7 @@ export default async function BlogPostPage({
 
   const t = await getTranslations({ locale, namespace: 'blog' });
   const tToc = await getTranslations({ locale, namespace: 'mdx.toc' });
+  const tSite = await getTranslations({ locale, namespace: 'site.pages' });
   const toc = extractToc(post.rawBody);
 
   return (
@@ -74,7 +76,7 @@ export default async function BlogPostPage({
       />
       <link rel="alternate" type="application/rss+xml" title="Blog (EN)" href="/feed.xml" />
       <link rel="alternate" type="application/rss+xml" title="Blog (PT)" href="/feed.pt.xml" />
-      <article className="mx-auto max-w-5xl px-4 py-12 lg:grid lg:grid-cols-[1fr_240px] lg:gap-10">
+      <article>
         <JsonLd
           schema={{
             '@context': 'https://schema.org',
@@ -91,39 +93,50 @@ export default async function BlogPostPage({
             wordCount: Math.round(post.readingTime.minutes * 200),
           }}
         />
-        <div className="min-w-0">
-          <Link
-            href="/blog"
-            className="text-sm text-muted-foreground decoration-primary hover:underline"
-          >
-            {t('cta.backToBlog')}
-          </Link>
-          <header className="mt-3">
-            <h1 className="text-3xl font-semibold tracking-tight md:text-4xl">{post.title}</h1>
-            <p className="mt-2 text-sm text-muted-foreground">
+        <header className="surface-ink">
+          <div className={`${sectionContainer} pt-14 pb-16 md:pt-20 md:pb-24`}>
+            <Link
+              href="/blog"
+              className="font-mono text-sm text-ink-muted underline decoration-signal-soft decoration-2 underline-offset-4 hover:text-paper"
+            >
+              {tSite('backToBlog')}
+            </Link>
+            <p className="mt-10 font-mono text-sm text-ink-muted">
               <time dateTime={post.date}>{formatDate(post.date, locale)}</time>
               {' · '}
               {t('readingTime', { minutes: post.readingTime.minutes })}
             </p>
+            <h1 className="mt-4 max-w-5xl font-display text-[clamp(40px,6vw,84px)] leading-[0.95] font-extrabold tracking-[-0.045em] text-balance [overflow-wrap:anywhere]">
+              {post.title}
+            </h1>
             {post.tags.length > 0 && (
-              <ul className="mt-3 flex flex-wrap gap-2">
+              <ul className="mt-6 flex flex-wrap gap-x-3 gap-y-1 font-mono text-[13px] text-ink-body">
                 {post.tags.map((tag) => (
-                  <li key={tag} className="text-xs text-muted-foreground">
-                    #{tag}
+                  <li key={tag}>
+                    <span className="text-signal-soft">#</span>
+                    {tag}
                   </li>
                 ))}
               </ul>
             )}
-          </header>
+          </div>
+        </header>
 
-          <TocMobile entries={toc} label={tToc('label')} />
+        <div className="surface-paper">
+          <div
+            className={`${sectionContainer} py-16 md:py-24 lg:grid lg:grid-cols-[minmax(0,1fr)_240px] lg:gap-16`}
+          >
+            <div className="mx-auto w-full max-w-3xl min-w-0">
+              <TocMobile entries={toc} label={tToc('label')} />
 
-          <div className="prose prose-neutral mt-8 max-w-none dark:prose-invert prose-headings:scroll-mt-20 prose-h2:mt-10 prose-h2:pb-3 prose-h2:font-semibold prose-h2:tracking-tight prose-h2:border-b prose-h2:border-border prose-h3:mt-8 prose-h3:font-semibold prose-h3:tracking-tight prose-a:text-primary prose-a:decoration-primary prose-a:font-normal prose-code:before:content-none prose-code:after:content-none prose-code:bg-muted prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded-sm prose-code:text-sm prose-code:font-mono prose-code:text-foreground">
-            {post.content}
+              <div className="prose prose-neutral max-w-none prose-headings:scroll-mt-20 prose-headings:font-display prose-headings:text-foreground prose-h2:mt-12 prose-h2:pb-3 prose-h2:font-extrabold prose-h2:tracking-[-0.03em] prose-h2:border-b-2 prose-h2:border-foreground prose-h3:mt-8 prose-h3:font-bold prose-h3:tracking-[-0.02em] prose-p:text-pretty prose-a:text-primary prose-a:decoration-primary prose-a:font-normal prose-code:before:content-none prose-code:after:content-none prose-code:bg-muted prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded-sm prose-code:text-sm prose-code:font-mono prose-code:text-foreground">
+                {post.content}
+              </div>
+            </div>
+
+            <TocSidebar entries={toc} label={tToc('label')} />
           </div>
         </div>
-
-        <TocSidebar entries={toc} label={tToc('label')} />
       </article>
     </>
   );

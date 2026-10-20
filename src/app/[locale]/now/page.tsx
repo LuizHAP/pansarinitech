@@ -1,5 +1,6 @@
 import JsonLd, { buildBreadcrumbList } from '@/components/json-ld';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui';
+import { SectionHead } from '@/components/site';
+import { Section, sectionContainer } from '@/components/ui';
 import { now } from '@/data/now';
 import type { Locale } from '@/i18n/routing';
 import { formatLongDate, pickLocale } from '@/lib/i18n/helpers';
@@ -44,6 +45,7 @@ export default async function NowPage({
   setRequestLocale(locale);
 
   const t = await getTranslations('now');
+  const tSite = await getTranslations('site.pages');
   const formattedDate = formatLongDate(now.lastUpdated, locale);
 
   const sections = [
@@ -60,29 +62,35 @@ export default async function NowPage({
           { name: t('title'), path: '/now' },
         ])}
       />
-      <article className="mx-auto max-w-3xl px-4 py-12">
-        <header className="mb-8">
-          <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">{t('title')}</h1>
-          <p className="mt-3 text-sm text-muted-foreground">
-            <time dateTime={now.lastUpdated}>
-              {t('lastUpdated')}: {formattedDate}
-            </time>
-          </p>
-        </header>
-
-        <div className="flex flex-col gap-6">
+      <Section ariaLabelledBy="now-heading" surface="ink" className="pb-16 md:pt-24 md:pb-20">
+        <SectionHead as="h1" id="now-heading" title={t('title')} comment={tSite('nowCommand')} />
+        <p className="mt-8 font-mono text-sm text-ink-muted">
+          <time dateTime={now.lastUpdated}>
+            {t('lastUpdated')}: {formattedDate}
+          </time>
+        </p>
+      </Section>
+      <div className="surface-paper">
+        <div
+          className={`${sectionContainer} grid grid-cols-[repeat(auto-fit,minmax(min(100%,340px),1fr))] gap-x-12 gap-y-12 py-16 md:py-24`}
+        >
           {sections.map((s) => (
-            <Card key={s.key}>
-              <CardHeader>
-                <CardTitle className="text-lg">{s.title}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-base leading-relaxed text-muted-foreground">{s.body}</p>
-              </CardContent>
-            </Card>
+            <section
+              key={s.key}
+              aria-labelledby={`now-${s.key}`}
+              className="flex flex-col gap-3 border-t-2 border-foreground pt-6"
+            >
+              <h2
+                id={`now-${s.key}`}
+                className="font-display text-[28px] leading-[1.1] font-bold tracking-[-0.03em]"
+              >
+                {s.title}
+              </h2>
+              <p className="text-[17px] leading-[1.55] text-muted-foreground">{s.body}</p>
+            </section>
           ))}
         </div>
-      </article>
+      </div>
     </>
   );
 }

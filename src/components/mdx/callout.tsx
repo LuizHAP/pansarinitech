@@ -23,7 +23,7 @@ const STYLES: Record<CalloutType, string> = {
 
 const ICON_TINT: Record<CalloutType, string> = {
   info: 'text-primary',
-  warn: 'text-yellow-600 dark:text-yellow-400',
+  warn: 'text-yellow-800',
   error: 'text-destructive',
 };
 

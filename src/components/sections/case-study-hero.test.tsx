@@ -76,10 +76,10 @@ vi.mock('next-intl/server', () => ({
     namespace,
   }: {
     locale: 'en' | 'pt';
-    namespace: string;
+    namespace?: string;
   }) => {
     const msgs = (locale === 'pt' ? ptMessages : enMessages) as Record<string, unknown>;
-    const ns = msgs[namespace] as Record<string, unknown>;
+    const ns = (namespace ? msgs[namespace] : msgs) as Record<string, unknown>;
     return (key: string) => {
       // dotted key lookup, e.g. 'cta.backToProjects'
       return key
@@ -123,22 +123,24 @@ describe('<CaseStudyHero />', () => {
       expect(screen.getByText(tech)).toBeInTheDocument();
     }
 
-    // back link
-    const backLink = screen.getByRole('link', { name: /Back to projects/i });
-    expect(backLink).toBeInTheDocument();
+    const backLink = screen.getByRole('link', { name: 'cd ../projects' });
+    expect(backLink).toHaveAttribute('href', '/projects');
 
     // hero image (mocked next/image renders <img>)
     const img = screen.getByRole('img');
     expect(img).toHaveAttribute('alt', baseProject.title);
   });
 
-  it('Test 2 (PT locale): back-link text uses the PT translation', async () => {
+  it('Test 2 (PT locale): renders the PT page with the terminal back link', async () => {
     const { CaseStudyHero } = await import('./case-study-hero');
     const jsx = await CaseStudyHero({ project: baseProject, locale: 'pt' });
     render(jsx, { locale: 'pt' });
 
-    // PT translation for cta.backToProjects is "← Voltar aos projetos"
-    expect(screen.getByRole('link', { name: /Voltar aos projetos/i })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'cd ../projects' })).toHaveAttribute(
+      'href',
+      '/projects',
+    );
+    expect(screen.getByText('pansarini.tech/projects/machinery-partner-ecommerce')).toBeVisible();
   });
 
   it('Test 3 (unknown slug): throws with a descriptive error', async () => {
