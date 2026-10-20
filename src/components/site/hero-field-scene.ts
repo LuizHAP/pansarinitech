@@ -122,6 +122,7 @@ export function mountHeroField(el: HTMLElement): () => void {
     };
 
     const ripple = (x: number, z: number) => {
+      if (isPaused()) return;
       ripples.push({ x, z, t: timer.getElapsed() });
       if (ripples.length > MAX_RIPPLES) ripples.shift();
     };
@@ -168,6 +169,7 @@ export function mountHeroField(el: HTMLElement): () => void {
     const start = () => {
       if (raf !== undefined || !visible) return;
       if (isPaused()) {
+        timer.reset();
         frame();
         return;
       }

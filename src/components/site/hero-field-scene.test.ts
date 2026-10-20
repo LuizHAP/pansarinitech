@@ -1,3 +1,4 @@
+import { InstancedMesh, Matrix4, type Scene } from 'three';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const { renderers } = vi.hoisted(() => ({
@@ -30,6 +31,44 @@ import { mountHeroField } from './hero-field-scene';
 
 const LISTENERS = ['pointermove', 'pointerdown', 'pansarini:ripple', 'pansarini:motion'];
 
+function stubViewport() {
+  let onIntersect: (entries: { isIntersecting: boolean }[]) => void = () => {};
+  vi.stubGlobal(
+    'IntersectionObserver',
+    class {
+      constructor(callback: typeof onIntersect) {
+        onIntersect = callback;
+      }
+      observe() {}
+      disconnect() {}
+    },
+  );
+  const frames: FrameRequestCallback[] = [];
+  vi.stubGlobal('requestAnimationFrame', (callback: FrameRequestCallback) => frames.push(callback));
+  vi.stubGlobal('cancelAnimationFrame', () => {});
+  return {
+    show: (isIntersecting: boolean) => onIntersect([{ isIntersecting }]),
+    nextFrame: () => frames.shift()?.(0),
+  };
+}
+
+function lastPose() {
+  const calls = renderers[0].render.mock.calls;
+  const scene = calls[calls.length - 1][0] as Scene;
+  const mesh = scene.children.find((child) => child instanceof InstancedMesh) as InstancedMesh;
+  const matrix = new Matrix4();
+  return Array.from({ length: mesh.count }, (_, k) => {
+    mesh.getMatrixAt(k, matrix);
+    return matrix.elements[13];
+  });
+}
+
+function setMotion(paused: boolean) {
+  if (paused) document.documentElement.dataset.motion = 'paused';
+  else delete document.documentElement.dataset.motion;
+  window.dispatchEvent(new CustomEvent('pansarini:motion', { detail: { paused } }));
+}
+
 describe('mountHeroField', () => {
   let el: HTMLDivElement;
 
@@ -41,6 +80,7 @@ describe('mountHeroField', () => {
 
   afterEach(() => {
     el.remove();
+    delete document.documentElement.dataset.motion;
     vi.unstubAllGlobals();
     vi.restoreAllMocks();
   });
@@ -78,5 +118,38 @@ describe('mountHeroField', () => {
     expect(renderer.forceContextLoss).toHaveBeenCalledTimes(1);
     expect(el.querySelector('canvas')).toBeNull();
     expect(removed.mock.calls.map(([type]) => type)).toEqual(expect.arrayContaining(LISTENERS));
+  });
+
+  it('keeps the paused pose still when the hero scrolls back into view', () => {
+    const now = vi.spyOn(performance, 'now').mockReturnValue(1000);
+    const viewport = stubViewport();
+    document.documentElement.dataset.motion = 'paused';
+    const dispose = mountHeroField(el);
+
+    viewport.show(true);
+    const before = lastPose();
+    now.mockReturnValue(6000);
+    viewport.show(false);
+    viewport.show(true);
+
+    expect(renderers[0].render).toHaveBeenCalledTimes(2);
+    expect(lastPose()).toEqual(before);
+    dispose();
+  });
+
+  it('drops ripples requested while paused instead of replaying them on resume', () => {
+    vi.spyOn(performance, 'now').mockReturnValue(1000);
+    const viewport = stubViewport();
+    document.documentElement.dataset.motion = 'paused';
+    const dispose = mountHeroField(el);
+    viewport.show(true);
+
+    window.dispatchEvent(new Event('pansarini:ripple'));
+    setMotion(false);
+    viewport.nextFrame();
+
+    expect(renderers[0].render).toHaveBeenCalledTimes(2);
+    expect(Math.max(...lastPose())).toBeLessThan(1);
+    dispose();
   });
 });
