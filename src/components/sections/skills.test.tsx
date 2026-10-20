@@ -27,22 +27,23 @@ describe('<Skills />', () => {
     }
   });
 
-  it('renders daily-use skills with underline', () => {
+  it('renders every skill by name, marking the daily-use ones', () => {
     render(<Skills />, { locale: 'en' });
 
-    // These are the 6 daily-use skills (textBadge skills render their mono abbreviation)
-    const dailySkills = [
-      'Next.js',
-      'TypeScript',
-      'Tailwind CSS',
-      'ui', // Shadcn/UI renders as mono abbreviation
-      'React Native',
-      'Vercel',
-    ];
-    for (const skill of dailySkills) {
-      const el = screen.getByText(skill);
-      expect(el).toHaveClass('underline');
+    const daily = ['Next.js', 'TypeScript', 'Tailwind CSS', 'Shadcn/UI', 'React Native', 'Vercel'];
+    for (const skill of daily) {
+      expect(screen.getByText(skill)).toHaveClass('underline');
     }
+    expect(screen.getByText('Radix UI')).not.toHaveClass('underline');
+  });
+
+  it('renders each category as a numbered heading', () => {
+    render(<Skills />, { locale: 'en' });
+
+    expect(screen.getAllByRole('heading', { level: 3 })).toHaveLength(7);
+    expect(screen.getByText('01')).toBeInTheDocument();
+    expect(screen.getByText('07')).toBeInTheDocument();
+    expect(screen.getByText('// stack')).toBeInTheDocument();
   });
 
   it('renders Portuguese categories', () => {
@@ -59,15 +60,6 @@ describe('<Skills />', () => {
     ];
     for (const cat of categories) {
       expect(screen.getByText(cat)).toBeInTheDocument();
-    }
-  });
-
-  it('renders mono abbreviations for textBadge skills', () => {
-    render(<Skills />, { locale: 'en' });
-
-    const abbreviations = ['ui', 'rdx', '{ }', 'RSC', 'axe', 'bio'];
-    for (const abbr of abbreviations) {
-      expect(screen.getByText(abbr)).toBeInTheDocument();
     }
   });
 });

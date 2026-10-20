@@ -1,61 +1,63 @@
-'use client';
-import { RevealGroup, RevealItem, Section, SectionHeader, SkillBadge } from '@/components/ui';
-import skillIconsData from '@/data/skill-icons.json';
+import { SectionHead } from '@/components/site';
+import { Section } from '@/components/ui';
 import { skills } from '@/data/skills';
 import type { Locale } from '@/i18n/routing';
 import { cn } from '@/lib/utils';
-import { Icon, addCollection } from '@iconify/react';
 import { useLocale, useTranslations } from 'next-intl';
-import { useEffect } from 'react';
 
 export function Skills() {
   const locale = useLocale() as Locale;
-  const t = useTranslations('skills');
-
-  useEffect(() => {
-    addCollection(skillIconsData as Parameters<typeof addCollection>[0]);
-  }, []);
+  const t = useTranslations();
+  const lastIndex = skills.length - 1;
 
   return (
-    <Section id="skills" aria-labelledby="skills-heading">
-      <SectionHeader id="skills-heading">{t('title')}</SectionHeader>
-      <p className="text-sm text-muted-foreground mb-8">{t('dailyUseLegend')}</p>
+    <Section id="skills" ariaLabelledBy="skills-heading" surface="paper">
+      <SectionHead
+        id="skills-heading"
+        title={t('skills.title')}
+        comment={t('site.sections.skillsComment')}
+      />
+      <p className="mt-6 font-mono text-sm text-muted-foreground">{t('skills.dailyUseLegend')}</p>
 
-      <RevealGroup className="space-y-10" stagger={0.04}>
-        {skills.map((category) => (
-          <RevealItem key={category.id}>
-            <dl className="flex flex-col gap-3">
-              <dt className="font-mono text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
-                {category.label[locale]}
-              </dt>
-              <dd className="flex flex-wrap gap-2">
-                {category.items.map((skill) => (
+      <div className="mt-14 grid grid-cols-1 gap-0.5 border-2 border-ink bg-ink sm:grid-cols-2 lg:grid-cols-4">
+        {skills.map((category, index) => (
+          <div
+            key={category.id}
+            className={cn(
+              'flex flex-col gap-6 bg-paper p-8 transition-colors duration-200 hover:bg-paper-card lg:min-h-[300px]',
+              index === lastIndex && skills.length % 2 === 1 && 'sm:col-span-2',
+              index === lastIndex && skills.length % 4 === 3 && 'lg:col-span-2',
+            )}
+          >
+            <span aria-hidden="true" className="font-mono text-[13px] text-signal">
+              {String(index + 1).padStart(2, '0')}
+            </span>
+            <h3 className="text-[34px] leading-none font-extrabold tracking-[-0.035em]">
+              {category.label[locale]}
+            </h3>
+            <ul className="mt-auto flex flex-wrap gap-x-1.5 gap-y-1 font-mono text-[13px] leading-relaxed">
+              {category.items.map((skill, i) => (
+                <li key={`${category.id}:${skill.name}`} className="flex gap-1.5">
                   <span
-                    key={`${category.id}:${skill.name}`}
                     className={cn(
-                      'font-mono text-xs px-2 py-1 rounded transition-colors',
                       skill.daily
-                        ? 'text-foreground underline decoration-primary decoration-1 underline-offset-2'
-                        : 'text-muted-foreground hover:text-foreground',
+                        ? 'text-foreground underline decoration-signal decoration-2 underline-offset-4'
+                        : 'text-muted-foreground',
                     )}
                   >
-                    {skill.icon && !skill.textBadge ? (
-                      <Icon
-                        icon={skill.icon}
-                        width={14}
-                        height={14}
-                        aria-hidden="true"
-                        className="inline-block align-middle mr-1"
-                      />
-                    ) : null}
-                    {skill.mono ?? skill.name}
+                    {skill.name}
                   </span>
-                ))}
-              </dd>
-            </dl>
-          </RevealItem>
+                  {i < category.items.length - 1 && (
+                    <span aria-hidden="true" className="text-muted-foreground">
+                      ·
+                    </span>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
         ))}
-      </RevealGroup>
+      </div>
     </Section>
   );
 }

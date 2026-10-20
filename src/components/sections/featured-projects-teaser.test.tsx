@@ -13,22 +13,23 @@ vi.mock('../../../content/projects/magazine-luiza-superapp/images/hero.jpg', () 
   default: { src: '/x.jpg', width: 1200, height: 750, blurDataURL: 'data:image/png;base64,xx' },
 }));
 
-// next-intl/server (getTranslations) is not available in jsdom — mock it to return
-// a simple t(key) → string function using the en message catalog shape.
-vi.mock('next-intl/server', () => ({
-  getTranslations: vi.fn(async ({ namespace }: { namespace: string }) => {
-    const catalog: Record<string, Record<string, string>> = {
-      sections: {
-        featuredProjects: 'Featured projects',
-      },
-      projects: {
-        'cta.viewAll': 'View all projects →',
-        'cta.readBlog': 'Read the blog →',
-      },
-    };
-    return (key: string) => catalog[namespace]?.[key] ?? key;
-  }),
+vi.mock('../../../content/projects/machinery-mobile-first/images/hero.jpg', () => ({
+  default: { src: '/x.jpg', width: 1200, height: 750, blurDataURL: 'data:image/png;base64,xx' },
 }));
+vi.mock('../../../content/projects/uaubox-design-system/images/hero.jpg', () => ({
+  default: { src: '/x.jpg', width: 1200, height: 750, blurDataURL: 'data:image/png;base64,xx' },
+}));
+
+vi.mock('next-intl/server', async () => {
+  const en = (await import('../../../messages/en.json')).default;
+  const lookup = (path: string): unknown =>
+    path
+      .split('.')
+      .reduce<unknown>((node, key) => (node as Record<string, unknown> | undefined)?.[key], en);
+  return {
+    getTranslations: vi.fn(async () => (key: string) => String(lookup(key) ?? key)),
+  };
+});
 
 // Mock the data loader — async function returning featured projects.
 vi.mock('@/lib/mdx/projects', () => ({
@@ -66,29 +67,49 @@ vi.mock('@/lib/mdx/projects', () => ({
 import { FeaturedProjectsTeaser } from './featured-projects-teaser';
 
 describe('<FeaturedProjectsTeaser />', () => {
-  it('renders the featured projects heading', async () => {
-    const ui = await FeaturedProjectsTeaser({ locale: 'en' });
-    render(ui, { locale: 'en' });
+  it('renders the section heading with its terminal comment', async () => {
+    render(await FeaturedProjectsTeaser({ locale: 'en' }), { locale: 'en' });
 
+    const heading = screen.getByRole('heading', { level: 2, name: 'Featured projects' });
+    expect(heading).toHaveAttribute('id', 'featured-projects-heading');
+    expect(screen.getByText('$ ls ~/projects')).toBeInTheDocument();
+  });
+
+  it('renders each featured project as a browser card linking to its case study', async () => {
+    render(await FeaturedProjectsTeaser({ locale: 'en' }), { locale: 'en' });
+
+    const card = screen.getByRole('link', { name: /Ecommerce Platform/ });
+    expect(card).toHaveAttribute('href', '/en/projects/machinery-partner-ecommerce');
+    expect(card).toHaveTextContent('pansarini.tech/projects/machinery-partner-ecommerce');
+    expect(card).toHaveTextContent('Lead · 2024');
     expect(
-      screen.getByRole('heading', { level: 2, name: /Featured projects/i }),
+      screen.getByRole('heading', { level: 3, name: 'No-Code Migration' }),
     ).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 3, name: 'Luiza Superapp' })).toBeInTheDocument();
   });
 
-  it('renders 3 project cards with titles', async () => {
-    const ui = await FeaturedProjectsTeaser({ locale: 'en' });
-    render(ui, { locale: 'en' });
+  it('loads only the first card image eagerly and never with fetch priority', async () => {
+    const { container } = render(await FeaturedProjectsTeaser({ locale: 'en' }), {
+      locale: 'en',
+    });
 
-    expect(screen.getByText('Ecommerce Platform')).toBeInTheDocument();
-    expect(screen.getByText('No-Code Migration')).toBeInTheDocument();
-    expect(screen.getByText('Luiza Superapp')).toBeInTheDocument();
+    const images = container.querySelectorAll('img');
+    expect(images).toHaveLength(3);
+    expect(images[0]).toHaveAttribute('loading', 'eager');
+    expect(images[1]).toHaveAttribute('loading', 'lazy');
+    expect(container.querySelector('[fetchpriority]')).toBeNull();
   });
 
-  it('renders View all and Read blog CTA links', async () => {
-    const ui = await FeaturedProjectsTeaser({ locale: 'en' });
-    render(ui, { locale: 'en' });
+  it('renders View all and Read blog links to the localized routes', async () => {
+    render(await FeaturedProjectsTeaser({ locale: 'en' }), { locale: 'en' });
 
-    expect(screen.getByRole('link', { name: /View all projects/i })).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /Read the blog/i })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /View all projects/i })).toHaveAttribute(
+      'href',
+      '/en/projects',
+    );
+    expect(screen.getByRole('link', { name: /Read the blog/i })).toHaveAttribute(
+      'href',
+      '/en/blog',
+    );
   });
 });

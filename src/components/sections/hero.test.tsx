@@ -1,86 +1,31 @@
-import { render, screen, within } from '@/test/render';
+import { render, screen } from '@/test/render';
+import { renderToStaticMarkup } from 'react-dom/server';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-
-// Mock static image imports BEFORE component import.
-vi.mock('../../../content/projects/machinery-partner-ecommerce/images/hero.jpg', () => ({
-  default: { src: '/x.jpg', width: 1200, height: 750, blurDataURL: 'data:image/png;base64,xx' },
-}));
-vi.mock('../../../content/projects/machinery-partner-migration/images/hero.jpg', () => ({
-  default: { src: '/x.jpg', width: 1200, height: 750, blurDataURL: 'data:image/png;base64,xx' },
-}));
-vi.mock('../../../content/projects/magazine-luiza-superapp/images/hero.jpg', () => ({
-  default: { src: '/x.jpg', width: 1200, height: 750, blurDataURL: 'data:image/png;base64,xx' },
-}));
-vi.mock('../../../content/projects/machinery-mobile-first/images/hero.jpg', () => ({
-  default: { src: '/x.jpg', width: 1200, height: 750, blurDataURL: 'data:image/png;base64,xx' },
-}));
 
 let mockLocale = 'en';
 
-vi.mock('next-intl/server', () => ({
-  getLocale: vi.fn(async () => mockLocale),
-  getTranslations: vi.fn(async ({ namespace }: { namespace: string }) => {
-    const enCatalog: Record<string, Record<string, string>> = {
-      hero: {
-        contactCta: 'Contact',
-        resumeCta: 'Resume',
-        photoAlt: "Luiz Pansarini at Galaxy's Edge",
-        experienceLabel: 'Experience',
-      },
-      projects: {
-        'cta.viewAll': 'View all projects →',
-        'cta.readMore': 'Read more →',
-      },
-    };
-    const ptCatalog: Record<string, Record<string, string>> = {
-      hero: {
-        contactCta: 'Contato',
-        resumeCta: 'Currículo',
-        photoAlt: "Luiz Pansarini no Galaxy's Edge",
-      },
-      projects: {
-        'cta.viewAll': 'Ver todos os projetos →',
-      },
-    };
-    const catalog = mockLocale === 'pt' ? ptCatalog : enCatalog;
-    return (key: string) => catalog[namespace]?.[key] ?? key;
-  }),
-}));
+vi.mock('next-intl/server', async () => {
+  const en = (await import('../../../messages/en.json')).default;
+  const pt = (await import('../../../messages/pt.json')).default;
+  const lookup = (messages: object, path: string): unknown =>
+    path
+      .split('.')
+      .reduce<unknown>(
+        (node, key) => (node as Record<string, unknown> | undefined)?.[key],
+        messages,
+      );
+  return {
+    getLocale: vi.fn(async () => mockLocale),
+    getTranslations: vi.fn(async ({ locale }: { locale: string }) => {
+      const messages = locale === 'pt' ? pt : en;
+      const t = (key: string) => String(lookup(messages, key) ?? key);
+      t.raw = (key: string) => lookup(messages, key);
+      return t;
+    }),
+  };
+});
 
-vi.mock('@/lib/mdx/projects', () => ({
-  getProjects: vi.fn(async () => [
-    {
-      slug: 'machinery-partner-ecommerce',
-      title: 'Heavy Machinery e-commerce',
-      role: 'Principal Software Engineer',
-      year: 2024,
-      blurb: 'First transactional storefront for US heavy machinery.',
-      stack: ['Next.js', 'React', 'TypeScript', 'Tailwind', 'Odoo'],
-      featured: true,
-      order: 1,
-    },
-    {
-      slug: 'machinery-partner-migration',
-      title: 'No-Code to Next.js Migration',
-      role: 'Lead Engineer',
-      year: 2023,
-      blurb: 'No-code to Next.js migration.',
-      stack: ['Next.js', 'App Router', 'Vercel', 'hreflang'],
-      featured: true,
-      order: 2,
-    },
-    {
-      slug: 'magazine-luiza-superapp',
-      title: 'Magazine Luiza Superapp',
-      role: 'Software Engineer',
-      year: 2021,
-      blurb: 'React Native superapp.',
-      stack: ['React Native', 'Jest', 'MSW', 'Native Modules'],
-      featured: true,
-      order: 3,
-    },
-  ]),
-}));
+vi.mock('@/components/site/hero-field-scene', () => ({ mountHeroField: vi.fn() }));
 
 import { Hero } from './hero';
 
@@ -89,97 +34,56 @@ describe('<Hero />', () => {
     mockLocale = 'en';
   });
 
-  it('renders the H1 and both CTAs in en locale', async () => {
-    const ui = await Hero();
-    render(ui, { locale: 'en' });
+  it('server-renders the name as plain h1 text', async () => {
+    const html = renderToStaticMarkup(await Hero());
 
-    expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Luiz Pansarini');
-
-    const contactCta = screen.getByRole('link', { name: /Contact/i });
-    expect(contactCta).toHaveAttribute('href', '#contact');
-
-    const resumeCta = screen.getByRole('link', { name: /Resume/i });
-    expect(resumeCta).toHaveAttribute('download');
-    expect(resumeCta.getAttribute('href')).toMatch(/Luiz-Pansarini_Resume\.pdf$/);
+    expect(html).toMatch(/<h1 id="hero-heading"[^>]*>Luiz Pansarini<\/h1>/);
   });
 
-  it('renders the pt locale resume label and href', async () => {
-    mockLocale = 'pt';
-    const ui = await Hero();
-    render(ui, { locale: 'pt' });
+  it('renders the eyebrow, typed line, value prop and the two CTAs in en', async () => {
+    render(await Hero(), { locale: 'en' });
 
-    const resumeCta = screen.getByRole('link', { name: /Currículo/i });
-    expect(resumeCta).toHaveAttribute('download');
-    expect(resumeCta.getAttribute('href')).toMatch(/Luiz-Pansarini_Curriculo\.pdf$/);
-
-    const contactCta = screen.getByRole('link', { name: /Contato/i });
-    expect(contactCta).toHaveAttribute('href', '#contact');
-  });
-
-  it('renders the role/value-prop text', async () => {
-    const ui = await Hero();
-    render(ui, { locale: 'en' });
-    expect(screen.getByText(/Principal Software Engineer · Brazil/i)).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 1, name: 'Luiz Pansarini' })).toBeInTheDocument();
+    expect(
+      screen.getByText('// principal software engineer · brazil → global'),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        'I build web platforms, mobile apps, design systems, APIs that scale and fast storefronts.',
+      ),
+    ).toBeInTheDocument();
+    expect(screen.getByText('web platforms')).toBeInTheDocument();
     expect(screen.getByText(/IT helpdesk at Klabin to Principal Engineer/i)).toBeInTheDocument();
+
+    expect(screen.getByRole('link', { name: 'Contact' })).toHaveAttribute('href', '#contact');
+    const resume = screen.getByRole('link', { name: 'Resume' });
+    expect(resume).toHaveAttribute('download', 'Luiz-Pansarini_Resume.pdf');
+    expect(resume.getAttribute('href')).toMatch(/Luiz-Pansarini_Resume\.pdf$/);
   });
 
-  it('renders 3 featured project cards with thumbnails', async () => {
-    const ui = await Hero();
-    render(ui, { locale: 'en' });
+  it('renders the pt CTAs, resume PDF and typed line', async () => {
+    mockLocale = 'pt';
+    render(await Hero(), { locale: 'pt' });
 
-    expect(screen.getByText('Heavy Machinery e-commerce')).toBeInTheDocument();
-    expect(screen.getByText('No-Code to Next.js Migration')).toBeInTheDocument();
-    expect(screen.getByText('Magazine Luiza Superapp')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Contato' })).toHaveAttribute('href', '#contact');
+    const resume = screen.getByRole('link', { name: 'Currículo' });
+    expect(resume).toHaveAttribute('download', 'Luiz-Pansarini_Curriculo.pdf');
+    expect(resume.getAttribute('href')).toMatch(/Luiz-Pansarini_Curriculo\.pdf$/);
+    expect(screen.getByText('plataformas web')).toBeInTheDocument();
   });
 
-  it('renders each project card with year, blurb and a capped stack list', async () => {
-    const ui = await Hero();
-    render(ui, { locale: 'en' });
+  it('offers the command palette hint by its accessible name', async () => {
+    render(await Hero(), { locale: 'en' });
 
-    const featured = screen.getByRole('link', { name: /Heavy Machinery e-commerce/ });
-    expect(featured).toHaveAttribute('href', '/en/projects/machinery-partner-ecommerce');
-    expect(featured).toHaveTextContent('2024 · Principal Software Engineer');
-    expect(featured).toHaveTextContent('First transactional storefront for US heavy machinery.');
-    expect(featured).toHaveTextContent('Tailwind');
-    expect(featured).not.toHaveTextContent('Odoo');
-    expect(featured).toHaveTextContent('Read more →');
-
-    const secondary = screen.getByRole('link', { name: /Magazine Luiza Superapp/ });
-    expect(secondary).toHaveTextContent('React Native superapp.');
-    expect(secondary).toHaveTextContent('MSW');
-    expect(secondary).not.toHaveTextContent('Native Modules');
-    expect(secondary).not.toHaveTextContent('Read more');
+    expect(
+      screen.getByRole('button', { name: 'Open the command palette (Ctrl or Cmd + K)' }),
+    ).toBeInTheDocument();
   });
 
-  it('renders the experience list from career data in locale order', async () => {
-    const ui = await Hero();
-    render(ui, { locale: 'en' });
+  it('ships no image in the hero, so nothing competes with the h1 for LCP', async () => {
+    const { container } = render(await Hero(), { locale: 'en' });
 
-    const list = screen.getByRole('list', { name: 'Experience' });
-    const items = within(list).getAllByRole('listitem');
-    expect(items).toHaveLength(5);
-    expect(items[0]).toHaveTextContent('Machinery Partner');
-    expect(items[0]).toHaveTextContent('Jan 2023 — Apr 2026');
-    expect(items[4]).toHaveTextContent('Klabin S/A');
-  });
-
-  it('links each experience entry to the company site in a new tab', async () => {
-    const ui = await Hero();
-    render(ui, { locale: 'en' });
-
-    const list = screen.getByRole('list', { name: 'Experience' });
-    const link = within(list).getByRole('link', { name: 'Luizalabs (Magazine Luiza)' });
-    expect(link).toHaveAttribute('href', 'https://luizalabs.com');
-    expect(link).toHaveAttribute('target', '_blank');
-    expect(link).toHaveAttribute('rel', 'noopener noreferrer');
-    expect(within(list).getAllByRole('link')).toHaveLength(5);
-  });
-
-  it('renders View all projects link', async () => {
-    const ui = await Hero();
-    render(ui, { locale: 'en' });
-
-    expect(screen.getByRole('link', { name: /View all projects/i })).toBeInTheDocument();
+    expect(container.querySelector('section#hero img')).toBeNull();
+    expect(container.querySelector('[fetchpriority]')).toBeNull();
   });
 });

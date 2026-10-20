@@ -10,13 +10,13 @@ import {
   PersonalProjects,
   Skills,
 } from '@/components/sections';
+import { Marquee } from '@/components/site';
 import type { Locale } from '@/i18n/routing';
 import { buildHomeMetadata } from '@/lib/seo';
 // src/app/[locale]/page.tsx — Phase 2 Wave 2 home composition.
 // D-24: setRequestLocale(locale) at the top so [locale] stays ● SSG.
 //
-// Anchor IDs across child sections (so a future Header nav can wire scroll links):
-//   #about, #projects, #skills, #now (the preview), #contact
+// Anchor IDs the command palette scrolls to: #hero, #about, #projects, #skills, #career, #contact
 //
 // Phase 4 SEO-01: generateMetadata via buildHomeMetadata (centralized in src/lib/seo.ts).
 import type { Metadata } from 'next';
@@ -39,6 +39,7 @@ export default async function HomePage({
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
+  const t = await getTranslations({ locale, namespace: 'site.marquee' });
 
   return (
     <>
@@ -60,11 +61,12 @@ export default async function HomePage({
         }}
       />
       <Hero />
+      <Marquee words={t.raw('words') as string[]} label={t('label')} />
       <About />
       <FeaturedProjectsTeaser locale={locale} />
       <PersonalProjects />
-      <CareerTimeline />
       <Skills />
+      <CareerTimeline />
       <NowPreview />
       <BlogPreview locale={locale} />
       <Contact />
