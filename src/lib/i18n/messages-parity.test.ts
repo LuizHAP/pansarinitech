@@ -67,12 +67,13 @@ describe('messages en/pt parity', () => {
     ]);
   });
 
-  it('drops the removed theme keys from both files', () => {
+  it('keeps no theme keys and only the terminal 404 keys in both files', () => {
     for (const messages of [en, pt] as Record<string, Record<string, unknown>>[]) {
-      expect(messages.themeToggle).toBeUndefined();
-      expect(messages.notFound.aurebeshFallback).toBeUndefined();
-      expect(messages.notFound.swReference).toBeUndefined();
-      expect(messages.commandPalette.actionToggleTheme).toBeUndefined();
+      const themed = (obj: Record<string, unknown>) =>
+        Object.keys(obj).filter((k) => /theme/i.test(k));
+      expect(themed(messages)).toEqual([]);
+      expect(themed(messages.commandPalette)).toEqual([]);
+      expect(Object.keys(messages.notFound).sort()).toEqual(['cta', 'title']);
     }
   });
 });

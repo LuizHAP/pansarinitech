@@ -1,8 +1,8 @@
 // tests/e2e.spec.ts — Phase 5 e2e suite (CONTEXT D-06..D-11).
 //
 // Single chromium project (`e2e` in playwright.config.ts) — does NOT run on the
-// 4-combo en/pt × light/dark axe matrix (RESEARCH §A4). Server is `next start`
-// against the existing `next build` artifacts (D-07 — same as a11y-matrix).
+// en/pt axe projects. Server is `next start` against the existing `next build`
+// artifacts (D-07 — same as a11y-matrix).
 //
 // localePrefix:'always' — every route is served under /en or /pt. Tests goto()
 // the explicit locale-prefixed path rather than relying on the NEXT_LOCALE
@@ -11,18 +11,17 @@
 //
 // 8 test.describe blocks:
 //   1. Locale switch + NEXT_LOCALE cookie                    (D-06 #1)
-//   2. Theme toggle persistence across reload                (D-06 #2)
-//   3. Navigation preserves locale (home -> blog)            (D-06 #3)
-//   4. Resume PDF download per locale                        (D-06 #4)
-//   5. Localized 404 response status + SW copy               (D-06 #5)
-//   6. Project case study route renders both locales         (D-06 #6)
+//   2. Navigation preserves locale (home -> blog)            (D-06 #3)
+//   3. Resume PDF download per locale                        (D-06 #4)
+//   4. Localized 404 response status + terminal copy         (D-06 #5)
+//   5. Project case study route renders both locales         (D-06 #6)
+//   6. Hero 3D field loads only on desktop
 //   7. Client preview viewer (proxy-excluded, always noindex)
 //   8. Hidden admin for client previews (env-gated, noindex)
 //
 // Selector notes:
 //   - Locale toggle is <button type="submit"> inside a <form>, NOT <a>. Use
 //     getByRole('button') with anchored regex /^pt$/i to avoid Pitfall 8.
-//   - Theme toggle aria-label is "Toggle theme" (en) / "Alternar tema" (pt).
 //   - Resume CTA in Hero is an <a href="..." download> — Playwright's
 //     waitForEvent('download') captures the click before navigation (Pitfall 4).
 //   - Nav-preserves-locale entry route is /pt (home page): the home-page
@@ -30,7 +29,7 @@
 //     lib/i18n/navigation wrapper (D-08), which re-prefixes it with the
 //     active locale segment — with localePrefix:'always' the resolved URL is
 //     /pt/blog — exactly the contract Test #3 verifies.
-import { expect, test } from '@playwright/test';
+import { type Browser, expect, test } from '@playwright/test';
 
 test.describe('Locale switch + NEXT_LOCALE cookie persistence', () => {
   test('toggling PT on /en/blog/{slug} sets NEXT_LOCALE cookie, redirects to /pt/..., and changes og:locale to pt_BR', async ({
@@ -58,27 +57,6 @@ test.describe('Locale switch + NEXT_LOCALE cookie persistence', () => {
     const ogLocale = page.locator('meta[property="og:locale"]');
     await expect(ogLocale).toHaveCount(1);
     await expect(ogLocale).toHaveAttribute('content', 'pt_BR');
-  });
-});
-
-test.describe('Theme toggle persistence across reload (next-themes localStorage)', () => {
-  test('toggling to dark, reloading, still dark', async ({ page }) => {
-    await page.goto('/en');
-    // Normalize to light first (clears any system-pref bleed-through).
-    await page.evaluate(() => localStorage.setItem('theme', 'light'));
-    await page.reload();
-
-    // Theme toggle aria-label is locale-dependent — match either string.
-    await page.getByRole('button', { name: /toggle theme|alternar tema/i }).click();
-
-    // next-themes writes 'theme' to localStorage synchronously (verified A1).
-    await page.reload();
-    const stored = await page.evaluate(() => localStorage.getItem('theme'));
-    expect(stored).toBe('dark');
-
-    // Belt-and-suspenders: <html> should carry .dark.
-    const htmlClass = (await page.locator('html').getAttribute('class')) ?? '';
-    expect(htmlClass).toContain('dark');
   });
 });
 
@@ -121,23 +99,26 @@ test.describe('Resume PDF download per locale (CONTACT-04 + D-06 #4)', () => {
   });
 });
 
-test.describe('Localized 404 (UX-04 + EASTER-01 + D-06 #5)', () => {
-  test('/en/does-not-exist returns 404 with EN SW reference and functional header', async ({
+test.describe('Localized 404 (UX-04 + D-06 #5)', () => {
+  test('/en/does-not-exist returns 404 with the EN terminal error and a working header', async ({
     page,
   }) => {
     const response = await page.goto('/en/does-not-exist');
     // Critical: localized not-found must return HTTP 404, not 200, so search
     // engines do not index garbage URLs (SEO crossover).
     expect(response?.status()).toBe(404);
-    await expect(page.getByText(/These aren't the pages you're looking for/i)).toBeVisible();
-    // Header chrome must still function on 404.
-    await expect(page.getByRole('button', { name: /toggle theme/i })).toBeVisible();
+    await expect(page.getByText(/no such file or directory/i)).toBeVisible();
+    await expect(page.getByRole('heading', { level: 1, name: /404/ })).toBeVisible();
+    await expect(page.getByRole('button', { name: /^pt$/i })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Open command palette' })).toBeVisible();
   });
 
-  test('/pt/nao-existe returns 404 with PT SW reference', async ({ page }) => {
+  test('/pt/nao-existe returns 404 with the PT terminal error', async ({ page }) => {
     const response = await page.goto('/pt/nao-existe');
     expect(response?.status()).toBe(404);
-    await expect(page.getByText(/Estas não são as páginas que você procura/i)).toBeVisible();
+    await expect(page.getByText(/arquivo ou diretório não encontrado/i)).toBeVisible();
+    await expect(page.getByRole('button', { name: /^en$/i })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Abrir painel de comandos' })).toBeVisible();
   });
 });
 
@@ -167,6 +148,56 @@ test.describe('Project case study route renders in both locales (PROJ-04 + D-06 
   test('/en/projects/magazine-luiza-superapp renders MDX body in EN', async ({ page }) => {
     await page.goto('/en/projects/magazine-luiza-superapp');
     await expect(page.locator('h1').first()).toBeVisible();
+  });
+});
+
+test.describe('Hero 3D field loads only on desktop', () => {
+  async function requestsSceneChunk(
+    browser: Browser,
+    options: Parameters<Browser['newContext']>[0],
+  ): Promise<boolean> {
+    const context = await browser.newContext(options);
+    const page = await context.newPage();
+    const bodies: Promise<string>[] = [];
+    page.on('response', (response) => {
+      if (response.request().resourceType() === 'script') {
+        bodies.push(response.text().catch(() => ''));
+      }
+    });
+    await page.goto('/en', { waitUntil: 'load' });
+    await page.waitForTimeout(3000);
+    const texts = await Promise.all(bodies);
+    await context.close();
+    return texts.some((text) => text.includes('isWebGLRenderer'));
+  }
+
+  test('375px touch viewport never requests the three.js chunk', async ({ browser }) => {
+    const requested = await requestsSceneChunk(browser, {
+      viewport: { width: 375, height: 812 },
+      isMobile: true,
+      hasTouch: true,
+    });
+    expect(requested).toBe(false);
+  });
+
+  test('desktop with prefers-reduced-motion never requests the three.js chunk', async ({
+    browser,
+  }) => {
+    const requested = await requestsSceneChunk(browser, {
+      viewport: { width: 1280, height: 720 },
+      reducedMotion: 'reduce',
+    });
+    expect(requested).toBe(false);
+  });
+
+  test('desktop with a fine pointer requests it after load (positive control)', async ({
+    browser,
+  }) => {
+    const requested = await requestsSceneChunk(browser, {
+      viewport: { width: 1280, height: 720 },
+      reducedMotion: 'no-preference',
+    });
+    expect(requested).toBe(true);
   });
 });
 
@@ -213,6 +244,16 @@ test.describe('Hidden admin for client previews (env-gated, noindex)', () => {
     await expect(page).toHaveURL(/\/admin\/login$/);
     await expect(page.getByLabel('Usuário')).toBeVisible();
     await expect(page.getByLabel('Senha')).toBeVisible();
+  });
+
+  test('admin keeps its own <html> while public pages carry the site scope', async ({ page }) => {
+    await page.goto('/admin/login');
+    const adminClasses = ((await page.locator('html').getAttribute('class')) ?? '').split(/\s+/);
+    expect(adminClasses).not.toContain('site');
+
+    await page.goto('/en');
+    const publicClasses = ((await page.locator('html').getAttribute('class')) ?? '').split(/\s+/);
+    expect(publicClasses).toContain('site');
   });
 
   test('wrong password shows the generic error', async ({ page }) => {
