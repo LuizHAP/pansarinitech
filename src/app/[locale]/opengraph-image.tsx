@@ -1,6 +1,6 @@
 // src/app/[locale]/opengraph-image.tsx — Phase 4 SEO-02, SEO-03 (home OG)
-// Per-route OG file. Node.js runtime (default) — renderOgImage reads the Geist
-// Bold subset via node:fs/promises. Reuses existing `home.brand` message key.
+// Per-route OG file. Node.js runtime (default) — renderOgImage reads the Bricolage
+// subset via node:fs/promises. Reuses existing `home.brand` message key.
 import type { Locale } from '@/i18n/routing';
 import { OG_CONTENT_TYPE, OG_SIZE, renderOgImage } from '@/lib/og';
 import { getTranslations } from 'next-intl/server';
