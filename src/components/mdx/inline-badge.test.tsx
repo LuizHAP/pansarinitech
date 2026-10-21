@@ -12,11 +12,13 @@ describe('<InlineBadge />', () => {
     expect(getByText('hello')).toBeInTheDocument();
   });
 
-  it('default variant is primary — applies text-primary and border-primary classes', () => {
+  it('default variant is primary — text reads the per-surface --badge-primary-text', () => {
     const { container } = render(InlineBadge({ children: 'label' }));
-    const span = container.querySelector('span');
-    expect(span?.className).toContain('text-primary');
-    expect(span?.className).toContain('border-primary');
+    const classes = container.querySelector('span')?.className.split(/\s+/) ?? [];
+    expect(classes).toContain('text-[var(--badge-primary-text)]');
+    expect(classes).toContain('border-primary/30');
+    expect(classes).not.toContain('text-primary');
+    expect(classes.some((c) => c.startsWith('dark:'))).toBe(false);
   });
 
   it('secondary variant applies bg-muted and text-muted-foreground', () => {

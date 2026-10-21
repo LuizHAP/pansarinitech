@@ -2,7 +2,7 @@
 
 ## What This Is
 
-A bilingual (PT/EN) personal portfolio website for **Luiz Pansarini**, Principal Software Engineer, designed to attract recruiters (BR + international), freelance clients, and the developer community. The site uses a **subtle Star Wars aesthetic** — light mode follows a Jedi palette (saber blue), dark mode follows a Sith palette (saber red) — with the theme toggle itself acting as the central themed feature. Built with Next.js 16, React 19, TypeScript, Tailwind v4, and Shadcn/UI on Vercel.
+A bilingual (PT/EN) personal portfolio website for **Luiz Pansarini**, Principal Software Engineer, designed to attract recruiters (BR + international), freelance clients, and the developer community. The public site uses a **terminal-brutalist identity**: one fixed palette of ink `#0E0F0C`, paper `#EEECE6` and signal blue `#2F3BFF` scoped to `html.site`, sections that alternate between ink, paper and signal surfaces, Bricolage Grotesque display type with IBM Plex Mono for UI and labels, a `>pansarini` prompt with a blinking block cursor, and a lazily loaded Three.js cube field behind the hero that a header control can pause. Admin and preview keep the shadcn light/dark tokens. Built with Next.js 16, React 19, TypeScript, Tailwind v4, and Shadcn/UI on Vercel.
 
 ## Core Value
 
@@ -30,12 +30,12 @@ Key additions in v1.3:
 
 **Live deliverables:**
 - Bilingual portfolio (PT + EN) at `/pt` and `/en` with browser auto-detect, path-preserving locale toggle, and hreflang reciprocity.
-- Light/Dark theme as Jedi/Sith with View Transitions API radial-reveal toggle (~420ms clip-path circle from click coordinate, 200ms `vt-fade` fallback under `prefers-reduced-motion`, instant-swap fallback on unsupported browsers).
+- Terminal-brutalist identity on every public page: fixed ink/paper/signal surfaces, Bricolage Grotesque + IBM Plex Mono, `>pansarini` prompt, lazy desktop-only Three.js hero field, and a pause-motion control in the header (WCAG 2.2.2). Admin and preview keep their light/dark tokens.
 - Hero / About / Featured Projects (5 case studies) / Career timeline / Skills / Now / Contact / 404 sections — all bilingual.
 - 5 case studies authored bilingually (Heavy Machinery e-commerce, no-code → Next.js migration, Magazine Luiza Superapp, UAUBox DS, Heavy Machinery mobile-first) via `next-mdx-remote@^6` RSC pipeline with build-time syntax highlighting (Shiki dual-theme).
 - Blog scaffolding + 3+ posts via automated OpenAI gpt-4o pipeline (GitHub Actions, PR-per-post).
-- Full SEO: `generateMetadata` on every route, multilingual sitemap (`xhtml:link` hreflang triplets), env-gated robots, dynamic Sith-red OG images per route, favicons + manifest, X-Robots-Tag preview defense.
-- CI gate: a11y matrix (28/28) + iPhone SE (56/56) + Sith contrast (4/4) + Phase 5 e2e (9/9 across 6 critical flows) — chromium-only, retries: 1 in CI, < 3 min total.
+- Full SEO: `generateMetadata` on every route, multilingual sitemap (`xhtml:link` hreflang triplets), env-gated robots, dynamic OG images per route in the ink/signal palette, favicons + manifest, X-Robots-Tag preview defense.
+- CI gate: a11y matrix (en/pt) + iPhone SE + e2e across the critical flows — chromium-only, retries: 1 in CI.
 - Vercel Analytics + Speed Insights ingest live on Hobby tier.
 
 **Not yet live:** custom domain `pansarini.tech` rollout (currently `pansarinitech.vercel.app`).
@@ -62,7 +62,7 @@ Key additions in v1.3:
 **Foundation:**
 - ✓ Next.js 16 (App Router) + TypeScript + Tailwind v4 + Shadcn/UI scaffold deployed on Vercel — v1.0
 - ✓ Bilingual content (PT + EN) via next-intl with `/pt` and `/en` routes, browser auto-detect, header toggle, hreflang tags — v1.0
-- ✓ Light/Dark mode toggle mapped to Jedi/Sith palettes with no flash of wrong theme on slow-3G; first visit honors `prefers-color-scheme`; View Transitions radial reveal with reduced-motion fallback — v1.0
+- ✓ Light/Dark mode toggle with no flash of wrong theme on slow-3G; first visit honors `prefers-color-scheme`; View Transitions radial reveal with reduced-motion fallback — v1.0 (retired from the public site 2026-10-20 in favour of one fixed palette; admin and preview keep light/dark)
 
 **Content sections:**
 - ✓ Hero + About — name, role, country (city omitted by privacy decision D-07), value prop, CTAs — v1.0
@@ -82,14 +82,14 @@ Key additions in v1.3:
 - ✓ Sitemap.xml (with `xhtml:link` hreflang reciprocity) + robots.txt (env-gated) — v1.0
 - ✓ Vercel Analytics + Speed Insights (privacy-respecting, no consent banner) — v1.0
 
-**Star Wars touches (subtle):**
-- ✓ Saber-glow accent color drives focus rings, link hover, primary CTAs (saber blue Jedi / saber red Sith) — v1.0
-- ✓ Theme toggle UX is the centerpiece — View Transitions radial reveal + Jedi/Sith hint — v1.0
-- ✓ One small SW reference on the 404 page ("These aren't the pages you're looking for" / "Estas não são as páginas que você procura") — v1.0
-- ✓ No SFX, no autoplay video, no 3D — discipline held through v1 — v1.0
+**Identity touches:**
+- ✓ Signal blue `#2F3BFF` is a fill only (buttons, marquee strip, CTA band); accent text on ink uses `#8F96FF` so every pair clears WCAG AA — 2026-10-20
+- ✓ Terminal motif carries the personality: `>pansarini` prompt with block cursor, `// comments` and `$ commands` as section heads, typed hero line, `whoami` keyboard easter egg — 2026-10-20
+- ✓ Terminal 404 (`$ cd ~/missing-page` → "no such file or directory" / "arquivo ou diretório não encontrado") — 2026-10-20
+- ✓ No SFX, no autoplay video; the only 3D is the hero cube field, loaded after load + idle on desktop with a fine pointer, never on mobile or under reduced motion, and paused by the header control — 2026-10-20
 
 **Post-launch hardening (Phase 5):**
-- ✓ Native View Transitions API on theme toggle with reduced-motion fallback and feature-gate fallback — v1.0
+- ✓ Native View Transitions API on the theme toggle with reduced-motion and feature-gate fallbacks — v1.0 (toggle retired 2026-10-20)
 - ✓ Playwright E2E in CI as a gating step covering 6 critical flows (locale, theme, navigation, downloads, 404, projects) — v1.0
 
 **v1.1 Polish, Quality & Test Baseline (2026-05-04)** — full archive at `.planning/milestones/v1.1-ROADMAP.md`. All 25 REQ-IDs verified (audit: `.planning/milestones/v1.1-MILESTONE-AUDIT.md`).
@@ -136,21 +136,21 @@ Key additions in v1.3:
 
 <!-- Explicit boundaries. Reasons included to prevent re-adding. -->
 
-- **3D scenes / WebGL hyperspace intros** — conflicts with mobile-first, a11y, and performance budgets
-- **Sound effects (lightsaber hum, R2-D2 beeps)** — autoplay audio is hostile UX and an a11y red flag
-- **Lightsaber cursor / custom cursor** — unreliable on mobile, hurts a11y, gimmicky for professional audience
-- **Aurebesh as primary navigation labels** — illegible to non-fans (recruiters); only as decorative numerals (currently fallback binary; AurekFonts OFL/MIT real binary shipped Phase 2)
+- **Immersive 3D scenes / WebGL intros** — the lazy, pausable hero field is the ceiling; anything that blocks first paint or loads on mobile conflicts with the mobile-first, a11y and performance budgets
+- **Sound effects** — autoplay audio is hostile UX and an a11y red flag
+- **Custom mouse cursor** — unreliable on mobile, hurts a11y, gimmicky for professional audience (the blinking block cursor is a text decoration, not a pointer replacement)
+- **Decorative or novelty fonts in navigation** — illegible to recruiters; nav and labels stay in IBM Plex Mono
 - **CMS for blog** — MDX in repo is sufficient; no operational overhead. Migration to Fumadocs MDX is the documented future path if blog grows.
 - **Comments on blog** — no moderation appetite; LinkedIn / X discussions instead
 - **Spanish locale** — Luiz's Spanish is basic; not worth the dual-authoring cost in v1
 - **Uses page** — Now page covers similar ground; avoid maintenance sprawl
 - **Design System case (UAUBox)** — Luiz prioritized 3 stronger cases; deferred to v2
 - **Newsletter signup / lead capture** — overkill for personal portfolio v1
-- **Dark/light mode beyond Jedi/Sith themes** — single toggle, two palettes, period
+- **Light/dark toggle on the public site** — the identity is one fixed palette with alternating ink/paper/signal surfaces; admin and preview keep their own light/dark
 - ~~**Cmd+K command palette**~~ — promoted to v1.2 Active (deferred from Phase 5 D-12, now validated demand)
 - ~~**RSS feed**~~ — may be promoted in v1.2 if blog reaches 3+ posts during the milestone
 - **nownownow.com submission** — deferred to post-launch validation (Phase 5 D-12)
-- **Console easter egg expansion** — Phase 4 EASTER-02 ships the saber ASCII + repo link; further expansion deferred (Phase 5 D-12)
+- **Console easter egg expansion** — the console banner (`> whoami`) and the typed `whoami` ripple are the whole easter egg; neither hijacks browser shortcuts
 - **next-seo / contentlayer / framer-motion (the npm name)** — anti-patterns in 2026; built-in Metadata API + Velite/next-mdx-remote + `motion` package are the locked alternatives
 - **Mocking the database/MDX pipeline in tests** — integration tests run against `next build && next start` production bundle (Phase 5 D-07)
 - **`continue-on-error` in CI for the e2e suite** — failure must block merge (Phase 5 D-18)
@@ -164,7 +164,7 @@ Key additions in v1.3:
 - At **Machinery Partner**: leading the first US-market e-commerce for Heavy Machinery, mobile app (React Native + Expo), backend services (Fastify, Elysia/Bun), ERP integrations (Odoo). Stack matches portfolio stack — strong "I build with what I show" signal.
 - At **Magazine Luiza (Luizalabs)**: shipped React Native features inside the Superapp at scale, with 95%+ test coverage. Brings BR-mass-market credibility.
 
-**Reference inspiration:** [patticatti.vercel.app](https://patticatti.vercel.app/) — admired for its blend of professional polish with authentic personality (gaming, coffee, art). The Star Wars + theme-toggle approach is Luiz's analogous personal hook.
+**Reference inspiration:** [patticatti.vercel.app](https://patticatti.vercel.app/) — admired for its blend of professional polish with authentic personality (gaming, coffee, art). The terminal-brutalist identity (`>pansarini` prompt, `$ ls ~/projects` section heads, typed hero line) is Luiz's analogous personal hook.
 
 **Stack rationale:** Stack is locked to Next.js + TypeScript + Tailwind + Shadcn/UI + Vercel because it matches Luiz's daily work — zero learning curve, the portfolio itself is a sample of his production work.
 
@@ -178,21 +178,21 @@ Key additions in v1.3:
 
 - **Tech stack**: Next.js 16 + React + TypeScript + Tailwind CSS + Shadcn/UI + Vercel — locked because it mirrors Luiz's daily production stack
 - **Mobile**: Mobile-first, must work cleanly on iPhone SE (375px) up — recruiters often open links on phones
-- **Accessibility**: WCAG 2.1 AA — non-negotiable; respects `prefers-reduced-motion` and `prefers-color-scheme`
+- **Accessibility**: WCAG 2.1 AA — non-negotiable; respects `prefers-reduced-motion`, and a header control pauses every looping animation (WCAG 2.2.2)
 - **Performance**: Lighthouse Performance ≥ 95 on mobile — fast first paint, minimal JS payload, optimized images (next/image)
 - **Bilingual content**: Every user-facing copy must be authored in both PT and EN before shipping a locale
-- **Theme tokens**: All color usage flows through CSS variables (Tailwind v4 `@theme` OKLCH) — palette swaps cleanly between Jedi/Sith without per-component code changes
+- **Theme tokens**: All color usage flows through CSS variables — fixed ink/paper/signal `@theme` tokens plus `.surface-ink` / `.surface-paper` / `.surface-accent` classes that re-point the full shadcn variable set, scoped to `html.site` so admin and preview keep their light/dark tokens
 - **No external CMS for v1**: Blog uses MDX in the repo; one source of truth, no infra cost
 - **Hosting**: Vercel (matches existing workflow); custom domain TBD (`pansarini.tech` reserved for v1.1 cutover)
-- **Theme intensity**: Star Wars references stay subtle — no element should make a conservative recruiter raise an eyebrow
-- **CI gate discipline**: All Playwright suites (a11y matrix, iPhone SE, Sith contrast, e2e) must pass; no `continue-on-error` on regression-blocking jobs
+- **Identity intensity**: The terminal motif stays playful but professional — no element should make a conservative recruiter raise an eyebrow
+- **CI gate discipline**: All Playwright suites (a11y matrix, iPhone SE, e2e) must pass; no `continue-on-error` on regression-blocking jobs
 
 ## Key Decisions
 
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
 | Next.js + TS + Tailwind + Shadcn + Vercel stack | Matches Luiz's production daily stack at Machinery Partner; portfolio doubles as proof of work | ✓ Validated (v1.0) |
-| Star Wars aesthetic via Light=Jedi / Dark=Sith theme toggle | Makes the theme functional (a11y feature) rather than decorative; subtle for recruiters, recognizable for fans | ✓ Validated (v1.0) |
+| Star Wars aesthetic via Light=Jedi / Dark=Sith theme toggle | Makes the theme functional (a11y feature) rather than decorative; subtle for recruiters, recognizable for fans | ✓ Validated (v1.0) — superseded 2026-10-20 by the terminal-brutalist identity |
 | Bilingual PT + EN with next-intl | Audience spans BR + international; authoring in both signals discipline and unlocks intl reach | ✓ Validated (v1.0) |
 | Subtle theme intensity over immersive | Hard requirement: mobile-first + a11y; immersive 3D/SFX conflicts with both | ✓ Validated (v1.0) |
 | Blog in MDX, not external CMS | v1 simplicity, no infra; can migrate later if blog grows | ✓ Validated (v1.0) |
@@ -200,7 +200,7 @@ Key additions in v1.3:
 | Contact via direct links + email; no contact form in v1 | Forms add anti-spam complexity; mailto + LinkedIn covers 95% of intent | ✓ Validated (v1.0) |
 | Now page included; Uses page deferred | Now signals current activity (more dynamic); Uses overlaps with Skills section | ✓ Validated (v1.0) |
 | Biome single-binary toolchain over ESLint+Prettier (Phase 1 D-16/D-25 mid-flight swap) | Single dependency, single config, CI-fast; the locked `next/link` rule is expressed via Biome's `noRestrictedImports` with overrides for `src/lib/i18n/navigation.ts` | ✓ Validated (v1.0) |
-| Sith primary darkened to `oklch(54% 0.21 28)` (Phase 1 contrast fix) | Original `oklch(58%)` failed WCAG 1.4.3 AA on dark-mode 404 CTA (4.33:1, needed 4.5:1); darkening to 54% achieves ~5.0:1 while staying visually saber red | ✓ Validated (v1.0) |
+| Sith primary darkened to `oklch(54% 0.21 28)` (Phase 1 contrast fix) | Original `oklch(58%)` failed WCAG 1.4.3 AA on dark-mode 404 CTA (4.33:1, needed 4.5:1); darkening to 54% achieves ~5.0:1 while staying visually saber red | ✓ Validated (v1.0) — superseded 2026-10-20 by the terminal-brutalist identity |
 | Catch-all `[locale]/[...rest]/page.tsx` calling `notFound()` over redirect-based locale-aware 404 | Redirect from root not-found to `/{locale}/not-found` caused infinite loop in Next 16; the catch-all + `notFound()` pattern keeps `[locale]/not-found.tsx` reachable as ● SSG | ✓ Validated (v1.0) |
 | `next-mdx-remote@^6` final stable over `@^5` (Phase 3 pin upgrade) | v6.0.0 (final stable, 2026-02-12) is the right pin; `blockJS` + `blockDangerousJS` defaults to `true` aligns with project's "MDX bodies are pure prose + JSX from typed map" pattern; 12-month migration target is Fumadocs MDX | ✓ Validated (v1.0) |
 | Shiki `github-light-high-contrast` + `github-dark-high-contrast` over plain themes (Phase 3 contrast fix) | Plain `github-light` failed WCAG AA on yellow/orange tokens (3.48:1); high-contrast variants preserve dual-theme contract while clearing 4.5:1 | ✓ Validated (v1.0) |
@@ -209,9 +209,9 @@ Key additions in v1.3:
 | `priority` → `preload` on next/image (Phase 2 deprecation fix) | `priority` deprecated in Next 16; `preload={true}` is the documented replacement; no functional change | ✓ Validated (v1.0) |
 | Inline SVG GitHub/LinkedIn brand marks over lucide-react (Phase 2) | lucide-react ships category icons (GitBranch, GitCommit) but no brand marks; inline SVGs colocated in contact + footer use `currentColor` (theme-aware) and `aria-hidden`; zero new deps | ✓ Validated (v1.0) |
 | Strictly-technical first launch post (Phase 4 D-13) | User override mid-Phase-4: technical voice over personal-narrative for the launch post; aligns with Principal-engineer signal | ✓ Validated (v1.0) |
-| Fixed Sith-red OG palette over per-page Jedi/Sith variants (Phase 4 D-21) | Single design path; ROADMAP "Jedi/Sith via params" wording simplified to fixed Sith-red; saves 6 palette branches and locks visual consistency on social previews | ✓ Validated (v1.0) |
+| Fixed Sith-red OG palette over per-page Jedi/Sith variants (Phase 4 D-21) | Single design path; ROADMAP "Jedi/Sith via params" wording simplified to fixed Sith-red; saves 6 palette branches and locks visual consistency on social previews | ✓ Validated (v1.0) — superseded 2026-10-20 by the terminal-brutalist identity |
 | OG runtime: Node.js (Next 16 default) over Edge | Per Next 16 default + RESEARCH correction; <500KB still applies (Geist subset 26.1KB + readFile pattern); avoids Edge-runtime constraints | ✓ Validated (v1.0) |
-| View Transitions API on theme toggle (radial reveal + RM fade fallback) | Makes the toggle the centerpiece SW touch without sacrificing a11y; CSS-only fallback under `prefers-reduced-motion`; feature-gated to fall back to instant swap on unsupported browsers | ✓ Validated (Phase 5) |
+| View Transitions API on theme toggle (radial reveal + RM fade fallback) | Makes the toggle the centerpiece SW touch without sacrificing a11y; CSS-only fallback under `prefers-reduced-motion`; feature-gated to fall back to instant swap on unsupported browsers | ✓ Validated (Phase 5) — superseded 2026-10-20 by the terminal-brutalist identity |
 | `experimental.viewTransition` flag NOT enabled in `next.config.ts` (Phase 5 Pitfall 1 lock) | Manual `document.startViewTransition()` calls conflict with Next's automatic interception; warning comment in next.config.ts documents the lock | ✓ Validated (Phase 5) |
 | Playwright E2E in CI as a gating step (chromium-only, retries: 1, single-project scoping via `testIgnore` + `testMatch`) | Catches locale/theme/navigation/download/404 regressions pre-merge without inflating CI runtime; chromium-only is enough coverage for a static portfolio; single-project scoping prevents the spec from running 4× across the axe matrix | ✓ Validated (Phase 5) |
 | All E2E tests run against `next build && next start` production bundle, NOT `next dev` (Phase 5 D-07) | Catches RSC/SSR regressions that only manifest in production builds; matches a11y-matrix pattern; no dev-only behavior leaks into the test suite | ✓ Validated (Phase 5) |
@@ -227,6 +227,7 @@ Key additions in v1.3:
 | `bg-muted text-muted-foreground` for InlineBadge `secondary` variant (v1.3 Phase 6) | `bg-secondary` token is not defined in globals.css; semantic override preserves visual intent without introducing undefined CSS variables | ✓ Validated (v1.3) |
 | `import { SITE_URL }; export { SITE_URL }` over bare re-export in json-ld.tsx (v1.3 Phase 7) | `export { X } from '...'` re-exports the binding but does not make `X` available as a local identifier inside the same module; needed `import` to use SITE_URL inside `AUTHOR_PERSON` | ✓ Validated (v1.3) |
 | `alternates.languages` in `buildMetadata()` over inline `<link rel="alternate">` tags (v1.3 Phase 7) | Next 16 Metadata API emits hreflang automatically from `alternates.languages` — single source of truth; per-page inline tags would drift | ✓ Validated (v1.3) |
+| Terminal-brutalist identity replaces the themed light/dark palettes on the public site (2026-10-20) | A single fixed ink/paper/signal system with Bricolage Grotesque + IBM Plex Mono is more distinctive and easier to keep AA than two themed palettes; tokens are scoped to `html.site` with full-variable surface classes so admin and preview keep the shadcn light/dark tokens; the Three.js hero field loads after load + idle on desktop only and pauses with the header motion control | Pending (quick 261020-jus) |
 
 ## Evolution
 
@@ -247,4 +248,4 @@ This document evolves at phase transitions and milestone boundaries.
 5. Update Current State + Next Milestone Goals sections
 
 ---
-*Last updated: 2026-05-20 — v1.4 milestone started*
+*Last updated: 2026-10-20 — terminal-brutalist identity replaces the themed palettes*

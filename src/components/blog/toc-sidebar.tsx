@@ -9,20 +9,20 @@ export function TocSidebar({ entries, label }: { entries: TocEntry[]; label: str
   return (
     <nav
       aria-labelledby="toc-heading"
-      className="hidden self-start lg:block lg:sticky lg:top-20 lg:max-h-[calc(100vh-6rem)] lg:overflow-y-auto"
+      className="hidden self-start border-t-2 border-foreground pt-4 lg:sticky lg:top-24 lg:block lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto"
     >
       <h2
         id="toc-heading"
-        className="text-sm font-semibold uppercase tracking-wide text-muted-foreground"
+        className="font-mono text-xs font-semibold tracking-[0.08em] text-muted-foreground uppercase"
       >
         {label}
       </h2>
-      <ol className="mt-3 space-y-2 text-sm">
+      <ol className="mt-4 space-y-2.5 font-mono text-[13px] leading-snug">
         {entries.map((e) => (
           <li key={e.id} className={e.level === 3 ? 'ml-4' : ''}>
             <a
               href={`#${e.id}`}
-              className="text-foreground decoration-primary decoration-2 underline-offset-4 hover:underline"
+              className="text-foreground decoration-primary decoration-2 underline-offset-4 hover:text-primary hover:underline"
             >
               {e.text}
             </a>

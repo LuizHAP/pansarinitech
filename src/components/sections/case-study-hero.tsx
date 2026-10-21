@@ -1,4 +1,5 @@
-import { Badge } from '@/components/ui';
+import { BrowserFrame } from '@/components/site';
+import { sectionContainer } from '@/components/ui';
 import type { Locale } from '@/i18n/routing';
 import { Link } from '@/lib/i18n/navigation';
 import type { Project } from '@/lib/mdx/schema';
@@ -31,7 +32,7 @@ export async function CaseStudyHero({
   project: Project;
   locale: Locale;
 }) {
-  const t = await getTranslations({ locale, namespace: 'projects' });
+  const t = await getTranslations({ locale });
   const heroSrc = HERO_IMAGES[project.slug];
   if (!heroSrc) {
     // Build-time guard: if a slug is added without registering its image, fail loudly.
@@ -40,33 +41,45 @@ export async function CaseStudyHero({
     );
   }
   return (
-    <header className="mx-auto max-w-3xl px-4 pt-8">
-      <Link href="/projects" className="text-sm text-muted-foreground hover:text-foreground">
-        {t('cta.backToProjects')}
-      </Link>
-      <h1 className="mt-4 text-4xl font-bold tracking-tight sm:text-5xl">{project.title}</h1>
-      <p className="mt-2 text-base text-muted-foreground">
-        {project.role} · {project.year}
-      </p>
-      <div className="mt-3 flex flex-wrap gap-2">
-        {project.stack.slice(0, 8).map((tech) => (
-          <Badge key={tech} variant="secondary">
-            {tech}
-          </Badge>
-        ))}
-      </div>
-      <div className="mt-6 overflow-hidden rounded-lg border bg-muted">
-        <Image
-          src={heroSrc}
-          alt={project.title}
-          width={1024}
-          height={640}
-          sizes="(max-width: 768px) 100vw, 768px"
-          priority
-          fetchPriority="high"
-          placeholder="blur"
-          className="h-auto w-full"
-        />
+    <header className="surface-ink">
+      <div className={`${sectionContainer} pt-14 pb-16 md:pt-20 md:pb-24`}>
+        <Link
+          href="/projects"
+          className="font-mono text-sm text-ink-muted underline decoration-signal-soft decoration-2 underline-offset-4 hover:text-paper"
+        >
+          {t('site.pages.backToProjects')}
+        </Link>
+        <p className="mt-10 font-mono text-sm text-ink-muted">
+          {project.role} · {project.year}
+        </p>
+        <h1 className="mt-4 max-w-5xl font-display text-[clamp(40px,6vw,84px)] leading-[0.95] font-extrabold tracking-[-0.045em] text-balance [overflow-wrap:anywhere]">
+          {project.title}
+        </h1>
+        <ul className="mt-6 flex flex-wrap gap-x-2 gap-y-1 font-mono text-[13px] text-ink-body">
+          {project.stack.slice(0, 8).map((tech, index) => (
+            <li key={tech} className="flex gap-2">
+              {index > 0 && (
+                <span aria-hidden="true" className="text-signal-soft">
+                  ·
+                </span>
+              )}
+              <span>{tech}</span>
+            </li>
+          ))}
+        </ul>
+        <BrowserFrame url={`pansarini.tech/projects/${project.slug}`} className="mt-12 max-w-5xl">
+          <Image
+            src={heroSrc}
+            alt={project.title}
+            width={1024}
+            height={640}
+            sizes="(max-width: 1088px) 100vw, 1024px"
+            priority
+            fetchPriority="high"
+            placeholder="blur"
+            className="h-auto w-full"
+          />
+        </BrowserFrame>
       </div>
     </header>
   );

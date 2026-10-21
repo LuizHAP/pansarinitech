@@ -36,7 +36,7 @@ progress:
 Phase: 11 (Lighthouse Performance Fix + Quality Verification) — COMPLETE
 Plan: 2 of 2 (both plans executed)
 Status: Milestone 50% — Phase 10 complete, Phase 11 complete (CASE-13 deferred: 608KB JS bundle blocks LCP)
-Last activity: 2026-10-13 - Fast fix: leads board scrolls inside on desktop, admin session lasts 90 days, two new lead stages, session renews on every action
+Last activity: 2026-10-21 - Completed quick task 261021-bux: terminal icon set and blog content rewrite
 
 ---
 
@@ -160,6 +160,8 @@ Last activity: 2026-10-13 - Fast fix: leads board scrolls inside on desktop, adm
 | 261006-ikq | Remove the exemplo repo client preview and the e2e tests that depend on it (repo-preview mechanism kept, registry empty) | 2026-10-06 | 0c8dd37 | [261006-ikq-remove-the-exemplo-repo-client-preview-a](./quick/261006-ikq-remove-the-exemplo-repo-client-preview-a/) |
 | 261007-dep | Leads board at /admin/leads backed by Upstash Redis: stage columns with Perdido collapsed, select + Mover, contact links (wa.me, mailto, tel, Instagram), linked Blob preview status, overdue next step, stage history; reserved-slug warning for leads/login | 2026-10-07 | c8a7851 | [261007-dep-leads-board-in-the-hidden-admin-backed-b](./quick/261007-dep-leads-board-in-the-hidden-admin-backed-b/) |
 | 261007-k1u | "Excluir prévia" on Blob preview pages: deletePreview lists every blob under <slug>/ and deletes them in batches after the admin types the slug; failures land on ?delete=failed with a retry; README EN/PT | 2026-10-07 | 83e06b7 | [261007-k1u-delete-a-blob-preview-permanently-from-t](./quick/261007-k1u-delete-a-blob-preview-permanently-from-t/) |
+| 261020-jus | Public site redesigned in a terminal-brutalist style (reverse-engineered from somoscontrolr.com.br), replacing Jedi/Sith; lazy Three.js cube-field hero; admin/preview untouched | 2026-10-20 | 7213601 | [261020-jus-redesign-public-pages-in-terminal-brutal](./quick/261020-jus-redesign-public-pages-in-terminal-brutal/) |
+| 261021-bux | Terminal >_ icon set generated from one SVG source; Star Wars-era blog passages rewritten for the terminal identity (photo alt kept) | 2026-10-21 | 159cca0 | [261021-bux-terminal-icon-set-and-blog-content-rewri](./quick/261021-bux-terminal-icon-set-and-blog-content-rewri/) |
 | fast | servePreviewAsset answers 404 for a slug missing from the index, so a deleted preview is not re-cached from a stale Blob read | 2026-10-07 | f5f6ebd | — |
 | fast | CI caches Playwright browsers by version and skips --with-deps, so a slow Ubuntu apt mirror no longer pushes the job past its 8-minute timeout | 2026-10-07 | d84ab3f | — |
 | fast | Leads board capped to the viewport from lg up (scrolls both ways, stage headings pinned) so the horizontal scrollbar stays on screen | 2026-10-13 | 9e7834a | — |

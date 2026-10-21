@@ -60,12 +60,23 @@ describe('<PostCard />', () => {
     expect(timeEl?.getAttribute('dateTime')).toBe('2025-01-01');
   });
 
-  it('renders the reading time text from the translation mock', async () => {
+  it('renders the reading time next to the date', async () => {
     const jsx = await PostCard({ post: POST_WITH_TAGS, locale: 'en' });
     const { container } = render(jsx);
-    // The reading time is a text node inside <p>, split by the <time> element.
-    // Query the containing paragraph and assert its text includes the reading time.
-    const paragraph = container.querySelector('p.text-xs');
-    expect(paragraph?.textContent).toContain('3 min read');
+    const paragraph = container.querySelector('time')?.parentElement;
+    expect(paragraph?.textContent).toBe('Jan 1, 2025 · 3 min read');
+  });
+
+  it('renders the title as an h2 link to the localized post route', async () => {
+    const jsx = await PostCard({ post: POST_WITH_TAGS, locale: 'en' });
+    const { getByRole } = render(jsx);
+    const heading = getByRole('heading', { level: 2, name: 'Test Post' });
+    expect(heading.querySelector('a')).toHaveAttribute('href', '/blog/test-post');
+  });
+
+  it('renders each tag as a hash label', async () => {
+    const jsx = await PostCard({ post: POST_WITH_TAGS, locale: 'en' });
+    const { getAllByRole } = render(jsx);
+    expect(getAllByRole('listitem').map((li) => li.textContent)).toEqual(['#typescript', '#react']);
   });
 });

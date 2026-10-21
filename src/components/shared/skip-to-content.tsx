@@ -8,7 +8,7 @@ export function SkipToContent() {
   return (
     <a
       href="#main-content"
-      className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[9999] focus:rounded-md focus:bg-background focus:px-3 focus:py-2 focus:text-foreground"
+      className="sr-only font-mono text-sm font-semibold focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[9999] focus:rounded-lg focus:bg-signal focus:px-4 focus:py-2.5 focus:text-paper"
     >
       {t('skipToContent')}
     </a>

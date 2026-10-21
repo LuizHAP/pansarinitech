@@ -11,12 +11,14 @@ export function LocaleToggle() {
   const t = useTranslations('localeToggle');
 
   // 44px touch targets (WCAG 2.5.5) via h-11 + min-w-[44px].
-  const baseBtn = 'inline-flex h-11 min-w-[44px] items-center justify-center px-2 text-sm';
-  const activeCls = 'font-semibold text-foreground underline decoration-primary';
+  const baseBtn =
+    'inline-flex h-11 min-w-[44px] items-center justify-center rounded-md px-2 font-mono text-sm transition-colors';
+  const activeCls =
+    'font-semibold text-foreground underline decoration-signal-soft underline-offset-4';
   const inactiveCls = 'text-muted-foreground hover:text-foreground';
 
   return (
-    <form aria-label={t('label')} className="flex items-center gap-1">
+    <form aria-label={t('label')} className="flex items-center">
       <button
         type="submit"
         formAction={switchLocale.bind(null, 'pt')}
@@ -25,7 +27,7 @@ export function LocaleToggle() {
       >
         PT
       </button>
-      <span aria-hidden="true" className="text-muted-foreground">
+      <span aria-hidden="true" className="font-mono text-sm text-muted-foreground">
         /
       </span>
       <button

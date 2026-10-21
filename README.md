@@ -10,18 +10,22 @@
 
 Bilingual (PT/EN) personal portfolio for **Luiz Pansarini**, Principal Software Engineer. Designed to attract recruiters (BR + international), freelance clients, and the developer community.
 
-The site features a **subtle Star Wars aesthetic** — light mode follows a Jedi palette (saber blue), dark mode follows a Sith palette (saber red) — with the theme toggle itself acting as the central themed element.
+The site uses a **terminal-brutalist identity**: one fixed palette of ink `#0E0F0C`, paper `#EEECE6` and an electric-blue signal `#2F3BFF`, Bricolage Grotesque display type with IBM Plex Mono for UI and labels, and a `>pansarini` prompt with a blinking block cursor. Sections alternate between ink, paper and signal bands.
 
 **Core goal:** communicate "Principal-level full-stack engineer" within 5 seconds on a recruiter's phone, with a clear path to contact.
 
-| Jedi mode (light) | Sith mode (dark) |
+| Desktop (1440px) | Mobile (375px) |
 |---|---|
-| ![Light mode — Jedi palette](public/screenshots/site-light.png) | ![Dark mode — Sith palette](public/screenshots/site-dark.png) |
+| ![Home page on desktop: ink hero with the name in large type, the typed line and the signal-blue marquee](public/screenshots/site-desktop.png) | ![Home page on a 375px phone: the same hero stacked in one column](public/screenshots/site-mobile.png) |
 
 ### Features
 
 - **Bilingual** — full PT/EN support via `next-intl`; locale auto-detected from browser `Accept-Language`
-- **Jedi / Sith theme** — light/dark toggle with CSS-variable palette swap; no per-component code changes
+- **Terminal-brutalist design system** — ink/paper/signal tokens scoped to `html.site` with full shadcn variable sets per surface, so admin and preview keep their own light/dark tokens
+- **3D hero** — a Three.js instanced-cube field loaded with `import()` after `load` + idle, only on desktop with a fine pointer and no reduced motion; a CSS grid is the fallback everywhere else
+- **Pause animations** — a header control (`aria-pressed`) stops the marquee, cursor, typing line and 3D field (WCAG 2.2.2)
+- **Command palette** — `Cmd/Ctrl + K` opens navigation and links; the hero keycap hint opens it too
+- **`whoami` easter egg** — type it anywhere outside a field and the hero field ripples
 - **Blog** — MDX-based posts in `content/blog/`, rendered via `next-mdx-remote/rsc` with build-time syntax highlighting (Shiki)
 - **Projects showcase** — case studies in `content/projects/`, with per-locale MDX files
 - **Career timeline** — chronological history from IT support to Principal Engineer
@@ -41,11 +45,11 @@ The site features a **subtle Star Wars aesthetic** — light mode follows a Jedi
 | Language | TypeScript (strict) |
 | Styling | Tailwind CSS v4 (CSS-first config, OKLCH palette) |
 | i18n | next-intl 4.11 |
-| Theming | next-themes 0.4 |
-| Animation | motion 12 (formerly framer-motion) |
+| Design tokens | Tailwind v4 `@theme` + scoped surface classes (next-themes 0.4 for admin/preview only) |
+| Animation | motion 12 (formerly framer-motion), CSS keyframes, three 0.186 (hero field) |
 | MDX | next-mdx-remote 6 + rehype-pretty-code + shiki |
 | Icons | lucide-react + @iconify/react |
-| Fonts | Geist Sans/Mono + FT Aurebesh (decorative) |
+| Fonts | Bricolage Grotesque + IBM Plex Mono (`next/font`); Bricolage 800 subset for OG images |
 | Hosting | Vercel |
 
 ### Getting Started
@@ -76,7 +80,8 @@ src/
     sections/           # Page sections (Hero, About, Skills, Career, etc.)
     blog/               # Blog-specific components (TOC, PostCard, etc.)
     mdx/                # MDX component overrides
-    shared/             # Layout components (Header, Footer, ThemeToggle)
+    shared/             # Layout components (Header, Footer, CommandPalette)
+    site/               # Terminal components (TerminalLogo, MotionToggle, hero field)
     ui/                 # Shadcn/UI primitives
   data/                 # Typed static data (career, skills, projects, etc.)
   lib/                  # Utilities, MDX loader, SEO helpers
@@ -107,8 +112,7 @@ pnpm test:unit:coverage
 
 # E2E + accessibility (Playwright + axe-core)
 pnpm test:e2e          # Full E2E suite
-pnpm test:a11y         # axe-core matrix: en/pt × light/dark × home/404
-pnpm test:sith         # Sith-red contrast regression smoke
+pnpm test:a11y         # axe-core matrix: en/pt × 10 pages + MDX contrast on paper
 pnpm test:iphone-se    # Mobile layout on iPhone SE (375px)
 
 # Content verification
@@ -196,8 +200,8 @@ Warnings flag a folder name outside `[a-z0-9-]`, a missing `index.html`, a missi
 ### Accessibility
 
 - WCAG 2.1 AA — non-negotiable
-- axe-core score: 1.0 across all locale/theme/page combinations
-- Respects `prefers-reduced-motion` and `prefers-color-scheme`
+- axe-core: 0 violations across both locales and every public page type
+- Respects `prefers-reduced-motion`, plus a pause-animations control in the header
 - Mobile-first: tested on iPhone SE (375px) up
 
 ### Author
@@ -214,18 +218,22 @@ MIT
 
 Portfólio pessoal bilíngue (PT/EN) de **Luiz Pansarini**, Principal Software Engineer. Criado para atrair recrutadores (BR + internacional), clientes freelance e a comunidade de desenvolvedores.
 
-O site apresenta uma **estética sutil de Star Wars** — o modo claro segue uma paleta Jedi (azul de sabre de luz), o modo escuro uma paleta Sith (vermelho de sabre de luz) — com o botão de troca de tema como elemento central da identidade visual.
+O site usa uma **identidade terminal-brutalista**: uma paleta fixa de ink `#0E0F0C`, paper `#EEECE6` e um azul elétrico (signal) `#2F3BFF`, tipografia de display Bricolage Grotesque com IBM Plex Mono na interface e nos rótulos, e um prompt `>pansarini` com cursor de bloco piscando. As seções alternam entre faixas ink, paper e signal.
 
 **Objetivo principal:** comunicar "engenheiro full-stack de nível Principal" em até 5 segundos no celular de um recrutador, com um caminho claro para contato.
 
-| Modo Jedi (claro) | Modo Sith (escuro) |
+| Desktop (1440px) | Mobile (375px) |
 |---|---|
-| ![Modo claro — paleta Jedi](public/screenshots/site-light.png) | ![Modo escuro — paleta Sith](public/screenshots/site-dark.png) |
+| ![Página inicial no desktop: hero ink com o nome em tipo grande, a linha digitada e o letreiro azul](public/screenshots/site-desktop.png) | ![Página inicial em um celular de 375px: o mesmo hero empilhado em uma coluna](public/screenshots/site-mobile.png) |
 
 ### Funcionalidades
 
 - **Bilíngue** — suporte completo PT/EN via `next-intl`; locale detectado automaticamente pelo `Accept-Language` do navegador
-- **Tema Jedi / Sith** — alternância claro/escuro com troca de paleta por variáveis CSS; sem alterações por componente
+- **Design system terminal-brutalista** — tokens ink/paper/signal com escopo em `html.site` e o conjunto completo de variáveis shadcn por superfície, então admin e preview mantêm seus próprios tokens claro/escuro
+- **Hero 3D** — um campo de cubos instanciados em Three.js carregado com `import()` depois do `load` + idle, só no desktop com ponteiro fino e sem movimento reduzido; nos demais casos fica um grid em CSS
+- **Pausar animações** — um controle no cabeçalho (`aria-pressed`) para o letreiro, o cursor, a linha digitada e o campo 3D (WCAG 2.2.2)
+- **Paleta de comandos** — `Cmd/Ctrl + K` abre navegação e links; a dica de teclas no hero também abre
+- **Easter egg `whoami`** — digite em qualquer lugar fora de um campo e o campo do hero ondula
 - **Blog** — posts em MDX em `content/blog/`, renderizados via `next-mdx-remote/rsc` com syntax highlighting em tempo de build (Shiki)
 - **Portfólio de projetos** — estudos de caso em `content/projects/`, com arquivos MDX por locale
 - **Linha do tempo de carreira** — histórico cronológico desde suporte de TI até Principal Engineer
@@ -245,11 +253,11 @@ O site apresenta uma **estética sutil de Star Wars** — o modo claro segue uma
 | Linguagem | TypeScript (strict) |
 | Estilização | Tailwind CSS v4 (config CSS-first, paleta OKLCH) |
 | i18n | next-intl 4.11 |
-| Temas | next-themes 0.4 |
-| Animação | motion 12 (antigo framer-motion) |
+| Tokens de design | Tailwind v4 `@theme` + classes de superfície com escopo (next-themes 0.4 só no admin/preview) |
+| Animação | motion 12 (antigo framer-motion), keyframes CSS, three 0.186 (campo do hero) |
 | MDX | next-mdx-remote 6 + rehype-pretty-code + shiki |
 | Ícones | lucide-react + @iconify/react |
-| Fontes | Geist Sans/Mono + FT Aurebesh (decorativa) |
+| Fontes | Bricolage Grotesque + IBM Plex Mono (`next/font`); subset de Bricolage 800 para as imagens OG |
 | Hospedagem | Vercel |
 
 ### Começando
@@ -280,7 +288,8 @@ src/
     sections/           # Seções de página (Hero, About, Skills, Career, etc.)
     blog/               # Componentes específicos do blog (TOC, PostCard, etc.)
     mdx/                # Overrides de componentes MDX
-    shared/             # Componentes de layout (Header, Footer, ThemeToggle)
+    shared/             # Componentes de layout (Header, Footer, CommandPalette)
+    site/               # Componentes de terminal (TerminalLogo, MotionToggle, campo do hero)
     ui/                 # Primitivos do Shadcn/UI
   data/                 # Dados estáticos tipados (carreira, skills, projetos, etc.)
   lib/                  # Utilitários, loader MDX, helpers de SEO
@@ -311,8 +320,7 @@ pnpm test:unit:coverage
 
 # E2E + acessibilidade (Playwright + axe-core)
 pnpm test:e2e          # Suite completa de E2E
-pnpm test:a11y         # Matriz axe-core: en/pt × claro/escuro × home/404
-pnpm test:sith         # Smoke test de contraste do tema Sith
+pnpm test:a11y         # Matriz axe-core: en/pt × 10 páginas + contraste MDX no paper
 pnpm test:iphone-se    # Layout mobile no iPhone SE (375px)
 
 # Verificação de conteúdo
@@ -400,8 +408,8 @@ Os avisos apontam nome de pasta fora de `[a-z0-9-]`, falta de `index.html`, falt
 ### Acessibilidade
 
 - WCAG 2.1 AA — inegociável
-- Score axe-core: 1.0 em todas as combinações de locale/tema/página
-- Respeita `prefers-reduced-motion` e `prefers-color-scheme`
+- axe-core: 0 violações nos dois idiomas e em todo tipo de página pública
+- Respeita `prefers-reduced-motion`, além de um controle para pausar animações no cabeçalho
 - Mobile-first: testado a partir do iPhone SE (375px)
 
 ### Autor

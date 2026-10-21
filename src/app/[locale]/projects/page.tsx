@@ -1,7 +1,8 @@
 import JsonLd, { buildBreadcrumbList } from '@/components/json-ld';
-import { Badge, Card, CardContent, CardHeader, CardTitle } from '@/components/ui';
+import { HERO_IMAGES } from '@/components/sections/featured-projects-teaser';
+import { BrowserCard, SectionHead } from '@/components/site';
+import { Section } from '@/components/ui';
 import type { Locale } from '@/i18n/routing';
-import { Link } from '@/lib/i18n/navigation';
 import { getProjects } from '@/lib/mdx/projects';
 import { buildMetadata } from '@/lib/seo';
 import type { Metadata } from 'next';
@@ -25,21 +26,6 @@ export async function generateMetadata({
 // Listing page — RSC. Stays ● SSG via setRequestLocale + frontmatter-only
 // loader.getProjects(locale). Cards link via @/lib/i18n/navigation Link to
 // preserve the locale prefix on the slug route.
-import Image from 'next/image';
-import machineryMobileFirst from '../../../../content/projects/machinery-mobile-first/images/hero.jpg';
-import machineryEcommerce from '../../../../content/projects/machinery-partner-ecommerce/images/hero.jpg';
-import machineryMigration from '../../../../content/projects/machinery-partner-migration/images/hero.jpg';
-import magaluSuperapp from '../../../../content/projects/magazine-luiza-superapp/images/hero.jpg';
-import uauboxHero from '../../../../content/projects/uaubox-design-system/images/hero.jpg';
-
-const HERO_IMAGES = {
-  'machinery-partner-ecommerce': machineryEcommerce,
-  'machinery-partner-migration': machineryMigration,
-  'magazine-luiza-superapp': magaluSuperapp,
-  'uaubox-design-system': uauboxHero,
-  'machinery-mobile-first': machineryMobileFirst,
-} as const;
-
 export default async function ProjectsListingPage({
   params,
 }: {
@@ -47,7 +33,7 @@ export default async function ProjectsListingPage({
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const t = await getTranslations({ locale, namespace: 'projects' });
+  const t = await getTranslations({ locale });
   const projects = await getProjects(locale);
 
   return (
@@ -55,56 +41,40 @@ export default async function ProjectsListingPage({
       <JsonLd
         schema={buildBreadcrumbList(locale, [
           { name: 'Home', path: '' },
-          { name: t('title'), path: '/projects' },
+          { name: t('projects.title'), path: '/projects' },
         ])}
       />
-      <section className="mx-auto max-w-6xl px-4 py-12">
-        <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">{t('title')}</h1>
-        <p className="mt-3 max-w-2xl text-base text-muted-foreground">{t('listingIntro')}</p>
-        <ul className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <Section ariaLabelledBy="projects-heading" surface="ink" className="md:pt-24">
+        <SectionHead
+          as="h1"
+          id="projects-heading"
+          title={t('projects.title')}
+          comment={t('site.pages.projectsCommand')}
+        />
+        <p className="mt-8 max-w-2xl text-[17px] leading-[1.55] text-ink-body md:text-lg">
+          {t('projects.listingIntro')}
+        </p>
+        <ul className="mt-14 grid grid-cols-[repeat(auto-fill,minmax(min(100%,360px),1fr))] gap-x-7 gap-y-12">
           {projects.map((p, index) => (
-            <li key={p.slug}>
-              <Link
+            <li key={p.slug} className="flex flex-col">
+              <BrowserCard
                 href={`/projects/${p.slug}`}
-                className="block transition hover:-translate-y-0.5 hover:shadow-md"
-              >
-                <Card className="h-full overflow-hidden">
-                  <div className="aspect-[16/10] w-full bg-muted">
-                    <Image
-                      src={HERO_IMAGES[p.slug as keyof typeof HERO_IMAGES]}
-                      alt={p.title}
-                      sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                      priority={index === 0}
-                      fetchPriority={index === 0 ? 'high' : 'auto'}
-                      placeholder="blur"
-                      className="h-full w-full object-cover"
-                    />
-                  </div>
-                  <CardHeader>
-                    <CardTitle className="text-lg">{p.title}</CardTitle>
-                    <p className="text-sm text-muted-foreground">
-                      {p.role} · {p.year}
-                    </p>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex flex-wrap gap-1.5">
-                      {p.stack.slice(0, 5).map((tech) => (
-                        <Badge key={tech} variant="secondary" className="text-xs">
-                          {tech}
-                        </Badge>
-                      ))}
-                    </div>
-                    <p className="mt-3 text-sm text-muted-foreground">{p.blurb}</p>
-                    <p className="mt-4 text-sm font-semibold text-foreground underline-offset-4 group-hover/card:underline">
-                      {t('cta.readMore')}
-                    </p>
-                  </CardContent>
-                </Card>
-              </Link>
+                url={`pansarini.tech/projects/${p.slug}`}
+                title={p.title}
+                meta={`${p.role} · ${p.year}`}
+                image={HERO_IMAGES[p.slug as keyof typeof HERO_IMAGES]}
+                alt=""
+                eager={index === 0}
+                headingLevel="h2"
+              />
+              <p className="mt-3 text-[15px] leading-[1.5] text-ink-body">{p.blurb}</p>
+              <p className="mt-3 font-mono text-xs text-ink-muted">
+                {p.stack.slice(0, 5).join(' · ')}
+              </p>
             </li>
           ))}
         </ul>
-      </section>
+      </Section>
     </>
   );
 }

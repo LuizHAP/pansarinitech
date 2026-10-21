@@ -23,7 +23,7 @@ const STYLES: Record<CalloutType, string> = {
 
 const ICON_TINT: Record<CalloutType, string> = {
   info: 'text-primary',
-  warn: 'text-yellow-600 dark:text-yellow-400',
+  warn: 'text-yellow-800',
   error: 'text-destructive',
 };
 
@@ -51,7 +51,7 @@ export async function Callout({
     >
       <Icon className={cn('mt-0.5 size-4 shrink-0', ICON_TINT[type])} aria-hidden="true" />
       <div className="flex-1">
-        <p className="font-medium">{resolvedLabel}</p>
+        <p className="my-0! font-medium">{resolvedLabel}</p>
         <div className="mt-1 [&>p]:my-0">{children}</div>
       </div>
     </aside>

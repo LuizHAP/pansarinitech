@@ -109,14 +109,9 @@ jobs:
         if: steps.playwright-cache.outputs.cache-hit != 'true'
         run: pnpm exec playwright install chromium
 
-      # D-14: full 4-combo × 2-page axe-core matrix; D-18: 0 violations required
-      - name: a11y matrix (en/pt × light/dark × home/404)
+      # D-14: axe-core matrix over the en and pt projects; D-18: 0 violations required
+      - name: a11y matrix (en/pt × 10 pages)
         run: pnpm test:a11y
-
-      # Wave 2 regression spec — Sith-red contrast smoke (subset of the
-      # full matrix, kept as fast-feedback for THEME-06 specifically)
-      - name: a11y Sith regression
-        run: pnpm test:sith
 
       # Phase 2 Wave 1 (Plan 02-01 T3): UX-01 iPhone SE 375px overflow gate.
       # Lighthouse mobile preset uses 412px (Moto G Power), so this is the
@@ -126,11 +121,11 @@ jobs:
 
       # Phase 5 D-06..D-11: end-to-end behavioral coverage of 6 critical flows.
       # Runs ONCE on a single chromium project (playwright.config.ts: `e2e`)
-      # so it does NOT multiply across the 4-combo axe matrix. Reuses the same
+      # so it does NOT multiply across the locale projects. Reuses the same
       # `next build` and Playwright browsers from the steps above. Fails build
       # on first violation (Phase 1 D-18). Adds ~30-60s to the pipeline,
       # comfortably under the < 3 min D-19 budget.
-      - name: Phase 5 e2e (locale, theme, navigation, downloads, 404, projects)
+      - name: Phase 5 e2e (locale, navigation, downloads, 404, projects, hero 3D gate, admin)
         run: pnpm test:e2e
 
       - name: Upload Playwright report on failure

@@ -81,7 +81,6 @@ export function CopyEmailButton({ email, className }: CopyEmailButtonProps) {
         {copied ? (
           <motion.span
             key="check"
-            className="text-green-600 dark:text-green-400"
             initial={{ opacity: 0, scale: 0.6 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.6 }}

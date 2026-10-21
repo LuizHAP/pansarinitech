@@ -1,12 +1,6 @@
 'use client';
-import {
-  MonoBadge,
-  RevealGroup,
-  RevealItem,
-  Section,
-  SectionHeader,
-  SkillBadge,
-} from '@/components/ui';
+import { SectionHead } from '@/components/site';
+import { MonoBadge, Section } from '@/components/ui';
 import type { PersonalProject } from '@/data/personal-projects';
 import { personalProjects } from '@/data/personal-projects';
 import type { Locale } from '@/i18n/routing';
@@ -21,7 +15,7 @@ function StatusBadge({
   labels,
 }: { status: PersonalProject['status']; labels: { live: string; inDev: string } }) {
   return (
-    <MonoBadge variant="primary" className="text-[10px] uppercase tracking-wider">
+    <MonoBadge variant="primary" className="shrink-0 text-[10px] tracking-wider uppercase">
       {status === 'live' ? labels.live : labels.inDev}
     </MonoBadge>
   );
@@ -30,14 +24,14 @@ function StatusBadge({
 function ProjectScreenshot({ project }: { project: PersonalProject }) {
   if (project.screenshot) {
     return (
-      <div className="aspect-[16/10] w-full overflow-hidden bg-muted">
+      <div className="aspect-[16/10] w-full overflow-hidden bg-ink">
         <Image
           src={project.screenshot}
           alt={project.name}
           width={640}
           height={400}
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 400px"
-          className="h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 600px"
+          className="h-full w-full object-cover object-top"
         />
       </div>
     );
@@ -45,62 +39,91 @@ function ProjectScreenshot({ project }: { project: PersonalProject }) {
 
   return (
     <div
-      className={`aspect-[16/10] w-full bg-gradient-to-br ${project.accentColor} flex items-center justify-center`}
+      className={`flex aspect-[16/10] w-full items-center justify-center bg-gradient-to-br ${project.accentColor}`}
     >
-      <span className="font-mono text-xs text-muted-foreground">{project.name}</span>
+      <span className="font-mono text-xs text-ink-body">{project.name}</span>
     </div>
   );
+}
+
+function displayUrl(url: string) {
+  return url.replace(/^https?:\/\//, '');
 }
 
 export function PersonalProjects() {
   const locale = useLocale() as Locale;
   const t = useTranslations('personalProjects');
+  const tSite = useTranslations('site.sections');
 
   return (
-    <Section id="personal-projects" aria-labelledby="personal-projects-heading">
-      <SectionHeader id="personal-projects-heading">{t('title')}</SectionHeader>
-      <p className="text-sm text-muted-foreground mb-6">{t('subtitle')}</p>
+    <Section
+      id="personal-projects"
+      ariaLabelledBy="personal-projects-heading"
+      surface="ink"
+      className="pt-0 md:pt-0"
+    >
+      <SectionHead
+        id="personal-projects-heading"
+        title={t('title')}
+        comment={tSite('personalComment')}
+      />
+      <p className="mt-6 max-w-[620px] text-[17px] leading-[1.5] text-ink-body">{t('subtitle')}</p>
 
-      <RevealGroup className="grid gap-4 grid-cols-1 lg:grid-cols-2" stagger={0.06}>
-        {personalProjects.map((project) => (
-          <RevealItem key={project.id}>
+      <div className="mt-14 grid grid-cols-1 gap-7 lg:grid-cols-2">
+        {personalProjects.map((project) => {
+          const primaryUrl = project.liveUrl ?? project.githubUrl;
+          return (
             <article
+              key={project.id}
               className={cn(
-                'group relative overflow-hidden rounded-lg border border-border bg-card transition-colors hover:border-primary/50',
+                'flex flex-col overflow-hidden rounded-[14px] border-[1.5px] border-ink-line bg-ink-card',
                 project.screenshotDraft && 'ring-1 ring-amber-500/30',
               )}
             >
+              <div
+                aria-hidden="true"
+                className="flex items-center gap-[7px] border-b-[1.5px] border-ink-line px-3.5 py-[11px]"
+              >
+                <span className="size-[9px] shrink-0 rounded-full bg-ink-line" />
+                <span className="size-[9px] shrink-0 rounded-full bg-ink-line" />
+                <span className="size-[9px] shrink-0 rounded-full bg-ink-line" />
+                {primaryUrl && (
+                  <span className="ml-2 truncate font-mono text-[11px] text-ink-muted">
+                    {displayUrl(primaryUrl)}
+                  </span>
+                )}
+              </div>
               <ProjectScreenshot project={project} />
 
-              <div className="p-5">
-                <div className="flex items-start justify-between gap-2">
-                  <h3 className="text-base font-medium leading-snug">{project.name}</h3>
+              <div className="flex flex-1 flex-col p-5 sm:p-6">
+                <div className="flex items-start justify-between gap-3">
+                  <h3 className="text-2xl leading-tight font-semibold tracking-[-0.02em]">
+                    {project.name}
+                  </h3>
                   <StatusBadge
                     status={project.status}
                     labels={{ live: t('statusLive'), inDev: t('statusInDev') }}
                   />
                 </div>
 
-                <p className="mt-3 line-clamp-3 text-sm text-muted-foreground">
+                <p className="mt-3 line-clamp-3 text-base leading-[1.5] text-ink-body">
                   {project.description[locale]}
                 </p>
 
-                <div className="mt-4 flex flex-wrap gap-1.5">
-                  {project.stack.map((tech) => (
-                    <SkillBadge key={tech} name={tech} />
-                  ))}
-                </div>
+                <p className="mt-4 font-mono text-[13px] text-ink-muted">
+                  {project.stack.join(' · ')}
+                </p>
 
-                <div className="mt-4 flex items-center gap-3 pt-3 border-t border-border">
+                <div className="mt-auto flex items-center gap-5 pt-5">
                   {project.liveUrl && (
                     <a
                       href={project.liveUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label={`${t('visitSite')} ${project.name} (${t('newTab')})`}
-                      className="flex items-center gap-1 text-xs font-medium text-primary underline-offset-2 hover:underline"
+                      className="flex items-center gap-1.5 font-mono text-[13px] font-semibold text-signal-soft underline-offset-4 hover:underline"
                     >
-                      <ExternalLink className="h-3 w-3" aria-hidden="true" />
+                      <ExternalLink className="size-3.5" aria-hidden="true" />
                       {t('visitSite')}
                     </a>
                   )}
@@ -110,18 +133,18 @@ export function PersonalProjects() {
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label={`${t('viewCode')} ${project.name} (${t('newTab')})`}
-                      className="flex items-center gap-1 text-xs font-medium text-muted-foreground underline-offset-2 hover:text-foreground hover:underline"
+                      className="flex items-center gap-1.5 font-mono text-[13px] text-ink-body underline-offset-4 hover:text-paper hover:underline"
                     >
-                      <Icon icon="mdi:github" className="h-3 w-3" aria-hidden="true" />
+                      <Icon icon="mdi:github" className="size-3.5" aria-hidden="true" />
                       {t('viewCode')}
                     </a>
                   )}
                 </div>
               </div>
             </article>
-          </RevealItem>
-        ))}
-      </RevealGroup>
+          );
+        })}
+      </div>
     </Section>
   );
 }

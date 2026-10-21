@@ -6,14 +6,14 @@ import type { TocEntry } from '@/lib/mdx/toc';
 export function TocMobile({ entries, label }: { entries: TocEntry[]; label: string }) {
   if (entries.length === 0) return null;
   return (
-    <details className="my-6 rounded-md border border-border p-3 lg:hidden">
-      <summary className="cursor-pointer text-sm font-semibold">{label}</summary>
-      <ol className="mt-3 space-y-2 text-sm">
+    <details className="mb-10 border-y-2 border-foreground py-3 lg:hidden">
+      <summary className="cursor-pointer font-mono text-sm font-semibold">{label}</summary>
+      <ol className="mt-3 space-y-2 font-mono text-[13px]">
         {entries.map((e) => (
           <li key={e.id} className={e.level === 3 ? 'ml-4' : ''}>
             <a
               href={`#${e.id}`}
-              className="text-foreground decoration-primary decoration-2 underline-offset-4 hover:underline"
+              className="text-foreground decoration-primary decoration-2 underline-offset-4 hover:text-primary hover:underline"
             >
               {e.text}
             </a>

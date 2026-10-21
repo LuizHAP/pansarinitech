@@ -4,9 +4,6 @@
     "placeholder": "Coming soon — Phase 2.",
     "shellNote": "Bilingual themed shell is in place. Content lands next."
   },
-  "themeToggle": {
-    "label": "Toggle theme"
-  },
   "localeToggle": {
     "label": "Switch language"
   },
@@ -18,8 +15,6 @@
   },
   "notFound": {
     "title": "404",
-    "aurebeshFallback": "404 in Aurebesh",
-    "swReference": "These aren't the pages you're looking for.",
     "cta": "Go back home"
   },
   "hero": {
@@ -125,7 +120,6 @@
     "navCareer": "Career",
     "navContact": "Contact",
     "navBlog": "Blog",
-    "actionToggleTheme": "Toggle theme — Jedi (light) / Sith (dark)",
     "actionSwitchPt": "Switch to Portuguese",
     "actionSwitchEn": "Switch to English",
     "linkResumePt": "Resume — PT (PDF)",
@@ -184,5 +178,73 @@
     "desktop": "Desktop",
     "mobile": "Mobile",
     "frameTitle": "{client} website"
+  },
+  "site": {
+    "nav": {
+      "label": "Main",
+      "projects": "projects",
+      "blog": "blog",
+      "now": "now",
+      "contact": "contact"
+    },
+    "motion": {
+      "label": "Pause animations"
+    },
+    "hero": {
+      "eyebrow": "// principal software engineer · brazil → global",
+      "typedPrefix": "> I build",
+      "typedWords": [
+        "web platforms",
+        "mobile apps",
+        "design systems",
+        "APIs that scale",
+        "fast storefronts"
+      ],
+      "typedSr": "I build web platforms, mobile apps, design systems, APIs that scale and fast storefronts.",
+      "hintLabel": "open the command palette",
+      "hintAria": "Open the command palette (Ctrl or Cmd + K)"
+    },
+    "marquee": {
+      "label": "Technologies I work with",
+      "words": [
+        "TypeScript",
+        "React",
+        "Next.js",
+        "React Native",
+        "Node.js",
+        "Tailwind CSS",
+        "Design Systems",
+        "AWS",
+        "PostgreSQL",
+        "Accessibility"
+      ]
+    },
+    "about": {
+      "statsLabel": "At a glance"
+    },
+    "sections": {
+      "aboutComment": "> whoami",
+      "projectsComment": "$ ls ~/projects",
+      "personalComment": "$ ls ~/side-projects",
+      "skillsComment": "// stack",
+      "careerComment": "$ git log --career",
+      "nowComment": "$ cat ~/now.md",
+      "blogComment": "$ ls ~/blog",
+      "contactPrompt": "let's talk"
+    },
+    "pages": {
+      "projectsCommand": "$ ls ~/projects",
+      "blogCommand": "$ ls ~/blog",
+      "nowCommand": "$ cat ~/now.md",
+      "backToProjects": "cd ../projects",
+      "backToBlog": "cd ../blog"
+    },
+    "notFound": {
+      "command": "$ cd ~/missing-page",
+      "error": "no such file or directory"
+    },
+    "easterEgg": {
+      "whoami": "luiz pansarini · principal software engineer · brazil → global"
+    }
   }
 }

@@ -1,45 +1,47 @@
-// src/components/shared/easter-egg.tsx — Phase 4 D-33, EASTER-02
-//
-// Production-only console.log easter egg with ASCII saber + saber-red %c
-// color. Renders nothing in dev (returns null when NODE_ENV !== 'production'),
-// so the dev console stays clean. Inline <Script id="easter-egg"> is deduped
-// by Next 16's script registry — fires exactly once on first page load.
-//
-// CSP NOTE: this is currently `unsafe-inline`. Phase 5 CSP work will need to
-// either allowlist this script's hash OR move the payload to a static .js file
-// in /public.
-import Script from 'next/script';
+'use client';
+import { useTranslations } from 'next-intl';
+import { useEffect } from 'react';
+import { toast } from 'sonner';
 
-const EASTER_EGG_LINES = [
-  '═══════════════════════════════════════',
-  ' Hello, fellow developer.',
-  ' May the Force be with your code.',
-  '═══════════════════════════════════════',
-  '',
-  '   ▌',
-  '   ▌',
-  '   ▌',
-  '   ▌',
-  '   ▌',
-  '   █  ← saber',
-  '',
-  ' Source: github.com/LuizHAP/pansarinitech',
+const SEQUENCE = 'whoami';
+
+const BANNER_LINES = [
+  '> whoami',
+  'luiz pansarini, principal software engineer',
+  '$ git clone github.com/LuizHAP/pansarinitech',
 ];
 
+function isEditable(target: EventTarget | null): boolean {
+  if (!(target instanceof Element)) return false;
+  return target.closest('input, textarea, select, [contenteditable]') !== null;
+}
+
 export function EasterEgg() {
-  if (process.env.NODE_ENV !== 'production') return null;
+  const whoami = useTranslations('site.easterEgg')('whoami');
 
-  // JSON.stringify so any future special-char in the lines is escaped safely
-  // when interpolated into the inline script payload.
-  const message = JSON.stringify(EASTER_EGG_LINES.join('\n'));
+  useEffect(() => {
+    if (process.env.NODE_ENV !== 'production') return;
+    console.log(
+      '%c%s',
+      'color: #8F96FF; font-family: monospace; font-size: 12px;',
+      BANNER_LINES.join('\n'),
+    );
+  }, []);
 
-  // %c saber-red color matches Sith --primary. %s carries the message as a
-  // single token so line breaks render correctly in the browser console.
-  const inlineScript = `console.log("%c%s", "color: #cd1819; font-family: monospace; font-size: 12px;", ${message});`;
+  useEffect(() => {
+    let buffer = '';
+    function onKeydown(event: KeyboardEvent) {
+      if (event.metaKey || event.ctrlKey || event.altKey) return;
+      if (event.key.length !== 1 || isEditable(event.target)) return;
+      buffer = (buffer + event.key.toLowerCase()).slice(-SEQUENCE.length);
+      if (buffer !== SEQUENCE) return;
+      buffer = '';
+      window.dispatchEvent(new CustomEvent('pansarini:ripple'));
+      toast(whoami);
+    }
+    document.addEventListener('keydown', onKeydown);
+    return () => document.removeEventListener('keydown', onKeydown);
+  }, [whoami]);
 
-  return (
-    <Script id="easter-egg" strategy="afterInteractive">
-      {inlineScript}
-    </Script>
-  );
+  return null;
 }

@@ -15,7 +15,9 @@ export async function CodeFilename({
 
   return (
     <div
-      className={cn('rounded-md overflow-hidden border border-border')}
+      className={cn(
+        'rounded-md overflow-hidden border border-border [&_figure]:my-0 [&_pre]:my-0 [&_pre]:rounded-none',
+      )}
       aria-label={`${t('codeFilename.ariaPrefix')}: ${filename}`}
     >
       <div className="flex items-center gap-2 border-b border-border bg-muted/50 px-4 py-2">

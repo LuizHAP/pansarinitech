@@ -24,7 +24,22 @@
   --color-popover-foreground: var(--popover-foreground);
   --font-sans: var(--font-ibm-plex-sans);
   --font-mono: var(--font-ibm-plex-mono);
-  --font-aurebesh: var(--font-aurebesh);
+  --font-display: var(--font-bricolage);
+}
+
+@theme {
+  --color-ink: #0e0f0c;
+  --color-paper: #eeece6;
+  --color-signal: #2f3bff;
+  --color-signal-soft: #8f96ff;
+  --color-ink-card: #1c1d19;
+  --color-ink-line: #33342f;
+  --color-ink-rule: #26271f;
+  --color-ink-muted: #9a9b92;
+  --color-ink-body: #c9c8c0;
+  --color-paper-muted: #55564f;
+  --color-paper-line: #dddbd2;
+  --color-paper-card: #ffffff;
 }
 
 /* Jedi (Light) — Linear-Clean Palette */
@@ -69,6 +84,165 @@
   --popover-foreground: oklch(95% 0 0);
 }
 
+/* Public site surfaces. Only html.site (the [locale] layout and the root 404) gets these,
+   so admin and preview keep the :root/.dark tokens. Every surface re-points the full
+   variable set: a partial set lets shadcn-token components inherit ink fills on paper. */
+html.site,
+.surface-ink {
+  --background: #0e0f0c;
+  --foreground: #eeece6;
+  --card: #1c1d19;
+  --card-foreground: #eeece6;
+  --popover: #1c1d19;
+  --popover-foreground: #eeece6;
+  --muted: #26271f;
+  --muted-foreground: #9a9b92;
+  --accent: #26271f;
+  --accent-foreground: #eeece6;
+  --border: #33342f;
+  --input: #75766d;
+  --primary: #2f3bff;
+  --primary-foreground: #eeece6;
+  --ring: #8f96ff;
+  --badge-primary-text: #8f96ff;
+  --destructive: #ff8a80;
+  background-color: var(--background);
+  color: var(--foreground);
+}
+
+.surface-paper {
+  --background: #eeece6;
+  --foreground: #0e0f0c;
+  --card: #ffffff;
+  --card-foreground: #0e0f0c;
+  --popover: #ffffff;
+  --popover-foreground: #0e0f0c;
+  --muted: #dddbd2;
+  --muted-foreground: #55564f;
+  --accent: #dddbd2;
+  --accent-foreground: #0e0f0c;
+  --border: #dddbd2;
+  --input: #55564f;
+  --primary: #2f3bff;
+  --primary-foreground: #eeece6;
+  --ring: #2f3bff;
+  --badge-primary-text: #2f3bff;
+  --destructive: #b42318;
+  background-color: var(--background);
+  color: var(--foreground);
+}
+
+.surface-accent {
+  --background: #2f3bff;
+  --foreground: #eeece6;
+  --card: #0e0f0c;
+  --card-foreground: #eeece6;
+  --popover: #0e0f0c;
+  --popover-foreground: #eeece6;
+  --muted: #0e0f0c;
+  --muted-foreground: #eeece6;
+  --accent: #0e0f0c;
+  --accent-foreground: #eeece6;
+  --border: #eeece6;
+  --input: #eeece6;
+  --primary: #0e0f0c;
+  --primary-foreground: #eeece6;
+  --ring: #eeece6;
+  --badge-primary-text: #eeece6;
+  --destructive: #eeece6;
+  background-color: var(--background);
+  color: var(--foreground);
+}
+
+html.site {
+  --font-ibm-plex-sans: var(--font-bricolage);
+}
+
+html.site body {
+  font-family: var(--font-bricolage), system-ui, sans-serif;
+}
+
+html.site p {
+  text-wrap: pretty;
+}
+
+@keyframes lp-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+@keyframes lp-marq {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes lp-frame {
+  to {
+    stroke-dashoffset: -100;
+  }
+}
+
+@keyframes lp-frame2 {
+  from {
+    stroke-dashoffset: -50;
+  }
+  to {
+    stroke-dashoffset: -150;
+  }
+}
+
+@keyframes lp-type {
+  0%,
+  8% {
+    transform: scaleX(0);
+  }
+  45%,
+  80% {
+    transform: scaleX(1);
+  }
+  100% {
+    transform: scaleX(0);
+  }
+}
+
+@keyframes lp-bar {
+  0%,
+  100% {
+    transform: scaleY(0.3);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+
+.lp-cursor {
+  display: inline-block;
+  animation: lp-blink 1s steps(1) infinite;
+}
+
+.lp-marquee-track {
+  display: flex;
+  width: max-content;
+  animation: lp-marq 28s linear infinite;
+}
+
+:hover > .lp-marquee-track,
+:focus-within > .lp-marquee-track {
+  animation-play-state: paused;
+}
+
+/* WCAG 2.2.2: the header pause control stops every looping animation. */
+html[data-motion="paused"] .lp-cursor,
+html[data-motion="paused"] .lp-marquee-track,
+html[data-motion="paused"] [data-anim] {
+  animation-play-state: paused;
+}
+
 /* A11Y-04 Layer 1 — UI-SPEC §"Reduced-Motion Contract" */
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -108,6 +282,18 @@ html.dark pre[data-theme*=" "] span {
   background-color: var(--shiki-dark-bg);
 }
 
+/* Public pages never get .dark, so the block must take the light theme's own fill;
+   otherwise prose paints its dark pre background around the white line spans, and the
+   inline-code fill from prose-code lands on the block <code> too. */
+html.site pre[data-theme*=" "] {
+  color: var(--shiki-light);
+  background-color: var(--shiki-light-bg);
+}
+html.site pre[data-theme*=" "] > code {
+  background-color: transparent;
+  padding: 0;
+}
+
 /* Phase 3 — keep MDX <pre> blocks from blowing out the viewport on iPhone SE
    (UX-01 375px gate). Long code lines scroll horizontally inside the figure
    instead of stretching <body>. */
@@ -122,73 +308,4 @@ html.dark pre[data-theme*=" "] span {
   border-radius: 0.5rem;
   font-size: 0.875rem;
   line-height: 1.5;
-}
-
-/* Phase 5 — View Transitions on theme toggle (CONTEXT D-01..D-05).
-   Same-document View Transition: radial-reveal clip-path mask from the
-   theme-toggle click coordinate. JS sets --vt-x / --vt-y on <html> before
-   calling document.startViewTransition(); CSS interpolates clip-path on
-   ::view-transition-new(root). No color flash — the new theme is unveiled,
-   not painted on. Falls back to instant swap on browsers without the API
-   (the @supports block silently no-ops).
-
-   Cascade gotcha (Pitfall 2 in 05-RESEARCH.md):
-   The existing globals.css reduced-motion block (line 74) uses `*` and does
-   NOT select ::view-transition-old/-new — those pseudo-elements live in the
-   UA shadow tree and ignore the universal selector. We MUST therefore add an
-   explicit reduced-motion override for the VT pseudo-elements below. */
-
-@media (prefers-reduced-motion: no-preference) {
-  @supports (view-transition-name: root) {
-    /* D-03: transparent reveal — OLD snapshot stays put; NEW wipes in on top. */
-    ::view-transition-old(root) {
-      animation: none;
-      mix-blend-mode: normal;
-    }
-    ::view-transition-new(root) {
-      animation: vt-reveal 420ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
-      mix-blend-mode: normal;
-      z-index: 1;
-    }
-
-    @keyframes vt-reveal {
-      from {
-        clip-path: circle(0% at var(--vt-x, 50%) var(--vt-y, 50%));
-      }
-      to {
-        clip-path: circle(150% at var(--vt-x, 50%) var(--vt-y, 50%));
-      }
-    }
-  }
-}
-
-/* D-05: prefers-reduced-motion fallback — explicit 200ms opacity fade.
-   The Phase 1 reduced-motion block on line 74 does NOT cascade into VT
-   pseudo-elements; without this override the browser would play its default
-   ~250ms cross-fade, which a strict-RM user might still perceive as motion.
-   The explicit vt-fade keeps theme-change perception (a calm fade) while
-   honoring the user's "reduce, not eliminate" preference. */
-@media (prefers-reduced-motion: reduce) {
-  @supports (view-transition-name: root) {
-    ::view-transition-old(root),
-    ::view-transition-new(root) {
-      animation: vt-fade 200ms linear forwards !important;
-      mix-blend-mode: normal;
-    }
-    /* WR-01: OLD fades 1 → 0 (forwards direction, default); NEW fades 0 → 1
-       (reverse). Total perceived effect: calm cross-fade where the previous
-       theme dissolves while the new theme materializes in the same 200ms
-       window — preserves "reduce, not eliminate" intent. */
-    ::view-transition-new(root) {
-      animation-direction: reverse !important;
-    }
-    @keyframes vt-fade {
-      from {
-        opacity: 1;
-      }
-      to {
-        opacity: 0;
-      }
-    }
-  }
 }

@@ -1,5 +1,6 @@
 import JsonLd, { AUTHOR_PERSON, SITE_URL } from '@/components/json-ld';
 import { CaseStudyHero } from '@/components/sections';
+import { sectionContainer } from '@/components/ui';
 import { type Locale, routing } from '@/i18n/routing';
 import { getAllSlugs, getProject } from '@/lib/mdx/projects';
 import { buildMetadata } from '@/lib/seo';
@@ -68,8 +69,12 @@ export default async function CaseStudyPage({
         }}
       />
       <CaseStudyHero project={project} locale={locale} />
-      <div className="prose prose-neutral mx-auto max-w-3xl px-4 py-8 dark:prose-invert prose-headings:scroll-mt-20 prose-h2:mt-10 prose-h2:pb-3 prose-h2:font-semibold prose-h2:tracking-tight prose-h2:border-b prose-h2:border-border prose-h3:mt-8 prose-h3:font-semibold prose-h3:tracking-tight prose-a:text-primary prose-a:decoration-primary prose-a:font-normal prose-code:before:content-none prose-code:after:content-none prose-code:bg-muted prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded-sm prose-code:text-sm prose-code:font-mono prose-code:text-foreground">
-        {project.content}
+      <div className="surface-paper">
+        <div className={`${sectionContainer} py-16 md:py-24`}>
+          <div className="prose prose-neutral max-w-3xl prose-headings:scroll-mt-20 prose-headings:font-display prose-headings:text-foreground prose-h2:mt-12 prose-h2:pb-3 prose-h2:font-extrabold prose-h2:tracking-[-0.03em] prose-h2:border-b-2 prose-h2:border-foreground prose-h3:mt-8 prose-h3:font-bold prose-h3:tracking-[-0.02em] prose-p:text-pretty prose-a:text-primary prose-a:decoration-primary prose-a:font-normal prose-code:before:content-none prose-code:after:content-none prose-code:bg-muted prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded-sm prose-code:text-sm prose-code:font-mono prose-code:text-foreground">
+            {project.content}
+          </div>
+        </div>
       </div>
     </article>
   );

@@ -1,220 +1,72 @@
-import { Badge, sectionContainer } from '@/components/ui';
-import { career } from '@/data/career';
+import { HeroFieldGate, PaletteHint, TypedLine } from '@/components/site';
 import { contact } from '@/data/contact';
 import { hero } from '@/data/hero';
 import type { Locale } from '@/i18n/routing';
-import { formatPeriod, pickLocale } from '@/lib/i18n/helpers';
-import { Link } from '@/lib/i18n/navigation';
-import { getProjects } from '@/lib/mdx/projects';
-import type { Project } from '@/lib/mdx/schema';
-import { cn } from '@/lib/utils';
-import { ArrowUpRightIcon } from 'lucide-react';
+import { pickLocale } from '@/lib/i18n/helpers';
 import { getLocale, getTranslations } from 'next-intl/server';
-import Image from 'next/image';
-
-import machineryMobileFirst from '../../../content/projects/machinery-mobile-first/images/hero.jpg';
-import machineryEcommerce from '../../../content/projects/machinery-partner-ecommerce/images/hero.jpg';
-import machineryMigration from '../../../content/projects/machinery-partner-migration/images/hero.jpg';
-import magaluSuperapp from '../../../content/projects/magazine-luiza-superapp/images/hero.jpg';
-
-const HERO_IMAGES = {
-  'machinery-partner-ecommerce': machineryEcommerce,
-  'machinery-partner-migration': machineryMigration,
-  'magazine-luiza-superapp': magaluSuperapp,
-  'machinery-mobile-first': machineryMobileFirst,
-} as const;
-
-function ProjectCard({
-  project,
-  featured,
-  readMore,
-}: {
-  project: Project;
-  featured: boolean;
-  readMore: string;
-}) {
-  return (
-    <Link
-      href={`/projects/${project.slug}`}
-      className={cn(
-        'group flex overflow-hidden rounded-xl border border-border bg-card transition-colors hover:border-foreground/30 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50',
-        featured
-          ? 'col-span-2 flex-col sm:flex-row'
-          : 'col-span-2 flex-row sm:col-span-1 sm:flex-col',
-      )}
-    >
-      <div
-        className={cn(
-          'relative shrink-0 overflow-hidden bg-muted',
-          featured
-            ? 'aspect-[16/9] w-full sm:aspect-auto sm:min-h-56 sm:w-1/2'
-            : 'w-28 sm:aspect-[16/9] sm:w-full',
-        )}
-      >
-        <Image
-          src={HERO_IMAGES[project.slug as keyof typeof HERO_IMAGES]}
-          alt=""
-          fill
-          priority={featured}
-          // Next 16's priority only preloads; fetchpriority must be set explicitly for the LCP image.
-          fetchPriority={featured ? 'high' : undefined}
-          placeholder="blur"
-          className="object-cover transition-transform duration-500 group-hover:scale-105"
-          sizes={featured ? '(max-width: 640px) 100vw, 30vw' : '(max-width: 640px) 112px, 30vw'}
-        />
-      </div>
-      <div className="flex min-w-0 flex-1 flex-col gap-2 p-4 sm:p-5">
-        <p className="font-mono text-xs text-muted-foreground">
-          {featured ? `${project.year} · ${project.role}` : project.year}
-        </p>
-        <h2
-          className={cn(
-            'font-medium tracking-tight text-foreground',
-            featured ? 'text-lg sm:text-xl' : 'text-base',
-          )}
-        >
-          {project.title}
-        </h2>
-        <p
-          className={cn(
-            'text-sm leading-relaxed text-muted-foreground',
-            featured ? 'line-clamp-3' : 'line-clamp-2',
-          )}
-        >
-          {project.blurb}
-        </p>
-        <div className={cn('mt-auto flex-wrap gap-1.5 pt-1', featured ? 'flex' : 'hidden sm:flex')}>
-          {project.stack.slice(0, featured ? 4 : 3).map((tech) => (
-            <Badge key={tech} variant="outline" className="text-xs text-muted-foreground">
-              {tech}
-            </Badge>
-          ))}
-        </div>
-        {featured && (
-          <p className="pt-1 text-sm font-medium text-foreground underline-offset-4 group-hover:underline">
-            {readMore}
-          </p>
-        )}
-      </div>
-    </Link>
-  );
-}
 
 export async function Hero() {
   const locale = (await getLocale()) as Locale;
-  const t = await getTranslations({ locale, namespace: 'hero' });
-  const tProj = await getTranslations({ locale, namespace: 'projects' });
+  const t = await getTranslations({ locale });
   const resumeHref = pickLocale(contact.resumePdf, locale);
   const resumeFile = resumeHref.split('/').pop() ?? 'resume.pdf';
-
-  const allProjects = await getProjects(locale);
-  const featuredProjects = allProjects.filter((p) => p.featured).slice(0, 3);
 
   return (
     <section
       id="hero"
       aria-labelledby="hero-heading"
-      className={cn(sectionContainer, 'pt-8 pb-12 sm:pt-12 sm:pb-16 lg:pt-16 lg:pb-20')}
+      className="surface-ink relative flex flex-col min-h-[max(640px,calc(100vh-64px))] scroll-mt-16 overflow-hidden"
     >
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-5">
-        <div className="lg:col-span-5 flex flex-col bg-card border border-border rounded-xl p-6 sm:p-8">
-          <div className="space-y-4">
-            <div className="flex items-start gap-4">
-              <div className="relative w-16 h-16 sm:w-20 sm:h-20 shrink-0">
-                <Image
-                  src="/luiz.jpg"
-                  alt={t('photoAlt')}
-                  fill
-                  priority
-                  className="object-cover rounded-lg"
-                  sizes="80px"
-                />
-              </div>
-              <div className="min-w-0">
-                <h1
-                  id="hero-heading"
-                  className="text-2xl sm:text-3xl font-semibold tracking-tight leading-tight"
-                >
-                  {hero.name}
-                </h1>
-                <p className="text-sm sm:text-base text-muted-foreground font-medium mt-1">
-                  {pickLocale(hero.role, locale)}
-                </p>
-              </div>
-            </div>
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 bg-[linear-gradient(var(--color-ink-rule)_1px,transparent_1px),linear-gradient(90deg,var(--color-ink-rule)_1px,transparent_1px)] bg-[size:48px_48px] bg-[position:-1px_-1px]"
+      />
+      <HeroFieldGate />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,#0e0f0c_0%,rgb(14_15_12/0.85)_35%,rgb(14_15_12/0)_70%)]"
+      />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-[linear-gradient(0deg,#0e0f0c,rgb(14_15_12/0))]"
+      />
 
-            <p className="text-sm sm:text-base leading-relaxed text-foreground">
-              {pickLocale(hero.valueProp, locale)}
-            </p>
-          </div>
-
-          <div className="hidden lg:block mt-8 border-t border-border pt-6">
-            <p
-              id="hero-experience"
-              className="font-mono text-xs uppercase tracking-wider text-muted-foreground"
-            >
-              {t('experienceLabel')}
-            </p>
-            <ul aria-labelledby="hero-experience" className="mt-3 flex flex-col gap-2.5">
-              {career.map((role) => (
-                <li key={role.id} className="flex items-baseline justify-between gap-4 text-sm">
-                  <a
-                    href={role.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group/company inline-flex items-center gap-1 font-medium text-foreground underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50 rounded-sm"
-                  >
-                    {role.company}
-                    <ArrowUpRightIcon
-                      aria-hidden="true"
-                      className="size-3.5 text-muted-foreground transition-transform group-hover/company:-translate-y-0.5 group-hover/company:translate-x-0.5"
-                    />
-                  </a>
-                  <span className="shrink-0 font-mono text-xs text-muted-foreground">
-                    {formatPeriod(role.period, locale)}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div className="flex flex-col sm:flex-row gap-3 mt-6 lg:mt-auto lg:pt-8">
-            <a
-              href="#contact"
-              className="inline-flex h-10 items-center justify-center rounded-md bg-primary px-5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
-            >
-              {t('contactCta')}
-            </a>
-            <a
-              href={resumeHref}
-              download={resumeFile}
-              className="inline-flex h-10 items-center justify-center rounded-md border border-border px-5 text-sm font-medium transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
-            >
-              {t('resumeCta')}
-            </a>
-          </div>
-        </div>
-
-        <div className="lg:col-span-7 grid grid-cols-2 gap-4 lg:gap-5">
-          {featuredProjects.map((project, index) => (
-            <ProjectCard
-              key={project.slug}
-              project={project}
-              featured={index === 0}
-              readMore={tProj('cta.readMore')}
-            />
-          ))}
-        </div>
-      </div>
-
-      <div className="flex justify-end mt-4">
-        <Link
-          href="/projects"
-          className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors underline decoration-primary decoration-2 underline-offset-4 hover:decoration-foreground"
+      <div className="relative mx-auto flex w-full max-w-[calc(1280px+4rem)] flex-1 flex-col justify-center gap-7 px-4 pt-12 pb-14 sm:gap-9 sm:px-5 sm:pt-24 sm:pb-16 md:px-8">
+        <p className="font-mono text-sm tracking-[0.06em] text-ink-muted">
+          {t('site.hero.eyebrow')}
+        </p>
+        <h1
+          id="hero-heading"
+          className="max-w-[900px] font-display text-[clamp(56px,9vw,136px)] leading-[0.88] font-extrabold tracking-[-0.05em]"
         >
-          {tProj('cta.viewAll')}
-        </Link>
+          {hero.name}
+        </h1>
+        <TypedLine
+          prefix={t('site.hero.typedPrefix')}
+          words={t.raw('site.hero.typedWords') as string[]}
+          srText={t('site.hero.typedSr')}
+        />
+        <p className="max-w-[620px] text-[17px] leading-[1.5] text-ink-body sm:text-lg md:text-[19px]">
+          {pickLocale(hero.valueProp, locale)}
+        </p>
+        <div className="flex flex-wrap gap-3.5">
+          <a
+            href="#contact"
+            className="inline-flex items-center rounded-[10px] bg-signal px-[26px] py-[18px] font-mono text-base font-semibold text-paper transition-transform duration-150 hover:-translate-y-[3px]"
+          >
+            {t('hero.contactCta')}
+          </a>
+          <a
+            href={resumeHref}
+            download={resumeFile}
+            className="inline-flex items-center rounded-[10px] border-[1.5px] border-paper px-[26px] py-[17px] font-mono text-base font-medium text-paper transition-colors hover:bg-paper hover:text-ink"
+          >
+            {t('hero.resumeCta')}
+          </a>
+        </div>
       </div>
+
+      <PaletteHint label={t('site.hero.hintLabel')} ariaLabel={t('site.hero.hintAria')} />
     </section>
   );
 }

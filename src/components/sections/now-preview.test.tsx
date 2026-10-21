@@ -20,11 +20,20 @@ describe('<NowPreview />', () => {
     expect(timeEl).toHaveAttribute('dateTime', now.lastUpdated);
   });
 
+  it('renders the three now topics as headed items', () => {
+    render(<NowPreview />, { locale: 'en' });
+
+    expect(
+      screen.getAllByRole('heading', { level: 3 }).map((heading) => heading.textContent),
+    ).toEqual(['Working on', 'Reading / Learning', 'Side / Personal']);
+    expect(screen.getByText(/Building this portfolio in my spare time/)).toBeInTheDocument();
+  });
+
   it('renders the /now page link', () => {
     render(<NowPreview />, { locale: 'en' });
 
     const link = screen.getByRole('link', { name: /See more on the \/now page/i });
-    expect(link).toBeInTheDocument();
+    expect(link).toHaveAttribute('href', '/en/now');
   });
 
   it('renders the pt locale heading', () => {

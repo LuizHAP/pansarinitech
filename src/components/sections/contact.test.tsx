@@ -34,6 +34,14 @@ describe('<Contact />', () => {
     expect(githubLink.getAttribute('rel')).toContain('noreferrer');
   });
 
+  it('renders the prompt, heading and copy button', () => {
+    render(<Contact />, { locale: 'en' });
+
+    expect(screen.getByRole('heading', { level: 2, name: 'Get in touch' })).toBeInTheDocument();
+    expect(screen.getByText("let's talk")).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Copy email' })).toBeInTheDocument();
+  });
+
   it('renders resume download link with correct locale-aware href', () => {
     render(<Contact />, { locale: 'en' });
     const resumeLinks = screen.getAllByRole('link');

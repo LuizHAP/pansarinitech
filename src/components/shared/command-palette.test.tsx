@@ -1,6 +1,6 @@
 // src/components/shared/command-palette.test.tsx
 // Vitest + RTL tests for CommandPalette behavior (Phase 01 UX-01 to UX-07).
-import { render, screen } from '@/test/render';
+import { act, render, screen } from '@/test/render';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -30,7 +30,7 @@ vi.mock('@/lib/i18n/navigation', async () => {
   };
 });
 
-import { CommandPaletteRoot } from './command-palette';
+import { CommandPaletteRoot, CommandPaletteTrigger } from './command-palette';
 // Must import after mocks are declared
 import { switchLocale } from './locale-toggle-action';
 
@@ -73,6 +73,14 @@ describe('<CommandPaletteRoot />', () => {
     expect(screen.getByRole('dialog')).toBeInTheDocument();
   });
 
+  it('opens palette when the key arrives uppercase (Caps Lock or Shift)', async () => {
+    render(<CommandPaletteRoot />, { locale: 'en' });
+    const user = userEvent.setup();
+
+    await user.keyboard('{Control>}K{/Control}');
+    expect(screen.getByRole('dialog')).toBeInTheDocument();
+  });
+
   it('toggles palette closed via Cmd+K when already open', async () => {
     render(<CommandPaletteRoot />, { locale: 'en' });
     const user = userEvent.setup();
@@ -84,6 +92,24 @@ describe('<CommandPaletteRoot />', () => {
     // Close via toggle
     await user.keyboard('{Meta>}k{/Meta}');
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+  });
+
+  it('opens palette when a pansarini:palette window event fires', async () => {
+    render(<CommandPaletteRoot />, { locale: 'en' });
+
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    act(() => {
+      window.dispatchEvent(new CustomEvent('pansarini:palette'));
+    });
+    expect(await screen.findByRole('dialog')).toBeInTheDocument();
+  });
+
+  it('stops listening for pansarini:palette after unmount', () => {
+    const removeSpy = vi.spyOn(window, 'removeEventListener');
+    const { unmount } = render(<CommandPaletteRoot />, { locale: 'en' });
+
+    unmount();
+    expect(removeSpy).toHaveBeenCalledWith('pansarini:palette', expect.any(Function));
   });
 
   it('opens palette by clicking the trigger button', async () => {
@@ -142,7 +168,7 @@ describe('<CommandPaletteRoot />', () => {
     expect(screen.getByText('Links')).toBeInTheDocument();
   });
 
-  it('renders all 14 command items when palette is open (EN)', async () => {
+  it('renders all 13 command items when palette is open (EN)', async () => {
     render(<CommandPaletteRoot />, { locale: 'en' });
     const user = userEvent.setup();
     await user.keyboard('{Meta>}k{/Meta}');
@@ -155,8 +181,8 @@ describe('<CommandPaletteRoot />', () => {
     expect(screen.getByText('Career')).toBeInTheDocument();
     expect(screen.getByText('Blog')).toBeInTheDocument();
     expect(screen.getByText('Contact')).toBeInTheDocument();
-    // 3 action items
-    expect(screen.getByText('Toggle theme — Jedi (light) / Sith (dark)')).toBeInTheDocument();
+    // 2 action items, no theme action
+    expect(screen.queryByText(/toggle theme/i)).not.toBeInTheDocument();
     expect(screen.getByText('Switch to Portuguese')).toBeInTheDocument();
     expect(screen.getByText('Switch to English')).toBeInTheDocument();
     // 4 link items
@@ -164,47 +190,6 @@ describe('<CommandPaletteRoot />', () => {
     expect(screen.getByText('Resume — EN (PDF)')).toBeInTheDocument();
     expect(screen.getByText('LinkedIn profile')).toBeInTheDocument();
     expect(screen.getByText('GitHub profile')).toBeInTheDocument();
-  });
-
-  // -------------------------------------------------------------------------
-  // Theme command
-  // -------------------------------------------------------------------------
-
-  it('theme command closes dialog then toggles dark class (light → dark)', async () => {
-    render(<CommandPaletteRoot />, { locale: 'en', theme: 'light' });
-    const user = userEvent.setup();
-
-    // Verify no dark class initially
-    expect(document.documentElement.classList.contains('dark')).toBe(false);
-
-    await user.keyboard('{Meta>}k{/Meta}');
-    expect(screen.getByRole('dialog')).toBeInTheDocument();
-
-    const themeItem = screen.getByText('Toggle theme — Jedi (light) / Sith (dark)');
-    await user.click(themeItem);
-
-    // Dialog should be closed immediately
-    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
-
-    // After requestAnimationFrame, dark class should be set
-    await vi.waitFor(() => {
-      expect(document.documentElement.classList.contains('dark')).toBe(true);
-    });
-  });
-
-  it('theme command closes dialog then toggles dark class (dark → light)', async () => {
-    render(<CommandPaletteRoot />, { locale: 'en', theme: 'dark' });
-    const user = userEvent.setup();
-
-    expect(document.documentElement.classList.contains('dark')).toBe(true);
-
-    await user.keyboard('{Meta>}k{/Meta}');
-    const themeItem = screen.getByText('Toggle theme — Jedi (light) / Sith (dark)');
-    await user.click(themeItem);
-
-    await vi.waitFor(() => {
-      expect(document.documentElement.classList.contains('dark')).toBe(false);
-    });
   });
 
   // -------------------------------------------------------------------------
@@ -377,5 +362,22 @@ describe('<CommandPaletteRoot />', () => {
         'noopener,noreferrer',
       );
     });
+  });
+});
+
+describe('<CommandPaletteTrigger />', () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it.each([
+    ['MacIntel', '⌘ K'],
+    ['Win32', 'Ctrl K'],
+    ['Linux x86_64', 'Ctrl K'],
+  ])('on %s shows %s, like the hero hint', (platform, shortcut) => {
+    vi.spyOn(navigator, 'platform', 'get').mockReturnValue(platform);
+    render(<CommandPaletteTrigger onOpen={() => {}} />, { locale: 'en' });
+
+    expect(screen.getByRole('button')).toHaveTextContent(shortcut);
   });
 });

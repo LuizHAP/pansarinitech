@@ -4,14 +4,13 @@
 // Lighthouse mobile preset uses Moto G Power 412×823, which doesn't cover the
 // explicit ROADMAP success-criterion #5 wording ("iPhone SE 375px"). This spec
 // is the additive viewport gate at the exact 375×667 budget; Playwright runs
-// against the same `pnpm next start` web server that test:a11y / test:sith use
+// against the same `pnpm next start` web server that test:a11y uses
 // (configured in playwright.config.ts).
 //
-// localePrefix:'always' — every route is served under /en or /pt. The 4
-// Playwright projects (en/pt × light/dark) each set locale: 'en-US' or
-// locale: 'pt-BR'; the locale segment used in goto() is derived from the
-// project name so en-* projects hit /en/... and pt-* projects hit /pt/....
-// 8 scenarios × 4 projects = 32 active tests total, 0 skips.
+// localePrefix:'always' — every route is served under /en or /pt. The `en`
+// and `pt` Playwright projects set locale: 'en-US' or locale: 'pt-BR'; the
+// locale segment used in goto() is derived from the project name.
+// 8 scenarios × 2 projects = 16 active tests total, 0 skips.
 import { expect, test } from '@playwright/test';
 
 const iPhoneSEViewport = { width: 375, height: 667 } as const;

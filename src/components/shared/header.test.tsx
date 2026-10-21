@@ -1,4 +1,4 @@
-import { render, screen } from '@/test/render';
+import { render, screen, within } from '@/test/render';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
@@ -35,19 +35,26 @@ vi.mock('./deferred-command-palette', async () => {
 import { Header } from './header';
 
 describe('<Header />', () => {
-  it('renders the brand mark image next to the wordmark', () => {
+  it('renders the terminal logo as the home link with the localized name', () => {
     render(<Header />, { locale: 'en' });
 
-    // Brand link has aria-label "Luiz Pansarini — home"
-    const brandLink = screen.getByRole('link', { name: /Luiz Pansarini/i });
-    expect(brandLink).toBeInTheDocument();
-    // The Link from next-intl prepends the locale; href will be /en
-    expect(brandLink.getAttribute('href')).toMatch(/^\/(en|pt)?/);
-    expect(brandLink).toHaveTextContent('Luiz Pansarini');
-    expect(brandLink.querySelector('img')).toHaveAttribute(
-      'src',
-      expect.stringContaining('pansarini-mark'),
+    const brandLink = screen.getByRole('link', { name: 'Luiz Pansarini — home' });
+    expect(brandLink).toHaveAttribute('href', '/en');
+    expect(brandLink).toHaveTextContent('>pansarini');
+    expect(brandLink.querySelector('img')).toBeNull();
+  });
+
+  it('renders the localized nav links and contact CTA', () => {
+    render(<Header />, { locale: 'pt' });
+
+    const nav = screen.getByRole('navigation', { name: 'Principal' });
+    expect(within(nav).getByRole('link', { name: 'projetos' })).toHaveAttribute(
+      'href',
+      '/pt/projects',
     );
+    expect(within(nav).getByRole('link', { name: 'blog' })).toHaveAttribute('href', '/pt/blog');
+    expect(within(nav).getByRole('link', { name: 'agora' })).toHaveAttribute('href', '/pt/now');
+    expect(screen.getByRole('link', { name: 'contato' })).toHaveAttribute('href', '/pt#contact');
   });
 
   it('renders the locale toggle buttons (PT and EN)', () => {
@@ -57,20 +64,12 @@ describe('<Header />', () => {
     expect(screen.getByRole('button', { name: /^PT$/ })).toBeInTheDocument();
   });
 
-  it('renders the theme toggle button', () => {
+  it('renders the pause-motion toggle and no theme toggle', () => {
     render(<Header />, { locale: 'en' });
 
-    // ThemeToggle renders a button with aria-label "Toggle theme"
-    const themeBtn = screen.getByRole('button', { name: /toggle theme/i });
-    expect(themeBtn).toBeInTheDocument();
-    expect(themeBtn).toHaveAttribute('aria-pressed');
-  });
-
-  it('renders the command palette trigger button between locale and theme toggles', () => {
-    render(<Header />, { locale: 'en' });
-
-    const trigger = screen.getByRole('button', { name: /open command palette/i });
-    expect(trigger).toBeInTheDocument();
+    const motion = screen.getByRole('button', { name: 'Pause animations' });
+    expect(motion).toHaveAttribute('aria-pressed', 'false');
+    expect(screen.queryByRole('button', { name: /theme/i })).not.toBeInTheDocument();
   });
 
   it('clicking the palette trigger opens the command palette dialog', async () => {
@@ -79,30 +78,25 @@ describe('<Header />', () => {
 
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
 
-    const trigger = screen.getByRole('button', { name: /open command palette/i });
-    await user.click(trigger);
+    await user.click(screen.getByRole('button', { name: /open command palette/i }));
 
     expect(screen.getByRole('dialog')).toBeInTheDocument();
   });
 
-  it('trigger appears after locale toggle and before theme toggle in DOM order', () => {
+  it('orders the controls locale toggle, palette trigger, motion toggle', () => {
     render(<Header />, { locale: 'en' });
 
     const allButtons = screen.getAllByRole('button');
-    const localeEnIdx = allButtons.findIndex((b) => b.textContent?.trim() === 'EN');
-    const localeCtrlIdx = allButtons.findIndex((b) =>
-      /switch language/i.test(b.getAttribute('aria-label') ?? ''),
-    );
+    const localeIdx = allButtons.findIndex((b) => b.textContent?.trim() === 'EN');
     const triggerIdx = allButtons.findIndex((b) =>
       /open command palette/i.test(b.getAttribute('aria-label') ?? ''),
     );
-    const themeIdx = allButtons.findIndex((b) =>
-      /toggle theme/i.test(b.getAttribute('aria-label') ?? ''),
+    const motionIdx = allButtons.findIndex(
+      (b) => b.getAttribute('aria-label') === 'Pause animations',
     );
 
-    // LocaleToggle buttons appear before the palette trigger
-    expect(Math.max(localeEnIdx, localeCtrlIdx)).toBeLessThan(triggerIdx);
-    // Palette trigger appears before the theme toggle
-    expect(triggerIdx).toBeLessThan(themeIdx);
+    expect(localeIdx).toBeGreaterThanOrEqual(0);
+    expect(localeIdx).toBeLessThan(triggerIdx);
+    expect(triggerIdx).toBeLessThan(motionIdx);
   });
 });

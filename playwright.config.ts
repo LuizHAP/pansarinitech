@@ -1,9 +1,8 @@
 // playwright.config.ts
 // Phase 5 D-11: 1 retry in CI (was 2 — overly forgiving, masks flake);
 // Phase 5 D-09 + D-10: tests/e2e.spec.ts runs ONCE on a single chromium
-// `e2e` project, not 4× across the en/pt × light/dark axe matrix
-// (RESEARCH §A4 — without testIgnore the spec would multiply CI minutes
-// for no behavioral coverage gain).
+// `e2e` project, not once per locale project (without testIgnore the spec
+// would multiply CI minutes for no behavioral coverage gain).
 import { defineConfig } from '@playwright/test';
 
 const PORT = process.env.PLAYWRIGHT_PORT ?? '3000';
@@ -33,29 +32,17 @@ export default defineConfig({
     baseURL: `http://localhost:${PORT}`,
   },
 
-  // 4 axe matrix projects — Pitfall 10 Method B: colorScheme triggers
-  // next-themes enableSystem to apply .dark. tests/e2e.spec.ts is ignored
-  // here so it does NOT run 4× — it runs once on the dedicated `e2e`
-  // project below (Phase 5 RESEARCH §A4).
+  // Public pages have one fixed palette, so the a11y and iPhone SE specs run once per locale.
+  // tests/e2e.spec.ts is ignored here and runs once on the `e2e` project below.
   projects: [
     {
-      name: 'en-light',
-      use: { colorScheme: 'light', locale: 'en-US' },
+      name: 'en',
+      use: { locale: 'en-US' },
       testIgnore: 'tests/e2e.spec.ts',
     },
     {
-      name: 'en-dark',
-      use: { colorScheme: 'dark', locale: 'en-US' },
-      testIgnore: 'tests/e2e.spec.ts',
-    },
-    {
-      name: 'pt-light',
-      use: { colorScheme: 'light', locale: 'pt-BR' },
-      testIgnore: 'tests/e2e.spec.ts',
-    },
-    {
-      name: 'pt-dark',
-      use: { colorScheme: 'dark', locale: 'pt-BR' },
+      name: 'pt',
+      use: { locale: 'pt-BR' },
       testIgnore: 'tests/e2e.spec.ts',
     },
     // Phase 5 D-09/D-10: dedicated chromium project for e2e flows.
