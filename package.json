@@ -14,6 +14,7 @@
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
     "format": "biome format --write .",
+    "icons": "node scripts/generate-icons.mjs",
     "verify:static": "node scripts/check-static-rendering.mjs",
     "verify:data": "tsx scripts/check-data.ts",
     "verify:projects": "node scripts/check-mdx-content.mjs --kind=projects",
