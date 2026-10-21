@@ -42,20 +42,20 @@ default no 16 deixa o ciclo de dev na casa dos ~80ms em vez de ~800ms. O React
 `react-hook-form`: a futura camada de formulário de contato cabe inteira em
 uma Server Action mais um schema Zod. Sem biblioteca de formulário no cliente.
 
-**Tailwind v4 com cores OKLCH.** A virada do v4 para configuração CSS-first
-— sem `tailwind.config.js`, só um bloco `@theme` no `globals.css` — tornou a
-paleta Jedi/Sith natural de expressar como tokens semânticos. OKLCH dá cor
-perceptualmente uniforme: o vermelho do sabre Sith parar em
-`oklch(54% 0.21 28)` em vez de um HSL arbitrário foi uma história de contraste
-(seção seguinte). O motor de build migrou para Lightning CSS; o efeito
-colateral é uma compilação cerca de dez vezes mais rápida, o que se acumula
-nas quatro rodadas da matriz axe-core no CI.
+**Tailwind v4 com tokens CSS-first.** A virada do v4 para configuração
+CSS-first — sem `tailwind.config.js`, só um bloco `@theme` no `globals.css` —
+tornou a paleta natural de expressar como tokens semânticos. A primeira
+paleta foi escrita em OKLCH. Os tokens atuais de ink, paper e signal são hex
+puro, e os números de contraste deles estão mais abaixo. O motor de build
+migrou para Lightning CSS; o efeito colateral é uma compilação cerca de dez
+vezes mais rápida, o que se acumula nas quatro rodadas da matriz axe-core no
+CI.
 
 **Shadcn em vez de uma biblioteca de componentes.** Shadcn não é uma
 biblioteca. É um catálogo de primitivos sem estilo, no esquema copia-e-cola.
 Soa retrógrado até a terceira vez que uma biblioteca pré-pronta força um
-workaround para um bug de contraste no modo Sith — aí ter o código-fonte fica
-óbvio. A desvantagem é que não existe "upgrade do Shadcn 1.0 para o 2.0." A
+workaround para um bug de contraste no modo escuro — aí ter o código-fonte
+fica óbvio. A desvantagem é que não existe "upgrade do Shadcn 1.0 para o 2.0." A
 vantagem é a mesma: não existe upgrade do Shadcn 1.0 para o 2.0.
 
 ## Bilíngue via next-intl
@@ -89,26 +89,41 @@ o número de namespaces passar de uns 200, dividir por arquivo é overhead. O
 gate de build é paridade bilíngue total: toda chave em EN precisa existir em
 PT e vice-versa, validado antes do `next build`.
 
-## Tematização Jedi/Sith
+## A identidade de terminal
 
-O `next-themes` cuida da persistência e do bootstrap sem flash. O Tailwind v4
-resolve as variáveis via `@custom-variant dark (&:where(.dark, .dark *))` no
-`globals.css`, substituindo o config `darkMode: 'class'` do v3 que não existe
-mais.
+A primeira versão saiu com dois temas atrás de um toggle. Em outubro de 2026
+troquei os dois por uma paleta fixa: ink `#0E0F0C`, paper `#EEECE6` e o azul
+signal `#2F3BFF`, declarados como tokens `@theme` no `globals.css`. A paleta
+vale só dentro de `html.site`, então só as páginas públicas recebem. Admin e
+preview continuam nos tokens claro/escuro do shadcn via `next-themes`.
 
-A história interessante é a correção de contraste. O primeiro vermelho de
-sabre Sith parou em `oklch(58% 0.21 28)` — visualmente icônico em uma tela
-boa, mas `text-primary` sobre o fundo do body marcou 3.67:1 na sondagem de
-contraste do axe-core. WCAG 2.1 AA pede 4.5:1 para texto de corpo. A primeira
-rodada da matriz já falhou na primeira build verde.
+As páginas alternam seções ink, paper e signal. Cada seção recebe uma classe
+`.surface-ink`, `.surface-paper` ou `.surface-accent`, e cada classe
+redefine o conjunto inteiro de variáveis do shadcn: background, foreground,
+card, popover, muted, accent, border, input, primary, ring. O conjunto
+inteiro importa. Um componente que lê uma variável que a superfície não
+redefiniu herda o valor do ink, e aparece um card escuro no meio de uma seção
+paper.
 
-Dois caminhos. Escurecer o tom do sabre, ou mudar o padrão de uso. Fizemos
-os dois. O primário Sith foi para `oklch(54% 0.21 28)` no toggle e em botões,
-onde a direção é `bg-primary text-primary-foreground` — esse par é AA-clean
-por construção. Para acentos inline como o link "Ver todos" do
-`FeaturedProjectsTeaser`, o padrão virou
-`text-foreground decoration-primary decoration-2 underline-offset-4`. Mesmo
-visual de sabre, foreground AA-clean.
+A tipografia usa duas famílias carregadas com `next/font/google` em
+`src/lib/fonts.ts`: Bricolage Grotesque para títulos e texto, IBM Plex Mono
+para navegação, botões, labels e metadados. O logo do header é um prompt
+`>pansarini` com um cursor de bloco piscando.
+
+No desktop, um campo de cubos em Three.js fica atrás do hero. Ele carrega sob
+demanda e só quando `(min-width: 1024px) and (pointer: fine) and
+(prefers-reduced-motion: no-preference)` bate, então o celular nunca baixa
+esse código. Um controle no header pausa toda animação em loop, incluindo o
+cursor e o campo de cubos, que é o que o WCAG 2.2.2 pede. Cmd/Ctrl+K abre o
+command palette, e digitar `whoami` fora de um campo de texto dispara um
+easter egg.
+
+Conferi a paleta com números em vez de confiar no olho. Azul signal sobre
+paper mede 5.57:1, e texto paper numa seção signal é o mesmo par, então
+também 5.57:1. Paper sobre ink mede 16.27:1. A armadilha era azul signal
+sobre ink: 2.92:1, abaixo do mínimo de 3:1 para anel de foco e bem abaixo de
+4.5:1 para texto. Nas superfícies ink, o anel de foco e o texto dos badges
+inline apontam para um azul mais claro, `#8F96FF`, que mede 7.30:1.
 
 O destaque de sintaxe dual-theme da Phase 3 bateu na mesma parede. O
 `github-light` puro falhava em AA nos tokens amarelo-laranja: `#e36209`
@@ -157,15 +172,15 @@ em toda execução, menos configs para manter sincronizadas. A regra
 idêntica. Removi o `eslint.config.mjs` do output do `create-next-app` e nunca
 olhei para trás.
 
-**Aurebesh como fonte só decorativa, com plano de fallback.** A primeira
-tentativa de baixar FT Aurebesh de um site de distribuição de fontes bateu em
-um gate de distribuição — a URL devolveu 60KB de HTML de formulário em vez do
-binário. O fallback, AurekFonts/Aurebesh_Rodian (licença MIT), funcionou e
-pesa 6.8KB em woff2. Licença e procedência ficam em
-`public/fonts/LICENSE-aurebesh.txt`. A lição: ao consumir assets OFL ou MIT,
-verifique o cabeçalho do binário (`file caminho/da/fonte.ttf`) antes de
-assumir que o download deu certo. Um `.html` disfarçado de `.ttf` corrompe
-silenciosamente a OG image gerada via Satori.
+**Confira o binário da fonte antes de confiar no download.** A primeira
+versão tinha uma fonte decorativa de título, e a primeira tentativa de
+baixá-la bateu em um gate de distribuição: a URL devolveu 60KB de HTML de
+formulário em vez do binário. A fonte saiu, a lição ficou. Ao consumir assets
+OFL ou MIT, verifique o cabeçalho do binário (`file caminho/da/fonte.ttf`)
+antes de assumir que o download deu certo. Um `.html` disfarçado de `.ttf`
+corrompe silenciosamente a OG image gerada via Satori. Hoje as OG images usam
+um subset da Bricolage Grotesque em `src/app/fonts/bricolage-800.ttf`, com a
+licença OFL commitada ao lado, em `LICENSE-bricolage.txt`.
 
 **Realidade do free tier do Vercel.** O planejamento citava "2.500 eventos
 por mês" para Web Analytics, vindo de dados de treinamento mais antigos. O
@@ -179,11 +194,14 @@ verifique preço no momento do planejamento, não da memória do training-cutoff
 Cinco coisas adiadas para a v2, cada uma com motivo.
 
 Um command palette Cmd+K. Bom para power users; recrutadores não usam. Phase
-5 se o launch indicar necessidade.
+5 se o launch indicar necessidade. Acabou saindo onze dias depois, e continua
+lá no Cmd/Ctrl+K.
 
 View Transitions no toggle de tema. Chromium e Safari 18+ entregam a API, e
 usuários com `prefers-reduced-motion` recebem o fallback estático automático.
-Phase 5 polish — o toggle já é o momento mais ornado de UX no site.
+Phase 5 polish — o toggle já é o momento mais ornado de UX no site. Saiu
+mesmo na Phase 5, e o redesign de outubro de 2026 removeu o efeito junto com
+o toggle: com uma paleta fixa, não sobrou nada para alternar.
 
 O domínio próprio `pansarini.tech`. Comprado, ainda não apontado. A URL
 `*.vercel.app` resolve bem para o launch v1 e ainda ganha de graça os headers

@@ -41,18 +41,17 @@ landed `useActionState` and `useFormStatus`, which removed the case for
 `react-hook-form`: the eventual contact-form layer collapses to a Server
 Action plus a Zod schema. No client form library required.
 
-**Tailwind v4 with OKLCH colors.** The v4 shift to CSS-first config — no
+**Tailwind v4 with CSS-first tokens.** The v4 shift to CSS-first config — no
 `tailwind.config.js`, only a `@theme` block in `globals.css` — made the
-Jedi/Sith palette natural to express as semantic tokens. OKLCH gave
-perceptually uniform color: the Sith saber-red landing at
-`oklch(54% 0.21 28)` rather than an arbitrary HSL was a contrast story (next
-section). The build engine moved to Lightning CSS; the side effect is roughly
-ten-times faster builds, which compounds across four axe-core matrix runs in
-CI.
+palette natural to express as semantic tokens. The first palette was written
+in OKLCH. The current ink, paper and signal tokens are plain hex, and their
+contrast numbers are further down. The build engine moved to Lightning CSS;
+the side effect is roughly ten-times faster builds, which compounds across
+four axe-core matrix runs in CI.
 
 **Shadcn over a component library.** Shadcn is not a library. It is a
 copy-paste catalog of unstyled primitives. That feels regressive until the
-third time a prebuilt library forces a workaround for a Sith-mode contrast
+third time a prebuilt library forces a workaround for a dark-mode contrast
 bug — at which point owning the source is obvious. The downside is that there
 is no "Shadcn 1.0 → 2.0 upgrade." The upside is that there is no Shadcn 1.0 →
 2.0 upgrade.
@@ -87,26 +86,40 @@ Until namespace count exceeds about 200 keys, splitting into per-namespace
 files is overhead. The build-time gate is full bilingual parity: every key in
 EN must exist in PT and vice versa, validated before `next build`.
 
-## Jedi/Sith theming
+## The terminal identity
 
-`next-themes` does the persistence and the no-flash bootstrap. Tailwind v4
-does the variable resolution via `@custom-variant dark (&:where(.dark,
-.dark *))` in `globals.css`, replacing v3's `darkMode: 'class'` config that no
-longer exists.
+The first version shipped two themes behind a toggle. In October 2026 I
+replaced both with one fixed palette: ink `#0E0F0C`, paper `#EEECE6` and
+signal blue `#2F3BFF`, declared as `@theme` tokens in `globals.css`. The
+palette is scoped to `html.site`, so only the public pages get it. Admin and
+preview still run on the shadcn light/dark tokens through `next-themes`.
 
-The interesting story is the contrast fix. The first Sith saber-red landed at
-`oklch(58% 0.21 28)` — visually iconic on a high-end display, but `text-primary`
-on the body background measured 3.67:1 against axe-core's contrast probe.
-WCAG 2.1 AA wants 4.5:1 for body text. The matrix run failed on the very first
-green build.
+Pages alternate between ink, paper and signal sections. Each section takes a
+`.surface-ink`, `.surface-paper` or `.surface-accent` class, and each class
+re-points the full shadcn variable set: background, foreground, card,
+popover, muted, accent, border, input, primary, ring. The full set matters. A
+component that reads a variable the surface did not override inherits the
+ink value, and an ink card shows up on a paper section.
 
-Two paths forward. Shift the saber tone darker, or change the usage pattern.
-We did both. The Sith primary moved to `oklch(54% 0.21 28)` for the toggle and
-buttons, where the direction is `bg-primary text-primary-foreground` — that
-pair is AA-clean by construction. For inline accents like the
-`FeaturedProjectsTeaser` "View all" link, the pattern became
-`text-foreground decoration-primary decoration-2 underline-offset-4`. Same
-saber visual, AA-clean foreground.
+Type is two families loaded with `next/font/google` in `src/lib/fonts.ts`:
+Bricolage Grotesque for display and body, IBM Plex Mono for navigation,
+buttons, labels and meta. The header logo is a `>pansarini` prompt with a
+blinking block cursor.
+
+On desktop a Three.js cube field sits behind the hero. It loads lazily and
+only when `(min-width: 1024px) and (pointer: fine) and
+(prefers-reduced-motion: no-preference)` matches, so phones never download
+it. A control in the header pauses every looping animation, the cursor and
+the cube field included, which is what WCAG 2.2.2 asks for. Cmd/Ctrl+K opens
+the command palette, and typing `whoami` outside a text field triggers an
+easter egg.
+
+I checked the palette with numbers instead of trusting how it looked. Signal
+blue on paper measures 5.57:1, and paper text on a signal section is the same
+pair, so also 5.57:1. Paper on ink measures 16.27:1. The trap was signal blue
+on ink: 2.92:1, under the 3:1 floor for focus rings and far under 4.5:1 for
+text. On ink surfaces the ring and the inline badge text point to a softer
+blue, `#8F96FF`, which measures 7.30:1.
 
 The dual-theme syntax-highlight in Phase 3 hit the same wall. Plain
 `github-light` failed AA on yellow-orange tokens — `#e36209` against `#ffffff`
@@ -152,15 +165,15 @@ every run, fewer configs to keep in sync. The `noRestrictedImports` rule
 replaced ESLint's; the semantic intent is identical. Removed the
 `eslint.config.mjs` from `create-next-app`'s output and never looked back.
 
-**Aurebesh as a decorative-only font with a fallback story.** The first
-attempt to download FT Aurebesh from a font distribution site hit a
-distribution gate — the URL returned 60KB of HTML form-page instead of a
-binary. The fallback, AurekFonts/Aurebesh_Rodian (MIT-licensed), works fine
-and ships at 6.8KB woff2. The license and provenance are committed to
-`public/fonts/LICENSE-aurebesh.txt`. The lesson: when ingesting OFL or MIT
+**Check the font binary before trusting the download.** The first version
+had a decorative display font, and the first attempt to download it hit a
+distribution gate: the URL returned 60KB of HTML form page instead of a
+binary. The font is gone, the lesson stayed. When ingesting OFL or MIT
 assets, verify the binary header (`file path/to/font.ttf`) before assuming
 the download succeeded. A `.html` masquerading as `.ttf` will silently
-corrupt your Satori OG image.
+corrupt your Satori OG image. The OG images now use a Bricolage Grotesque
+subset at `src/app/fonts/bricolage-800.ttf`, with its OFL license committed
+next to it as `LICENSE-bricolage.txt`.
 
 **Vercel free-tier reality check.** Planning quoted "2,500 events per month"
 for Web Analytics from older training data. The actual 2026 Hobby tier is
@@ -174,11 +187,14 @@ training-cutoff memory.
 Five things are deferred to v2, and each has a reason.
 
 A Cmd+K command palette. Nice for power users; recruiters do not use them.
-Phase 5 if the launch reveals a need.
+Phase 5 if the launch reveals a need. It shipped eleven days later anyway,
+and it is still there on Cmd/Ctrl+K.
 
 View Transitions on the theme toggle. Chromium and Safari 18+ ship the API,
 and reduced-motion users get the static fallback automatically. Phase 5
-polish — the toggle is already the most ornate UX moment on the site.
+polish — the toggle is already the most ornate UX moment on the site. It
+did ship in Phase 5, and the October 2026 redesign removed it together with
+the toggle: with one fixed palette there was nothing left to toggle.
 
 The custom domain `pansarini.tech`. Bought, not yet pointed. The
 `*.vercel.app` URL is fine for v1 launch and gets Vercel's automatic

@@ -57,10 +57,10 @@
       <guid>https://pansarini.tech/blog/ai-in-development</guid>
     </item>
     <item>
-      <title>View Transitions API no Alternador de Tema</title>
+      <title>Olhando para trás: View Transitions no antigo alternador de tema</title>
       <link>https://pansarini.tech/blog/view-transitions-theme-toggle</link>
       <pubDate>Tue, 19 May 2026 00:00:00 GMT</pubDate>
-      <description>Como conectei a View Transitions API a uma revelação radial via clip-path no alternador de tema, com fallback de dois níveis para movimento reduzido e enhancement progressivo para navegadores antigos.</description>
+      <description>Um olhar para o alternador claro/escuro que este site teve até outubro de 2026: revelação radial via clip-path com a View Transitions API, fallback de dois níveis para movimento reduzido, fallback de teclado para o ponto do clique e por que o redesign o removeu.</description>
       <guid>https://pansarini.tech/blog/view-transitions-theme-toggle</guid>
     </item>
     <item>

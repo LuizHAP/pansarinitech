@@ -57,10 +57,10 @@
       <guid>https://pansarini.tech/blog/ai-in-development</guid>
     </item>
     <item>
-      <title>View Transitions API on the Theme Toggle</title>
+      <title>Looking back: View Transitions on the old theme toggle</title>
       <link>https://pansarini.tech/blog/view-transitions-theme-toggle</link>
       <pubDate>Tue, 19 May 2026 00:00:00 GMT</pubDate>
-      <description>How I wired the View Transitions API to a radial clip-path reveal on the theme toggle, with a two-layer reduced-motion fallback and a progressive enhancement path for older browsers.</description>
+      <description>A look back at the light/dark toggle this site had until October 2026: a View Transitions radial clip-path reveal, a two-layer reduced-motion fallback, a keyboard fallback for the click point, and why the redesign removed it.</description>
       <guid>https://pansarini.tech/blog/view-transitions-theme-toggle</guid>
     </item>
     <item>
