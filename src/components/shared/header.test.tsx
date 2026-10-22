@@ -39,7 +39,7 @@ describe('<Header />', () => {
     render(<Header />, { locale: 'en' });
 
     const brandLink = screen.getByRole('link', { name: 'Luiz Pansarini — home' });
-    expect(brandLink).toHaveAttribute('href', '/en');
+    expect(brandLink).toHaveAttribute('href', '/');
     expect(brandLink).toHaveTextContent('>pansarini');
     expect(brandLink.querySelector('img')).toBeNull();
   });
@@ -50,11 +50,11 @@ describe('<Header />', () => {
     const nav = screen.getByRole('navigation', { name: 'Principal' });
     expect(within(nav).getByRole('link', { name: 'projetos' })).toHaveAttribute(
       'href',
-      '/pt/projects',
+      '/projects',
     );
-    expect(within(nav).getByRole('link', { name: 'blog' })).toHaveAttribute('href', '/pt/blog');
-    expect(within(nav).getByRole('link', { name: 'agora' })).toHaveAttribute('href', '/pt/now');
-    expect(screen.getByRole('link', { name: 'contato' })).toHaveAttribute('href', '/pt#contact');
+    expect(within(nav).getByRole('link', { name: 'blog' })).toHaveAttribute('href', '/blog');
+    expect(within(nav).getByRole('link', { name: 'agora' })).toHaveAttribute('href', '/now');
+    expect(screen.getByRole('link', { name: 'contato' })).toHaveAttribute('href', '/#contact');
   });
 
   it('renders the locale toggle buttons (PT and EN)', () => {

@@ -39,7 +39,7 @@ export default async function ProjectsListingPage({
   return (
     <>
       <JsonLd
-        schema={buildBreadcrumbList(locale, [
+        schema={buildBreadcrumbList([
           { name: 'Home', path: '' },
           { name: t('projects.title'), path: '/projects' },
         ])}

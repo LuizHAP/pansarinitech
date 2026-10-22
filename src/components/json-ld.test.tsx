@@ -53,9 +53,9 @@ describe('AUTHOR_PERSON export', () => {
 });
 
 describe('buildBreadcrumbList', () => {
-  it('builds a BreadcrumbList with 1-based positions and locale-prefixed absolute URLs', () => {
+  it('builds a BreadcrumbList with 1-based positions and absolute URLs', () => {
     expect(
-      buildBreadcrumbList('pt', [
+      buildBreadcrumbList([
         { name: 'Home', path: '' },
         { name: 'Projetos', path: '/projects' },
       ]),
@@ -63,8 +63,8 @@ describe('buildBreadcrumbList', () => {
       '@context': 'https://schema.org',
       '@type': 'BreadcrumbList',
       itemListElement: [
-        { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE_URL}/pt` },
-        { '@type': 'ListItem', position: 2, name: 'Projetos', item: `${SITE_URL}/pt/projects` },
+        { '@type': 'ListItem', position: 1, name: 'Home', item: SITE_URL },
+        { '@type': 'ListItem', position: 2, name: 'Projetos', item: `${SITE_URL}/projects` },
       ],
     });
   });

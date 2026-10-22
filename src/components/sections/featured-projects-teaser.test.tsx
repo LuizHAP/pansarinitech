@@ -79,7 +79,7 @@ describe('<FeaturedProjectsTeaser />', () => {
     render(await FeaturedProjectsTeaser({ locale: 'en' }), { locale: 'en' });
 
     const card = screen.getByRole('link', { name: /Ecommerce Platform/ });
-    expect(card).toHaveAttribute('href', '/en/projects/machinery-partner-ecommerce');
+    expect(card).toHaveAttribute('href', '/projects/machinery-partner-ecommerce');
     expect(card).toHaveTextContent('pansarini.tech/projects/machinery-partner-ecommerce');
     expect(card).toHaveTextContent('Lead · 2024');
     expect(
@@ -105,11 +105,8 @@ describe('<FeaturedProjectsTeaser />', () => {
 
     expect(screen.getByRole('link', { name: /View all projects/i })).toHaveAttribute(
       'href',
-      '/en/projects',
+      '/projects',
     );
-    expect(screen.getByRole('link', { name: /Read the blog/i })).toHaveAttribute(
-      'href',
-      '/en/blog',
-    );
+    expect(screen.getByRole('link', { name: /Read the blog/i })).toHaveAttribute('href', '/blog');
   });
 });

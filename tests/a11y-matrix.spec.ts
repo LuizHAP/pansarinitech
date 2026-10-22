@@ -6,16 +6,13 @@
 // contrast check on the two MDX-heavy pages in each locale.
 // 0 violations required (D-18 fail-build on first violation).
 //
-// localePrefix:'always' — every route is served under /en or /pt. The locale
-// segment used in goto() is derived from the project name.
+// localePrefix:'never' — the en/pt projects set Accept-Language, which picks
+// the locale for the unprefixed URL (no geo header outside Vercel).
 import { AxeBuilder } from '@axe-core/playwright';
 import { type Page, expect, test } from '@playwright/test';
 
-const localeFor = (projectName: string) => (projectName.startsWith('pt') ? 'pt' : 'en');
-
-// `path` is the locale-free suffix ('' for home), prefixed with /en or /pt at goto() time.
 const PAGES = [
-  { path: () => '', desc: 'home' },
+  { path: () => '/', desc: 'home' },
   { path: () => '/non-existent-route-for-404', desc: '404' },
   { path: () => '/projects', desc: 'projects-listing' },
   { path: () => '/projects/machinery-partner-ecommerce', desc: 'projects-case-study' },
@@ -41,10 +38,8 @@ async function revealFirstCopyButton(page: Page) {
 
 test.describe('a11y matrix — WCAG 2.1 AA across en/pt × 10 pages', () => {
   for (const { path, desc } of PAGES) {
-    test(`${desc}`, async ({ page }, testInfo) => {
-      const locale = localeFor(testInfo.project.name);
-
-      await page.goto(`/${locale}${path()}`);
+    test(`${desc}`, async ({ page }) => {
+      await page.goto(path());
 
       // Lets any remaining RevealGroup/RevealItem stagger finish before axe samples styles.
       await page.waitForTimeout(800);
@@ -149,8 +144,7 @@ const MDX_PAGES = ['/blog/ai-workspace-jean-opencode', '/projects/uaubox-design-
 test.describe('MDX components on paper — computed non-text and badge contrast', () => {
   for (const path of MDX_PAGES) {
     test(`contrast ${path}`, async ({ page }, testInfo) => {
-      const locale = localeFor(testInfo.project.name);
-      await page.goto(`/${locale}${path}`);
+      await page.goto(path);
       await page.waitForTimeout(800);
 
       const pairs = await page.evaluate(measurePairs);

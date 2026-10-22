@@ -1,4 +1,3 @@
-import { type Locale, routing } from '@/i18n/routing';
 import { getPosts } from '@/lib/mdx/blog';
 import { getProjects } from '@/lib/mdx/projects';
 import type { MetadataRoute } from 'next';
@@ -8,8 +7,6 @@ const SITE_URL =
   (process.env.VERCEL_ENV === 'production' && process.env.VERCEL_PROJECT_PRODUCTION_URL
     ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
     : 'https://pansarini.dev');
-
-const HREFLANG: Record<Locale, string> = { en: 'en', pt: 'pt-BR' };
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const projects = await getProjects('en');
@@ -36,22 +33,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const allEntries = [...staticEntries, ...projectEntries, ...postEntries];
 
-  return allEntries.flatMap(({ path, priority, lastModified }) =>
-    routing.locales.map((locale) => {
-      const url = `${SITE_URL}/${locale}${path}`;
-      const languages: Record<string, string> = {};
-      for (const l of routing.locales) {
-        languages[HREFLANG[l]] = `${SITE_URL}/${l}${path}`;
-      }
-      languages['x-default'] = `${SITE_URL}/${routing.defaultLocale}${path}`;
-
-      return {
-        url,
-        lastModified,
-        changeFrequency: 'weekly' as const,
-        priority,
-        alternates: { languages },
-      };
-    }),
-  );
+  return allEntries.map(({ path, priority, lastModified }) => ({
+    url: `${SITE_URL}${path}`,
+    lastModified,
+    changeFrequency: 'weekly' as const,
+    priority,
+  }));
 }

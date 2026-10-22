@@ -16,28 +16,25 @@ import { join } from 'node:path';
 // ---------------------------------------------------------------------------
 
 const RULES = [
-  // localePrefix:'always' — every route is served under /en or /pt. A bare
-  // goto('/') or toHaveURL(/^\/blog/) targets a URL that middleware 307s away
-  // from, so tests must use the explicit locale-prefixed path.
+  // localePrefix:'never' — /en and /pt are legacy prefixes that the proxy
+  // 308s away, setting the locale cookie on the way. A test that goto()s a
+  // prefixed path tests the redirect instead of the page, so pick the locale
+  // with the NEXT_LOCALE cookie or the project's Accept-Language.
   {
-    id: 'LOCALE_PREFIX_REQUIRED_IN_TEST_GOTO',
-    description: "page.goto() with a locale-free path (localePrefix is 'always')",
+    id: 'NO_LOCALE_PREFIX_IN_TEST_GOTO',
+    description: "page.goto() with a legacy /en or /pt prefix (localePrefix is 'never')",
     // NOTE: the glob resolver below only expands '**' when it precedes at
     // least one more path segment held by a directory — it does not match
     // files sitting directly inside the '**' directory. All spec files live
     // flat under tests/, so 'tests/*.spec.ts' is used instead of 'tests/**/*.ts'
     // (which would silently resolve to zero files and make this rule a no-op).
     files: ['tests/*.spec.ts'],
-    // Flags goto('/'), goto('/blog'), goto('/does-not-exist'), etc. Allows
-    // goto('/en'), goto('/pt/...'), and template literals whose first segment
-    // is a dynamic locale (e.g. goto(`/${locale}${path}`)) — those derive the
-    // prefix from the Playwright project name at runtime. Also allows
-    // goto('/preview/...') and goto('/admin...'), which the proxy excludes from
-    // locale routing.
-    pattern: /goto\(\s*['"`]\/(?!en\b|pt\b|preview\b|admin\b|\$\{)[^'"`]*['"`]/,
+    // Flags goto('/en'), goto('/pt/blog') and goto(`/${locale}...`). Tests that
+    // cover the legacy redirect itself mark the line with `ci-safety: legacy-redirect`.
+    pattern: /goto\(\s*['"`]\/(en\b|pt\b|\$\{locale\})(?![^\n]*ci-safety: legacy-redirect)/,
     message:
-      "Prefix test URLs with the target locale, e.g. goto('/en/blog') or " +
-      "goto('/pt/blog'), to match localePrefix:'always'.",
+      "Use the unprefixed path, e.g. goto('/blog'), and set the NEXT_LOCALE cookie " +
+      'when the test needs PT.',
   },
   // gh pr edit has no --add-body flag. This breaks post-generation workflows
   // after the PR is created and the Vercel preview is deployed.

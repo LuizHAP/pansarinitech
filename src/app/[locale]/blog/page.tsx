@@ -44,7 +44,7 @@ export default async function BlogListingPage({
   return (
     <>
       <JsonLd
-        schema={buildBreadcrumbList(locale, [
+        schema={buildBreadcrumbList([
           { name: 'Home', path: '' },
           { name: t('blog.pageTitle'), path: '/blog' },
         ])}
