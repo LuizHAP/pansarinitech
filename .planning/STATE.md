@@ -169,6 +169,7 @@ Last activity: 2026-10-21 - Completed quick task 261021-bux: terminal icon set a
 | fast | Admin session cookie lasts 90 days instead of 8 hours | 2026-10-13 | 1fc85d7 | — |
 | fast | Lead stages Prévia enviada (after Prévia pronta) and Contraproposta (after Proposta) on the board and in the stage menu | 2026-10-13 | bdb447c | — |
 | fast | Admin Server Actions renew the session cookie to 90 days from now, so an open tab in use never logs out | 2026-10-13 | 2c5b1d0 | — |
+| fast | Personal project screenshots (Redzone Boss, DoAção, Starlimp) retaken from the live sites; Redzone Boss and DoAção link to them | 2026-10-22 | b4b96e3 | — |
 
 ### Risks Carried Forward
 

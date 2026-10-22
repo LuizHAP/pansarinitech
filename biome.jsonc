@@ -15,7 +15,8 @@
       "public/client-previews",
       "*.min.js",
       "pnpm-lock.yaml",
-      ".planning/**"
+      ".planning/**",
+      ".openqodex/**"
     ]
   },
   "formatter": {
