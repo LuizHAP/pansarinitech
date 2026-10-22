@@ -7,22 +7,19 @@
 // against the same `pnpm next start` web server that test:a11y uses
 // (configured in playwright.config.ts).
 //
-// localePrefix:'always' — every route is served under /en or /pt. The `en`
-// and `pt` Playwright projects set locale: 'en-US' or locale: 'pt-BR'; the
-// locale segment used in goto() is derived from the project name.
+// localePrefix:'never' — the `en` and `pt` Playwright projects set locale:
+// 'en-US' or locale: 'pt-BR', and that Accept-Language picks the locale for
+// the unprefixed URL. browser.newContext() does not inherit `use`, so the
+// project locale is passed through explicitly.
 // 8 scenarios × 2 projects = 16 active tests total, 0 skips.
 import { expect, test } from '@playwright/test';
 
 const iPhoneSEViewport = { width: 375, height: 667 } as const;
 
-const localeFor = (projectName: string) => (projectName.startsWith('pt') ? 'pt' : 'en');
-
 type Scenario = { path: string };
 
-// `path` is the locale-free suffix ('' for home) — prefixed with /en or /pt
-// at goto() time below, based on the running Playwright project's locale.
 const scenarios: Scenario[] = [
-  { path: '' },
+  { path: '/' },
   { path: '/now' },
   { path: '/projects' },
   { path: '/projects/machinery-partner-ecommerce' },
@@ -33,19 +30,18 @@ const scenarios: Scenario[] = [
 ];
 
 for (const { path } of scenarios) {
-  test(`iPhone SE 375px no horizontal overflow on ${path || '/'}`, async ({
-    browser,
-  }, testInfo) => {
-    const locale = localeFor(testInfo.project.name);
-    const url = `/${locale}${path}`;
-    const context = await browser.newContext({ viewport: iPhoneSEViewport });
+  test(`iPhone SE 375px no horizontal overflow on ${path}`, async ({ browser }, testInfo) => {
+    const context = await browser.newContext({
+      viewport: iPhoneSEViewport,
+      locale: testInfo.project.use.locale,
+    });
     try {
       const page = await context.newPage();
-      await page.goto(url);
+      await page.goto(path);
       const bodyScrollWidth = await page.evaluate(() => document.body.scrollWidth);
       expect(
         bodyScrollWidth,
-        `body.scrollWidth (${bodyScrollWidth}) must be <= 375 on iPhone SE for ${url}`,
+        `body.scrollWidth (${bodyScrollWidth}) must be <= 375 on iPhone SE for ${path}`,
       ).toBeLessThanOrEqual(375);
     } finally {
       await context.close();

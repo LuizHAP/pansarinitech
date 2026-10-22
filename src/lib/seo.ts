@@ -3,7 +3,6 @@ import type { Locale } from '@/i18n/routing';
 //
 // Centralized Next 16 Metadata API factory. Single source of truth for:
 //   - canonical URL generation
-//   - hreflang map (en + pt-BR + x-default)
 //   - openGraph + twitter card metadata
 //   - robots noindex on Vercel preview deploys (defense-in-depth alongside
 //     Plan 04-03's robots.txt + X-Robots-Tag header)
@@ -20,7 +19,7 @@ const OG_LOCALE: Record<Locale, string> = { en: 'en_US', pt: 'pt_BR' };
 
 export type BuildMetadataInput = {
   locale: Locale;
-  /** path AFTER the locale segment, e.g. "/blog/foo" or "" for home */
+  /** e.g. "/blog/foo" or "" for home */
   path: string;
   title: string;
   description: string;
@@ -43,10 +42,9 @@ export function buildMetadata(input: BuildMetadataInput): Metadata {
   } = input;
 
   const fullTitle = `${title} — ${SITE_NAME}`;
-  // Canonical must include the locale prefix (localePrefix:'always') and match
-  // the sitemap's URL style: `${SITE_URL}/${locale}${path}`, where path === ''
-  // for home (e.g. `https://x/en`, no trailing slash).
-  const canonicalUrl = `${SITE_URL}/${locale}${path || ''}`;
+  // localePrefix:'never' serves both locales from one URL, so there is no
+  // per-language URL to list as an hreflang alternate.
+  const canonicalUrl = `${SITE_URL}${path}`;
 
   // robots layer: per-page meta-tag noindex on Vercel preview deploys
   // (VERCEL_ENV defined but != 'production'). On local dev (VERCEL_ENV
@@ -77,14 +75,7 @@ export function buildMetadata(input: BuildMetadataInput): Metadata {
     // continues to use fullTitle explicitly below.
     title,
     description,
-    alternates: {
-      canonical: canonicalUrl,
-      languages: {
-        en: `${SITE_URL}/en${path || ''}`,
-        'pt-BR': `${SITE_URL}/pt${path || ''}`,
-        'x-default': `${SITE_URL}/en${path || ''}`,
-      },
-    },
+    alternates: { canonical: canonicalUrl },
     openGraph,
     twitter: {
       card: 'summary_large_image',

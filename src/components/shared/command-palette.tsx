@@ -37,7 +37,7 @@ import {
 import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 import { isPaletteShortcut, usePaletteModifier } from '../site/palette-shortcut';
-import { switchLocale } from './locale-toggle-action';
+import { changeLocale } from './change-locale';
 
 // ---------------------------------------------------------------------------
 // CommandPalette — controlled dialog shell + full command list
@@ -135,7 +135,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
           <CommandItem
             onSelect={() =>
               runCommand(() => {
-                switchLocale('pt');
+                changeLocale('pt');
               })
             }
           >
@@ -145,7 +145,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
           <CommandItem
             onSelect={() =>
               runCommand(() => {
-                switchLocale('en');
+                changeLocale('en');
               })
             }
           >

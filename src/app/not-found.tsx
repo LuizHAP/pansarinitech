@@ -5,10 +5,10 @@
 //   (Next 16 propagates dynamic context from root not-found.tsx to all sibling routes,
 //   making /[locale] go from ● SSG to ƒ Dynamic — which violates I18N-06).
 //
-// English-only: unmatched /en/* and /pt/* routes go to [locale]/not-found.tsx, so this
+// English-only: unmatched public routes go to [locale]/not-found.tsx, so this
 // only serves proxy-excluded paths (api, _next/static, files with an extension).
 //
-// A plain <a> to /en keeps client-side locale routing out of this static fallback.
+// A plain <a> keeps client-side locale routing out of this static fallback.
 import { bricolage, plexMono } from '@/lib/fonts';
 
 export default function RootNotFound() {
@@ -32,7 +32,7 @@ export default function RootNotFound() {
             />
           </h1>
           <a
-            href="/en"
+            href="/"
             className="mt-12 inline-flex rounded-[10px] bg-signal px-[26px] py-[18px] font-mono text-base font-semibold text-paper transition-[transform,background-color,color] hover:-translate-y-[3px] hover:bg-paper hover:text-ink"
           >
             Go back home

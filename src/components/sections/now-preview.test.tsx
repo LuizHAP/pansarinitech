@@ -33,7 +33,7 @@ describe('<NowPreview />', () => {
     render(<NowPreview />, { locale: 'en' });
 
     const link = screen.getByRole('link', { name: /See more on the \/now page/i });
-    expect(link).toHaveAttribute('href', '/en/now');
+    expect(link).toHaveAttribute('href', '/now');
   });
 
   it('renders the pt locale heading', () => {

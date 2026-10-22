@@ -8,7 +8,6 @@
 //   import JsonLd, { AUTHOR_PERSON, SITE_URL } from '@/components/json-ld'
 //   <JsonLd schema={{ "@context": "https://schema.org", "@type": "Article", ... }} />
 
-import type { Locale } from '@/i18n/routing';
 import { SITE_URL } from '@/lib/seo';
 export { SITE_URL };
 
@@ -33,7 +32,7 @@ interface BreadcrumbItem {
   path: string;
 }
 
-export function buildBreadcrumbList(locale: Locale, items: BreadcrumbItem[]) {
+export function buildBreadcrumbList(items: BreadcrumbItem[]) {
   return {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
@@ -41,7 +40,7 @@ export function buildBreadcrumbList(locale: Locale, items: BreadcrumbItem[]) {
       '@type': 'ListItem',
       position: index + 1,
       name: item.name,
-      item: `${SITE_URL}/${locale}${item.path}`,
+      item: `${SITE_URL}${item.path}`,
     })),
   };
 }

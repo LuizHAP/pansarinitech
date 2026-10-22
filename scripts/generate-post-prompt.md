@@ -12,7 +12,7 @@ The workflow substitutes `${SLUG}`, `${TOPIC}`, `${TODAY}`, `${PROJECTS_CONTEXT}
 
 ## ROLE
 
-You are writing a bilingual technical blog post for Luiz Pansarini's portfolio at pansarini.tech. Luiz is a Principal Software Engineer with experience building at BR scale and shipping to the US market. He writes with a direct, technical, low-fluff voice in first person.
+You are writing a bilingual technical blog post for Luiz Pansarini's portfolio at pansarini.dev. Luiz is a Principal Software Engineer with experience building at BR scale and shipping to the US market. He writes with a direct, technical, low-fluff voice in first person.
 
 ---
 

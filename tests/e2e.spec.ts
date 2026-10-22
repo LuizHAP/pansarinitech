@@ -4,78 +4,137 @@
 // en/pt axe projects. Server is `next start` against the existing `next build`
 // artifacts (D-07 — same as a11y-matrix).
 //
-// localePrefix:'always' — every route is served under /en or /pt. Tests goto()
-// the explicit locale-prefixed path rather than relying on the NEXT_LOCALE
-// cookie / Accept-Language to pick a locale for a locale-free URL.
-// The `e2e` project sets locale: 'en-US' as the default Accept-Language.
+// localePrefix:'never' — public routes carry no locale segment. The locale comes
+// from the NEXT_LOCALE cookie, then x-vercel-ip-country, then Accept-Language.
+// The `e2e` project sets locale: 'en-US' as the default Accept-Language, and
+// PT tests set the cookie with usePt() before navigating.
 //
-// 8 test.describe blocks:
+// 9 test.describe blocks:
 //   1. Locale switch + NEXT_LOCALE cookie                    (D-06 #1)
-//   2. Navigation preserves locale (home -> blog)            (D-06 #3)
-//   3. Resume PDF download per locale                        (D-06 #4)
-//   4. Localized 404 response status + terminal copy         (D-06 #5)
-//   5. Project case study route renders both locales         (D-06 #6)
-//   6. Hero 3D field loads only on desktop
-//   7. Client preview viewer (proxy-excluded, always noindex)
-//   8. Hidden admin for client previews (env-gated, noindex)
+//   2. Locale resolution and legacy /en, /pt redirects
+//   3. Navigation preserves locale (home -> blog)            (D-06 #3)
+//   4. Resume PDF download per locale                        (D-06 #4)
+//   5. Localized 404 response status + terminal copy         (D-06 #5)
+//   6. Project case study route renders both locales         (D-06 #6)
+//   7. Hero 3D field loads only on desktop
+//   8. Client preview viewer (proxy-excluded, always noindex)
+//   9. Hidden admin for client previews (env-gated, noindex)
 //
 // Selector notes:
 //   - Locale toggle is <button type="submit"> inside a <form>, NOT <a>. Use
 //     getByRole('button') with anchored regex /^pt$/i to avoid Pitfall 8.
 //   - Resume CTA in Hero is an <a href="..." download> — Playwright's
 //     waitForEvent('download') captures the click before navigation (Pitfall 4).
-//   - Nav-preserves-locale entry route is /pt (home page): the home-page
-//     FeaturedProjectsTeaser renders <Link href="/blog"> via the typed
-//     lib/i18n/navigation wrapper (D-08), which re-prefixes it with the
-//     active locale segment — with localePrefix:'always' the resolved URL is
-//     /pt/blog — exactly the contract Test #3 verifies.
-import { type Browser, expect, test } from '@playwright/test';
+import { type Browser, type BrowserContext, expect, test } from '@playwright/test';
+
+async function usePt(context: BrowserContext, baseURL: string | undefined) {
+  await context.addCookies([{ name: 'NEXT_LOCALE', value: 'pt', url: baseURL ?? '' }]);
+}
 
 test.describe('Locale switch + NEXT_LOCALE cookie persistence', () => {
-  test('toggling PT on /en/blog/{slug} sets NEXT_LOCALE cookie, redirects to /pt/..., and changes og:locale to pt_BR', async ({
+  test('toggling PT on /blog/{slug} sets NEXT_LOCALE cookie, keeps the URL, and changes og:locale to pt_BR', async ({
     page,
     context,
   }) => {
-    await page.goto('/en/blog/building-this-portfolio');
+    await page.goto('/blog/building-this-portfolio');
     // Locale toggle is a <form> with <button type="submit">PT</button>.
     // Anchored regex /^pt$/i matches the PT button exactly (Pitfall 8 — avoids
     // matching "Newsletter (PT)" or other loose substrings if added later).
     await page.getByRole('button', { name: /^pt$/i }).click();
-    // Wait for the Server Action redirect + Set-Cookie response to complete
-    // before reading cookies — the action sets NEXT_LOCALE in the response
-    // headers and the cookie is only visible after the redirect finishes.
-    await page.waitForLoadState('networkidle');
+    // The URL does not change, so wait on the reloaded document's <head>.
+    const ogLocale = page.locator('meta[property="og:locale"]');
+    await expect(ogLocale).toHaveAttribute('content', 'pt_BR');
+    await expect(page.locator('html')).toHaveAttribute('lang', 'pt-BR');
 
-    // switchLocale() strips the /en prefix and re-prefixes with /pt (D-03).
-    await expect(page).toHaveURL(/\/pt\/blog\/building-this-portfolio/);
+    await expect(page).toHaveURL(/\/blog\/building-this-portfolio$/);
 
     const cookies = await context.cookies();
     const localeCookie = cookies.find((c) => c.name === 'NEXT_LOCALE');
     expect(localeCookie?.value).toBe('pt');
 
+    // Pages prefetched in EN before the switch share these URLs, so a stale
+    // router cache would show EN copy here.
+    await page.getByRole('link', { name: 'projetos' }).first().click();
+    await expect(page).toHaveURL(/\/projects$/);
     // The client-side navigation briefly keeps the old <meta> next to the new one.
-    const ogLocale = page.locator('meta[property="og:locale"]');
     await expect(ogLocale).toHaveCount(1);
     await expect(ogLocale).toHaveAttribute('content', 'pt_BR');
   });
 });
 
+test.describe('Locale resolution and legacy prefix redirects', () => {
+  test('/ serves the page without redirecting to a locale prefix', async ({ request }) => {
+    const response = await request.get('/', { maxRedirects: 0 });
+    expect(response.status()).toBe(200);
+  });
+
+  test('legacy /pt/... 308s to the unprefixed path and keeps PT in the cookie', async ({
+    request,
+    baseURL,
+  }) => {
+    const response = await request.get('/pt/blog/building-this-portfolio?ref=x', {
+      maxRedirects: 0,
+    });
+    expect(response.status()).toBe(308);
+    expect(new URL(response.headers().location, baseURL).pathname).toBe(
+      '/blog/building-this-portfolio',
+    );
+    expect(new URL(response.headers().location, baseURL).search).toBe('?ref=x');
+    expect(response.headers()['set-cookie']).toMatch(/NEXT_LOCALE=pt/);
+  });
+
+  test('legacy /en 308s to the site root', async ({ request, baseURL }) => {
+    const response = await request.get('/en', { maxRedirects: 0 });
+    expect(response.status()).toBe(308);
+    expect(new URL(response.headers().location, baseURL).pathname).toBe('/');
+  });
+
+  test('legacy dated blog slug under a prefix lands on the current slug', async ({ page }) => {
+    await page.goto('/pt/blog/software-engineering-career-20260516'); // ci-safety: legacy-redirect
+    await expect(page).toHaveURL(/\/blog\/software-engineering-career$/);
+    await expect(page.locator('html')).toHaveAttribute('lang', 'pt-BR');
+  });
+
+  test('a Brazilian IP gets PT and the choice is written to the cookie', async ({ request }) => {
+    const response = await request.get('/', {
+      headers: { 'x-vercel-ip-country': 'BR', 'accept-language': 'en-US' },
+    });
+    expect(await response.text()).toMatch(/<html[^>]*lang="pt-BR"/);
+    expect(response.headers()['set-cookie']).toMatch(/NEXT_LOCALE=pt/);
+  });
+
+  test('a non Portuguese-speaking country gets EN even with a PT browser', async ({ request }) => {
+    const response = await request.get('/', {
+      headers: { 'x-vercel-ip-country': 'US', 'accept-language': 'pt-BR' },
+    });
+    expect(await response.text()).toMatch(/<html[^>]*lang="en"/);
+  });
+
+  test('the cookie outranks the geo header', async ({ request }) => {
+    const response = await request.get('/', {
+      headers: { 'x-vercel-ip-country': 'BR', cookie: 'NEXT_LOCALE=en' },
+    });
+    expect(await response.text()).toMatch(/<html[^>]*lang="en"/);
+  });
+});
+
 test.describe('Navigation preserves locale (lib/i18n/navigation Link wrapper)', () => {
-  test('from /pt home, internal blog link navigates to /pt/blog', async ({ page }) => {
-    await page.goto('/pt');
-    // The home page's FeaturedProjectsTeaser renders an internal nav link to
-    // /blog via the typed <Link> wrapper (D-08). With localePrefix:'always' the
-    // wrapper re-prefixes it with the active locale segment, so the resolved
-    // URL is /pt/blog. Click any link with accessible name "blog" (matches
-    // the localized cta.readBlog copy).
+  test('from the PT home, the internal blog link opens /blog in PT', async ({
+    page,
+    context,
+    baseURL,
+  }) => {
+    await usePt(context, baseURL);
+    await page.goto('/');
     await page.getByRole('link', { name: /blog/i }).first().click();
-    await expect(page).toHaveURL(/\/pt\/blog(\/?$|\/)/);
+    await expect(page).toHaveURL(/\/blog\/?$/);
+    await expect(page.locator('html')).toHaveAttribute('lang', 'pt-BR');
   });
 });
 
 test.describe('Resume PDF download per locale (CONTACT-04 + D-06 #4)', () => {
-  test('EN /en hero "Resume" CTA downloads Luiz-Pansarini_Resume.pdf', async ({ page }) => {
-    await page.goto('/en');
+  test('EN hero "Resume" CTA downloads Luiz-Pansarini_Resume.pdf', async ({ page }) => {
+    await page.goto('/');
     const downloadPromise = page.waitForEvent('download');
     // Hero CTA is the FIRST resume link; Contact section adds another with
     // identical href + download attribute. .first() selects Hero.
@@ -87,8 +146,13 @@ test.describe('Resume PDF download per locale (CONTACT-04 + D-06 #4)', () => {
     expect(download.suggestedFilename()).toBe('Luiz-Pansarini_Resume.pdf');
   });
 
-  test('PT /pt hero "Currículo" CTA downloads Luiz-Pansarini_Curriculo.pdf', async ({ page }) => {
-    await page.goto('/pt');
+  test('PT hero "Currículo" CTA downloads Luiz-Pansarini_Curriculo.pdf', async ({
+    page,
+    context,
+    baseURL,
+  }) => {
+    await usePt(context, baseURL);
+    await page.goto('/');
     const downloadPromise = page.waitForEvent('download');
     await page
       .getByRole('link', { name: /^currículo$/i })
@@ -100,10 +164,10 @@ test.describe('Resume PDF download per locale (CONTACT-04 + D-06 #4)', () => {
 });
 
 test.describe('Localized 404 (UX-04 + D-06 #5)', () => {
-  test('/en/does-not-exist returns 404 with the EN terminal error and a working header', async ({
+  test('/does-not-exist returns 404 with the EN terminal error and a working header', async ({
     page,
   }) => {
-    const response = await page.goto('/en/does-not-exist');
+    const response = await page.goto('/does-not-exist');
     // Critical: localized not-found must return HTTP 404, not 200, so search
     // engines do not index garbage URLs (SEO crossover).
     expect(response?.status()).toBe(404);
@@ -113,8 +177,9 @@ test.describe('Localized 404 (UX-04 + D-06 #5)', () => {
     await expect(page.getByRole('button', { name: 'Open command palette' })).toBeVisible();
   });
 
-  test('/pt/nao-existe returns 404 with the PT terminal error', async ({ page }) => {
-    const response = await page.goto('/pt/nao-existe');
+  test('/nao-existe returns 404 with the PT terminal error', async ({ page, context, baseURL }) => {
+    await usePt(context, baseURL);
+    const response = await page.goto('/nao-existe');
     expect(response?.status()).toBe(404);
     await expect(page.getByText(/arquivo ou diretório não encontrado/i)).toBeVisible();
     await expect(page.getByRole('button', { name: /^en$/i })).toBeVisible();
@@ -123,8 +188,13 @@ test.describe('Localized 404 (UX-04 + D-06 #5)', () => {
 });
 
 test.describe('Project case study route renders in both locales (PROJ-04 + D-06 #6)', () => {
-  test('/pt/projects/magazine-luiza-superapp renders MDX body in PT', async ({ page }) => {
-    await page.goto('/pt/projects/magazine-luiza-superapp');
+  test('/projects/magazine-luiza-superapp renders MDX body in PT', async ({
+    page,
+    context,
+    baseURL,
+  }) => {
+    await usePt(context, baseURL);
+    await page.goto('/projects/magazine-luiza-superapp');
     // H1 from frontmatter title should render.
     await expect(page.locator('h1').first()).toBeVisible();
     // First main image should load (frontmatter heroImage path — verifies
@@ -145,8 +215,8 @@ test.describe('Project case study route renders in both locales (PROJ-04 + D-06 
       .toBe(true);
   });
 
-  test('/en/projects/magazine-luiza-superapp renders MDX body in EN', async ({ page }) => {
-    await page.goto('/en/projects/magazine-luiza-superapp');
+  test('/projects/magazine-luiza-superapp renders MDX body in EN', async ({ page }) => {
+    await page.goto('/projects/magazine-luiza-superapp');
     await expect(page.locator('h1').first()).toBeVisible();
   });
 });
@@ -164,7 +234,7 @@ test.describe('Hero 3D field loads only on desktop', () => {
         bodies.push(response.text().catch(() => ''));
       }
     });
-    await page.goto('/en', { waitUntil: 'load' });
+    await page.goto('/', { waitUntil: 'load' });
     await page.waitForTimeout(3000);
     const texts = await Promise.all(bodies);
     await context.close();
@@ -251,7 +321,7 @@ test.describe('Hidden admin for client previews (env-gated, noindex)', () => {
     const adminClasses = ((await page.locator('html').getAttribute('class')) ?? '').split(/\s+/);
     expect(adminClasses).not.toContain('site');
 
-    await page.goto('/en');
+    await page.goto('/');
     const publicClasses = ((await page.locator('html').getAttribute('class')) ?? '').split(/\s+/);
     expect(publicClasses).toContain('site');
   });

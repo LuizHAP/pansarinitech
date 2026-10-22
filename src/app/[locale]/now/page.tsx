@@ -57,7 +57,7 @@ export default async function NowPage({
   return (
     <>
       <JsonLd
-        schema={buildBreadcrumbList(locale, [
+        schema={buildBreadcrumbList([
           { name: 'Home', path: '' },
           { name: t('title'), path: '/now' },
         ])}

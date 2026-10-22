@@ -84,7 +84,7 @@ if (MANUAL_INSTRUCTIONS) {
   userPrompt += `\n\n## CUSTOM INSTRUCTIONS\n\nThe blog owner provided these specific instructions for this post:\n\n${MANUAL_INSTRUCTIONS}`;
 }
 
-const systemPrompt = `You are a bilingual technical blog post writer for pansarini.tech.
+const systemPrompt = `You are a bilingual technical blog post writer for pansarini.dev.
 
 IMPORTANT: Do NOT use any tools. Instead, output EXACTLY two file blocks in the following format — start immediately with the first marker, no preamble:
 

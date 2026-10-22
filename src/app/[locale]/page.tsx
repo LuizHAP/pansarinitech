@@ -44,7 +44,7 @@ export default async function HomePage({
           '@context': 'https://schema.org',
           '@type': 'WebSite',
           name: 'Luiz Pansarini',
-          url: `${SITE_URL}/${locale}`,
+          url: SITE_URL,
           inLanguage: ['en', 'pt-BR'],
           publisher: AUTHOR_PERSON,
         }}
@@ -53,7 +53,7 @@ export default async function HomePage({
         schema={{
           '@context': 'https://schema.org',
           ...AUTHOR_PERSON,
-          url: `${SITE_URL}/${locale}`,
+          url: SITE_URL,
         }}
       />
       <Hero />

@@ -1,4 +1,4 @@
-# Project: pansarini.tech (this portfolio)
+# Project: pansarini.dev (this portfolio)
 
 **Stack:** Next.js 16, TypeScript, Tailwind CSS v4, Shadcn/UI, next-intl, Three.js, Vercel
 **Status:** active

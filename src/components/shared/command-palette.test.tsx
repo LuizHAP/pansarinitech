@@ -4,10 +4,10 @@ import { act, render, screen } from '@/test/render';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-// Mock locale-toggle-action (Server Action — 'use server') so jsdom doesn't
-// error trying to import next/headers, next/cookies, etc.
-vi.mock('./locale-toggle-action', () => ({
-  switchLocale: vi.fn(async () => {}),
+// Mock change-locale: it calls a Server Action ('use server') and reloads the page,
+// neither of which jsdom supports.
+vi.mock('./change-locale', () => ({
+  changeLocale: vi.fn(async () => {}),
 }));
 
 // Mock @/lib/i18n/navigation to provide a test-friendly useRouter.
@@ -30,9 +30,9 @@ vi.mock('@/lib/i18n/navigation', async () => {
   };
 });
 
-import { CommandPaletteRoot, CommandPaletteTrigger } from './command-palette';
 // Must import after mocks are declared
-import { switchLocale } from './locale-toggle-action';
+import { changeLocale } from './change-locale';
+import { CommandPaletteRoot, CommandPaletteTrigger } from './command-palette';
 
 // Note: Element.prototype.scrollIntoView stub is defined in vitest.setup.ts
 // (cmdk calls scrollIntoView internally — jsdom doesn't implement it).
@@ -196,7 +196,7 @@ describe('<CommandPaletteRoot />', () => {
   // Locale commands
   // -------------------------------------------------------------------------
 
-  it('Switch to Portuguese calls switchLocale("pt")', async () => {
+  it('Switch to Portuguese calls changeLocale("pt")', async () => {
     render(<CommandPaletteRoot />, { locale: 'en' });
     const user = userEvent.setup();
 
@@ -204,11 +204,11 @@ describe('<CommandPaletteRoot />', () => {
     await user.click(screen.getByText('Switch to Portuguese'));
 
     await vi.waitFor(() => {
-      expect(switchLocale).toHaveBeenCalledWith('pt');
+      expect(changeLocale).toHaveBeenCalledWith('pt');
     });
   });
 
-  it('Switch to English calls switchLocale("en")', async () => {
+  it('Switch to English calls changeLocale("en")', async () => {
     render(<CommandPaletteRoot />, { locale: 'pt' });
     const user = userEvent.setup();
 
@@ -216,7 +216,7 @@ describe('<CommandPaletteRoot />', () => {
     await user.click(screen.getByText('Trocar para Inglês'));
 
     await vi.waitFor(() => {
-      expect(switchLocale).toHaveBeenCalledWith('en');
+      expect(changeLocale).toHaveBeenCalledWith('en');
     });
   });
 

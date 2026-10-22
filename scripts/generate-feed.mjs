@@ -5,9 +5,8 @@
 import { readFile, readdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
-const SITE_URL = process.env.VERCEL_URL
-  ? `https://${process.env.VERCEL_URL}`
-  : 'https://pansarini.tech';
+// VERCEL_URL is the per-deployment hash host, not the public domain.
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://pansarini.dev';
 
 const BLOG_DIR = join(process.cwd(), 'content', 'blog');
 const FILE_PATTERN = /^([a-z0-9-]+)\.(en|pt)\.mdx$/;

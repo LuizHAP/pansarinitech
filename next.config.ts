@@ -32,41 +32,35 @@ const nextConfig: NextConfig = {
         destination: 'https://pansarini.dev/:path*',
         permanent: true,
       },
-      // Unprefixed routes (pre localePrefix:'always') redirect to the default locale.
-      { source: '/blog', destination: '/en/blog', permanent: true },
-      { source: '/blog/:slug', destination: '/en/blog/:slug', permanent: true },
-      { source: '/projects', destination: '/en/projects', permanent: true },
-      { source: '/projects/:slug', destination: '/en/projects/:slug', permanent: true },
-      { source: '/now', destination: '/en/now', permanent: true },
       // Remove dates from blog post slugs (date-suffixed slugs are legacy)
       {
-        source: '/:locale(en|pt)/blog/ai-in-development-20260612',
-        destination: '/:locale/blog/ai-in-development',
+        source: '/blog/ai-in-development-20260612',
+        destination: '/blog/ai-in-development',
         permanent: true,
       },
       {
-        source: '/:locale(en|pt)/blog/ai-workspace-jean-opencode-20250625',
-        destination: '/:locale/blog/ai-workspace-jean-opencode',
+        source: '/blog/ai-workspace-jean-opencode-20250625',
+        destination: '/blog/ai-workspace-jean-opencode',
         permanent: true,
       },
       {
-        source: '/:locale(en|pt)/blog/nextjs-react-frontend-20260515',
-        destination: '/:locale/blog/nextjs-react-frontend',
+        source: '/blog/nextjs-react-frontend-20260515',
+        destination: '/blog/nextjs-react-frontend',
         permanent: true,
       },
       {
-        source: '/:locale(en|pt)/blog/personal-projects-open-source-20260616',
-        destination: '/:locale/blog/navigating-personal-open-source',
+        source: '/blog/personal-projects-open-source-20260616',
+        destination: '/blog/navigating-personal-open-source',
         permanent: true,
       },
       {
-        source: '/:locale(en|pt)/blog/personal-projects-open-source-20260621',
-        destination: '/:locale/blog/personal-projects-open-source',
+        source: '/blog/personal-projects-open-source-20260621',
+        destination: '/blog/personal-projects-open-source',
         permanent: true,
       },
       {
-        source: '/:locale(en|pt)/blog/software-engineering-career-20260516',
-        destination: '/:locale/blog/software-engineering-career',
+        source: '/blog/software-engineering-career-20260516',
+        destination: '/blog/software-engineering-career',
         permanent: true,
       },
     ];

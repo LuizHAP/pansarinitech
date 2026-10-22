@@ -2,25 +2,23 @@
 // scripts/verify-metadata.mjs — Phase 4 PERF-03 / SEO gate
 //
 // Spawns `next start` against the existing .next build, fetches every route
-// under both the /en and /pt locale prefixes, and asserts the rendered
-// <head> contains:
+// once per locale (picked with the NEXT_LOCALE cookie), and asserts the
+// rendered <head> contains:
 //   - <title> non-empty with exactly one `— Luiz Pansarini` suffix
 //   - <meta name="description"> non-empty
 //   - <meta property="og:locale"> matches en_US (EN pass) or pt_BR (PT pass)
-//   - hreflang alternate links for en, pt-BR, and x-default
+//   - an unprefixed canonical link and no hreflang alternates
 //
-// localePrefix:'always' means every route is served under /en or /pt and
-// next-intl emits hreflang alternate links for each locale-prefixed URL —
-// asserted below via REQUIRED_PATTERNS_HREFLANG.
+// localePrefix:'never' serves both locales from one URL, so there is no
+// per-language URL for hreflang to point at.
 //
 // Requires `pnpm next build` to have run first. Spawns its own server on a
 // non-conflicting port. Kills the server cleanly even on failure (T-04-29).
 import { spawn } from 'node:child_process';
 import { setTimeout as wait } from 'node:timers/promises';
 
-// Locale-free route suffixes ('' for home) — prefixed with /en or /pt below.
 const ROUTES = [
-  '',
+  '/',
   '/projects',
   '/projects/machinery-partner-ecommerce',
   '/blog',
@@ -30,8 +28,8 @@ const ROUTES = [
 
 const BRAND_SUFFIX = ' — Luiz Pansarini';
 const EXPECTED_TITLES = new Map([
-  ['/en/blog', `Software Engineering Blog${BRAND_SUFFIX}`],
-  ['/pt/blog', `Blog de Engenharia de Software${BRAND_SUFFIX}`],
+  ['EN /blog', `Software Engineering Blog${BRAND_SUFFIX}`],
+  ['PT /blog', `Blog de Engenharia de Software${BRAND_SUFFIX}`],
 ]);
 
 const REQUIRED_PATTERNS_COMMON = [
@@ -43,7 +41,7 @@ function checkTitle(html, locale, url) {
   const title = html.match(/<title>([^<]+)<\/title>/)?.[1];
   if (!title) return 0;
 
-  const expectedTitle = EXPECTED_TITLES.get(url);
+  const expectedTitle = EXPECTED_TITLES.get(`${locale} ${url}`);
   if (expectedTitle && title !== expectedTitle) {
     console.error(
       `[verify-metadata] ${locale} ${url}: expected <title> "${expectedTitle}", received "${title}"`,
@@ -76,20 +74,17 @@ const REQUIRED_PATTERNS_PT = [
   },
 ];
 
-// hreflang alternates asserted on every route regardless of which locale
-// prefix was requested — next-intl emits the full set of alternates on
-// every locale-prefixed page (localePrefix:'always').
-// NOTE: verified against real rendered output (curl) — Next's metadata
-// renderer emits the attribute as `hrefLang` (camelCase, NOT lowercased by
-// React DOM in this Next/React version), so assert that exact casing.
-const REQUIRED_PATTERNS_HREFLANG = [
-  { name: 'hrefLang="en"', regex: /<link rel="alternate" hrefLang="en" href="[^"]+"/ },
-  { name: 'hrefLang="pt-BR"', regex: /<link rel="alternate" hrefLang="pt-BR" href="[^"]+"/ },
-  {
-    name: 'hrefLang="x-default"',
-    regex: /<link rel="alternate" hrefLang="x-default" href="[^"]+"/,
-  },
-];
+function routeChecks(route) {
+  const canonical = route === '/' ? '' : route;
+  return [
+    {
+      name: `canonical ending in "${canonical || '/'}"`,
+      ok: (html) =>
+        new RegExp(`<link rel="canonical" href="https?://[^/"]+${canonical}"`).test(html),
+    },
+    { name: 'no hrefLang alternates', ok: (html) => !/hrefLang=/i.test(html) },
+  ];
+}
 
 const port = 3001;
 const proc = spawn('node', ['node_modules/next/dist/bin/next', 'start', '-p', String(port)], {
@@ -107,7 +102,7 @@ process.on('SIGINT', () => {
 });
 
 let failed = 0;
-const checksPerRoute = REQUIRED_PATTERNS_EN.length + REQUIRED_PATTERNS_HREFLANG.length + 1;
+const checksPerRoute = REQUIRED_PATTERNS_EN.length + routeChecks('/').length + 1;
 const totalChecks = ROUTES.length * 2 * checksPerRoute;
 
 try {
@@ -127,40 +122,31 @@ try {
   // Tiny grace period for the server to actually accept connections.
   await wait(500);
 
-  // First pass: /en/{route} — check title, description, og:locale=en_US, hreflang
-  for (const route of ROUTES) {
-    const url = `/en${route}`;
-    const res = await fetch(`http://localhost:${port}${url}`);
-    if (!res.ok) {
-      console.error(`[verify-metadata] EN ${url}: HTTP ${res.status}`);
-      failed++;
-      continue;
-    }
-    const html = await res.text();
-    failed += checkTitle(html, 'EN', url);
-    for (const p of [...REQUIRED_PATTERNS_EN, ...REQUIRED_PATTERNS_HREFLANG]) {
-      if (!p.regex.test(html)) {
-        console.error(`[verify-metadata] EN ${url}: missing ${p.name}`);
+  const passes = [
+    { label: 'EN', cookie: 'NEXT_LOCALE=en', patterns: REQUIRED_PATTERNS_EN },
+    { label: 'PT', cookie: 'NEXT_LOCALE=pt', patterns: REQUIRED_PATTERNS_PT },
+  ];
+  for (const { label, cookie, patterns } of passes) {
+    for (const url of ROUTES) {
+      const res = await fetch(`http://localhost:${port}${url}`, { headers: { cookie } });
+      if (!res.ok) {
+        console.error(`[verify-metadata] ${label} ${url}: HTTP ${res.status}`);
         failed++;
+        continue;
       }
-    }
-  }
-
-  // Second pass: /pt/{route} — check title, description, og:locale=pt_BR, hreflang
-  for (const route of ROUTES) {
-    const url = `/pt${route}`;
-    const res = await fetch(`http://localhost:${port}${url}`);
-    if (!res.ok) {
-      console.error(`[verify-metadata] PT ${url}: HTTP ${res.status}`);
-      failed++;
-      continue;
-    }
-    const html = await res.text();
-    failed += checkTitle(html, 'PT', url);
-    for (const p of [...REQUIRED_PATTERNS_PT, ...REQUIRED_PATTERNS_HREFLANG]) {
-      if (!p.regex.test(html)) {
-        console.error(`[verify-metadata] PT ${url}: missing ${p.name}`);
-        failed++;
+      const html = await res.text();
+      failed += checkTitle(html, label, url);
+      for (const p of patterns) {
+        if (!p.regex.test(html)) {
+          console.error(`[verify-metadata] ${label} ${url}: missing ${p.name}`);
+          failed++;
+        }
+      }
+      for (const check of routeChecks(url)) {
+        if (!check.ok(html)) {
+          console.error(`[verify-metadata] ${label} ${url}: failed ${check.name}`);
+          failed++;
+        }
       }
     }
   }
