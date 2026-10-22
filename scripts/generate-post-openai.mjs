@@ -116,7 +116,7 @@ const newState = {
 // System prompt instructs the model to output parseable file blocks
 // (overrides the "Write tool" instruction in the user prompt template)
 // Note: pipeline-state.json is written directly from newState, not from model output.
-const systemPrompt = `You are a bilingual technical blog post writer for pansarini.tech.
+const systemPrompt = `You are a bilingual technical blog post writer for pansarini.dev.
 
 IMPORTANT: Do NOT use any tools. Instead, output EXACTLY two file blocks in the following format — start immediately with the first marker, no preamble:
 

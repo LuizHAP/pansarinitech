@@ -80,7 +80,7 @@ describe('<FeaturedProjectsTeaser />', () => {
 
     const card = screen.getByRole('link', { name: /Ecommerce Platform/ });
     expect(card).toHaveAttribute('href', '/projects/machinery-partner-ecommerce');
-    expect(card).toHaveTextContent('pansarini.tech/projects/machinery-partner-ecommerce');
+    expect(card).toHaveTextContent('pansarini.dev/projects/machinery-partner-ecommerce');
     expect(card).toHaveTextContent('Lead · 2024');
     expect(
       screen.getByRole('heading', { level: 3, name: 'No-Code Migration' }),

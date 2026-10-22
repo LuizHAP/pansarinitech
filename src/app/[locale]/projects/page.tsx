@@ -59,7 +59,7 @@ export default async function ProjectsListingPage({
             <li key={p.slug} className="flex flex-col">
               <BrowserCard
                 href={`/projects/${p.slug}`}
-                url={`pansarini.tech/projects/${p.slug}`}
+                url={`pansarini.dev/projects/${p.slug}`}
                 title={p.title}
                 meta={`${p.role} · ${p.year}`}
                 image={HERO_IMAGES[p.slug as keyof typeof HERO_IMAGES]}

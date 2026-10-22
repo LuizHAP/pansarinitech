@@ -67,7 +67,7 @@ export async function CaseStudyHero({
             </li>
           ))}
         </ul>
-        <BrowserFrame url={`pansarini.tech/projects/${project.slug}`} className="mt-12 max-w-5xl">
+        <BrowserFrame url={`pansarini.dev/projects/${project.slug}`} className="mt-12 max-w-5xl">
           <Image
             src={heroSrc}
             alt={project.title}

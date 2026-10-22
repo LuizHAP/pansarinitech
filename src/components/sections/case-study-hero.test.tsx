@@ -140,7 +140,7 @@ describe('<CaseStudyHero />', () => {
       'href',
       '/projects',
     );
-    expect(screen.getByText('pansarini.tech/projects/machinery-partner-ecommerce')).toBeVisible();
+    expect(screen.getByText('pansarini.dev/projects/machinery-partner-ecommerce')).toBeVisible();
   });
 
   it('Test 3 (unknown slug): throws with a descriptive error', async () => {
