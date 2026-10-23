@@ -25,13 +25,10 @@
 
 import { readFile, readdir } from 'node:fs/promises';
 import { join } from 'node:path';
-import { mdxComponents } from '@/components/mdx';
 import type { Locale } from '@/i18n/routing';
-import { compileMDX } from 'next-mdx-remote/rsc';
 import { cache } from 'react';
 import type { ReactElement } from 'react';
 import type { z } from 'zod';
-import { rehypePlugins, remarkPlugins } from './plugins';
 import { calculateReadingTime } from './reading-time';
 
 const FILE_PATTERN = /^([a-z0-9-]+)\.(en|pt)\.mdx$/;
@@ -197,33 +194,7 @@ export function createMdxLoader<T>({
     for (const [slug, bucket] of perSlug.entries()) {
       const filename = bucket[locale];
       if (!filename) continue;
-      const { data, raw, body } = await readAndParse(filename);
-      // Drive compileMDX once on the same source to confirm it's parseable +
-      // frontmatter round-trips with the @^6 parser. We discard `content`; the
-      // listing page only needs metadata. (Pitfall 1: blockJS/blockDangerousJS
-      // defaults preserved.)
-      const { frontmatter } = await compileMDX<unknown>({
-        source: raw,
-        options: {
-          parseFrontmatter: true,
-          // blockJS + blockDangerousJS default to true in next-mdx-remote@6 — KEEP THAT.
-        },
-      });
-      // Cross-validate: our YAML parser and next-mdx-remote's vfile-matter must
-      // agree on at least the title (cheap check; any drift means our YAML
-      // parser broke).
-      if (
-        frontmatter &&
-        typeof frontmatter === 'object' &&
-        'title' in frontmatter &&
-        data.title !== (frontmatter as Record<string, unknown>).title
-      ) {
-        throw new Error(
-          `[mdx/factory] Frontmatter parser disagreement on ${filename}: local='${String(
-            data.title,
-          )}' vs vfile-matter='${String((frontmatter as Record<string, unknown>).title)}'`,
-        );
-      }
+      const { data, body } = await readAndParse(filename);
       const validated = validateFrontmatter(filename, data);
       items.push({
         ...validated,
@@ -244,6 +215,14 @@ export function createMdxLoader<T>({
       if (!filename) return null;
       const { data, raw, body } = await readAndParse(filename);
       const validated = validateFrontmatter(filename, data);
+      // Keep the compiler out of metadata-only consumers such as listings and
+      // sitemap generation. Full post/project routes load it only when needed.
+      const [{ mdxComponents }, { compileMDX }, { rehypePlugins, remarkPlugins }] =
+        await Promise.all([
+          import('@/components/mdx'),
+          import('next-mdx-remote/rsc'),
+          import('./plugins'),
+        ]);
       const { content } = await compileMDX<unknown>({
         source: raw,
         components: mdxComponents,
