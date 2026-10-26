@@ -2,15 +2,26 @@
 
 import { randomUUID } from 'node:crypto';
 import { requireAdminAction } from '@/lib/admin/auth';
-import { findLead, insertLead, removeLead, saveLead } from '@/lib/admin/lead-store';
+import {
+  findLead,
+  insertLead,
+  insertLeadRecord,
+  removeLead,
+  removeLeadRecord,
+  saveLead,
+} from '@/lib/admin/lead-store';
 import {
   type LeadFormErrors,
   type LeadFormValues,
+  type LeadRecordFormErrors,
+  type LeadRecordFormValues,
   isLeadId,
   isLeadStage,
   parseInitialStage,
   parseLeadInput,
+  parseLeadRecordInput,
   readLeadForm,
+  readLeadRecordForm,
 } from '@/lib/admin/leads';
 import { refresh } from 'next/cache';
 import { redirect } from 'next/navigation';
@@ -19,6 +30,13 @@ export type LeadFormState = {
   errors: LeadFormErrors;
   message: string | null;
   values: LeadFormValues | null;
+  attempt: number;
+};
+
+export type LeadRecordFormState = {
+  errors: LeadRecordFormErrors;
+  message: string | null;
+  values: LeadRecordFormValues | null;
   attempt: number;
 };
 
@@ -31,6 +49,15 @@ function rejected(
   errors: LeadFormErrors,
   message: string | null = null,
 ): LeadFormState {
+  return { errors, message, values, attempt: previous.attempt + 1 };
+}
+
+function recordRejected(
+  previous: LeadRecordFormState,
+  values: LeadRecordFormValues,
+  errors: LeadRecordFormErrors,
+  message: string | null = null,
+): LeadRecordFormState {
   return { errors, message, values, attempt: previous.attempt + 1 };
 }
 
@@ -106,4 +133,38 @@ export async function deleteLead(id: string): Promise<void> {
   if (!isLeadId(id)) return;
   await removeLead(id);
   redirect('/admin/leads');
+}
+
+export async function createLeadRecord(
+  leadId: string,
+  previous: LeadRecordFormState,
+  formData: FormData,
+): Promise<LeadRecordFormState> {
+  await requireAdminAction();
+  const values = readLeadRecordForm(formData);
+  if (!isLeadId(leadId)) return recordRejected(previous, values, {}, MISSING_MESSAGE);
+  const parsed = parseLeadRecordInput(values);
+  if (!parsed.ok) return recordRejected(previous, values, parsed.errors);
+
+  const { available, lead } = await findLead(leadId);
+  if (!available) return recordRejected(previous, values, {}, UNAVAILABLE_MESSAGE);
+  if (!lead) return recordRejected(previous, values, {}, MISSING_MESSAGE);
+  try {
+    await insertLeadRecord(leadId, {
+      id: randomUUID(),
+      ...parsed.input,
+      createdAt: new Date().toISOString(),
+    });
+  } catch {
+    return recordRejected(previous, values, {}, UNAVAILABLE_MESSAGE);
+  }
+  refresh();
+  return { errors: {}, message: null, values: null, attempt: previous.attempt + 1 };
+}
+
+export async function deleteLeadRecord(leadId: string, recordId: string): Promise<void> {
+  await requireAdminAction();
+  if (!isLeadId(leadId) || !isLeadId(recordId)) return;
+  await removeLeadRecord(leadId, recordId);
+  refresh();
 }

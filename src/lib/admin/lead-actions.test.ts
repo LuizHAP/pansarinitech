@@ -4,8 +4,17 @@ import { Redis } from '@upstash/redis';
 import { refresh } from 'next/cache';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ADMIN_SESSION_COOKIE, SESSION_TTL_MS, signSession } from './auth';
-import { type LeadFormState, createLead, deleteLead, moveLead, updateLead } from './lead-actions';
-import { type Lead, isLeadId } from './leads';
+import {
+  type LeadFormState,
+  type LeadRecordFormState,
+  createLead,
+  createLeadRecord,
+  deleteLead,
+  deleteLeadRecord,
+  moveLead,
+  updateLead,
+} from './lead-actions';
+import { type Lead, type LeadRecord, isLeadId } from './leads';
 
 const { jar, cookieStore } = vi.hoisted(() => {
   const jar = new Map<string, string>();
@@ -45,6 +54,20 @@ const NOW = '2026-10-07T12:00:00.000Z';
 const UNAVAILABLE = 'Não foi possível salvar: o Redis está indisponível.';
 const MISSING = 'Este lead não existe mais.';
 const PREVIOUS: LeadFormState = { errors: {}, message: null, values: null, attempt: 2 };
+const RECORD_PREVIOUS: LeadRecordFormState = {
+  errors: {},
+  message: null,
+  values: null,
+  attempt: 2,
+};
+
+const RECORD_FORM = {
+  kind: 'proposta',
+  date: '2026-10-06',
+  title: ' Proposta enviada ',
+  link: 'docs.exemplo.com.br/proposta',
+  body: ' Site institucional, R$ 2.500. ',
+};
 
 const FULL_FORM = {
   name: ' Padaria ',
@@ -426,5 +449,171 @@ describe('deleteLead', () => {
     expect(Redis).not.toHaveBeenCalled();
     expect(fake.record(`leads:lead:${stored.id}`)).toEqual(stored);
     expect(fake.members('leads:index')).toHaveLength(1);
+  });
+});
+
+describe('createLeadRecord', () => {
+  it('writes nothing without a session', async () => {
+    const stored = lead();
+    await seed(stored);
+
+    await expect(createLeadRecord(stored.id, RECORD_PREVIOUS, form(RECORD_FORM))).rejects.toThrow(
+      /^NEXT_REDIRECT \/admin\/login$/,
+    );
+    expect(await fake.hgetall(`leads:records:${stored.id}`)).toBeNull();
+    expect(refresh).not.toHaveBeenCalled();
+  });
+
+  it.each(['../x', randomUUID()])(
+    'says the lead is gone for id %s and writes nothing',
+    async (id) => {
+      signIn();
+      await seed(lead());
+      const keysBefore = fake.keys();
+
+      await expect(createLeadRecord(id, RECORD_PREVIOUS, form(RECORD_FORM))).resolves.toEqual({
+        errors: {},
+        message: MISSING,
+        values: RECORD_FORM,
+        attempt: 3,
+      });
+      expect(fake.keys()).toEqual(keysBefore);
+      expect(refresh).not.toHaveBeenCalled();
+    },
+  );
+
+  it('returns pt-BR field errors with the typed values and writes nothing', async () => {
+    signIn();
+    const stored = lead();
+    await seed(stored);
+    const submitted = { ...RECORD_FORM, title: '', link: 'javascript:alert(1)' };
+
+    await expect(createLeadRecord(stored.id, RECORD_PREVIOUS, form(submitted))).resolves.toEqual({
+      errors: {
+        title: 'Informe um título.',
+        link: 'Informe um endereço válido, como exemplo.com.br.',
+      },
+      message: null,
+      values: submitted,
+      attempt: 3,
+    });
+    expect(await fake.hgetall(`leads:records:${stored.id}`)).toBeNull();
+    expect(refresh).not.toHaveBeenCalled();
+  });
+
+  it('reports Redis as unavailable without credentials', async () => {
+    signIn();
+    const stored = lead();
+    await seed(stored);
+    vi.stubEnv('KV_REST_API_URL', undefined);
+
+    await expect(createLeadRecord(stored.id, RECORD_PREVIOUS, form(RECORD_FORM))).resolves.toEqual({
+      errors: {},
+      message: UNAVAILABLE,
+      values: RECORD_FORM,
+      attempt: 3,
+    });
+    expect(await fake.hgetall(`leads:records:${stored.id}`)).toBeNull();
+  });
+
+  it('reports Redis as unavailable when the write fails', async () => {
+    signIn();
+    const stored = lead();
+    await seed(stored);
+    vi.spyOn(fake, 'hset').mockRejectedValueOnce(new Error('fetch failed'));
+
+    await expect(
+      createLeadRecord(stored.id, RECORD_PREVIOUS, form(RECORD_FORM)),
+    ).resolves.toMatchObject({ message: UNAVAILABLE, values: RECORD_FORM });
+    expect(refresh).not.toHaveBeenCalled();
+  });
+
+  it('stores the normalized record, refreshes and resets the form', async () => {
+    signIn();
+    const stored = lead();
+    await seed(stored);
+
+    await expect(createLeadRecord(stored.id, RECORD_PREVIOUS, form(RECORD_FORM))).resolves.toEqual({
+      errors: {},
+      message: null,
+      values: null,
+      attempt: 3,
+    });
+
+    const hash = await fake.hgetall<Record<string, LeadRecord>>(`leads:records:${stored.id}`);
+    const [[id, record]] = Object.entries(hash ?? {});
+    expect(isLeadId(id)).toBe(true);
+    expect(record).toEqual({
+      id,
+      kind: 'proposta',
+      date: '2026-10-06',
+      title: 'Proposta enviada',
+      body: 'Site institucional, R$ 2.500.',
+      link: 'https://docs.exemplo.com.br/proposta',
+      createdAt: NOW,
+    });
+    expect(fake.record(`leads:lead:${stored.id}`)).toEqual(stored);
+    expect(refresh).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('deleteLeadRecord', () => {
+  async function seedWithRecords() {
+    const stored = lead();
+    await seed(stored);
+    const removed: LeadRecord = {
+      id: randomUUID(),
+      kind: 'nota',
+      date: '2026-10-05',
+      title: 'Ligar de novo',
+      body: 'Sem resposta.',
+      link: null,
+      createdAt: '2026-10-05T12:00:00.000Z',
+    };
+    const kept: LeadRecord = { ...removed, id: randomUUID(), title: 'Briefing' };
+    await fake.hset(`leads:records:${stored.id}`, { [removed.id]: removed, [kept.id]: kept });
+    return { stored, removed, kept };
+  }
+
+  it('removes nothing without a session', async () => {
+    const { stored, removed, kept } = await seedWithRecords();
+
+    await expect(deleteLeadRecord(stored.id, removed.id)).rejects.toThrow(
+      /^NEXT_REDIRECT \/admin\/login$/,
+    );
+    expect(await fake.hgetall(`leads:records:${stored.id}`)).toEqual({
+      [removed.id]: removed,
+      [kept.id]: kept,
+    });
+    expect(refresh).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    ['lead id', true],
+    ['record id', false],
+  ])('ignores a %s outside the UUID format', async (_case, badLead) => {
+    signIn();
+    const { stored, removed, kept } = await seedWithRecords();
+
+    await expect(
+      deleteLeadRecord(badLead ? '../x' : stored.id, badLead ? removed.id : '../x'),
+    ).resolves.toBeUndefined();
+
+    expect(Redis).not.toHaveBeenCalled();
+    expect(await fake.hgetall(`leads:records:${stored.id}`)).toEqual({
+      [removed.id]: removed,
+      [kept.id]: kept,
+    });
+    expect(refresh).not.toHaveBeenCalled();
+  });
+
+  it('removes only that record and refreshes the page', async () => {
+    signIn();
+    const { stored, removed, kept } = await seedWithRecords();
+
+    await expect(deleteLeadRecord(stored.id, removed.id)).resolves.toBeUndefined();
+
+    expect(await fake.hgetall(`leads:records:${stored.id}`)).toEqual({ [kept.id]: kept });
+    expect(refresh).toHaveBeenCalledTimes(1);
   });
 });
