@@ -3,11 +3,15 @@ import type { IndexedPreview, PreviewIndex } from '@/lib/client-preview-source';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   BOARD_STAGES,
+  LEAD_RECORD_KINDS,
   LEAD_SOURCES,
   LEAD_STAGES,
   type Lead,
   type LeadFormValues,
+  type LeadRecordFormValues,
   PREVIEW_STATUS_LABELS,
+  RECORD_KIND_LABELS,
+  RECORD_KIND_OPTIONS,
   SOURCE_LABELS,
   SOURCE_OPTIONS,
   STAGE_LABELS,
@@ -20,11 +24,14 @@ import {
   isOverdue,
   leadFormValues,
   leadPreviewOptions,
+  leadRecordFormValues,
   mailtoHref,
   parseInitialStage,
   parseLeadInput,
+  parseLeadRecordInput,
   previewStatus,
   readLeadForm,
+  readLeadRecordForm,
   telHref,
   todayInSaoPaulo,
   whatsappHref,
@@ -507,5 +514,106 @@ describe('leadPreviewOptions', () => {
       { value: '', label: 'Nenhuma' },
       { value: 'old-site', label: 'old-site (fora do índice)' },
     ]);
+  });
+});
+
+const RECORD: LeadRecordFormValues = {
+  kind: 'reuniao',
+  date: '2026-10-20',
+  title: ' Primeira call ',
+  link: '',
+  body: ' Quer um site com cardápio. ',
+};
+
+function recordValues(overrides: Partial<LeadRecordFormValues> = {}): LeadRecordFormValues {
+  return { ...RECORD, ...overrides };
+}
+
+describe('record kinds', () => {
+  it('labels every kind in pt-BR and builds the options in order', () => {
+    expect(LEAD_RECORD_KINDS).toEqual(['reuniao', 'briefing', 'proposta', 'nota']);
+    expect(RECORD_KIND_LABELS).toEqual({
+      reuniao: 'Reunião',
+      briefing: 'Briefing',
+      proposta: 'Proposta',
+      nota: 'Nota',
+    });
+    expect(RECORD_KIND_OPTIONS).toEqual(
+      LEAD_RECORD_KINDS.map((value) => ({ value, label: RECORD_KIND_LABELS[value] })),
+    );
+  });
+});
+
+describe('readLeadRecordForm', () => {
+  it('reads only the record fields, with missing fields and files as empty strings', () => {
+    const data = new FormData();
+    data.set('title', ' Call ');
+    data.set('body', new File(['x'], 'body.txt'));
+    data.set('name', 'Padaria');
+
+    expect(readLeadRecordForm(data)).toEqual({
+      kind: '',
+      date: '',
+      title: ' Call ',
+      link: '',
+      body: '',
+    });
+  });
+});
+
+describe('leadRecordFormValues', () => {
+  it('defaults to a meeting dated today with empty text', () => {
+    expect(leadRecordFormValues('2026-10-26')).toEqual({
+      kind: 'reuniao',
+      date: '2026-10-26',
+      title: '',
+      link: '',
+      body: '',
+    });
+  });
+});
+
+describe('parseLeadRecordInput', () => {
+  it('trims the text and stores an empty link as null', () => {
+    expect(parseLeadRecordInput(recordValues())).toEqual({
+      ok: true,
+      input: {
+        kind: 'reuniao',
+        date: '2026-10-20',
+        title: 'Primeira call',
+        body: 'Quer um site com cardápio.',
+        link: null,
+      },
+    });
+  });
+
+  it('normalizes the link like the website', () => {
+    const parsed = parseLeadRecordInput(recordValues({ link: ' exemplo.com.br/x ' }));
+    expect(parsed).toMatchObject({ ok: true, input: { link: 'https://exemplo.com.br/x' } });
+  });
+
+  it.each([
+    ['title', '', 'Informe um título.'],
+    ['title', '   ', 'Informe um título.'],
+    ['title', 'a'.repeat(161), 'Use no máximo 160 caracteres.'],
+    ['body', '  ', 'Escreva o texto do registro.'],
+    ['body', 'a'.repeat(50001), 'Use no máximo 50000 caracteres.'],
+    ['link', 'javascript:alert(1)', 'Informe um endereço válido, como exemplo.com.br.'],
+    ['link', 'nota', 'Informe um endereço válido, como exemplo.com.br.'],
+    ['kind', 'visita', 'Escolha um tipo da lista.'],
+    ['date', '', 'Informe uma data válida.'],
+    ['date', '2026-13-40', 'Informe uma data válida.'],
+  ] as const)('rejects %s %j', (field, value, message) => {
+    expect(parseLeadRecordInput(recordValues({ [field]: value }))).toEqual({
+      ok: false,
+      errors: { [field]: message },
+    });
+  });
+
+  it('accepts the maximum lengths', () => {
+    const parsed = parseLeadRecordInput(
+      recordValues({ title: 'a'.repeat(160), body: 'b'.repeat(50000) }),
+    );
+    expect(parsed.ok).toBe(true);
   });
 });

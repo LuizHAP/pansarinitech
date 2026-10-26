@@ -7,12 +7,16 @@ import {
   findLead,
   getLeadsRedis,
   insertLead,
+  insertLeadRecord,
   leadKey,
+  leadRecordsKey,
+  listLeadRecords,
   listLeads,
   removeLead,
+  removeLeadRecord,
   saveLead,
 } from './lead-store';
-import type { Lead } from './leads';
+import type { Lead, LeadRecord } from './leads';
 
 vi.mock('@upstash/redis', () => ({ Redis: vi.fn() }));
 
@@ -39,6 +43,23 @@ function lead(overrides: Partial<Lead> = {}): Lead {
     updatedAt: '2026-10-01T12:00:00.000Z',
     ...overrides,
   };
+}
+
+function leadRecord(overrides: Partial<LeadRecord> = {}): LeadRecord {
+  return {
+    id: randomUUID(),
+    kind: 'reuniao',
+    date: '2026-10-05',
+    title: 'Primeira call',
+    body: 'Quer um site com cardápio.',
+    link: null,
+    createdAt: '2026-10-05T15:00:00.000Z',
+    ...overrides,
+  };
+}
+
+async function seedRecords(leadId: string, ...records: LeadRecord[]) {
+  for (const item of records) await fake.hset(`leads:records:${leadId}`, { [item.id]: item });
 }
 
 async function seed(...leads: Lead[]) {
@@ -71,6 +92,7 @@ describe('keys', () => {
   it('namespaces records and the index under leads:', () => {
     expect(LEADS_INDEX_KEY).toBe('leads:index');
     expect(leadKey('abc')).toBe('leads:lead:abc');
+    expect(leadRecordsKey('abc')).toBe('leads:records:abc');
   });
 });
 
@@ -134,6 +156,16 @@ describe('listLeads', () => {
     vi.spyOn(fake, 'zrange').mockRejectedValueOnce(new Error('WRONGPASS invalid token'));
 
     await expect(listLeads()).resolves.toEqual({ available: false, leads: [] });
+  });
+
+  it('never reads the records hashes', async () => {
+    const stored = lead();
+    await seed(stored);
+    await seedRecords(stored.id, leadRecord());
+    const hgetall = vi.spyOn(fake, 'hgetall');
+
+    await expect(listLeads()).resolves.toEqual({ available: true, leads: [stored] });
+    expect(hgetall).not.toHaveBeenCalled();
   });
 });
 
@@ -210,6 +242,20 @@ describe('removeLead', () => {
     expect(fake.members('leads:index')).toEqual([[kept.id, Date.parse(kept.createdAt)]]);
   });
 
+  it('removes its records and leaves other leads records alone', async () => {
+    const removed = lead();
+    const kept = lead();
+    const keptRecord = leadRecord();
+    await seed(removed, kept);
+    await seedRecords(removed.id, leadRecord(), leadRecord());
+    await seedRecords(kept.id, keptRecord);
+
+    await removeLead(removed.id);
+
+    expect(await fake.hgetall(`leads:records:${removed.id}`)).toBeNull();
+    expect(await fake.hgetall(`leads:records:${kept.id}`)).toEqual({ [keptRecord.id]: keptRecord });
+  });
+
   it('rejects without credentials and removes nothing', async () => {
     const stored = lead();
     await seed(stored);
@@ -217,5 +263,81 @@ describe('removeLead', () => {
 
     await expect(removeLead(stored.id)).rejects.toThrow('Redis indisponível');
     expect(fake.record(`leads:lead:${stored.id}`)).toEqual(stored);
+  });
+});
+
+describe('listLeadRecords', () => {
+  it('is available and empty for a lead without records', async () => {
+    await expect(listLeadRecords(randomUUID())).resolves.toEqual({ available: true, records: [] });
+  });
+
+  it('sorts by date, newest first, then by creation time', async () => {
+    const leadId = randomUUID();
+    const old = leadRecord({ date: '2026-10-01', createdAt: '2026-10-09T00:00:00.000Z' });
+    const sameDayEarlier = leadRecord({
+      date: '2026-10-05',
+      createdAt: '2026-10-05T10:00:00.000Z',
+    });
+    const sameDayLater = leadRecord({ date: '2026-10-05', createdAt: '2026-10-05T18:00:00.000Z' });
+    const newest = leadRecord({ date: '2026-10-07', createdAt: '2026-10-07T09:00:00.000Z' });
+    await seedRecords(leadId, old, sameDayEarlier, newest, sameDayLater);
+
+    await expect(listLeadRecords(leadId)).resolves.toEqual({
+      available: true,
+      records: [newest, sameDayLater, sameDayEarlier, old],
+    });
+  });
+
+  it('is unavailable without credentials or when hgetall fails', async () => {
+    const leadId = randomUUID();
+    await seedRecords(leadId, leadRecord());
+    vi.spyOn(fake, 'hgetall').mockRejectedValueOnce(new Error('fetch failed'));
+    await expect(listLeadRecords(leadId)).resolves.toEqual({ available: false, records: [] });
+
+    vi.stubEnv('KV_REST_API_TOKEN', undefined);
+    await expect(listLeadRecords(leadId)).resolves.toEqual({ available: false, records: [] });
+  });
+});
+
+describe('insertLeadRecord', () => {
+  it('stores the record under its id in the lead hash', async () => {
+    const leadId = randomUUID();
+    const stored = leadRecord({ link: 'https://exemplo.com.br/x' });
+
+    await insertLeadRecord(leadId, stored);
+
+    expect(await fake.hgetall(`leads:records:${leadId}`)).toEqual({ [stored.id]: stored });
+    await expect(listLeadRecords(leadId)).resolves.toEqual({ available: true, records: [stored] });
+  });
+
+  it('rejects without credentials and writes nothing', async () => {
+    vi.stubEnv('KV_REST_API_URL', undefined);
+    await expect(insertLeadRecord(randomUUID(), leadRecord())).rejects.toThrow(
+      'Redis indisponível',
+    );
+    expect(fake.keys()).toEqual([]);
+  });
+});
+
+describe('removeLeadRecord', () => {
+  it('removes only that record', async () => {
+    const leadId = randomUUID();
+    const removed = leadRecord();
+    const kept = leadRecord();
+    await seedRecords(leadId, removed, kept);
+
+    await removeLeadRecord(leadId, removed.id);
+
+    expect(await fake.hgetall(`leads:records:${leadId}`)).toEqual({ [kept.id]: kept });
+  });
+
+  it('rejects without credentials and removes nothing', async () => {
+    const leadId = randomUUID();
+    const stored = leadRecord();
+    await seedRecords(leadId, stored);
+    vi.stubEnv('KV_REST_API_URL', undefined);
+
+    await expect(removeLeadRecord(leadId, stored.id)).rejects.toThrow('Redis indisponível');
+    expect(await fake.hgetall(`leads:records:${leadId}`)).toEqual({ [stored.id]: stored });
   });
 });

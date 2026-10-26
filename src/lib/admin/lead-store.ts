@@ -1,4 +1,4 @@
-import type { Lead } from '@/lib/admin/leads';
+import type { Lead, LeadRecord } from '@/lib/admin/leads';
 import { Redis } from '@upstash/redis';
 
 const KEY_PREFIX = 'leads';
@@ -7,6 +7,10 @@ export const LEADS_INDEX_KEY = `${KEY_PREFIX}:index`;
 
 export function leadKey(id: string): string {
   return `${KEY_PREFIX}:lead:${id}`;
+}
+
+export function leadRecordsKey(leadId: string): string {
+  return `${KEY_PREFIX}:records:${leadId}`;
 }
 
 export function getLeadsRedis(env: NodeJS.ProcessEnv = process.env): Redis | null {
@@ -60,6 +64,30 @@ export async function saveLead(lead: Lead): Promise<void> {
 export async function removeLead(id: string): Promise<void> {
   const transaction = requireRedis().multi();
   transaction.zrem(LEADS_INDEX_KEY, id);
-  transaction.del(leadKey(id));
+  transaction.del(leadKey(id), leadRecordsKey(id));
   await transaction.exec();
+}
+
+export async function listLeadRecords(
+  leadId: string,
+): Promise<{ available: boolean; records: LeadRecord[] }> {
+  const redis = getLeadsRedis();
+  if (!redis) return { available: false, records: [] };
+  try {
+    const hash = await redis.hgetall<Record<string, LeadRecord>>(leadRecordsKey(leadId));
+    const records = Object.values(hash ?? {}).sort(
+      (a, b) => b.date.localeCompare(a.date) || b.createdAt.localeCompare(a.createdAt),
+    );
+    return { available: true, records };
+  } catch {
+    return { available: false, records: [] };
+  }
+}
+
+export async function insertLeadRecord(leadId: string, record: LeadRecord): Promise<void> {
+  await requireRedis().hset(leadRecordsKey(leadId), { [record.id]: record });
+}
+
+export async function removeLeadRecord(leadId: string, recordId: string): Promise<void> {
+  await requireRedis().hdel(leadRecordsKey(leadId), recordId);
 }
