@@ -606,7 +606,7 @@ function Footer({ contact }: { contact: Proposal['contact'] }) {
   return (
     <View style={styles.footer} fixed>
       <Text>
-        {contact.name} · {contact.site}
+        {contact.name} · {displayUrl(contact.site)}
       </Text>
       <Text render={({ pageNumber, totalPages }) => `${pageNumber} / ${totalPages}`} />
     </View>

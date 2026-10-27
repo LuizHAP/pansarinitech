@@ -661,7 +661,7 @@ describe('createLeadRecord', () => {
     await expect(
       createLeadRecord(stored.id, RECORD_PREVIOUS, form(RECORD_FORM, pdfFile())),
     ).resolves.toEqual({
-      errors: {},
+      errors: { file: 'Escolha o PDF de novo antes de salvar.' },
       message: 'Não foi possível enviar o PDF. Tente de novo.',
       values: RECORD_FORM,
       attempt: 3,
@@ -684,6 +684,57 @@ describe('createLeadRecord', () => {
     expect(pathname).toMatch(new RegExp(`^_leads/${stored.id}/[0-9a-f-]{36}\\.pdf$`));
     expect(del).toHaveBeenCalledWith(pathname);
     expect(refresh).not.toHaveBeenCalled();
+  });
+
+  it('asks for the PDF again when the text fields are rejected', async () => {
+    signIn();
+    const stored = lead();
+    await seed(stored);
+    const submitted = { ...RECORD_FORM, title: '' };
+
+    await expect(
+      createLeadRecord(stored.id, RECORD_PREVIOUS, form(submitted, pdfFile())),
+    ).resolves.toMatchObject({
+      errors: { title: 'Informe um título.', file: 'Escolha o PDF de novo antes de salvar.' },
+    });
+    expect(put).not.toHaveBeenCalled();
+  });
+
+  it('removes the record and the PDF when the lead is deleted mid-request', async () => {
+    signIn();
+    const stored = lead();
+    await seed(stored);
+    vi.mocked(put).mockImplementationOnce(async (pathname) => {
+      await fake.del(`leads:lead:${stored.id}`);
+      return { pathname } as never;
+    });
+
+    await expect(
+      createLeadRecord(stored.id, RECORD_PREVIOUS, form(RECORD_FORM, pdfFile())),
+    ).resolves.toMatchObject({ message: 'Este lead não existe mais.' });
+
+    expect(await fake.hgetall(`leads:records:${stored.id}`)).toBeNull();
+    const [[pathname]] = vi.mocked(put).mock.calls;
+    expect(del).toHaveBeenCalledWith(pathname);
+    expect(refresh).not.toHaveBeenCalled();
+  });
+
+  it('removes a record without a PDF when the lead is deleted mid-request', async () => {
+    signIn();
+    const stored = lead();
+    await seed(stored);
+    const hset = fake.hset.bind(fake);
+    vi.spyOn(fake, 'hset').mockImplementationOnce(async (key, kv) => {
+      await fake.del(`leads:lead:${stored.id}`);
+      return hset(key, kv);
+    });
+
+    await expect(
+      createLeadRecord(stored.id, RECORD_PREVIOUS, form(RECORD_FORM)),
+    ).resolves.toMatchObject({ message: 'Este lead não existe mais.' });
+
+    expect(await fake.hgetall(`leads:records:${stored.id}`)).toBeNull();
+    expect(del).not.toHaveBeenCalled();
   });
 });
 

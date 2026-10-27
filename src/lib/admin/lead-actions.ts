@@ -51,6 +51,8 @@ export type LeadRecordFormState = {
 const UNAVAILABLE_MESSAGE = 'Não foi possível salvar: o Redis está indisponível.';
 const MISSING_MESSAGE = 'Este lead não existe mais.';
 const UPLOAD_FAILED_MESSAGE = 'Não foi possível enviar o PDF. Tente de novo.';
+// A rejected submit remounts the form, and a file input can't be refilled from state.
+const RESELECT_FILE_MESSAGE = 'Escolha o PDF de novo antes de salvar.';
 
 function rejected(
   previous: LeadFormState,
@@ -155,12 +157,14 @@ export async function createLeadRecord(
   if (!isLeadId(leadId)) return recordRejected(previous, values, {}, MISSING_MESSAGE);
   const parsed = parseLeadRecordInput(values);
   const file = await readPdfUpload(formData.get('file'));
-  const errors: LeadRecordFormErrors = parsed.ok ? {} : { ...parsed.errors };
+  const reselect: LeadRecordFormErrors =
+    file.ok && file.upload ? { file: RESELECT_FILE_MESSAGE } : {};
+  const errors: LeadRecordFormErrors = parsed.ok ? {} : { ...reselect, ...parsed.errors };
   if (!file.ok) errors.file = file.error;
   if (!parsed.ok || !file.ok) return recordRejected(previous, values, errors);
 
   const { available, lead } = await findLead(leadId);
-  if (!available) return recordRejected(previous, values, {}, UNAVAILABLE_MESSAGE);
+  if (!available) return recordRejected(previous, values, reselect, UNAVAILABLE_MESSAGE);
   if (!lead) return recordRejected(previous, values, {}, MISSING_MESSAGE);
 
   const id = randomUUID();
@@ -169,7 +173,7 @@ export async function createLeadRecord(
     try {
       attachment = await uploadRecordPdf(leadId, id, file.upload);
     } catch {
-      return recordRejected(previous, values, {}, UPLOAD_FAILED_MESSAGE);
+      return recordRejected(previous, values, reselect, UPLOAD_FAILED_MESSAGE);
     }
   }
   try {
@@ -181,7 +185,15 @@ export async function createLeadRecord(
     });
   } catch {
     if (attachment) await deleteRecordFile(attachment.pathname);
-    return recordRejected(previous, values, {}, UNAVAILABLE_MESSAGE);
+    return recordRejected(previous, values, reselect, UNAVAILABLE_MESSAGE);
+  }
+  // A lead deleted while the PDF uploaded would leave this record and file behind;
+  // a delete after this check removes both on its own.
+  const after = await findLead(leadId);
+  if (after.available && !after.lead) {
+    await removeLeadRecord(leadId, id);
+    if (attachment) await deleteRecordFile(attachment.pathname);
+    return recordRejected(previous, values, {}, MISSING_MESSAGE);
   }
   refresh();
   return { errors: {}, message: null, values: null, attempt: previous.attempt + 1 };
