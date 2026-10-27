@@ -39,6 +39,7 @@
   "dependencies": {
     "@formatjs/intl-localematcher": "^0.8.5",
     "@iconify/react": "^6.0.2",
+    "@react-pdf/renderer": "^4.9.0",
     "@tailwindcss/typography": "^0.5.19",
     "@upstash/redis": "^1.39.0",
     "@vercel/analytics": "^2.0.1",
