@@ -125,12 +125,15 @@ export const proposalInputSchema = z.strictObject({
     .max(8)
     .default(() => DEFAULT_NEXT_STEPS.map((step) => ({ ...step }))),
   materials: list(required(160), 12),
-  previewUrl: z
-    .string()
-    .trim()
-    .max(500)
-    .refine(isHttpUrl, { error: 'Informe um endereço http ou https.' })
-    .optional(),
+  previewUrl: z.preprocess(
+    (value) => (typeof value === 'string' && value.trim() === '' ? undefined : value),
+    z
+      .string()
+      .trim()
+      .max(500)
+      .refine(isHttpUrl, { error: 'Informe um endereço http ou https.' })
+      .optional(),
+  ),
   contact: z
     .strictObject({
       name: required(80),

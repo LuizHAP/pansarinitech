@@ -271,8 +271,15 @@ function pairs<T>(items: readonly T[]): [T, T | undefined][] {
   return rows;
 }
 
+const URL_SCHEME = /^(https?):\/\//i;
+
 function displayUrl(url: string): string {
-  return url.replace(/^https?:\/\//, '').replace(/\/$/, '');
+  return url.replace(URL_SCHEME, '').replace(/\/$/, '');
+}
+
+function siteHref(site: string): string {
+  const scheme = site.match(URL_SCHEME)?.[1].toLowerCase() ?? 'https';
+  return `${scheme}://${displayUrl(site)}`;
 }
 
 function Arrow() {
@@ -588,10 +595,7 @@ function ContactBand({ contact }: { contact: Proposal['contact'] }) {
       </View>
       <View style={styles.contactList}>
         <Text style={styles.contactItem}>{contact.name}</Text>
-        <Link
-          style={[styles.contactItem, styles.contactLink]}
-          src={`https://${displayUrl(contact.site)}`}
-        >
+        <Link style={[styles.contactItem, styles.contactLink]} src={siteHref(contact.site)}>
           {displayUrl(contact.site)}
         </Link>
         <Link style={[styles.contactItem, styles.contactLink]} src={`mailto:${contact.email}`}>

@@ -38,6 +38,22 @@ describe('renderProposalPdf', () => {
     expect(text).toContain('/URI (https://exemplo.dev)');
     expect(text).not.toContain('https://https');
   });
+
+  it(
+    'keeps an http contact site on http, whatever the scheme case',
+    { timeout: 60_000 },
+    async () => {
+      const pdf = await renderProposalPdf(
+        parsed({
+          ...MINIMAL_PROPOSAL_INPUT,
+          contact: { name: 'Luiz', site: 'HTTP://Exemplo.dev', email: 'luiz@exemplo.dev' },
+        }),
+      );
+      const text = pdf.toString('latin1');
+      expect(text).toContain('/URI (http://Exemplo.dev)');
+      expect(text).not.toMatch(/https?:\/\/HTTP/i);
+    },
+  );
 });
 
 describe('renderProposalPdf with every field at its cap', () => {

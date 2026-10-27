@@ -45,6 +45,13 @@ describe('parseProposal', () => {
     expect(proposal.title).toBeUndefined();
   });
 
+  it.each(['', '   '])('treats a blank previewUrl %j as absent', (previewUrl) => {
+    const result = parseProposal({ ...MINIMAL_PROPOSAL_INPUT, previewUrl }, NOW);
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.proposal.previewUrl).toBeUndefined();
+  });
+
   it('uses the Sao Paulo calendar day for the default date', () => {
     const result = parseProposal(MINIMAL_PROPOSAL_INPUT, new Date('2026-10-27T02:00:00Z'));
     expect(result.ok && result.proposal.date).toBe('2026-10-26');
