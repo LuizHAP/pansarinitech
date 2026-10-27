@@ -36,7 +36,7 @@ progress:
 Phase: 11 (Lighthouse Performance Fix + Quality Verification) — COMPLETE
 Plan: 2 of 2 (both plans executed)
 Status: Milestone 50% — Phase 10 complete, Phase 11 complete (CASE-13 deferred: 608KB JS bundle blocks LCP)
-Last activity: 2026-10-26 - Completed quick task 261026-oy9: per-lead records log on the admin lead page
+Last activity: 2026-10-27 - Completed quick task 261026-rsz: proposal PDF API and record attachments
 
 ---
 
@@ -171,6 +171,7 @@ Last activity: 2026-10-26 - Completed quick task 261026-oy9: per-lead records lo
 | fast | Admin Server Actions renew the session cookie to 90 days from now, so an open tab in use never logs out | 2026-10-13 | 2c5b1d0 | — |
 | fast | Personal project screenshots (Redzone Boss, DoAção, Starlimp) retaken from the live sites; Redzone Boss and DoAção link to them | 2026-10-22 | b4b96e3 | — |
 | 261026-oy9 | Admin leads: per-lead records log (meeting notes, briefing, proposal) in a Redis hash, listed and added on the lead page | 2026-10-26 | fd8eccb | [261026-oy9-admin-leads-per-lead-records-log-notes-b](./quick/261026-oy9-admin-leads-per-lead-records-log-notes-b/) |
+| 261026-rsz | Proposal PDF (react-pdf template), PDF attachments on lead records in private Blob, token-protected /api/leads search and proposal endpoints | 2026-10-27 | 2e3c600 | [261026-rsz-lead-proposal-pdf-api-and-record-attachm](./quick/261026-rsz-lead-proposal-pdf-api-and-record-attachm/) |
 
 ### Risks Carried Forward
 
