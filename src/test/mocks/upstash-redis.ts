@@ -89,6 +89,11 @@ export class FakeRedis {
     return Object.fromEntries([...hash].map(([field, raw]) => [field, JSON.parse(raw)])) as T;
   }
 
+  async hget<T>(key: string, field: string): Promise<T | null> {
+    const raw = this.hashes.get(key)?.get(field);
+    return raw === undefined ? null : (JSON.parse(raw) as T);
+  }
+
   async hdel(key: string, ...fields: string[]): Promise<number> {
     const hash = this.hashes.get(key);
     let removed = 0;

@@ -84,6 +84,22 @@ export async function listLeadRecords(
   }
 }
 
+export async function findLeadRecord(
+  leadId: string,
+  recordId: string,
+): Promise<{ available: boolean; record: LeadRecord | null }> {
+  const redis = getLeadsRedis();
+  if (!redis) return { available: false, record: null };
+  try {
+    return {
+      available: true,
+      record: await redis.hget<LeadRecord>(leadRecordsKey(leadId), recordId),
+    };
+  } catch {
+    return { available: false, record: null };
+  }
+}
+
 export async function insertLeadRecord(leadId: string, record: LeadRecord): Promise<void> {
   await requireRedis().hset(leadRecordsKey(leadId), { [record.id]: record });
 }

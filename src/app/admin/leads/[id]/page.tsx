@@ -68,6 +68,17 @@ function RecordItem({
             <Badge variant="secondary">{RECORD_KIND_LABELS[record.kind]}</Badge>
             <span className="text-muted-foreground">{formatDueDate(record.date)}</span>
             <span className="min-w-0 font-medium break-words">{record.title}</span>
+            {record.attachment && (
+              <Button asChild variant="link" size="sm">
+                <a
+                  href={`/admin/leads/${leadId}/records/${record.id}/file`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Abrir PDF
+                </a>
+              </Button>
+            )}
           </span>
         </summary>
         <div className="mt-3 flex flex-col gap-3">

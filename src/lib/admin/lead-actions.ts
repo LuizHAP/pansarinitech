@@ -3,7 +3,14 @@
 import { randomUUID } from 'node:crypto';
 import { requireAdminAction } from '@/lib/admin/auth';
 import {
+  deleteLeadFiles,
+  deleteRecordFile,
+  readPdfUpload,
+  uploadRecordPdf,
+} from '@/lib/admin/lead-files';
+import {
   findLead,
+  findLeadRecord,
   insertLead,
   insertLeadRecord,
   removeLead,
@@ -13,6 +20,7 @@ import {
 import {
   type LeadFormErrors,
   type LeadFormValues,
+  type LeadRecordAttachment,
   type LeadRecordFormErrors,
   type LeadRecordFormValues,
   isLeadId,
@@ -42,6 +50,7 @@ export type LeadRecordFormState = {
 
 const UNAVAILABLE_MESSAGE = 'Não foi possível salvar: o Redis está indisponível.';
 const MISSING_MESSAGE = 'Este lead não existe mais.';
+const UPLOAD_FAILED_MESSAGE = 'Não foi possível enviar o PDF. Tente de novo.';
 
 function rejected(
   previous: LeadFormState,
@@ -132,6 +141,7 @@ export async function deleteLead(id: string): Promise<void> {
   await requireAdminAction();
   if (!isLeadId(id)) return;
   await removeLead(id);
+  await deleteLeadFiles(id);
   redirect('/admin/leads');
 }
 
@@ -144,18 +154,33 @@ export async function createLeadRecord(
   const values = readLeadRecordForm(formData);
   if (!isLeadId(leadId)) return recordRejected(previous, values, {}, MISSING_MESSAGE);
   const parsed = parseLeadRecordInput(values);
-  if (!parsed.ok) return recordRejected(previous, values, parsed.errors);
+  const file = await readPdfUpload(formData.get('file'));
+  const errors: LeadRecordFormErrors = parsed.ok ? {} : { ...parsed.errors };
+  if (!file.ok) errors.file = file.error;
+  if (!parsed.ok || !file.ok) return recordRejected(previous, values, errors);
 
   const { available, lead } = await findLead(leadId);
   if (!available) return recordRejected(previous, values, {}, UNAVAILABLE_MESSAGE);
   if (!lead) return recordRejected(previous, values, {}, MISSING_MESSAGE);
+
+  const id = randomUUID();
+  let attachment: LeadRecordAttachment | null = null;
+  if (file.upload) {
+    try {
+      attachment = await uploadRecordPdf(leadId, id, file.upload);
+    } catch {
+      return recordRejected(previous, values, {}, UPLOAD_FAILED_MESSAGE);
+    }
+  }
   try {
     await insertLeadRecord(leadId, {
-      id: randomUUID(),
+      id,
       ...parsed.input,
+      attachment,
       createdAt: new Date().toISOString(),
     });
   } catch {
+    if (attachment) await deleteRecordFile(attachment.pathname);
     return recordRejected(previous, values, {}, UNAVAILABLE_MESSAGE);
   }
   refresh();
@@ -165,6 +190,8 @@ export async function createLeadRecord(
 export async function deleteLeadRecord(leadId: string, recordId: string): Promise<void> {
   await requireAdminAction();
   if (!isLeadId(leadId) || !isLeadId(recordId)) return;
+  const { record } = await findLeadRecord(leadId, recordId);
   await removeLeadRecord(leadId, recordId);
+  if (record?.attachment) await deleteRecordFile(record.attachment.pathname);
   refresh();
 }

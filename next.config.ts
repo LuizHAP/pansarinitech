@@ -95,6 +95,10 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  experimental: {
+    // Room for a 4 MB record PDF plus the form fields; Vercel caps request bodies at 4.5 MB anyway.
+    serverActions: { bodySizeLimit: '5mb' },
+  },
 };
 
 export default withBundleAnalyzer(withNextIntl(nextConfig));

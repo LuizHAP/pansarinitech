@@ -103,6 +103,27 @@ export function LeadRecordForm({
       <Field field="link" label="Link (opcional)" error={errors.link}>
         <Input {...control('link')} inputMode="url" placeholder="exemplo.com.br" />
       </Field>
+      <div className="flex min-w-0 flex-col gap-1.5">
+        <label htmlFor="record-file" className="text-sm font-medium">
+          PDF (opcional)
+        </label>
+        <Input
+          id="record-file"
+          name="file"
+          type="file"
+          accept="application/pdf"
+          aria-describedby={errors.file ? 'record-file-hint record-file-error' : 'record-file-hint'}
+          {...(errors.file ? { 'aria-invalid': true } : {})}
+        />
+        <p id="record-file-hint" className="text-sm text-muted-foreground">
+          Até 4 MB.
+        </p>
+        {errors.file && (
+          <p id="record-file-error" className="text-sm text-destructive">
+            {errors.file}
+          </p>
+        )}
+      </div>
       <Field field="body" label="Texto" error={errors.body}>
         <Textarea {...control('body')} rows={12} />
       </Field>

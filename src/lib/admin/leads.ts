@@ -116,12 +116,23 @@ export type LeadRecordInput = {
   link: string | null;
 };
 
-export type LeadRecord = LeadRecordInput & { id: string; createdAt: string };
+export type LeadRecordAttachment = {
+  pathname: string;
+  name: string;
+  contentType: 'application/pdf';
+  size: number;
+};
+
+export type LeadRecord = LeadRecordInput & {
+  id: string;
+  createdAt: string;
+  attachment?: LeadRecordAttachment | null;
+};
 
 export const LEAD_RECORD_FORM_FIELDS = ['kind', 'date', 'title', 'link', 'body'] as const;
 export type LeadRecordFormField = (typeof LEAD_RECORD_FORM_FIELDS)[number];
 export type LeadRecordFormValues = Record<LeadRecordFormField, string>;
-export type LeadRecordFormErrors = Partial<Record<LeadRecordFormField, string>>;
+export type LeadRecordFormErrors = Partial<Record<LeadRecordFormField | 'file', string>>;
 
 export type LeadPreviewStatus = 'active' | 'disabled' | 'missing' | 'unknown';
 

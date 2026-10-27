@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { FakeRedis } from '@/test/mocks/upstash-redis';
 import { Redis } from '@upstash/redis';
+import { del, list, put } from '@vercel/blob';
 import { refresh } from 'next/cache';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ADMIN_SESSION_COOKIE, SESSION_TTL_MS, signSession } from './auth';
@@ -102,10 +103,15 @@ const NORMALIZED = {
 
 const fake = new FakeRedis();
 
-function form(fields: Record<string, string>): FormData {
+function form(fields: Record<string, string>, file?: File): FormData {
   const data = new FormData();
   for (const [name, value] of Object.entries(fields)) data.set(name, value);
+  if (file) data.set('file', file);
   return data;
+}
+
+function pdfFile(body = '%PDF-1.7\n1 0 obj\n', name = 'proposta.pdf'): File {
+  return new File([new TextEncoder().encode(body)], name, { type: 'application/pdf' });
 }
 
 function signIn() {
@@ -152,6 +158,11 @@ beforeEach(() => {
     return fake;
   } as never);
   vi.mocked(refresh).mockClear();
+  vi.mocked(put).mockReset();
+  vi.mocked(put).mockImplementation(async (pathname) => ({ pathname }) as never);
+  vi.mocked(del).mockReset();
+  vi.mocked(list).mockReset();
+  vi.mocked(list).mockResolvedValue({ blobs: [], hasMore: false } as never);
   vi.stubEnv('ADMIN_USER', CREDENTIALS.user);
   vi.stubEnv('ADMIN_PASSWORD', CREDENTIALS.password);
   vi.stubEnv('KV_REST_API_URL', 'https://example-test.upstash.io');
@@ -440,6 +451,34 @@ describe('deleteLead', () => {
     expect(fake.members('leads:index')).toEqual([[kept.id, Date.parse(kept.createdAt)]]);
   });
 
+  it('deletes every blob under the lead prefix after the Redis transaction', async () => {
+    signIn();
+    const removed = lead();
+    await seed(removed);
+    const files = [`_leads/${removed.id}/a.pdf`, `_leads/${removed.id}/b.pdf`];
+    let leadGoneBeforeList = false;
+    vi.mocked(list).mockImplementationOnce(async () => {
+      leadGoneBeforeList = fake.record(`leads:lead:${removed.id}`) === undefined;
+      return { blobs: files.map((pathname) => ({ pathname })), hasMore: false } as never;
+    });
+
+    await expect(deleteLead(removed.id)).rejects.toThrow(/^NEXT_REDIRECT \/admin\/leads$/);
+
+    expect(list).toHaveBeenCalledWith(expect.objectContaining({ prefix: `_leads/${removed.id}/` }));
+    expect(del).toHaveBeenCalledWith(files);
+    expect(leadGoneBeforeList).toBe(true);
+  });
+
+  it('still goes back to the board when Blob fails', async () => {
+    signIn();
+    const removed = lead();
+    await seed(removed);
+    vi.mocked(list).mockRejectedValueOnce(new Error('Blob down'));
+
+    await expect(deleteLead(removed.id)).rejects.toThrow(/^NEXT_REDIRECT \/admin\/leads$/);
+    expect(fake.record(`leads:lead:${removed.id}`)).toBeUndefined();
+  });
+
   it('ignores an id outside the UUID format', async () => {
     signIn();
     const stored = lead();
@@ -550,10 +589,101 @@ describe('createLeadRecord', () => {
       title: 'Proposta enviada',
       body: 'Site institucional, R$ 2.500.',
       link: 'https://docs.exemplo.com.br/proposta',
+      attachment: null,
       createdAt: NOW,
     });
     expect(fake.record(`leads:lead:${stored.id}`)).toEqual(stored);
     expect(refresh).toHaveBeenCalledTimes(1);
+    expect(put).not.toHaveBeenCalled();
+  });
+
+  it('uploads a PDF to the record path and stores the attachment', async () => {
+    signIn();
+    const stored = lead();
+    await seed(stored);
+
+    await expect(
+      createLeadRecord(stored.id, RECORD_PREVIOUS, form(RECORD_FORM, pdfFile())),
+    ).resolves.toMatchObject({ errors: {}, message: null, values: null });
+
+    const hash = await fake.hgetall<Record<string, LeadRecord>>(`leads:records:${stored.id}`);
+    const [[id, record]] = Object.entries(hash ?? {});
+    const pathname = `_leads/${stored.id}/${id}.pdf`;
+    expect(record.attachment).toEqual({
+      pathname,
+      name: 'proposta.pdf',
+      contentType: 'application/pdf',
+      size: 17,
+    });
+    expect(put).toHaveBeenCalledTimes(1);
+    expect(put).toHaveBeenCalledWith(pathname, Buffer.from('%PDF-1.7\n1 0 obj\n'), {
+      access: 'private',
+      addRandomSuffix: false,
+      allowOverwrite: false,
+      contentType: 'application/pdf',
+    });
+    expect(refresh).toHaveBeenCalledTimes(1);
+  });
+
+  it.each([
+    [
+      'a file over 4 MB',
+      new File([new Uint8Array(4 * 1024 * 1024 + 1)], 'grande.pdf'),
+      'O PDF pode ter no máximo 4 MB.',
+    ],
+    ['a file that is not a PDF', pdfFile('GIF89a', 'foto.pdf'), 'Envie um arquivo PDF.'],
+  ])('rejects %s next to the field errors and stores nothing', async (_case, file, error) => {
+    signIn();
+    const stored = lead();
+    await seed(stored);
+    const submitted = { ...RECORD_FORM, title: '' };
+    const hset = vi.spyOn(fake, 'hset');
+
+    await expect(
+      createLeadRecord(stored.id, RECORD_PREVIOUS, form(submitted, file)),
+    ).resolves.toEqual({
+      errors: { title: 'Informe um título.', file: error },
+      message: null,
+      values: submitted,
+      attempt: 3,
+    });
+    expect(put).not.toHaveBeenCalled();
+    expect(hset).not.toHaveBeenCalled();
+    expect(refresh).not.toHaveBeenCalled();
+  });
+
+  it('writes nothing to Redis when the upload fails', async () => {
+    signIn();
+    const stored = lead();
+    await seed(stored);
+    vi.mocked(put).mockRejectedValueOnce(new Error('Blob down'));
+
+    await expect(
+      createLeadRecord(stored.id, RECORD_PREVIOUS, form(RECORD_FORM, pdfFile())),
+    ).resolves.toEqual({
+      errors: {},
+      message: 'Não foi possível enviar o PDF. Tente de novo.',
+      values: RECORD_FORM,
+      attempt: 3,
+    });
+    expect(await fake.hgetall(`leads:records:${stored.id}`)).toBeNull();
+    expect(refresh).not.toHaveBeenCalled();
+  });
+
+  it('deletes the uploaded PDF when the Redis write fails', async () => {
+    signIn();
+    const stored = lead();
+    await seed(stored);
+    vi.spyOn(fake, 'hset').mockRejectedValueOnce(new Error('fetch failed'));
+
+    await expect(
+      createLeadRecord(stored.id, RECORD_PREVIOUS, form(RECORD_FORM, pdfFile())),
+    ).resolves.toMatchObject({ message: UNAVAILABLE });
+
+    const [[pathname]] = vi.mocked(put).mock.calls;
+    expect(pathname).toMatch(new RegExp(`^_leads/${stored.id}/[0-9a-f-]{36}\\.pdf$`));
+    expect(del).toHaveBeenCalledWith(pathname);
+    expect(refresh).not.toHaveBeenCalled();
   });
 });
 
@@ -614,6 +744,34 @@ describe('deleteLeadRecord', () => {
     await expect(deleteLeadRecord(stored.id, removed.id)).resolves.toBeUndefined();
 
     expect(await fake.hgetall(`leads:records:${stored.id}`)).toEqual({ [kept.id]: kept });
+    expect(refresh).toHaveBeenCalledTimes(1);
+    expect(del).not.toHaveBeenCalled();
+  });
+
+  it('deletes the attachment blob after the record, and survives a Blob failure', async () => {
+    signIn();
+    const { stored, kept } = await seedWithRecords();
+    const withFile: LeadRecord = {
+      ...kept,
+      id: randomUUID(),
+      attachment: {
+        pathname: `_leads/${stored.id}/file.pdf`,
+        name: 'proposta.pdf',
+        contentType: 'application/pdf',
+        size: 10,
+      },
+    };
+    await fake.hset(`leads:records:${stored.id}`, { [withFile.id]: withFile });
+    let recordGoneBeforeDel = false;
+    vi.mocked(del).mockImplementationOnce(async () => {
+      recordGoneBeforeDel = (await fake.hget(`leads:records:${stored.id}`, withFile.id)) === null;
+      throw new Error('Blob down');
+    });
+
+    await expect(deleteLeadRecord(stored.id, withFile.id)).resolves.toBeUndefined();
+
+    expect(del).toHaveBeenCalledWith(`_leads/${stored.id}/file.pdf`);
+    expect(recordGoneBeforeDel).toBe(true);
     expect(refresh).toHaveBeenCalledTimes(1);
   });
 });

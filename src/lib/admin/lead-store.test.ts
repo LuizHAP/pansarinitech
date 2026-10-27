@@ -5,6 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   LEADS_INDEX_KEY,
   findLead,
+  findLeadRecord,
   getLeadsRedis,
   insertLead,
   insertLeadRecord,
@@ -296,6 +297,60 @@ describe('listLeadRecords', () => {
 
     vi.stubEnv('KV_REST_API_TOKEN', undefined);
     await expect(listLeadRecords(leadId)).resolves.toEqual({ available: false, records: [] });
+  });
+});
+
+describe('findLeadRecord', () => {
+  it('returns a stored record unchanged, with or without an attachment', async () => {
+    const leadId = randomUUID();
+    const old = leadRecord();
+    const withFile = leadRecord({
+      attachment: {
+        pathname: `_leads/${leadId}/x.pdf`,
+        name: 'proposta.pdf',
+        contentType: 'application/pdf',
+        size: 10,
+      },
+    });
+    await seedRecords(leadId, old, withFile);
+
+    await expect(findLeadRecord(leadId, old.id)).resolves.toEqual({ available: true, record: old });
+    expect('attachment' in ((await findLeadRecord(leadId, old.id)).record ?? {})).toBe(false);
+    await expect(findLeadRecord(leadId, withFile.id)).resolves.toEqual({
+      available: true,
+      record: withFile,
+    });
+  });
+
+  it('returns null for a missing record or lead', async () => {
+    const leadId = randomUUID();
+    await seedRecords(leadId, leadRecord());
+
+    await expect(findLeadRecord(leadId, randomUUID())).resolves.toEqual({
+      available: true,
+      record: null,
+    });
+    await expect(findLeadRecord(randomUUID(), randomUUID())).resolves.toEqual({
+      available: true,
+      record: null,
+    });
+  });
+
+  it('is unavailable without credentials or when hget fails', async () => {
+    const leadId = randomUUID();
+    const stored = leadRecord();
+    await seedRecords(leadId, stored);
+    vi.spyOn(fake, 'hget').mockRejectedValueOnce(new Error('fetch failed'));
+    await expect(findLeadRecord(leadId, stored.id)).resolves.toEqual({
+      available: false,
+      record: null,
+    });
+
+    vi.stubEnv('KV_REST_API_URL', undefined);
+    await expect(findLeadRecord(leadId, stored.id)).resolves.toEqual({
+      available: false,
+      record: null,
+    });
   });
 });
 
