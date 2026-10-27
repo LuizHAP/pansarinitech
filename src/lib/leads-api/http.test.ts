@@ -88,13 +88,44 @@ describe('readJsonBody', () => {
 
   it('answers 413 from Content-Length before reading', async () => {
     const body = request({ 'Content-Length': '300000' }, '{}');
-    const text = vi.spyOn(body, 'text');
     const result = await readJsonBody(body);
     expect(result.ok).toBe(false);
     if (result.ok) return;
     expect(result.response.status).toBe(413);
     expect(await result.response.json()).toEqual({ error: 'payload_too_large' });
-    expect(text).not.toHaveBeenCalled();
+    expect(body.bodyUsed).toBe(false);
+  });
+
+  it('stops reading a chunked body without Content-Length once it passes the cap', async () => {
+    let pulls = 0;
+    const cancel = vi.fn();
+    const stream = new ReadableStream<Uint8Array>({
+      pull(controller) {
+        pulls += 1;
+        controller.enqueue(new Uint8Array(16));
+      },
+      cancel,
+    });
+    const chunked = new Request('https://example.test/api/leads', {
+      method: 'POST',
+      body: stream,
+      duplex: 'half',
+    } as RequestInit);
+
+    const result = await readJsonBody(chunked, 64);
+
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(result.response.status).toBe(413);
+    expect(cancel).toHaveBeenCalled();
+    expect(pulls).toBeLessThan(10);
+  });
+
+  it('answers 400 when there is no body at all', async () => {
+    const result = await readJsonBody(request());
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(result.response.status).toBe(400);
   });
 
   it('answers 413 when the body read is over the cap', async () => {

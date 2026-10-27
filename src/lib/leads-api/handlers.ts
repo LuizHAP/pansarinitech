@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import { deleteRecordFile, uploadRecordPdf } from '@/lib/admin/lead-files';
-import { findLead, insertLeadRecord, listLeads } from '@/lib/admin/lead-store';
+import { findLead, insertLeadRecord, listLeads, removeLeadRecord } from '@/lib/admin/lead-store';
 import { type Lead, type LeadRecordAttachment, isLeadId } from '@/lib/admin/leads';
 import { proposalPdfFileName, renderProposalPdf } from '@/lib/proposals/render';
 import { parseProposal } from '@/lib/proposals/schema';
@@ -94,6 +94,15 @@ export async function createProposalApi(
   } catch {
     await deleteRecordFile(attachment.pathname);
     return unavailable();
+  }
+
+  // A lead deleted while the PDF rendered would leave this record and file behind;
+  // a delete after this check removes both on its own.
+  const after = await findLead(leadId);
+  if (after.available && !after.lead) {
+    await removeLeadRecord(leadId, recordId);
+    await deleteRecordFile(attachment.pathname);
+    return leadNotFound();
   }
 
   return jsonResponse(

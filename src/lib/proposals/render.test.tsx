@@ -26,6 +26,18 @@ describe('renderProposalPdf', () => {
     expect(pdf.subarray(0, 5).toString('latin1')).toBe('%PDF-');
     expect(pageCount(pdf)).toBe(4);
   });
+
+  it('links a contact site sent with a scheme only once', { timeout: 60_000 }, async () => {
+    const pdf = await renderProposalPdf(
+      parsed({
+        ...MINIMAL_PROPOSAL_INPUT,
+        contact: { name: 'Luiz', site: 'https://exemplo.dev/', email: 'luiz@exemplo.dev' },
+      }),
+    );
+    const text = pdf.toString('latin1');
+    expect(text).toContain('/URI (https://exemplo.dev)');
+    expect(text).not.toContain('https://https');
+  });
 });
 
 describe('renderProposalPdf with every field at its cap', () => {

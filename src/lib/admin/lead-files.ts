@@ -31,9 +31,10 @@ export function safeAttachmentName(raw: string, fallback: string): string {
     .replace(/[\p{Cc}"\\]/gu, '')
     .replace(/\s+/g, ' ')
     .trim();
-  const base = (name || fallback)
-    .replace(/\.pdf$/i, '')
+  // Array.from slices by code point, so an emoji is never cut in half (encodeURIComponent throws on a lone surrogate).
+  const base = Array.from((name || fallback).replace(/\.pdf$/i, ''))
     .slice(0, MAX_NAME_LENGTH - '.pdf'.length)
+    .join('')
     .trim();
   return `${base || fallback.replace(/\.pdf$/i, '')}.pdf`;
 }
@@ -109,7 +110,7 @@ export async function deleteLeadFiles(leadId: string): Promise<void> {
       hasMore = page.hasMore;
     }
   } catch {
-    return;
+    // Still delete the pages already listed; the lead record is gone, so nothing else would.
   }
   for (let start = 0; start < pathnames.length; start += DELETE_BATCH_SIZE) {
     try {

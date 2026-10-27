@@ -588,8 +588,11 @@ function ContactBand({ contact }: { contact: Proposal['contact'] }) {
       </View>
       <View style={styles.contactList}>
         <Text style={styles.contactItem}>{contact.name}</Text>
-        <Link style={[styles.contactItem, styles.contactLink]} src={`https://${contact.site}`}>
-          {contact.site}
+        <Link
+          style={[styles.contactItem, styles.contactLink]}
+          src={`https://${displayUrl(contact.site)}`}
+        >
+          {displayUrl(contact.site)}
         </Link>
         <Link style={[styles.contactItem, styles.contactLink]} src={`mailto:${contact.email}`}>
           {contact.email}

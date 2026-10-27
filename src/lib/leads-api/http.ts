@@ -46,8 +46,21 @@ export async function readJsonBody(
     response: jsonResponse({ error: 'payload_too_large' }, 413),
   });
   if (Number(request.headers.get('content-length') ?? 0) > maxBytes) return tooLarge();
-  const text = await request.text();
-  if (Buffer.byteLength(text) > maxBytes) return tooLarge();
+  const chunks: Uint8Array[] = [];
+  let size = 0;
+  if (request.body) {
+    const reader = request.body.getReader();
+    for (let chunk = await reader.read(); !chunk.done; chunk = await reader.read()) {
+      size += chunk.value.byteLength;
+      // A chunked request has no Content-Length, so the cap has to hold while reading.
+      if (size > maxBytes) {
+        await reader.cancel();
+        return tooLarge();
+      }
+      chunks.push(chunk.value);
+    }
+  }
+  const text = Buffer.concat(chunks).toString('utf8');
   try {
     return { ok: true, value: JSON.parse(text) };
   } catch {

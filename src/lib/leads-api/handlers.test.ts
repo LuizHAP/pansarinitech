@@ -295,6 +295,31 @@ describe('createProposalApi', () => {
     },
   );
 
+  it(
+    'cleans up the record and the blob when the lead is deleted mid-request',
+    { timeout: 60_000 },
+    async () => {
+      const stored = lead();
+      await seed(stored);
+      vi.mocked(put).mockImplementationOnce(async (pathname) => {
+        await fake.del(`leads:lead:${stored.id}`);
+        return { pathname } as never;
+      });
+
+      const response = await createProposalApi(
+        postRequest(stored.id, MINIMAL_PROPOSAL_INPUT),
+        stored.id,
+        NOW,
+      );
+
+      expect(response.status).toBe(404);
+      expect(await response.json()).toEqual({ error: 'lead_not_found' });
+      expect(await storedRecords(stored.id)).toEqual([]);
+      const [[pathname]] = vi.mocked(put).mock.calls;
+      expect(del).toHaveBeenCalledWith(pathname);
+    },
+  );
+
   it('answers 400 with dot paths and touches neither Redis nor Blob', async () => {
     const stored = lead();
     const response = await createProposalApi(

@@ -116,6 +116,12 @@ describe('safeAttachmentName', () => {
     expect(name).toHaveLength(120);
     expect(name.endsWith('.pdf')).toBe(true);
   });
+
+  it('never splits an emoji at the cap, so the header can still encode it', () => {
+    const name = safeAttachmentName(`${'a'.repeat(115)}😀😀.pdf`, 'documento.pdf');
+    expect(name).toBe(`${'a'.repeat(115)}😀.pdf`);
+    expect(() => contentDisposition(name)).not.toThrow();
+  });
 });
 
 describe('contentDisposition', () => {
@@ -273,6 +279,14 @@ describe('deleteLeadFiles', () => {
     vi.mocked(del).mockRejectedValueOnce(new Error('Blob down'));
     await expect(deleteLeadFiles(randomUUID())).resolves.toBeUndefined();
     expect(del).toHaveBeenCalledTimes(2);
+  });
+
+  it('still deletes the pages listed before a later page fails', async () => {
+    vi.mocked(list)
+      .mockResolvedValueOnce(page(3, 0, 'next'))
+      .mockRejectedValueOnce(new Error('Blob down'));
+    await deleteLeadFiles(randomUUID());
+    expect(del).toHaveBeenCalledWith(['_leads/x/0.pdf', '_leads/x/1.pdf', '_leads/x/2.pdf']);
   });
 });
 
