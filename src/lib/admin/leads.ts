@@ -39,6 +39,16 @@ export const SOURCE_LABELS: Record<LeadSource, string> = {
   outro: 'Outro',
 };
 
+export const LEAD_RECORD_KINDS = ['reuniao', 'briefing', 'proposta', 'nota'] as const;
+export type LeadRecordKind = (typeof LEAD_RECORD_KINDS)[number];
+
+export const RECORD_KIND_LABELS: Record<LeadRecordKind, string> = {
+  reuniao: 'Reunião',
+  briefing: 'Briefing',
+  proposta: 'Proposta',
+  nota: 'Nota',
+};
+
 export type SelectOption = { value: string; label: string };
 
 export const STAGE_OPTIONS: SelectOption[] = LEAD_STAGES.map((value) => ({
@@ -48,6 +58,10 @@ export const STAGE_OPTIONS: SelectOption[] = LEAD_STAGES.map((value) => ({
 export const SOURCE_OPTIONS: SelectOption[] = LEAD_SOURCES.map((value) => ({
   value,
   label: SOURCE_LABELS[value],
+}));
+export const RECORD_KIND_OPTIONS: SelectOption[] = LEAD_RECORD_KINDS.map((value) => ({
+  value,
+  label: RECORD_KIND_LABELS[value],
 }));
 
 export type StageChange = { stage: LeadStage; at: string };
@@ -93,6 +107,32 @@ export const LEAD_FORM_FIELDS = [
 export type LeadFormField = (typeof LEAD_FORM_FIELDS)[number];
 export type LeadFormValues = Record<LeadFormField, string>;
 export type LeadFormErrors = Partial<Record<LeadFormField, string>>;
+
+export type LeadRecordInput = {
+  kind: LeadRecordKind;
+  date: string;
+  title: string;
+  body: string;
+  link: string | null;
+};
+
+export type LeadRecordAttachment = {
+  pathname: string;
+  name: string;
+  contentType: 'application/pdf';
+  size: number;
+};
+
+export type LeadRecord = LeadRecordInput & {
+  id: string;
+  createdAt: string;
+  attachment?: LeadRecordAttachment | null;
+};
+
+export const LEAD_RECORD_FORM_FIELDS = ['kind', 'date', 'title', 'link', 'body'] as const;
+export type LeadRecordFormField = (typeof LEAD_RECORD_FORM_FIELDS)[number];
+export type LeadRecordFormValues = Record<LeadRecordFormField, string>;
+export type LeadRecordFormErrors = Partial<Record<LeadRecordFormField | 'file', string>>;
 
 export type LeadPreviewStatus = 'active' | 'disabled' | 'missing' | 'unknown';
 
@@ -195,6 +235,17 @@ const leadInputSchema = z.object({
   notes: optionalText(5000),
 });
 
+const leadRecordInputSchema = z.object({
+  kind: z.enum(LEAD_RECORD_KINDS, { error: 'Escolha um tipo da lista.' }),
+  date: z
+    .string()
+    .trim()
+    .refine((value) => DATE_ONLY.safeParse(value).success, { error: 'Informe uma data válida.' }),
+  title: text(160).min(1, { error: 'Informe um título.' }),
+  link: optional(text(500), normalizeUrl, URL_ERROR),
+  body: text(50000).min(1, { error: 'Escreva o texto do registro.' }),
+});
+
 export function isLeadId(value: string): boolean {
   return LEAD_ID.test(value);
 }
@@ -256,6 +307,32 @@ export function parseLeadInput(
   const errors: LeadFormErrors = {};
   for (const issue of result.error.issues) {
     const field = issue.path[0] as LeadFormField;
+    errors[field] ??= issue.message;
+  }
+  return { ok: false, errors };
+}
+
+export function readLeadRecordForm(formData: FormData): LeadRecordFormValues {
+  const entries = LEAD_RECORD_FORM_FIELDS.map((name) => {
+    const value = formData.get(name);
+    return [name, typeof value === 'string' ? value : ''];
+  });
+  return Object.fromEntries(entries) as LeadRecordFormValues;
+}
+
+export function leadRecordFormValues(today: string): LeadRecordFormValues {
+  return { kind: 'reuniao', date: today, title: '', link: '', body: '' };
+}
+
+export function parseLeadRecordInput(
+  values: LeadRecordFormValues,
+): { ok: true; input: LeadRecordInput } | { ok: false; errors: LeadRecordFormErrors } {
+  const result = leadRecordInputSchema.safeParse(values);
+  if (result.success) return { ok: true, input: result.data };
+
+  const errors: LeadRecordFormErrors = {};
+  for (const issue of result.error.issues) {
+    const field = issue.path[0] as LeadRecordFormField;
     errors[field] ??= issue.message;
   }
   return { ok: false, errors };

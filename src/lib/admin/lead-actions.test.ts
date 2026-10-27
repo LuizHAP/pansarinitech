@@ -1,11 +1,21 @@
 import { randomUUID } from 'node:crypto';
 import { FakeRedis } from '@/test/mocks/upstash-redis';
 import { Redis } from '@upstash/redis';
+import { del, list, put } from '@vercel/blob';
 import { refresh } from 'next/cache';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ADMIN_SESSION_COOKIE, SESSION_TTL_MS, signSession } from './auth';
-import { type LeadFormState, createLead, deleteLead, moveLead, updateLead } from './lead-actions';
-import { type Lead, isLeadId } from './leads';
+import {
+  type LeadFormState,
+  type LeadRecordFormState,
+  createLead,
+  createLeadRecord,
+  deleteLead,
+  deleteLeadRecord,
+  moveLead,
+  updateLead,
+} from './lead-actions';
+import { type Lead, type LeadRecord, isLeadId } from './leads';
 
 const { jar, cookieStore } = vi.hoisted(() => {
   const jar = new Map<string, string>();
@@ -45,6 +55,20 @@ const NOW = '2026-10-07T12:00:00.000Z';
 const UNAVAILABLE = 'Não foi possível salvar: o Redis está indisponível.';
 const MISSING = 'Este lead não existe mais.';
 const PREVIOUS: LeadFormState = { errors: {}, message: null, values: null, attempt: 2 };
+const RECORD_PREVIOUS: LeadRecordFormState = {
+  errors: {},
+  message: null,
+  values: null,
+  attempt: 2,
+};
+
+const RECORD_FORM = {
+  kind: 'proposta',
+  date: '2026-10-06',
+  title: ' Proposta enviada ',
+  link: 'docs.exemplo.com.br/proposta',
+  body: ' Site institucional, R$ 2.500. ',
+};
 
 const FULL_FORM = {
   name: ' Padaria ',
@@ -79,10 +103,15 @@ const NORMALIZED = {
 
 const fake = new FakeRedis();
 
-function form(fields: Record<string, string>): FormData {
+function form(fields: Record<string, string>, file?: File): FormData {
   const data = new FormData();
   for (const [name, value] of Object.entries(fields)) data.set(name, value);
+  if (file) data.set('file', file);
   return data;
+}
+
+function pdfFile(body = '%PDF-1.7\n1 0 obj\n', name = 'proposta.pdf'): File {
+  return new File([new TextEncoder().encode(body)], name, { type: 'application/pdf' });
 }
 
 function signIn() {
@@ -129,6 +158,11 @@ beforeEach(() => {
     return fake;
   } as never);
   vi.mocked(refresh).mockClear();
+  vi.mocked(put).mockReset();
+  vi.mocked(put).mockImplementation(async (pathname) => ({ pathname }) as never);
+  vi.mocked(del).mockReset();
+  vi.mocked(list).mockReset();
+  vi.mocked(list).mockResolvedValue({ blobs: [], hasMore: false } as never);
   vi.stubEnv('ADMIN_USER', CREDENTIALS.user);
   vi.stubEnv('ADMIN_PASSWORD', CREDENTIALS.password);
   vi.stubEnv('KV_REST_API_URL', 'https://example-test.upstash.io');
@@ -417,6 +451,34 @@ describe('deleteLead', () => {
     expect(fake.members('leads:index')).toEqual([[kept.id, Date.parse(kept.createdAt)]]);
   });
 
+  it('deletes every blob under the lead prefix after the Redis transaction', async () => {
+    signIn();
+    const removed = lead();
+    await seed(removed);
+    const files = [`_leads/${removed.id}/a.pdf`, `_leads/${removed.id}/b.pdf`];
+    let leadGoneBeforeList = false;
+    vi.mocked(list).mockImplementationOnce(async () => {
+      leadGoneBeforeList = fake.record(`leads:lead:${removed.id}`) === undefined;
+      return { blobs: files.map((pathname) => ({ pathname })), hasMore: false } as never;
+    });
+
+    await expect(deleteLead(removed.id)).rejects.toThrow(/^NEXT_REDIRECT \/admin\/leads$/);
+
+    expect(list).toHaveBeenCalledWith(expect.objectContaining({ prefix: `_leads/${removed.id}/` }));
+    expect(del).toHaveBeenCalledWith(files);
+    expect(leadGoneBeforeList).toBe(true);
+  });
+
+  it('still goes back to the board when Blob fails', async () => {
+    signIn();
+    const removed = lead();
+    await seed(removed);
+    vi.mocked(list).mockRejectedValueOnce(new Error('Blob down'));
+
+    await expect(deleteLead(removed.id)).rejects.toThrow(/^NEXT_REDIRECT \/admin\/leads$/);
+    expect(fake.record(`leads:lead:${removed.id}`)).toBeUndefined();
+  });
+
   it('ignores an id outside the UUID format', async () => {
     signIn();
     const stored = lead();
@@ -426,5 +488,341 @@ describe('deleteLead', () => {
     expect(Redis).not.toHaveBeenCalled();
     expect(fake.record(`leads:lead:${stored.id}`)).toEqual(stored);
     expect(fake.members('leads:index')).toHaveLength(1);
+  });
+});
+
+describe('createLeadRecord', () => {
+  it('writes nothing without a session', async () => {
+    const stored = lead();
+    await seed(stored);
+
+    await expect(createLeadRecord(stored.id, RECORD_PREVIOUS, form(RECORD_FORM))).rejects.toThrow(
+      /^NEXT_REDIRECT \/admin\/login$/,
+    );
+    expect(await fake.hgetall(`leads:records:${stored.id}`)).toBeNull();
+    expect(refresh).not.toHaveBeenCalled();
+  });
+
+  it.each(['../x', randomUUID()])(
+    'says the lead is gone for id %s and writes nothing',
+    async (id) => {
+      signIn();
+      await seed(lead());
+      const keysBefore = fake.keys();
+
+      await expect(createLeadRecord(id, RECORD_PREVIOUS, form(RECORD_FORM))).resolves.toEqual({
+        errors: {},
+        message: MISSING,
+        values: RECORD_FORM,
+        attempt: 3,
+      });
+      expect(fake.keys()).toEqual(keysBefore);
+      expect(refresh).not.toHaveBeenCalled();
+    },
+  );
+
+  it('returns pt-BR field errors with the typed values and writes nothing', async () => {
+    signIn();
+    const stored = lead();
+    await seed(stored);
+    const submitted = { ...RECORD_FORM, title: '', link: 'javascript:alert(1)' };
+
+    await expect(createLeadRecord(stored.id, RECORD_PREVIOUS, form(submitted))).resolves.toEqual({
+      errors: {
+        title: 'Informe um título.',
+        link: 'Informe um endereço válido, como exemplo.com.br.',
+      },
+      message: null,
+      values: submitted,
+      attempt: 3,
+    });
+    expect(await fake.hgetall(`leads:records:${stored.id}`)).toBeNull();
+    expect(refresh).not.toHaveBeenCalled();
+  });
+
+  it('reports Redis as unavailable without credentials', async () => {
+    signIn();
+    const stored = lead();
+    await seed(stored);
+    vi.stubEnv('KV_REST_API_URL', undefined);
+
+    await expect(createLeadRecord(stored.id, RECORD_PREVIOUS, form(RECORD_FORM))).resolves.toEqual({
+      errors: {},
+      message: UNAVAILABLE,
+      values: RECORD_FORM,
+      attempt: 3,
+    });
+    expect(await fake.hgetall(`leads:records:${stored.id}`)).toBeNull();
+  });
+
+  it('reports Redis as unavailable when the write fails', async () => {
+    signIn();
+    const stored = lead();
+    await seed(stored);
+    vi.spyOn(fake, 'hset').mockRejectedValueOnce(new Error('fetch failed'));
+
+    await expect(
+      createLeadRecord(stored.id, RECORD_PREVIOUS, form(RECORD_FORM)),
+    ).resolves.toMatchObject({ message: UNAVAILABLE, values: RECORD_FORM });
+    expect(refresh).not.toHaveBeenCalled();
+  });
+
+  it('stores the normalized record, refreshes and resets the form', async () => {
+    signIn();
+    const stored = lead();
+    await seed(stored);
+
+    await expect(createLeadRecord(stored.id, RECORD_PREVIOUS, form(RECORD_FORM))).resolves.toEqual({
+      errors: {},
+      message: null,
+      values: null,
+      attempt: 3,
+    });
+
+    const hash = await fake.hgetall<Record<string, LeadRecord>>(`leads:records:${stored.id}`);
+    const [[id, record]] = Object.entries(hash ?? {});
+    expect(isLeadId(id)).toBe(true);
+    expect(record).toEqual({
+      id,
+      kind: 'proposta',
+      date: '2026-10-06',
+      title: 'Proposta enviada',
+      body: 'Site institucional, R$ 2.500.',
+      link: 'https://docs.exemplo.com.br/proposta',
+      attachment: null,
+      createdAt: NOW,
+    });
+    expect(fake.record(`leads:lead:${stored.id}`)).toEqual(stored);
+    expect(refresh).toHaveBeenCalledTimes(1);
+    expect(put).not.toHaveBeenCalled();
+  });
+
+  it('uploads a PDF to the record path and stores the attachment', async () => {
+    signIn();
+    const stored = lead();
+    await seed(stored);
+
+    await expect(
+      createLeadRecord(stored.id, RECORD_PREVIOUS, form(RECORD_FORM, pdfFile())),
+    ).resolves.toMatchObject({ errors: {}, message: null, values: null });
+
+    const hash = await fake.hgetall<Record<string, LeadRecord>>(`leads:records:${stored.id}`);
+    const [[id, record]] = Object.entries(hash ?? {});
+    const pathname = `_leads/${stored.id}/${id}.pdf`;
+    expect(record.attachment).toEqual({
+      pathname,
+      name: 'proposta.pdf',
+      contentType: 'application/pdf',
+      size: 17,
+    });
+    expect(put).toHaveBeenCalledTimes(1);
+    expect(put).toHaveBeenCalledWith(pathname, Buffer.from('%PDF-1.7\n1 0 obj\n'), {
+      access: 'private',
+      addRandomSuffix: false,
+      allowOverwrite: false,
+      contentType: 'application/pdf',
+    });
+    expect(refresh).toHaveBeenCalledTimes(1);
+  });
+
+  it.each([
+    [
+      'a file over 4 MB',
+      new File([new Uint8Array(4 * 1024 * 1024 + 1)], 'grande.pdf'),
+      'O PDF pode ter no máximo 4 MB.',
+    ],
+    ['a file that is not a PDF', pdfFile('GIF89a', 'foto.pdf'), 'Envie um arquivo PDF.'],
+  ])('rejects %s next to the field errors and stores nothing', async (_case, file, error) => {
+    signIn();
+    const stored = lead();
+    await seed(stored);
+    const submitted = { ...RECORD_FORM, title: '' };
+    const hset = vi.spyOn(fake, 'hset');
+
+    await expect(
+      createLeadRecord(stored.id, RECORD_PREVIOUS, form(submitted, file)),
+    ).resolves.toEqual({
+      errors: { title: 'Informe um título.', file: error },
+      message: null,
+      values: submitted,
+      attempt: 3,
+    });
+    expect(put).not.toHaveBeenCalled();
+    expect(hset).not.toHaveBeenCalled();
+    expect(refresh).not.toHaveBeenCalled();
+  });
+
+  it('writes nothing to Redis when the upload fails', async () => {
+    signIn();
+    const stored = lead();
+    await seed(stored);
+    vi.mocked(put).mockRejectedValueOnce(new Error('Blob down'));
+
+    await expect(
+      createLeadRecord(stored.id, RECORD_PREVIOUS, form(RECORD_FORM, pdfFile())),
+    ).resolves.toEqual({
+      errors: { file: 'Escolha o PDF de novo antes de salvar.' },
+      message: 'Não foi possível enviar o PDF. Tente de novo.',
+      values: RECORD_FORM,
+      attempt: 3,
+    });
+    expect(await fake.hgetall(`leads:records:${stored.id}`)).toBeNull();
+    expect(refresh).not.toHaveBeenCalled();
+  });
+
+  it('deletes the uploaded PDF when the Redis write fails', async () => {
+    signIn();
+    const stored = lead();
+    await seed(stored);
+    vi.spyOn(fake, 'hset').mockRejectedValueOnce(new Error('fetch failed'));
+
+    await expect(
+      createLeadRecord(stored.id, RECORD_PREVIOUS, form(RECORD_FORM, pdfFile())),
+    ).resolves.toMatchObject({ message: UNAVAILABLE });
+
+    const [[pathname]] = vi.mocked(put).mock.calls;
+    expect(pathname).toMatch(new RegExp(`^_leads/${stored.id}/[0-9a-f-]{36}\\.pdf$`));
+    expect(del).toHaveBeenCalledWith(pathname);
+    expect(refresh).not.toHaveBeenCalled();
+  });
+
+  it('asks for the PDF again when the text fields are rejected', async () => {
+    signIn();
+    const stored = lead();
+    await seed(stored);
+    const submitted = { ...RECORD_FORM, title: '' };
+
+    await expect(
+      createLeadRecord(stored.id, RECORD_PREVIOUS, form(submitted, pdfFile())),
+    ).resolves.toMatchObject({
+      errors: { title: 'Informe um título.', file: 'Escolha o PDF de novo antes de salvar.' },
+    });
+    expect(put).not.toHaveBeenCalled();
+  });
+
+  it('removes the record and the PDF when the lead is deleted mid-request', async () => {
+    signIn();
+    const stored = lead();
+    await seed(stored);
+    vi.mocked(put).mockImplementationOnce(async (pathname) => {
+      await fake.del(`leads:lead:${stored.id}`);
+      return { pathname } as never;
+    });
+
+    await expect(
+      createLeadRecord(stored.id, RECORD_PREVIOUS, form(RECORD_FORM, pdfFile())),
+    ).resolves.toMatchObject({ message: 'Este lead não existe mais.' });
+
+    expect(await fake.hgetall(`leads:records:${stored.id}`)).toBeNull();
+    const [[pathname]] = vi.mocked(put).mock.calls;
+    expect(del).toHaveBeenCalledWith(pathname);
+    expect(refresh).not.toHaveBeenCalled();
+  });
+
+  it('removes a record without a PDF when the lead is deleted mid-request', async () => {
+    signIn();
+    const stored = lead();
+    await seed(stored);
+    const hset = fake.hset.bind(fake);
+    vi.spyOn(fake, 'hset').mockImplementationOnce(async (key, kv) => {
+      await fake.del(`leads:lead:${stored.id}`);
+      return hset(key, kv);
+    });
+
+    await expect(
+      createLeadRecord(stored.id, RECORD_PREVIOUS, form(RECORD_FORM)),
+    ).resolves.toMatchObject({ message: 'Este lead não existe mais.' });
+
+    expect(await fake.hgetall(`leads:records:${stored.id}`)).toBeNull();
+    expect(del).not.toHaveBeenCalled();
+  });
+});
+
+describe('deleteLeadRecord', () => {
+  async function seedWithRecords() {
+    const stored = lead();
+    await seed(stored);
+    const removed: LeadRecord = {
+      id: randomUUID(),
+      kind: 'nota',
+      date: '2026-10-05',
+      title: 'Ligar de novo',
+      body: 'Sem resposta.',
+      link: null,
+      createdAt: '2026-10-05T12:00:00.000Z',
+    };
+    const kept: LeadRecord = { ...removed, id: randomUUID(), title: 'Briefing' };
+    await fake.hset(`leads:records:${stored.id}`, { [removed.id]: removed, [kept.id]: kept });
+    return { stored, removed, kept };
+  }
+
+  it('removes nothing without a session', async () => {
+    const { stored, removed, kept } = await seedWithRecords();
+
+    await expect(deleteLeadRecord(stored.id, removed.id)).rejects.toThrow(
+      /^NEXT_REDIRECT \/admin\/login$/,
+    );
+    expect(await fake.hgetall(`leads:records:${stored.id}`)).toEqual({
+      [removed.id]: removed,
+      [kept.id]: kept,
+    });
+    expect(refresh).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    ['lead id', true],
+    ['record id', false],
+  ])('ignores a %s outside the UUID format', async (_case, badLead) => {
+    signIn();
+    const { stored, removed, kept } = await seedWithRecords();
+
+    await expect(
+      deleteLeadRecord(badLead ? '../x' : stored.id, badLead ? removed.id : '../x'),
+    ).resolves.toBeUndefined();
+
+    expect(Redis).not.toHaveBeenCalled();
+    expect(await fake.hgetall(`leads:records:${stored.id}`)).toEqual({
+      [removed.id]: removed,
+      [kept.id]: kept,
+    });
+    expect(refresh).not.toHaveBeenCalled();
+  });
+
+  it('removes only that record and refreshes the page', async () => {
+    signIn();
+    const { stored, removed, kept } = await seedWithRecords();
+
+    await expect(deleteLeadRecord(stored.id, removed.id)).resolves.toBeUndefined();
+
+    expect(await fake.hgetall(`leads:records:${stored.id}`)).toEqual({ [kept.id]: kept });
+    expect(refresh).toHaveBeenCalledTimes(1);
+    expect(del).not.toHaveBeenCalled();
+  });
+
+  it('deletes the attachment blob after the record, and survives a Blob failure', async () => {
+    signIn();
+    const { stored, kept } = await seedWithRecords();
+    const withFile: LeadRecord = {
+      ...kept,
+      id: randomUUID(),
+      attachment: {
+        pathname: `_leads/${stored.id}/file.pdf`,
+        name: 'proposta.pdf',
+        contentType: 'application/pdf',
+        size: 10,
+      },
+    };
+    await fake.hset(`leads:records:${stored.id}`, { [withFile.id]: withFile });
+    let recordGoneBeforeDel = false;
+    vi.mocked(del).mockImplementationOnce(async () => {
+      recordGoneBeforeDel = (await fake.hget(`leads:records:${stored.id}`, withFile.id)) === null;
+      throw new Error('Blob down');
+    });
+
+    await expect(deleteLeadRecord(stored.id, withFile.id)).resolves.toBeUndefined();
+
+    expect(del).toHaveBeenCalledWith(`_leads/${stored.id}/file.pdf`);
+    expect(recordGoneBeforeDel).toBe(true);
+    expect(refresh).toHaveBeenCalledTimes(1);
   });
 });

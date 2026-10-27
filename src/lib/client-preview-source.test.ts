@@ -230,6 +230,24 @@ describe('buildPreviewIndex', () => {
     expect(get).toHaveBeenCalledWith('acme/index.html', { access: 'private' });
   });
 
+  it('skips private lead files stored under a reserved _ prefix', async () => {
+    listing(
+      listed(
+        '_leads/9f1c2d3e-4b5a-4c6d-8e7f-0a1b2c3d4e5f/0a1b2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d.pdf',
+        900,
+      ),
+      listed('_drafts/index.html', 10),
+      listed('acme/index.html', 100),
+    );
+    serving({ 'acme/index.html': '<title>Acme</title>' });
+
+    const index = await buildPreviewIndex();
+
+    expect(index.previews.map((preview) => preview.slug)).toEqual(['acme']);
+    expect(index.previews[0].warnings).toEqual([]);
+    expect(get).toHaveBeenCalledTimes(1);
+  });
+
   it('follows the list cursor until hasMore is false', async () => {
     vi.mocked(list)
       .mockResolvedValueOnce({

@@ -136,6 +136,8 @@ export async function buildPreviewIndex(): Promise<PreviewIndex> {
       const separator = blob.pathname.indexOf('/');
       if (separator === -1) continue;
       const slug = blob.pathname.slice(0, separator);
+      // The store also holds private lead files under reserved '_' prefixes.
+      if (slug.startsWith('_')) continue;
       const path = blob.pathname.slice(separator + 1);
       const uploadedAt = blob.uploadedAt.toISOString();
       const group = groups.get(slug) ?? {
