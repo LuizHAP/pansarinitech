@@ -1,4 +1,5 @@
 import { render, screen } from '@/test/render';
+import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
 // locale-toggle-action is a Server Action ('use server') — mock it so jsdom
@@ -6,7 +7,11 @@ import { describe, expect, it, vi } from 'vitest';
 vi.mock('./locale-toggle-action', () => ({
   switchLocale: vi.fn(async () => {}),
 }));
+vi.mock('./change-locale', () => ({
+  changeLocale: vi.fn(),
+}));
 
+import { changeLocale } from './change-locale';
 import { LocaleToggle } from './locale-toggle';
 
 describe('<LocaleToggle />', () => {
@@ -37,4 +42,19 @@ describe('<LocaleToggle />', () => {
     const form = screen.getByRole('form', { name: /Switch language/i });
     expect(form).toBeInTheDocument();
   });
+
+  it.each([
+    { currentLocale: 'en' as const, targetLabel: 'PT', targetLocale: 'pt' },
+    { currentLocale: 'pt' as const, targetLabel: 'EN', targetLocale: 'en' },
+  ])(
+    'switches from $currentLocale to $targetLocale when $targetLabel is clicked',
+    async ({ currentLocale, targetLabel, targetLocale }) => {
+      const user = userEvent.setup();
+      render(<LocaleToggle />, { locale: currentLocale });
+
+      await user.click(screen.getByRole('button', { name: targetLabel }));
+
+      expect(changeLocale).toHaveBeenCalledWith(targetLocale);
+    },
+  );
 });
