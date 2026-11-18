@@ -42,8 +42,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           enableSystem={false}
           disableTransitionOnChange
         >
-          <AdminNav />
-          {children}
+          <AdminNav>{children}</AdminNav>
         </ThemeProvider>
       </body>
     </html>

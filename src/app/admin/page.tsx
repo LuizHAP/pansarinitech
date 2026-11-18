@@ -3,7 +3,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { logout, refreshIndex } from '@/lib/admin/actions';
+import { refreshIndex } from '@/lib/admin/actions';
 import { requireAdmin } from '@/lib/admin/auth';
 import {
   type AdminPreview,
@@ -100,11 +100,6 @@ export default async function AdminPage() {
             </Button>
           </form>
           <CopyButton value={urls.join('\n')} label="Copiar todas as URLs" />
-          <form action={logout}>
-            <Button type="submit" variant="outline" size="sm">
-              Sair
-            </Button>
-          </form>
         </div>
       </header>
 

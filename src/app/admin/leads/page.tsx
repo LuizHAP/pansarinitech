@@ -3,7 +3,6 @@ import { ScoreBatchButton } from '@/components/admin/score-controls';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { logout } from '@/lib/admin/actions';
 import { requireAdmin } from '@/lib/admin/auth';
 import { listLeads } from '@/lib/admin/lead-store';
 import {
@@ -92,11 +91,6 @@ export default async function LeadsPage({
           <Button asChild variant="outline" size="sm">
             <a href="/admin">Prévias de clientes</a>
           </Button>
-          <form action={logout}>
-            <Button type="submit" variant="outline" size="sm">
-              Sair
-            </Button>
-          </form>
         </div>
       </header>
 
