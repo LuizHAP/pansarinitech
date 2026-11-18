@@ -1,3 +1,4 @@
+import { ScoreBadge } from '@/components/admin/score-panel';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
@@ -38,6 +39,11 @@ function contactLinks(lead: Lead): ContactLink[] {
   const links: ContactLink[] = [];
   if (lead.whatsapp) {
     links.push({ label: 'WhatsApp', href: whatsappHref(lead.whatsapp), external: true });
+    links.push({
+      label: 'Conversar',
+      href: `/admin/whatsapp?phone=${encodeURIComponent(lead.whatsapp)}`,
+      external: false,
+    });
   }
   if (lead.email) links.push({ label: 'E-mail', href: mailtoHref(lead.email), external: false });
   if (lead.phone) links.push({ label: 'Telefone', href: telHref(lead.phone), external: false });
@@ -147,6 +153,7 @@ export function LeadCard({
           </a>
         </h3>
         <Badge variant="secondary">{SOURCE_LABELS[lead.source]}</Badge>
+        <ScoreBadge score={lead.extras?.score} />
       </CardHeader>
       <CardContent className="flex flex-col gap-3">
         {(lead.nextStep || lead.dueDate) && (

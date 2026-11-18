@@ -58,3 +58,4 @@ test-results/
 .swarm/
 agentdb.rvf*
 ruvector.db
+.worker-data/
