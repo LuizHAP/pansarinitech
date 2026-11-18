@@ -1,3 +1,4 @@
+import { AdminNav } from '@/components/admin/admin-nav';
 import { ThemeProvider } from '@/components/shared/theme-provider';
 import type { Metadata } from 'next';
 import { IBM_Plex_Mono, IBM_Plex_Sans } from 'next/font/google';
@@ -37,10 +38,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <body>
         <ThemeProvider
           attribute="class"
-          defaultTheme="system"
-          enableSystem
+          defaultTheme="dark"
+          enableSystem={false}
           disableTransitionOnChange
         >
+          <AdminNav />
           {children}
         </ThemeProvider>
       </body>

@@ -1,6 +1,7 @@
 import { LeadLinks, StageForm, leadPreview } from '@/components/admin/lead-card';
 import { LeadForm } from '@/components/admin/lead-form';
 import { LeadRecordForm } from '@/components/admin/lead-record-form';
+import { ScorePanel } from '@/components/admin/score-panel';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -159,6 +160,8 @@ export default async function LeadPage({ params }: { params: Promise<{ id: strin
       </dl>
 
       <StageForm lead={lead} />
+
+      <ScorePanel leadId={lead.id} score={lead.extras?.score} />
 
       <section className="flex flex-col gap-2 text-sm">
         <h2 className="text-lg font-semibold">Contato e prévia</h2>

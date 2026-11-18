@@ -197,6 +197,23 @@ Leads:
 
 Warnings flag a folder name outside `[a-z0-9-]`, a missing `index.html`, a missing `<title>`, asset paths starting with `/`, a repo preview with the same slug, and a slug that matches an admin page (`leads`, `login`), whose admin link opens that page instead.
 
+CRM (WhatsApp, scraper, scoring, campaigns):
+
+- Pages: `/admin/whatsapp`, `/admin/scraper`, `/admin/campanhas` and the score filters on `/admin/leads`. They share the leads Redis, so existing leads are kept.
+- A local worker runs the parts that cannot live on Vercel: the WhatsApp connection (Baileys), the Google Maps scraper (Playwright) and the campaign scheduler. Start it next to the dev server and keep it open:
+
+```bash
+pnpm exec playwright install chromium   # once, for the scraper
+pnpm dev
+pnpm worker
+```
+
+- Without the worker the pages load but show it as offline, and searches and campaigns wait. The worker session is stored in `.worker-data/` (git-ignored), so the QR code is only scanned once.
+- WhatsApp: "Gerar QR Code" on `/admin/whatsapp`, then WhatsApp > Linked devices on the phone. Chats are matched to leads by the last 8 digits of the number. Sending to a lead moves it to Contatado, and a reply moves it to Em conversa.
+- Scoring uses local rules and, if `OPENROUTER_API_KEY` is set (and optionally `OPENROUTER_MODEL`), refines them with AI. Leads without a site score highest.
+- Campaigns send at most 30 messages a day by default (cap 100), at least 20 seconds apart. Bulk sending can get the number banned.
+- `SCRAPER_HEADED=1` shows the scraper browser window.
+
 ### Accessibility
 
 - WCAG 2.1 AA — non-negotiable
@@ -404,6 +421,23 @@ Leads:
 - "Excluir lead" e depois "Confirmar exclusão" apagam o registro e o histórico de vez.
 
 Os avisos apontam nome de pasta fora de `[a-z0-9-]`, falta de `index.html`, falta de `<title>`, caminhos de assets começando com `/`, uma prévia do repositório com o mesmo slug e um slug igual ao de uma página do admin (`leads`, `login`), cujo link no admin abre essa página no lugar da prévia.
+
+CRM (WhatsApp, scraper, score, campanhas):
+
+- Páginas: `/admin/whatsapp`, `/admin/scraper`, `/admin/campanhas` e os filtros de score em `/admin/leads`. Elas usam o mesmo Redis dos leads, então os leads existentes continuam.
+- Um worker local roda o que não cabe na Vercel: a conexão do WhatsApp (Baileys), o scraper do Google Maps (Playwright) e o agendador de campanhas. Suba junto com o dev server e deixe aberto:
+
+```bash
+pnpm exec playwright install chromium   # uma vez, para o scraper
+pnpm dev
+pnpm worker
+```
+
+- Sem o worker as páginas abrem, mas aparecem como offline, e buscas e campanhas ficam paradas. A sessão do worker fica em `.worker-data/` (ignorada pelo git), então o QR Code é lido uma vez só.
+- WhatsApp: "Gerar QR Code" em `/admin/whatsapp`, depois WhatsApp > Aparelhos conectados no celular. As conversas são ligadas aos leads pelos últimos 8 dígitos do número. Enviar a um lead o move para Contatado, e a resposta o move para Em conversa.
+- O score usa regras locais e, com `OPENROUTER_API_KEY` definida (e `OPENROUTER_MODEL`, se quiser), refina com IA. Leads sem site pontuam mais alto.
+- As campanhas enviam no máximo 30 mensagens por dia por padrão (teto 100), com pelo menos 20 segundos entre elas. Envio em massa pode banir o número.
+- `SCRAPER_HEADED=1` mostra a janela do navegador do scraper.
 
 ### Acessibilidade
 

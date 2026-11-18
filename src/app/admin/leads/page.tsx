@@ -1,4 +1,5 @@
 import { LeadCard, leadPreview } from '@/components/admin/lead-card';
+import { ScoreBatchButton } from '@/components/admin/score-controls';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -13,6 +14,16 @@ import {
   todayInSaoPaulo,
 } from '@/lib/admin/leads';
 import { type PreviewIndex, getPreviewIndex } from '@/lib/client-preview-source';
+import {
+  PRIORITY_FILTERS,
+  PRIORITY_LABELS,
+  filterByJob,
+  filterByPriority,
+  leadViewHref,
+  parseLeadView,
+  sortByScore,
+  unscoredLeadIds,
+} from '@/lib/crm/scoring/view';
 import { TriangleAlert } from 'lucide-react';
 
 function leadCount(count: number): string {
@@ -42,11 +53,28 @@ function LeadList({
   );
 }
 
-export default async function LeadsPage() {
+export default async function LeadsPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
   await requireAdmin();
+  const view = parseLeadView(await searchParams);
   const [{ available, leads }, index] = await Promise.all([listLeads(), getPreviewIndex()]);
   const today = todayInSaoPaulo();
-  const grouped = groupLeadsByStage(leads);
+  const grouped = groupLeadsByStage(filterByPriority(filterByJob(leads, view.job), view.priority));
+  if (view.sort) {
+    for (const stage of BOARD_STAGES) grouped[stage] = sortByScore(grouped[stage]);
+    grouped.perdido = sortByScore(grouped.perdido);
+  }
+  const unscored = unscoredLeadIds(leads);
+  const filterLinks = [
+    { value: null, label: 'Todas' },
+    ...PRIORITY_FILTERS.map((value) => ({
+      value,
+      label: value === 'sem' ? 'Sem score' : PRIORITY_LABELS[value],
+    })),
+  ];
 
   return (
     <main className="mx-auto flex max-w-7xl min-w-0 flex-col gap-6 px-4 py-6">
@@ -71,6 +99,41 @@ export default async function LeadsPage() {
           </form>
         </div>
       </header>
+
+      {available && (
+        <div className="flex flex-col gap-3">
+          <ScoreBatchButton ids={unscored} />
+          <nav aria-label="Filtros de score" className="flex flex-wrap items-center gap-2 text-sm">
+            <span className="text-muted-foreground">Prioridade:</span>
+            {filterLinks.map((filter) => {
+              const active = view.priority === filter.value;
+              return (
+                <Button
+                  key={filter.label}
+                  asChild
+                  size="sm"
+                  variant={active ? 'secondary' : 'outline'}
+                >
+                  <a
+                    href={leadViewHref({ ...view, priority: filter.value })}
+                    aria-current={active ? 'true' : undefined}
+                  >
+                    {filter.label}
+                  </a>
+                </Button>
+              );
+            })}
+            <Button asChild size="sm" variant={view.sort ? 'secondary' : 'outline'}>
+              <a
+                href={leadViewHref({ ...view, sort: view.sort ? null : 'score' })}
+                aria-pressed={view.sort ? 'true' : 'false'}
+              >
+                Ordenar por score
+              </a>
+            </Button>
+          </nav>
+        </div>
+      )}
 
       {!available ? (
         <Alert>

@@ -1,4 +1,5 @@
 import { type PreviewIndex, isPreviewSlug } from '@/lib/client-preview-source';
+import type { LeadExtras } from '@/lib/crm/contract';
 import { z } from 'zod';
 
 export const LEAD_STAGES = [
@@ -83,6 +84,7 @@ export type LeadInput = {
 
 export type Lead = LeadInput & {
   id: string;
+  extras?: LeadExtras;
   stage: LeadStage;
   history: StageChange[];
   createdAt: string;
